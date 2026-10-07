@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V149" defer></script>
-  <script src="tournament-bracket.js?v=V151" defer></script>
+  <script src="tournament-bracket.js?v=V152" defer></script>
   <script src="court-center.js?v=V149" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -418,7 +418,7 @@ body.light-mode .myhub-home-section-title{color:var(--text,#151821)}
 <style id="scs-score-v1248">
 .scs-score-live-top{display:none!important}.scs-score-role-head,.scs-score-role-cell{width:52px!important;min-width:52px!important}.scs-score-role-cell{cursor:pointer;position:sticky;left:104px;z-index:3;font-weight:900}.scs-score-role-cell span{display:inline-flex;width:34px;height:34px;border-radius:50%;align-items:center;justify-content:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24)}.scs-score-role-cell.is-server span{background:#2563eb}.scs-score-role-cell.is-receiver span{background:#e11d48}.scs-score-role-cell.is-locked{cursor:default}.scs-score-role-note{text-align:center;font-size:.72rem;opacity:.7;margin:6px 0 0}@media(max-width:420px){.scs-score-role-cell{left:86px}}
 </style>
-<link rel="stylesheet" href="tournament-bracket.css?v=V151">
+<link rel="stylesheet" href="tournament-bracket.css?v=V152">
 
 <style id="scs-tournament-home-v91">
 .scs-home-access-card.scs-tournament-access{background:#213a42;border-color:rgba(91,221,192,.28)}
@@ -443,17 +443,21 @@ function scsOpenTournamentManager(){var e=document.getElementById('scsTournament
 function scsCloseTournamentManager(){var e=document.getElementById('scsTournamentManager');if(e)e.hidden=true}
 function scsTournamentManagerStart(){scsCloseTournamentManager();scsOpenTournamentTypePicker()}
 function scsTournamentManagerContinue(){
-  var ko=null,gt=null;try{ko=JSON.parse(localStorage.getItem('scs_tournament_v1')||localStorage.getItem('scs_tournament_saved_v1')||'null')}catch(_){}
+  scsCloseTournamentManager();
+  var box=document.getElementById('scsTournamentContinueList'),overlay=document.getElementById('scsTournamentContinue');if(!box||!overlay)return;
+  var ko=null,gt=null;try{ko=JSON.parse(localStorage.getItem('scs_knockout_tournament_v94')||'null')}catch(_){}
   try{gt=JSON.parse(localStorage.getItem('scs_group_tournament_ui_v1')||'null')}catch(_){}
-  var groupActive=!!(gt&&(gt.created||gt.started));
-  if(groupActive&&ko){if(confirm('Open Group Tournament?\n\nOK = Group Tournament\nCancel = Knockout Tournament')){scsCloseTournamentManager();SCSGroupTournament.open();}else{scsCloseTournamentManager();SCSTournament.enterSavedTournament();}return}
-  if(groupActive){scsCloseTournamentManager();SCSGroupTournament.open();return}
-  if(window.SCSTournament&&typeof SCSTournament.enterSavedTournament==='function'){scsCloseTournamentManager();SCSTournament.enterSavedTournament();return}
-  alert('No tournament in progress on this device.');
+  var cards=[];
+  if(gt&&(gt.created||gt.started)){var gm=Array.isArray(gt.matches)?gt.matches:[],gc=gm.filter(function(m){return m&&(m.completed||m.approved||m.status==='completed')}).length;cards.push('<button class="scs-tmgr-tournament-card group" onclick="scsContinueGroupTournament()"><span><small>GROUP TOURNAMENT · '+(gt.started?'LIVE':'IN PROGRESS')+'</small><strong>'+String(gt.title||gt.name||'Group Tournament')+'</strong><em>'+gc+' / '+gm.length+' matches completed</em></span><b>Continue ›</b></button>')}
+  if(ko){var km=Array.isArray(ko.matches)?ko.matches:[],kc=km.filter(function(m){return m&&(m.completed||m.winner||m.status==='completed')}).length;cards.push('<button class="scs-tmgr-tournament-card knockout" onclick="scsContinueKnockoutTournament()"><span><small>KNOCKOUT · '+(ko.live?'LIVE':'IN PROGRESS')+'</small><strong>'+String(ko.title||'Tournament')+'</strong><em>'+kc+' / '+km.length+' matches completed'+(ko.live?' · '+Math.max(1,Number(ko.numCourts)||1)+' courts':'')+'</em></span><b>Continue ›</b></button>')}
+  box.innerHTML=cards.length?cards.join(''):'<div class="scs-tmgr-empty">No tournament in progress on this device.</div>';overlay.hidden=false;
 }
+function scsCloseTournamentContinue(){var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true}
+function scsContinueGroupTournament(){scsCloseTournamentContinue();if(window.SCSGroupTournament)SCSGroupTournament.open()}
+function scsContinueKnockoutTournament(){scsCloseTournamentContinue();if(window.SCSTournament&&SCSTournament.enterSavedTournament)SCSTournament.enterSavedTournament()}
 function scsTournamentManagerLive(){scsCloseTournamentManager();if(window.SCSCourtCenter&&SCSCourtCenter.openLiveBracket)SCSCourtCenter.openLiveBracket();else alert('Live Tournament is still loading.')}
 function scsTournamentManagerCompleted(){alert('Completed Tournament history will be connected in the next Tournament Manager step.')}
-function scsTournamentManagerConduct(){scsCloseTournamentManager();if(window.SCSCourtCenter&&SCSCourtCenter.open)SCSCourtCenter.open();else alert('Court Center is still loading.')}
+function scsTournamentManagerConduct(){scsCloseTournamentManager();if(window.SCSScoring&&SCSScoring.open)SCSScoring.open();else alert('Score a Match is still loading.')}
 function scsTournamentManagerStatus(){
  var c=document.getElementById('scsTmContinueStatus'),l=document.getElementById('scsTmLiveStatus');if(!c)return;
  var has=false;try{var g=JSON.parse(localStorage.getItem('scs_group_tournament_ui_v1')||'null');has=!!(g&&(g.created||g.started))}catch(_){}
@@ -470,13 +474,14 @@ function scsStartKnockoutTournament(){
   alert('Tournament is still loading. Please try again.');
 }
 </script>
-<link rel="stylesheet" href="./group-tournament.css?v=V151"><script src="./shared-match-center.js?v=V151" defer></script><script src="./group-tournament.js?v=V151" defer></script>
+<link rel="stylesheet" href="./group-tournament.css?v=V152"><script src="./shared-match-center.js?v=V152" defer></script><script src="./group-tournament.js?v=V152" defer></script>
 
 <style id="scs-tournament-manager-v1">
 .scs-tmgr-overlay{position:fixed;inset:0;z-index:10038;background:rgba(3,8,18,.78);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;padding:16px}
 .scs-tmgr-overlay[hidden]{display:none!important}.scs-tmgr-card{width:min(560px,100%);max-height:92vh;overflow:auto;background:#101d31;border:1px solid #334b6d;border-radius:28px 28px 22px 22px;padding:20px;color:#f6f8ff;box-shadow:0 24px 80px rgba(0,0,0,.5)}
 .scs-tmgr-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}.scs-tmgr-kicker{font-size:.7rem;font-weight:900;letter-spacing:.18em;color:#78d9c0}.scs-tmgr-head h2{margin:4px 0 3px;font-size:1.55rem}.scs-tmgr-head p{margin:0;color:#aebbd0;font-size:.9rem}.scs-tmgr-close{border:0;background:#22324a;color:#fff;width:38px;height:38px;border-radius:50%;font-size:1.25rem}
 .scs-tmgr-actions{display:grid;gap:11px}.scs-tmgr-action{width:100%;border:1px solid #395474;background:#182942;color:#fff;border-radius:19px;padding:15px;display:grid;grid-template-columns:48px 1fr 22px;align-items:center;gap:12px;text-align:left}.scs-tmgr-action:active{transform:scale(.99)}.scs-tmgr-icon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:1.35rem;background:#243b5c}.scs-tmgr-copy strong,.scs-tmgr-copy small{display:block}.scs-tmgr-copy strong{font-size:1rem}.scs-tmgr-copy small{color:#9eafc6;margin-top:4px;line-height:1.25}.scs-tmgr-go{font-size:1.7rem;color:#7f95b3}.scs-tmgr-action.start{border-color:#3a806e;background:#17372f}.scs-tmgr-action.start .scs-tmgr-icon{background:#24594b}.scs-tmgr-action.conduct{border-color:#7051a7;background:#2b2144}.scs-tmgr-action.conduct .scs-tmgr-icon{background:#49366e}
+.scs-tmgr-tournament-list{display:grid;gap:12px}.scs-tmgr-tournament-card{width:100%;border:1px solid #41618a;background:#182b46;color:#fff;border-radius:20px;padding:17px;display:flex;align-items:center;justify-content:space-between;gap:14px;text-align:left}.scs-tmgr-tournament-card span{min-width:0}.scs-tmgr-tournament-card small,.scs-tmgr-tournament-card strong,.scs-tmgr-tournament-card em{display:block}.scs-tmgr-tournament-card small{font-size:.68rem;letter-spacing:.12em;color:#86b9ff;font-weight:900}.scs-tmgr-tournament-card strong{font-size:1.08rem;margin:6px 0}.scs-tmgr-tournament-card em{font-style:normal;color:#aebed3;font-size:.84rem}.scs-tmgr-tournament-card b{white-space:nowrap;color:#fff;background:#315f9b;border-radius:13px;padding:11px}.scs-tmgr-tournament-card.group{border-color:#3c806e}.scs-tmgr-tournament-card.group small{color:#68dfbd}.scs-tmgr-empty{padding:28px 12px;text-align:center;color:#9fb0c7}.scs-tmgr-back{border:0;background:#263a55;color:#fff;border-radius:13px;padding:10px 14px;font-weight:800;margin-top:16px;width:100%}
 body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;color:#14243a;border-color:#b8c6d9}body.light-mode .scs-tmgr-head p,html.app-light .scs-tmgr-head p{color:#607089}body.light-mode .scs-tmgr-action,html.app-light .scs-tmgr-action{background:#fff;color:#17263a;border-color:#cad5e3}body.light-mode .scs-tmgr-copy small,html.app-light .scs-tmgr-copy small{color:#68778d}body.light-mode .scs-tmgr-action.start,html.app-light .scs-tmgr-action.start{background:#e8f8f2;border-color:#91cdbb}body.light-mode .scs-tmgr-action.conduct,html.app-light .scs-tmgr-action.conduct{background:#f2edff;border-color:#b8a6e3}
 </style>
 </head>
@@ -3763,6 +3768,8 @@ style="display:none;font-size:0.72rem;color:var(--accent);word-break:break-all;m
     </div>
   </section>
 </div>
+
+<div id="scsTournamentContinue" class="scs-tmgr-overlay" hidden onclick="if(event.target===this)scsCloseTournamentContinue()"><section class="scs-tmgr-card" role="dialog" aria-modal="true"><header class="scs-tmgr-head"><div><div class="scs-tmgr-kicker">SCS · TOURNAMENT</div><h2>Continue a Tournament</h2><p>Your tournaments that are not completed.</p></div><button class="scs-tmgr-close" onclick="scsCloseTournamentContinue()" aria-label="Close">×</button></header><div id="scsTournamentContinueList" class="scs-tmgr-tournament-list"></div><button class="scs-tmgr-back" onclick="scsCloseTournamentContinue();scsOpenTournamentManager()">‹ Tournament Manager</button></section></div>
 
 <div id="scsTournamentTypePicker" class="scs-tournament-type-overlay" hidden onclick="if(event.target===this)scsCloseTournamentTypePicker()">
   <section class="scs-tournament-type-card" role="dialog" aria-modal="true" aria-labelledby="scsTournamentTypeTitle">
