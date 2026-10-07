@@ -1,0 +1,38 @@
+ .scs-gt-overlay{position:fixed;inset:0;z-index:999999;background:rgba(5,12,25,.82);overflow:auto;padding:12px;color:#eef4ff}.scs-gt-sheet{max-width:850px;margin:8px auto 28px;padding:16px;background:#17253c;border:1px solid #466187;border-radius:17px;font:inherit}.scs-gt-sheet header{display:flex;justify-content:space-between;align-items:center;font-size:1.15rem;margin-bottom:14px}.scs-gt-sheet > header button,.scs-gt-sheet > nav button,.scs-gt-card button{cursor:pointer;min-height:40px;border-radius:9px;border:1px solid #55749f;background:#263c5d;color:#fff;padding:8px}.scs-gt-card{padding:14px;background:#243957;border:1px solid #526d94;border-radius:13px;margin:12px 0}.scs-gt-card h3{margin:0 0 12px}.scs-gt-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.scs-gt-fields label{display:flex;flex-direction:column;gap:6px}.scs-gt-fields input{min-width:0;padding:10px;border-radius:8px;background:#10213a;color:white;border:1px solid #7293c0;font-size:1rem}.scs-gt-primary,.scs-gt-tabs .active{background:#3167b6!important}.scs-gt-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:12px 0}.scs-gt-tabs button{font-size:.75rem;min-width:0;padding:5px 2px;overflow-wrap:anywhere}.scs-gt-standings{overflow-x:auto}.scs-gt-head{display:grid;grid-template-columns:60px minmax(95px,1fr) 32px 36px 36px;gap:5px;padding:9px 2px;border-bottom:1px solid #526d94;font-size:.85rem}.scs-gt-empty{color:#c0cce0}.scs-gt-secondary{margin-top:12px}@media(max-width:420px){.scs-gt-sheet{padding:10px}.scs-gt-fields{grid-template-columns:1fr}.scs-gt-tabs button{font-size:.68rem}}
+.scs-gt-team{width:100%;text-align:left;background:transparent!important;border:0!important;border-bottom:1px solid #526d94!important;border-radius:0!important;color:inherit!important}
+.scs-gt-player{display:flex;gap:12px;align-items:center;padding:10px;border-bottom:1px solid #526d94}
+.scs-gt-player input{width:20px;height:20px}
+.scs-gt-editor-backdrop{position:fixed;inset:0;z-index:1000001;background:#000a;display:flex;align-items:center;justify-content:center;padding:14px}
+.scs-gt-editor{width:min(440px,100%);max-height:90vh;overflow:auto;padding:18px;background:#243957;border:1px solid #7293c0;border-radius:16px;display:grid;gap:12px}
+.scs-gt-editor label{display:grid;gap:5px}.scs-gt-editor select{width:100%;padding:12px;background:#10213a;color:#fff;border:1px solid #7293c0;border-radius:8px}
+
+/* V143: same player badge and rating ring used in Knockout Tournament */
+.scs-gt-team{min-height:72px;height:auto!important;align-items:center}
+.scs-gt-team-players{display:flex;flex-direction:column;gap:6px;min-width:0;padding:3px 0}
+.scs-gt-team-players .scs-tm-shared-player{display:flex;align-items:center;gap:7px;min-width:0;text-align:left}
+.scs-gt-team-players .scs-tm-shared-name{overflow-wrap:anywhere;line-height:1.25}
+.scs-gt-team-players .scs-tm-ring-slot{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.scs-gt-unassigned{opacity:.85}
+.scs-gt-head{grid-template-columns:60px minmax(125px,1fr) 32px 36px 36px}
+
+.scs-gt-court,.scs-gt-fixture{padding:12px;margin:8px 0;border:1px solid #5a7aa7;border-radius:11px;background:#1b2e4a}.scs-gt-fixture div{padding:7px 0}.scs-gt-court-controls{display:flex;justify-content:space-between;align-items:center}.scs-gt-fixture button{margin-left:10px}
+
+
+/* Match Center presentation is owned by tournament-bracket.css, shared by both modules. */
+
+/* V149 — standings redesign only. Existing fields and rating/gender rings retained. */
+.scs-gt-standings{overflow-x:visible;display:grid;gap:9px;min-width:0}
+.scs-gt-standings>.scs-gt-head:first-child{background:#1b3354;border:1px solid #36547e;border-radius:11px;padding:12px 10px;color:#bcd6ff;font-weight:700;min-height:43px}
+.scs-gt-standings .scs-gt-head{grid-template-columns:minmax(44px,15%) minmax(0,1fr) minmax(25px,8%) minmax(29px,9%) minmax(32px,11%);column-gap:5px;align-items:center;box-sizing:border-box;font-size:clamp(.69rem,2.9vw,.92rem);text-align:center}
+.scs-gt-standings .scs-gt-head>span:nth-child(2){text-align:left;min-width:0}
+.scs-gt-standings .scs-gt-result-row,.scs-gt-standings button.scs-gt-team{padding:13px 9px!important;min-height:100px;border:1px solid #466993!important;border-radius:15px!important;background:linear-gradient(120deg,#1a3050,#1b2d49)!important;box-shadow:0 2px 8px #06101e3d;overflow:hidden}
+.scs-gt-standings .scs-gt-result-row:first-of-type{border-color:#3c9a80!important}
+.scs-gt-standings .scs-gt-team>span:first-child{display:grid;place-items:center;justify-self:center;width:35px;height:35px;border-radius:50%;background:#3a567b;font-size:1rem;font-weight:750;color:#fff}
+.scs-gt-standings .scs-gt-result-row:nth-child(2)>span:first-child{background:#299e78}
+.scs-gt-standings .scs-gt-result-row:nth-child(3)>span:first-child{background:#277fd0}
+.scs-gt-standings .scs-gt-team>span:nth-child(n+3){font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:normal}
+.scs-gt-standings .scs-gt-team-players{gap:8px;padding:2px 0}
+.scs-gt-standings .scs-gt-team-players .scs-tm-shared-player{gap:6px;font-weight:650}
+.scs-gt-standings .scs-gt-team-players .scs-tm-shared-name{overflow-wrap:anywhere;word-break:normal}
+.scs-gt-standings .scs-gt-team>span:nth-child(3){border-left:1px solid #416082;padding-left:3px}
+@media(max-width:380px){.scs-gt-standings .scs-gt-head{grid-template-columns:44px minmax(0,1fr) 25px 28px 30px;gap:3px;font-size:.69rem}.scs-gt-standings .scs-gt-result-row,.scs-gt-standings button.scs-gt-team{padding:11px 5px!important}.scs-gt-standings .scs-gt-team>span:first-child{width:30px;height:30px}}
