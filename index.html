@@ -457,7 +457,7 @@ function scsContinueGroupTournament(){scsCloseTournamentContinue();if(window.SCS
 function scsContinueKnockoutTournament(){scsCloseTournamentContinue();if(window.SCSTournament&&SCSTournament.enterSavedTournament)SCSTournament.enterSavedTournament()}
 function scsTournamentManagerLive(){scsCloseTournamentManager();if(window.SCSCourtCenter&&SCSCourtCenter.openLiveBracket)SCSCourtCenter.openLiveBracket();else alert('Live Tournament is still loading.')}
 function scsTournamentManagerCompleted(){alert('Completed Tournament history will be connected in the next Tournament Manager step.')}
-function scsTournamentManagerConduct(){scsCloseTournamentManager();if(window.SCSScoring&&SCSScoring.open)SCSScoring.open();else alert('Score a Match is still loading.')}
+function scsTournamentManagerConduct(){scsCloseTournamentManager();if(window.SCSScoring&&SCSScoring.openConduct)SCSScoring.openConduct();else alert('Score a Match is still loading.')}
 function scsTournamentManagerStatus(){
  var c=document.getElementById('scsTmContinueStatus'),l=document.getElementById('scsTmLiveStatus');if(!c)return;
  var has=false;try{var g=JSON.parse(localStorage.getItem('scs_group_tournament_ui_v1')||'null');has=!!(g&&(g.created||g.started))}catch(_){}

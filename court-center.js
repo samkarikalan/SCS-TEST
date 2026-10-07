@@ -22,6 +22,15 @@ function localScoreUpdate(sessionId,court,pair1,pair2,score,winner){
  localStorage.setItem(LOCAL_TM_SESSION,JSON.stringify(local));session=local;
  if(window.SCSTournament&&SCSTournament.renderLive)SCSTournament.renderLive();return true;
 }
+async function finishConductMatch(id){
+ var local=readLocalSession();if(!local||!local.rounds_data||!local.rounds_data[0])return false;
+ var g=(local.rounds_data[0].games||[]).find(function(x){return x.ccid===id});
+ if(!g||g.score_status!=='scored')return false;
+ g.conduct_finished=true;g.conduct_finished_at=new Date().toISOString();
+ localStorage.setItem(LOCAL_TM_SESSION,JSON.stringify(local));session=local;
+ if(window.SCSTournament&&SCSTournament.renderLive)SCSTournament.renderLive();return true;
+}
+
 async function startTournament(tournament,numCourts){
  var n=Math.max(1,Math.min(20,Number(numCourts)||1));
  var old=readLocalSession();
@@ -68,5 +77,5 @@ async function assignTournamentMatch(id,info,requestedCourt){if(busy||!info)retu
 async function bracket(ro){if(!session)return;try{session=await latestSession()}catch(e){}var round=session.rounds_data[0];if(!round.tournament){if(ro){alert('Set up the tournament in Court Center first.');return;}if(!confirm('Create a new tournament? Teams and match connections will be entered next.'))return;round.tournament=SCSTournament.init();try{await save()}catch(e){delete round.tournament;alert(e.message||'Could not save tournament');return;}}SCSTournament.open(round.tournament,ro,async function(updated){var fresh=await latestSession(),freshRound=fresh.rounds_data[0],previous=freshRound.tournament;freshRound.tournament=updated;session=fresh;try{await save();round=session.rounds_data[0]}catch(e){freshRound.tournament=previous;throw e}},function(id,info){assignTournamentMatch(id,info)},async function(){var fresh=await latestSession(),freshRound=fresh.rounds_data[0],previousTournament=freshRound.tournament,previousGames=(freshRound.games||[]).slice();freshRound.games=(freshRound.games||[]).filter(function(g){return !g.tournament_match});delete freshRound.tournament;session=fresh;try{await save();round=session.rounds_data[0]}catch(e){freshRound.tournament=previousTournament;freshRound.games=previousGames;throw e}});} 
 async function openLiveBracket(){try{var fresh=await findSession();if(!fresh||!fresh.rounds_data||!fresh.rounds_data[0]||!fresh.rounds_data[0].tournament){alert('No live tournament bracket for your club.');return;}session=fresh;bracket(true)}catch(e){alert(e.message||'Could not load live tournament bracket')}}
 function tournamentGame(id){return games().find(function(g){return Number(g.tournament_match)===Number(id)})}
-window.SCSCourtCenter={startTournament:startTournament,resumeTournament:resumeTournament,liveState:liveState,refreshTournamentState:refreshTournamentState,freeCourts:freeCourts,playerNames:function(){return players.filter(function(p){return p&&p.name}).map(function(p){return p.name})},openLiveBracket:openLiveBracket,openTournament:openTournament,bracket:bracket,tournamentGame:tournamentGame,assignTournamentMatch:assignTournamentMatch,changeTournamentCourts:changeTournamentCourts,startTournamentMatch:startTournamentMatch,localScoreUpdate:localScoreUpdate,localSession:function(){return readLocalSession()},open:open,close:close,start:start,showAssign:showAssign,cancelAssign:cancelAssign,addMatch:addMatch,editMatch:editMatch,deleteMatch:deleteMatch,approve:approve,tab:tab,refresh:refresh};
+window.SCSCourtCenter={startTournament:startTournament,resumeTournament:resumeTournament,liveState:liveState,refreshTournamentState:refreshTournamentState,freeCourts:freeCourts,playerNames:function(){return players.filter(function(p){return p&&p.name}).map(function(p){return p.name})},openLiveBracket:openLiveBracket,openTournament:openTournament,bracket:bracket,tournamentGame:tournamentGame,assignTournamentMatch:assignTournamentMatch,changeTournamentCourts:changeTournamentCourts,startTournamentMatch:startTournamentMatch,localScoreUpdate:localScoreUpdate,finishConductMatch:finishConductMatch,localSession:function(){return readLocalSession()},open:open,close:close,start:start,showAssign:showAssign,cancelAssign:cancelAssign,addMatch:addMatch,editMatch:editMatch,deleteMatch:deleteMatch,approve:approve,tab:tab,refresh:refresh};
 })();
