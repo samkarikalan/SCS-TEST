@@ -166,7 +166,7 @@ function matchCenter(){
   if(!m)return {number:n};
   const ready=m.status==='score_ready',playing=m.status==='playing';
   const sets=m.score&&m.score.completedSets;
-  return {number:n,playerRenderer:playerRow,match:{status:ready?'AWAITING APPROVAL':playing?'IN PROGRESS':'ASSIGNED (Not Started)',label:m.id+' · Group '+groupLabel(m.group),groupIndex:m.group,left:assignments[m.a]||[],right:assignments[m.b]||[],ready,started:playing||ready,score:Array.isArray(sets)?sets.map(set=>(set.score||[]).join('–')).join(' | '):'',action:ready?'data-approve="'+escapeHTML(m.id)+'"':playing?'data-score="'+escapeHTML(m.id)+'"':'data-start-match="'+escapeHTML(m.id)+'"',actionLabel:ready?'Approve Result':playing?'View Score':'Start Match'}};
+  return {number:n,playerRenderer:playerRow,match:{status:ready?'AWAITING APPROVAL':playing?'IN PROGRESS':'ASSIGNED (Not Started)',label:m.id+' · Group '+groupLabel(m.group),groupIndex:m.group,left:assignments[m.a]||[],right:assignments[m.b]||[],ready,started:playing||ready,score:Array.isArray(sets)?sets.map(set=>(set.score||[]).join('–')).join(' | '):'',winner:m.winner==='L'?'left':m.winner==='R'?'right':null,action:ready?'data-approve="'+escapeHTML(m.id)+'"':playing?'data-score="'+escapeHTML(m.id)+'"':'data-start-match="'+escapeHTML(m.id)+'"',actionLabel:ready?'Approve Result':playing?'View Score':'Start Match'}};
  });
  const pending=matches.filter(m=>m.status==='pending'||m.status==='assigned'||m.status==='playing'||m.status==='score_ready');
  const done=matches.filter(m=>m.status==='approved');

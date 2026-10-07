@@ -36537,5 +36537,5 @@ body.app-light .scs-court-card{background:#fff!important;box-shadow:0 5px 16px r
 /* V33: direct tournament entry on Court Center setup */
 .scs-court-start .scs-court-tournament-entry{display:block;width:100%;margin-top:12px;background:#292d43;color:#c2b8ff;border:1px solid #7465dc;border-radius:16px;padding:16px;font-weight:700;}
 
-/* V154 Conduct Match: explicit scoring and court-finish actions */
+/* V155 Conduct Match: explicit scoring and court-finish actions */
 .scs-conduct-start,.scs-conduct-finish{display:block;width:calc(100% - 28px);min-height:48px;margin:4px 14px 14px;border:0;border-radius:13px;font:800 .95rem inherit;color:#fff}.scs-conduct-start{background:#356aa8}.scs-conduct-finish{background:#16a36f}.scs-conduct-score{text-align:center;font-weight:900;font-size:1.05rem;padding:6px 14px 8px}.scs-score-live-match.is-score-ready{border-color:rgba(22,163,111,.8)}
