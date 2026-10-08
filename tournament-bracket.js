@@ -620,22 +620,17 @@ function organizeTournamentTabs(){
  var details=root.querySelector('.scs-tm-details');
  var old=root.querySelector('.scs-tm-organized-tabs');if(old)old.remove();
  var live=draw.live===true;
- var tabs=live?[['players','Players'],['flowchart','Flowchart'],['match','Match Center']]:[['main','Main'],['players','Players'],['flowchart','Flowchart'],['match','Match Center']];
- var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs';bar.setAttribute('aria-label','Tournament sections');
- tabs.forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.textContent=item[1];btn.setAttribute('data-tm-tab',item[0]);btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
- if(live){
-  var homeRow=document.createElement('div');homeRow.className='scs-tm-home-row';
-  var homeButton=document.createElement('button');homeButton.type='button';
-  homeButton.className='scs-activity-home-back scs-tm-home-button';
-  homeButton.textContent='‹ SCS Home';
-  homeButton.onclick=function(){
-    // Explicit Home navigation; ordinary Close still returns to its parent.
-    if(window.SCSTournament&&typeof window.SCSTournament.close==='function')window.SCSTournament.close();
-    if(typeof window.scsActivityReturnHome==='function')window.scsActivityReturnHome();
-  };
-  homeRow.appendChild(homeButton);root.insertBefore(homeRow,root.firstChild);
-}
-root.insertBefore(bar,root.querySelector('.scs-tm-home-row')?root.querySelector('.scs-tm-home-row').nextSibling:root.firstChild);
+ var tabs=live?[['home','Home','⌂'],['players','Players','♙'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']]:[['main','Main'],['players','Players'],['flowchart','Flowchart'],['match','Match Center']];
+ var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs'+(live?' scs-tm-bottom-nav':'');bar.setAttribute('aria-label','Tournament sections');
+ tabs.forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.setAttribute('data-tm-tab',item[0]);
+  if(live){var ico=document.createElement('span');ico.className='scs-tm-nav-icon';ico.setAttribute('aria-hidden','true');ico.textContent=item[2];var label=document.createElement('span');label.className='scs-tm-nav-label';label.textContent=item[1];btn.appendChild(ico);btn.appendChild(label)}else btn.textContent=item[1];
+  btn.onclick=function(){if(item[0]==='home'){
+   // Home is explicit navigation; closing a subpage still uses its parent stack.
+   if(window.SCSTournament&&typeof window.SCSTournament.close==='function')window.SCSTournament.close();
+   if(typeof window.scsActivityReturnHome==='function')window.scsActivityReturnHome();
+   return;
+  }switchTournamentTab(item[0])};bar.appendChild(btn)});
+ root.insertBefore(bar,root.firstChild);
  function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);root.appendChild(wrap);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
  panel('main',[summary]);panel('players',[pool]);panel('flowchart',[workspace,hint,details]);panel('match',[match]);
  if(live&&(tournamentActiveTab==='main'||!tournamentActiveTab))tournamentActiveTab='match';

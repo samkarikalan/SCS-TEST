@@ -335,3 +335,12 @@
 /* V165: explicit SCS Home navigation above live tournament tabs */
 .scs-tm-home-row{display:flex;justify-content:flex-start;margin:0 0 12px}
 .scs-tm-home-button{cursor:pointer}
+
+/* V166: practice-style fixed bottom navigation for live knockout tournaments. */
+.scs-tm-overlay:has(.scs-tm-bottom-nav){padding-bottom:calc(104px + env(safe-area-inset-bottom));}
+.scs-tm-bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:10050;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:0!important;margin:0!important;padding:8px 5px calc(8px + env(safe-area-inset-bottom))!important;background:#0d0c13!important;border:0!important;border-top:1px solid #343344!important;border-radius:0!important;box-shadow:0 -3px 12px #0005;}
+.scs-tm-bottom-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:62px!important;padding:5px 1px!important;border:0!important;background:transparent!important;color:#a5a4b1!important;border-radius:0!important;font-size:11px!important;overflow-wrap:normal!important;}
+.scs-tm-bottom-nav button.active{color:#8768ff!important;}
+.scs-tm-bottom-nav button.active:after{content:'';display:block;width:30px;height:3px;background:#8768ff;border-radius:6px;position:absolute;bottom:calc(6px + env(safe-area-inset-bottom));}
+.scs-tm-bottom-nav .scs-tm-nav-icon{font-size:25px;line-height:1.1;font-weight:600;}
+.scs-tm-bottom-nav .scs-tm-nav-label{font-size:11px;font-weight:700;white-space:nowrap;}
