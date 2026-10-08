@@ -327,3 +327,7 @@
 .scs-tm-center-tabs button{min-width:0;padding:12px 4px;border:0;border-radius:11px;background:transparent;color:#d6e0f0;font-weight:700;font-size:14px}
 .scs-tm-center-tabs button.active{background:#3768b2;color:#fff}
 [data-tm-center-panel][hidden],.scs-tm-tab-panel[hidden]{display:none!important}
+
+/* V164: one tournament navigation row; courts and match lists stay together. */
+.scs-tm-organized-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+.scs-tm-organized-tabs:has(button:nth-child(4)){grid-template-columns:repeat(4,minmax(0,1fr))}

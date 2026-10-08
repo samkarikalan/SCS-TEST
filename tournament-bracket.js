@@ -602,66 +602,32 @@ function switchTournamentCenterTab(name){
  if(name==='flowchart'){requestAnimationFrame(function(){applyZoom();wires();bindGestures()})}
 }
 function switchTournamentTab(name){
- if(['main','players','match'].indexOf(name)<0)return;
+ if(['main','players','flowchart','match'].indexOf(name)<0)return;
  tournamentActiveTab=name;
  if(!root)return;
- root.querySelectorAll('[data-tm-tab]').forEach(function(button){
-  var active=button.getAttribute('data-tm-tab')===name;
-  button.classList.toggle('active',active);
-  button.setAttribute('aria-selected',active?'true':'false');
- });
- root.querySelectorAll('[data-tm-panel]').forEach(function(panel){
-  var section=panel.getAttribute('data-tm-panel');
-  panel.hidden=!(name==='main'||name===section);
- });
- if(name==='match')switchTournamentCenterTab(tournamentCenterTab);
- if(name==='main'){applyZoom();wires()}
+ root.querySelectorAll('[data-tm-tab]').forEach(function(button){var active=button.getAttribute('data-tm-tab')===name;button.classList.toggle('active',active);button.setAttribute('aria-selected',active?'true':'false')});
+ root.querySelectorAll('[data-tm-panel]').forEach(function(panel){panel.hidden=panel.getAttribute('data-tm-panel')!==name});
+ if(name==='flowchart')requestAnimationFrame(function(){applyZoom();wires();bindGestures()});
 }
+
 function organizeTournamentTabs(){
  if(!root||!draw||!draw.matches||!draw.matches.length)return;
  var summary=root.querySelector('.scs-tm-tournament-dashboard,.scs-tm-pattern-dashboard');
- var pool=root.querySelector('.scs-tm-pool');
- if(!pool)pool=root.querySelector('[class*="scs-tm-pool"]');
+ var pool=root.querySelector('.scs-tm-pool')||root.querySelector('[class*="scs-tm-pool"]');
  var workspace=root.querySelector('.scs-tm-workspace');
  var match=root.querySelector('.scs-tm-live-center,.scs-tm-start-panel');
- var old=root.querySelector('.scs-tm-organized-tabs');if(old)old.remove();
- var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs';bar.setAttribute('aria-label','Tournament sections');
- [['main','Main'],['players','Players'],['match','Match Center']].forEach(function(item){
-  var button=document.createElement('button');button.type='button';button.textContent=item[1];
-  button.setAttribute('data-tm-tab',item[0]);button.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(button);
- });
- root.insertBefore(bar,root.firstChild);
- function panel(name,els){
-  var wrapper=document.createElement('section');wrapper.className='scs-tm-tab-panel';wrapper.setAttribute('data-tm-panel',name);
-  root.appendChild(wrapper);els.forEach(function(el){if(el)wrapper.appendChild(el)});
-  return wrapper;
- }
  var hint=root.querySelector('.scs-tm-swap-hint');
  var details=root.querySelector('.scs-tm-details');
- panel('summary',[summary]);
- panel('players',[pool]);
- var center=panel('match',[]);
- var centerTabs=document.createElement('nav');centerTabs.className='scs-tm-center-tabs';centerTabs.setAttribute('aria-label','Match Center sections');
- [['flowchart','Flowchart'],['courts','Courts'],['matches','Matches']].forEach(function(item){
-  var button=document.createElement('button');button.type='button';button.textContent=item[1];
-  button.setAttribute('data-tm-center-tab',item[0]);button.onclick=function(){switchTournamentCenterTab(item[0])};centerTabs.appendChild(button);
- });
- center.appendChild(centerTabs);
- function centerPanel(name){var section=document.createElement('section');section.setAttribute('data-tm-center-panel',name);center.appendChild(section);return section}
- var flow=centerPanel('flowchart');[workspace,hint,details].forEach(function(el){if(el)flow.appendChild(el)});
- var courts=centerPanel('courts');
- var matches=centerPanel('matches');
- if(match){
-  courts.appendChild(match);
-  // The existing shared Match Center owns the courts and match lists. Move its
-  // existing tabs and match-list area rather than rendering duplicate cards.
-  var sharedTabs=match.querySelector('.scs-tm-live-tabs');
-  if(sharedTabs){var list=document.createElement('section');list.className='scs-tm-live-center';matches.appendChild(list);var sibling=sharedTabs;while(sibling){var next=sibling.nextElementSibling;list.appendChild(sibling);sibling=next}}
- }
- if(!matches.children.length){
-  var note=document.createElement('p');note.textContent='Waiting, Completed and Ranking are available in the existing court panel.';
-  matches.appendChild(note);
- }
+ var old=root.querySelector('.scs-tm-organized-tabs');if(old)old.remove();
+ var live=draw.live===true;
+ var tabs=live?[['players','Players'],['flowchart','Flowchart'],['match','Match Center']]:[['main','Main'],['players','Players'],['flowchart','Flowchart'],['match','Match Center']];
+ var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs';bar.setAttribute('aria-label','Tournament sections');
+ tabs.forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.textContent=item[1];btn.setAttribute('data-tm-tab',item[0]);btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
+ root.insertBefore(bar,root.firstChild);
+ function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);root.appendChild(wrap);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
+ panel('main',[summary]);panel('players',[pool]);panel('flowchart',[workspace,hint,details]);panel('match',[match]);
+ if(live&&(tournamentActiveTab==='main'||!tournamentActiveTab))tournamentActiveTab='match';
+ if(!tabs.some(function(t){return t[0]===tournamentActiveTab}))tournamentActiveTab='match';
  switchTournamentTab(tournamentActiveTab);
 }
 
