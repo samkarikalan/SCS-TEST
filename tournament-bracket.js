@@ -625,9 +625,19 @@ function organizeTournamentTabs(){
  tabs.forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.setAttribute('data-tm-tab',item[0]);
   if(live){var ico=document.createElement('span');ico.className='scs-tm-nav-icon';ico.setAttribute('aria-hidden','true');ico.textContent=item[2];var label=document.createElement('span');label.className='scs-tm-nav-label';label.textContent=item[1];btn.appendChild(ico);btn.appendChild(label)}else btn.textContent=item[1];
   btn.onclick=function(){if(item[0]==='home'){
-   // Home is explicit navigation; closing a subpage still uses its parent stack.
-   if(window.SCSTournament&&typeof window.SCSTournament.close==='function')window.SCSTournament.close();
-   if(typeof window.scsActivityReturnHome==='function')window.scsActivityReturnHome();
+   // Bottom Home always opens Tournament Manager, never the main SCS activity home.
+   // Do not close through the parent stack: that may reopen the Continue dialog.
+   if(root){root.hidden=true;root=null;}
+   if(typeof window.scsOpenTournamentManager==='function'){
+    window.scsTournamentParentStack=[];
+    window.scsTournamentReturnPage=null;
+    var continuePage=document.getElementById('scsTournamentContinue');
+    if(continuePage)continuePage.hidden=true;
+    var typePage=document.getElementById('scsTournamentTypePicker');
+    if(typePage)typePage.hidden=true;
+    window.scsActivityMode='tournament';
+    window.scsOpenTournamentManager();
+   }
    return;
   }switchTournamentTab(item[0])};bar.appendChild(btn)});
  root.insertBefore(bar,root.firstChild);
