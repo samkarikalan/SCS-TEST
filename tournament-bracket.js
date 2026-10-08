@@ -578,7 +578,7 @@ function liveTournamentPanel(){
     return {number:n,playerRenderer:tournamentPlayerRow,match:{status:ready?'AWAITING APPROVAL':playing?'IN PROGRESS':'ASSIGNED (Not Started)',label:'MATCH '+id,left:(g.pair1||[]).length?g.pair1:splitTeam(info?info.a:'').players,right:(g.pair2||[]).length?g.pair2:splitTeam(info?info.b:'').players,score:scoreText(g),winner:g&&g.winner==='L'?'left':g&&g.winner==='R'?'right':null,ready:ready,started:playing||ready||!!g.started_at,action:ready?'onclick="SCSTournament.approveLive('+id+')"':playing?'onclick="SCSScoring.open()"':'onclick="SCSTournament.startCourtMatch('+id+')"',actionLabel:ready?'Approve Result':playing?'View Score':'Start Match'}};
   });
   return SCSSharedMatchCenter.panel({courtCount,courts,tab,assigning:draw.assigningMatch,
-   waiting:waiting.map(function(x){var g=x.g,started=g&&(g.score_status==='scoring'||g.score_status==='scored'||g.started_at||g.score),assigned=g&&g.court&&!started;return {number:x.m.id,left:x.info.a,right:x.info.b,label:started?(g.score_status==='scored'?'Score Ready':'In Progress'):assigned?'Assigned · Court '+g.court:'Assign',assigned:assigned,action:started?'':'onclick="SCSTournament.assign('+x.m.id+')"'}}),
+   waiting:waiting.map(function(x){var g=x.g,started=g&&(g.score_status==='scoring'||g.score_status==='scored'||g.started_at||g.score),assigned=g&&g.court&&!started;return {number:x.m.id,left:x.info.a,right:x.info.b,label:started?(g.score_status==='scored'?'Score Ready':'In Progress'):assigned?'Assigned · Court '+g.court:'Assign',assigned:assigned,action:readonly?'':started?'':'onclick="SCSTournament.assign('+x.m.id+')"'}}),
    completed:completed.map(function(x){var r=draw.results[x.m.id];return {number:x.m.id,left:x.info.a,right:x.info.b,leftPlayers:splitTeam(x.info.a).players,rightPlayers:splitTeam(x.info.b).players,score:scoreText(x.g),winner:r?(r.winner===x.info.a?'left':r.winner===x.info.b?'right':null):null}}),
    attrs:{change:n=>'onclick="SCSTournament.changeLiveCourts('+n+')"',choose:n=>'onclick="SCSTournament.selectAssignmentCourt('+n+')"',cancel:'onclick="SCSTournament.cancelCourtSelection()"',tab:id=>'onclick="SCSTournament.liveTab(\''+id+'\')"'}
   });
@@ -620,30 +620,24 @@ function organizeTournamentTabs(){
  var details=root.querySelector('.scs-tm-details');
  var old=root.querySelector('.scs-tm-organized-tabs');if(old)old.remove();
  var live=draw.live===true;
- var tabs=live?[['home','Home','⌂'],['players','Players','♙'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']]:[['main','Main'],['players','Players'],['flowchart','Flowchart'],['match','Match Center']];
+ var tabs=live?(readonly?[['home','Home','⌂'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']]:[['home','Home','⌂'],['players','Players','♙'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']]):[['main','Main'],['players','Players'],['flowchart','Flowchart'],['match','Match Center']];
  var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs'+(live?' scs-tm-bottom-nav':'');bar.setAttribute('aria-label','Tournament sections');
  tabs.forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.setAttribute('data-tm-tab',item[0]);
   if(live){var ico=document.createElement('span');ico.className='scs-tm-nav-icon';ico.setAttribute('aria-hidden','true');ico.textContent=item[2];var label=document.createElement('span');label.className='scs-tm-nav-label';label.textContent=item[1];btn.appendChild(ico);btn.appendChild(label)}else btn.textContent=item[1];
   btn.onclick=function(){if(item[0]==='home'){
-   // Bottom Home always opens Tournament Manager, never the main SCS activity home.
-   // Do not close through the parent stack: that may reopen the Continue dialog.
-   if(root){root.hidden=true;root=null;}
-   if(typeof window.scsOpenTournamentManager==='function'){
-    window.scsTournamentParentStack=[];
-    window.scsTournamentReturnPage=null;
-    var continuePage=document.getElementById('scsTournamentContinue');
-    if(continuePage)continuePage.hidden=true;
-    var typePage=document.getElementById('scsTournamentTypePicker');
-    if(typePage)typePage.hidden=true;
-    window.scsActivityMode='tournament';
-    window.scsOpenTournamentManager();
-   }
+   // Home is explicit navigation; closing a subpage still uses its parent stack.
+   if(readonly){if(window.SCSTournament&&typeof window.SCSTournament.close==='function')window.SCSTournament.close();return;}
+   if(window.SCSTournament&&typeof window.SCSTournament.close==='function')window.SCSTournament.close();
+   if(typeof window.scsActivityReturnHome==='function')window.scsActivityReturnHome();
    return;
   }switchTournamentTab(item[0])};bar.appendChild(btn)});
  root.insertBefore(bar,root.firstChild);
  function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);root.appendChild(wrap);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
  panel('main',[summary]);panel('players',[pool]);panel('flowchart',[workspace,hint,details]);panel('match',[match]);
- if(live&&(tournamentActiveTab==='main'||!tournamentActiveTab))tournamentActiveTab='match';
+ // Spectators reuse the live Match Center markup but cannot operate any court or match.
+ if(readonly&&live){var viewPanel=root.querySelector('[data-tm-panel="match"]');if(viewPanel){viewPanel.querySelectorAll('button').forEach(function(btn){if(!btn.closest('.scs-tm-live-tabs'))btn.remove()});viewPanel.querySelectorAll('[onclick]').forEach(function(node){var call=node.getAttribute('onclick')||'';if(!/^SCSTournament\.liveTab\(/.test(call))node.removeAttribute('onclick')});}}
+ if(readonly&&live&&(tournamentActiveTab==='main'||!tournamentActiveTab))tournamentActiveTab='match';
+ if(readonly&&live&&tournamentActiveTab==='players')tournamentActiveTab='match';
  if(!tabs.some(function(t){return t[0]===tournamentActiveTab}))tournamentActiveTab='match';
  switchTournamentTab(tournamentActiveTab);
 }
