@@ -331,3 +331,7 @@
 /* V164: one tournament navigation row; courts and match lists stay together. */
 .scs-tm-organized-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
 .scs-tm-organized-tabs:has(button:nth-child(4)){grid-template-columns:repeat(4,minmax(0,1fr))}
+
+/* V165: explicit SCS Home navigation above live tournament tabs */
+.scs-tm-home-row{display:flex;justify-content:flex-start;margin:0 0 12px}
+.scs-tm-home-button{cursor:pointer}

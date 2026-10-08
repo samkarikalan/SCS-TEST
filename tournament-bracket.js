@@ -623,7 +623,19 @@ function organizeTournamentTabs(){
  var tabs=live?[['players','Players'],['flowchart','Flowchart'],['match','Match Center']]:[['main','Main'],['players','Players'],['flowchart','Flowchart'],['match','Match Center']];
  var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs';bar.setAttribute('aria-label','Tournament sections');
  tabs.forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.textContent=item[1];btn.setAttribute('data-tm-tab',item[0]);btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
- root.insertBefore(bar,root.firstChild);
+ if(live){
+  var homeRow=document.createElement('div');homeRow.className='scs-tm-home-row';
+  var homeButton=document.createElement('button');homeButton.type='button';
+  homeButton.className='scs-activity-home-back scs-tm-home-button';
+  homeButton.textContent='‹ SCS Home';
+  homeButton.onclick=function(){
+    // Explicit Home navigation; ordinary Close still returns to its parent.
+    if(window.SCSTournament&&typeof window.SCSTournament.close==='function')window.SCSTournament.close();
+    if(typeof window.scsActivityReturnHome==='function')window.scsActivityReturnHome();
+  };
+  homeRow.appendChild(homeButton);root.insertBefore(homeRow,root.firstChild);
+}
+root.insertBefore(bar,root.querySelector('.scs-tm-home-row')?root.querySelector('.scs-tm-home-row').nextSibling:root.firstChild);
  function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);root.appendChild(wrap);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
  panel('main',[summary]);panel('players',[pool]);panel('flowchart',[workspace,hint,details]);panel('match',[match]);
  if(live&&(tournamentActiveTab==='main'||!tournamentActiveTab))tournamentActiveTab='match';
