@@ -493,6 +493,11 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #scsTournamentManager .scs-activity-home-back{margin:6px 0 22px;}
 @media(max-width:380px){#scsTournamentManager.scs-tmgr-fullpage>.scs-tmgr-card{padding-left:14px;padding-right:14px;}#scsTournamentManager .scs-tmgr-action{grid-template-columns:44px minmax(0,1fr) 16px;gap:9px;padding:12px;}#scsTournamentManager .scs-tmgr-icon{width:44px;height:44px;}}
 </style>
+<style id="scs-v160-home-navigation">
+.scs-practice-return-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px 6px;color:var(--text,#fff);font-size:1rem;font-weight:800;}
+.scs-practice-return-header .scs-activity-home-back{margin:0;padding:9px 14px;font-size:.85rem;white-space:nowrap;}
+@media(max-width:370px){.scs-practice-return-header{padding-left:12px;padding-right:12px;}}
+</style>
 </head>
 <body>
 
@@ -1691,6 +1696,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 
   <!-- ── My Hub Home: independent tab view ── -->
   <section id="myHubHomeView" class="myhub-tab-view is-active" data-myhub-view="home">
+  <div class="scs-practice-return-header"><button type="button" class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button><span>My Hub</span></div>
 
   <!-- ── My Card content inline (no tile, no navigation) ── -->
 
@@ -1799,7 +1805,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
       <div class="myhub-home-list" id="myHubLiveList"></div>
     </div>
     <h2 class="myhub-home-section-title myhub-club-section-title">Quick access</h2>
-    <button class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ Home</button><div class="scs-home-access-card scs-personal-access">
+    <div class="scs-home-access-card scs-personal-access">
       <span class="myhub-club-card-icon" aria-hidden="true">👤</span>
       <span class="myhub-club-card-copy"><strong>My Profile</strong><small>Personal activities</small></span>
       <button type="button" class="myhub-club-add" aria-label="Open My Profile menu" aria-haspopup="dialog" aria-controls="scsProfileQuickMenu" onclick="scsOpenProfileQuickMenu()">+</button>
@@ -1871,7 +1877,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 </div>
 
   <nav id="scsPrimaryBottomNav" class="scs-primary-bottom-nav" aria-label="Main navigation">
-    <button id="scsNavHome" type="button" onclick="scsPrimaryNavigate('viewer')"><span class="scs-primary-nav-icon" aria-hidden="true">⌂</span><span>Home</span></button>
+    <button id="scsNavHome" type="button" onclick="scsPrimaryNavigate('viewer')"><span class="scs-primary-nav-icon" aria-hidden="true">⌂</span><span>My Hub</span></button>
     <button id="scsNavRound" type="button" onclick="scsPrimaryNavigate('organiser')"><span class="scs-primary-nav-icon" aria-hidden="true">🏸</span><span>Round</span></button>
     <button id="scsNavSlot" type="button" onclick="scsPrimaryNavigate('vault')"><span class="scs-primary-nav-icon" aria-hidden="true">▣</span><span>Manage</span></button>
     <button id="scsNavSettings" type="button" onclick="scsPrimaryNavigate('settings')"><span class="scs-primary-nav-icon" aria-hidden="true">⚙</span><span>Settings</span></button>
@@ -3777,7 +3783,7 @@ window.scsActivityReturnHome=function(){['scsTournamentManager','scsTournamentCo
 <div id="scsTournamentManager" class="scs-tmgr-overlay scs-tmgr-fullpage" hidden>
   <section class="scs-tmgr-card" role="main" aria-labelledby="scsTmManagerTitle">
     <header class="scs-tmgr-head"><div><div class="scs-tmgr-kicker">SCS · TOURNAMENT</div><h2 id="scsTmManagerTitle">Tournament Manager</h2><p>What would you like to do?</p></div></header>
-    <button class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ Home</button><div class="scs-tmgr-actions">
+    <button class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button><div class="scs-tmgr-actions">
       <button class="scs-tmgr-action start" onclick="scsTournamentManagerStart()"><span class="scs-tmgr-icon">＋</span><span class="scs-tmgr-copy"><strong>Start a New Tournament</strong><small>Knockout or Group Tournament</small></span><span class="scs-tmgr-go">›</span></button>
       <button class="scs-tmgr-action" onclick="scsTournamentManagerContinue()"><span class="scs-tmgr-icon">▶</span><span class="scs-tmgr-copy"><strong>Continue a Tournament</strong><small id="scsTmContinueStatus">Open your tournament in progress</small></span><span class="scs-tmgr-go">›</span></button>
       <button class="scs-tmgr-action" onclick="scsTournamentManagerLive()"><span class="scs-tmgr-icon">◉</span><span class="scs-tmgr-copy"><strong>View a Live Tournament</strong><small id="scsTmLiveStatus">Open a live tournament</small></span><span class="scs-tmgr-go">›</span></button>
