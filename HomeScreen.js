@@ -378,6 +378,7 @@ document.querySelectorAll('.page').forEach(function(page) {
 document.body.classList.add('home-open');
 
 homeEl.style.display = 'flex';
+if(!window.scsActivityMode && typeof scsActivityShowHome==='function') scsActivityShowHome();
 // Always reopen a workspace at its real top. Players and other child pages can
 // leave homePageOverlay with a previous scrollTop, which made Round Manager
 // reappear clipped under a large blank status-area region after closing Players.
