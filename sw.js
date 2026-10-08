@@ -1,24 +1,24 @@
 // SCS_BUILD_50_MYHUB_EMBEDDED_CLUBS_REPORT
 /* Sports Club Scheduler service worker — complete installed-app updates. */
-const CACHE_NAME = 'scs-cache-V167';
-const APP_SHELL = './index.html?v=V167';
+const CACHE_NAME = 'scs-cache-V168';
+const APP_SHELL = './index.html?v=V168';
 
 const ASSETS = [
   APP_SHELL,
-  './ui.css?v=V167', './rounds.css?v=V167',
-  './shared-match-center.js?v=V167', './group-tournament.js?v=V167', './group-tournament.css?v=V167', './tournament-bracket.js?v=V167', './tournament-bracket.css?v=V167', './scoring.js?v=V167', './court-center.js?v=V167', './offline-db.js?v=V167', './offline-rounds.js?v=V167', './full-schedule.js?v=V167', './snapshot.js?v=V167', './supabase.js?v=V167', './auth.js?v=V167',
-  './authUI.js?v=V167', './subscription.js?v=V167', './HomeScreen.js?v=V167',
-  './engjap.js?v=V167', './main.js?v=V167', './games.js?v=V167',
-  './rounds.js?v=V167', './mbm.js?v=V167', './players.js?v=V167',
-  './importPlayers.js?v=V167', './settings.js?v=V167', './summary.js?v=V167',
-  './help.js?v=V167', './profile.js?v=V167', './dashboard.js?v=V167',
-  './slots.js?v=V167', './notifications.js?v=V167', './viewer.js?v=V167',
-  './report.js?v=V167', './manifest.json?v=V167',
-  './male.png?v=V167', './female.png?v=V167', './win-cup.png?v=V167',
-  './welcome-default-myhub.png?v=V167', './welcome-default-round-manager.png?v=V167', './welcome-default-slot-manager.png?v=V167',
-  './lock.png?v=V167', './unlock.png?v=V167', './icon-192.png?v=V167',
-  './icon-512.png?v=V167', './clubs-brand.png?v=V167', './google-g.svg?v=V167', './help_en.json?v=V167', './help_jp.json?v=V167',
-  './help_kr.json?v=V167', './help_zh.json?v=V167', './help_vi.json?v=V167'
+  './ui.css?v=V168', './rounds.css?v=V168',
+  './shared-match-center.js?v=V168', './group-tournament.js?v=V168', './group-tournament.css?v=V168', './tournament-bracket.js?v=V168', './tournament-bracket.css?v=V168', './scoring.js?v=V168', './court-center.js?v=V168', './offline-db.js?v=V168', './offline-rounds.js?v=V168', './full-schedule.js?v=V168', './snapshot.js?v=V168', './supabase.js?v=V168', './auth.js?v=V168',
+  './authUI.js?v=V168', './subscription.js?v=V168', './HomeScreen.js?v=V168',
+  './engjap.js?v=V168', './main.js?v=V168', './games.js?v=V168',
+  './rounds.js?v=V168', './mbm.js?v=V168', './players.js?v=V168',
+  './importPlayers.js?v=V168', './settings.js?v=V168', './summary.js?v=V168',
+  './help.js?v=V168', './profile.js?v=V168', './dashboard.js?v=V168',
+  './slots.js?v=V168', './notifications.js?v=V168', './viewer.js?v=V168',
+  './report.js?v=V168', './manifest.json?v=V168',
+  './male.png?v=V168', './female.png?v=V168', './win-cup.png?v=V168',
+  './welcome-default-myhub.png?v=V168', './welcome-default-round-manager.png?v=V168', './welcome-default-slot-manager.png?v=V168',
+  './lock.png?v=V168', './unlock.png?v=V168', './icon-192.png?v=V168',
+  './icon-512.png?v=V168', './clubs-brand.png?v=V168', './google-g.svg?v=V168', './help_en.json?v=V168', './help_jp.json?v=V168',
+  './help_kr.json?v=V168', './help_zh.json?v=V168', './help_vi.json?v=V168'
 ];
 
 self.addEventListener('install', function(event) {
