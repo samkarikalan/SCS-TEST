@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V164" defer></script>
-  <script src="tournament-bracket.js?v=V167" defer></script>
+  <script src="tournament-bracket.js?v=V168" defer></script>
   <script src="court-center.js?v=V149" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -459,7 +459,21 @@ function scsTournamentManagerContinue(){
 function scsCloseTournamentContinue(){var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true;if(window.scsTournamentReturnPage)scsReturnToTournamentParent()}
 function scsContinueGroupTournament(){scsTournamentRememberParent('scsTournamentContinue');var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true;if(window.SCSGroupTournament)SCSGroupTournament.open()}
 function scsContinueKnockoutTournament(){scsTournamentRememberParent('scsTournamentContinue');var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true;if(window.SCSTournament&&SCSTournament.enterSavedTournament)SCSTournament.enterSavedTournament()}
-function scsTournamentManagerLive(){scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();if(window.SCSCourtCenter&&SCSCourtCenter.openLiveBracket)SCSCourtCenter.openLiveBracket();else alert('Live Tournament is still loading.')}
+function scsTournamentManagerLive(){
+  // Open the actual saved tournament, never the Practice/club Court Center route.
+  var saved=null,group=null;
+  try{saved=JSON.parse(localStorage.getItem('scs_knockout_tournament_v94')||'null')}catch(_){}
+  try{group=JSON.parse(localStorage.getItem('scs_group_tournament_ui_v1')||'null')}catch(_){}
+  if(saved&&saved.live===true&&window.SCSTournament&&typeof SCSTournament.open==='function'){
+    scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();
+    var viewer=Object.assign({},saved,{live:true,livePage:true});
+    SCSTournament.open(viewer,true);
+    return;
+  }
+  // The group module currently has no spectator-only entry. Do not expose its editor.
+  if(group&&group.started){alert('Read-only Group tournament viewing is not yet available.');return;}
+  alert('No live tournament available to view on this device.');
+}
 function scsTournamentManagerCompleted(){alert('Completed Tournament history will be connected in the next Tournament Manager step.')}
 function scsTournamentManagerConduct(){scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();if(window.SCSScoring&&SCSScoring.openConduct)SCSScoring.openConduct();else alert('Score a Match is still loading.')}
 function scsTournamentManagerStatus(){
