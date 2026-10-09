@@ -430,10 +430,12 @@ function availablePlayerNames(){
 // Tournament-specific selection from the existing Players Manager registry.
 // Saved tournaments can predate playerPool persistence. Derive a display-only
 // fallback from their actual bracket entries, without touching the club registry.
-function tournamentEntryPlayers(d){
+function tournamentEntryPlayerNames(d){
  var seen=new Set(),names=[];
  (d&&Array.isArray(d.entries)?d.entries:[]).forEach(function(entry){
-  splitTeam(entry&&entry.name||'').players.forEach(function(name){
+  var label=entry&&entry.name;
+  if(typeof label!=='string'||/^Entry \d+$/.test(label))return;
+  splitTeam(label).players.forEach(function(name){
    name=String(name||'').trim();var key=name.toLocaleLowerCase();
    if(name&&!seen.has(key)){seen.add(key);names.push(name)}
   });
@@ -444,9 +446,11 @@ function restoreTournamentPlayerPool(d){
  if(!d)return;
  var pool=Array.isArray(d.playerPool)?d.playerPool:[];
  var seen=new Set();
- d.playerPool=pool.concat(tournamentEntryPlayers(d)).filter(function(name){
-  name=String(name||'').trim();var key=name.toLocaleLowerCase();
-  if(!name||seen.has(key))return false;seen.add(key);return true;
+ d.playerPool=pool.concat(tournamentEntryPlayerNames(d)).map(function(player){
+  return typeof player==='string'?player:player&&typeof player.name==='string'?player.name:'';
+ }).map(function(name){return name.trim()}).filter(function(name){
+  var key=name.toLocaleLowerCase();if(!name||seen.has(key))return false;
+  seen.add(key);return true;
  });
 }
 function tournamentPool(){
