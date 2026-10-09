@@ -428,7 +428,32 @@ function availablePlayerNames(){
   return Array.from(new Map(names.map(function(n){return [n.toLocaleLowerCase(),n]})).values()).sort(function(a,b){return a.localeCompare(b)});
 }
 // Tournament-specific selection from the existing Players Manager registry.
-function tournamentPool(){return Array.isArray(draw&&draw.playerPool)?draw.playerPool:[]}
+// Saved tournaments can predate playerPool persistence. Derive a display-only
+// fallback from their actual bracket entries, without touching the club registry.
+function tournamentEntryPlayers(d){
+ var seen=new Set(),names=[];
+ (d&&Array.isArray(d.entries)?d.entries:[]).forEach(function(entry){
+  splitTeam(entry&&entry.name||'').players.forEach(function(name){
+   name=String(name||'').trim();var key=name.toLocaleLowerCase();
+   if(name&&!seen.has(key)){seen.add(key);names.push(name)}
+  });
+ });
+ return names;
+}
+function restoreTournamentPlayerPool(d){
+ if(!d)return;
+ var pool=Array.isArray(d.playerPool)?d.playerPool:[];
+ var seen=new Set();
+ d.playerPool=pool.concat(tournamentEntryPlayers(d)).filter(function(name){
+  name=String(name||'').trim();var key=name.toLocaleLowerCase();
+  if(!name||seen.has(key))return false;seen.add(key);return true;
+ });
+}
+function tournamentPool(){
+ if(!draw)return [];
+ if(draw.live===true||draw.livePage===true)restoreTournamentPlayerPool(draw);
+ return Array.isArray(draw.playerPool)?draw.playerPool:[];
+}
 // Reuse Round Manager's existing createRatingRing; no player/round changes.
 function tournamentPlayerRow(name){
  return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span></span>';
@@ -565,7 +590,7 @@ function savedTournamentCard(){var saved=localTournamentLoad();if(!saved)return 
 function tournamentStartPanel(){var n=Math.max(1,Math.min(20,Number(draw.numCourts)||2));return '<section class="scs-tm-start-panel scs-tm-live-prestart"><div><small>TOURNAMENT LIVE</small><h3>Courts &amp; Match Assignment</h3><p>Select the number of courts, then start this live tournament.</p></div><div class="scs-tm-court-picker"><button type="button" onclick="SCSTournament.setTournamentCourts(-1)">−</button><b>'+n+'</b><button type="button" onclick="SCSTournament.setTournamentCourts(1)">+</button></div><div class="scs-tm-prestart-courts">'+Array.from({length:n},function(_,i){return '<div class="scs-tm-court-card is-free"><div class="scs-tm-court-head"><strong>COURT '+(i+1)+'</strong><span>FREE</span></div><p>Available when tournament starts</p></div>'}).join('')+'</div><button type="button" class="scs-tm-start-live" onclick="SCSTournament.startSavedTournament()">▶ Start Tournament</button></section>'}
 function setTournamentCourts(delta){if(!draw)return;draw.numCourts=Math.max(1,Math.min(20,(Number(draw.numCourts)||2)+Number(delta||0)));localTournamentSave(draw);render()}
 async function startSavedTournament(){if(!draw||!draw.matches||!draw.matches.length)return;if(!window.SCSCourtCenter||typeof SCSCourtCenter.startTournament!=='function'){alert('Court Center is still loading. Please try again.');return}try{draw.live=true;draw.livePage=true;draw.numCourts=Math.max(1,Math.min(20,Number(draw.numCourts)||2));await SCSCourtCenter.startTournament(draw,draw.numCourts);await localTournamentSave(draw);render()}catch(e){draw.live=false;alert(e.message||'Could not start the live tournament.')}}
-async function enterSavedTournament(){var saved=localTournamentLoad();if(!saved){alert('No saved tournament found.');render();return}try{creationScreenPinned=false;bracketViewInitialized=false;bracketScrollState=null;draw=saved;selected=null;swapEntryId=null;draw.livePage=true;ensure();root=document.getElementById('scsTournamentOverlay');if(root)root.hidden=false;if(saved.live===true&&window.SCSCourtCenter&&typeof SCSCourtCenter.resumeTournament==='function'){var state=await SCSCourtCenter.resumeTournament();if(state&&state.tournament){draw=state.tournament;draw.live=true;draw.livePage=true;draw.numCourts=state.courtCount;await localTournamentSave(draw)}}render()}catch(e){alert(e.message||'Could not open the tournament.')}}
+async function enterSavedTournament(){var saved=localTournamentLoad();if(!saved){alert('No saved tournament found.');render();return}try{creationScreenPinned=false;bracketViewInitialized=false;bracketScrollState=null;draw=saved;selected=null;swapEntryId=null;draw.livePage=true;ensure();restoreTournamentPlayerPool(draw);root=document.getElementById('scsTournamentOverlay');if(root)root.hidden=false;if(saved.live===true&&window.SCSCourtCenter&&typeof SCSCourtCenter.resumeTournament==='function'){var state=await SCSCourtCenter.resumeTournament();if(state&&state.tournament){draw=state.tournament;draw.live=true;draw.livePage=true;draw.numCourts=state.courtCount;restoreTournamentPlayerPool(draw);await localTournamentSave(draw)}}render()}catch(e){alert(e.message||'Could not open the tournament.')}}
 function openCourtCenter(){if(window.SCSCourtCenter&&typeof window.SCSCourtCenter.open==='function'){window.SCSCourtCenter.open();return}alert('Court Center is not available.')}
 function liveTournamentPanel(){
   if(!draw||draw.live!==true)return '';
