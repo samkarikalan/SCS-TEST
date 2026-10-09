@@ -658,39 +658,32 @@ function organizeTournamentTabs(){
  if(!root||!draw||!draw.matches||!draw.matches.length)return;
  if(!readonly&&draw.live!==true&&draw.livePage!==true)return;
  var summary=root.querySelector('.scs-tm-tournament-dashboard,.scs-tm-pattern-dashboard');
- var pool=root.querySelector('.scs-tm-pool');
+ var pool=root.querySelector('.scs-tm-pool')||root.querySelector('[class*="scs-tm-pool"]');
  var workspace=root.querySelector('.scs-tm-workspace');
  var match=root.querySelector('.scs-tm-live-center,.scs-tm-start-panel');
  var hint=root.querySelector('.scs-tm-swap-hint');
  var details=root.querySelector('.scs-tm-details');
  var old=root.querySelector('.scs-tm-organized-tabs');if(old)old.remove();
  var live=draw.live===true||readonly;
- var tabs=readonly?[['flowchart','Flowchart','⑂'],['match','Matches','▣']]:
-  [['home','Home','⌂'],['players','Players','♙'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']];
- var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs scs-tm-bottom-nav';bar.setAttribute('aria-label','Tournament sections');
+ var tabs=live?(readonly?[['home','Home','⌂'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']]:[['home','Home','⌂'],['players','Players','♙'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']]):[['main','Main'],['players','Players'],['flowchart','Flowchart'],['match','Match Center']];
+ var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs'+(live?' scs-tm-bottom-nav':'');bar.setAttribute('aria-label','Tournament sections');
  tabs.forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.setAttribute('data-tm-tab',item[0]);
-  var ico=document.createElement('span');ico.className='scs-tm-nav-icon';ico.setAttribute('aria-hidden','true');ico.textContent=item[2];
-  var label=document.createElement('span');label.className='scs-tm-nav-label';label.textContent=item[1];btn.appendChild(ico);btn.appendChild(label);
-  btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
- function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
- var organizerTeams=null;
- if(!readonly){organizerTeams=document.createElement('div');organizerTeams.innerHTML=assistTeamsCard();}
- var homePanel=panel('home',[summary]);
- var playersPanel=panel('players',[pool,organizerTeams]);
- var flowPanel=panel('flowchart',[workspace,hint,details]);
- var matchPanel=panel('match',[match]);
- // Prevent legacy combined-page fragments from appearing outside the selected tab.
- // All top-level content belongs to one of the four panels.
- root.replaceChildren(bar,homePanel,playersPanel,flowPanel,matchPanel);
- if(!readonly&&!summary){
-  homePanel.innerHTML='<section class="scs-tm-tournament-dashboard"><h2>'+esc(draw.title||'Tournament')+'</h2><p>Tournament overview</p></section>';
- }
- if(!readonly)hydrateTournamentPlayerCards();
+  if(live){var ico=document.createElement('span');ico.className='scs-tm-nav-icon';ico.setAttribute('aria-hidden','true');ico.textContent=item[2];var label=document.createElement('span');label.className='scs-tm-nav-label';label.textContent=item[1];btn.appendChild(ico);btn.appendChild(label)}else btn.textContent=item[1];
+  btn.onclick=function(){if(item[0]==='home'){
+   // Home is explicit navigation; closing a subpage still uses its parent stack.
+   if(readonly){if(window.SCSTournament&&typeof window.SCSTournament.close==='function')window.SCSTournament.close();return;}
+   if(window.SCSTournament&&typeof window.SCSTournament.close==='function')window.SCSTournament.close();
+   if(typeof window.scsActivityReturnHome==='function')window.scsActivityReturnHome();
+   return;
+  }switchTournamentTab(item[0])};bar.appendChild(btn)});
+ root.insertBefore(bar,root.firstChild);
+ function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);root.appendChild(wrap);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
+ panel('main',[summary]);panel('players',[pool]);panel('flowchart',[workspace,hint,details]);panel('match',[match]);
  // Spectators reuse the live Match Center markup but cannot operate any court or match.
  if(readonly&&live){var viewPanel=root.querySelector('[data-tm-panel="match"]');if(viewPanel){viewPanel.querySelectorAll('button').forEach(function(btn){if(!btn.closest('.scs-tm-live-tabs'))btn.remove()});viewPanel.querySelectorAll('[onclick]').forEach(function(node){var call=node.getAttribute('onclick')||'';if(!/^SCSTournament\.liveTab\(/.test(call))node.removeAttribute('onclick')});}}
  if(readonly&&live&&(tournamentActiveTab==='main'||!tournamentActiveTab))tournamentActiveTab='flowchart';
  if(readonly&&live&&tournamentActiveTab==='players')tournamentActiveTab='flowchart';
- if(!tabs.some(function(t){return t[0]===tournamentActiveTab}))tournamentActiveTab=readonly?'flowchart':'home';
+ if(!tabs.some(function(t){return t[0]===tournamentActiveTab}))tournamentActiveTab=readonly?'flowchart':'match';
  switchTournamentTab(tournamentActiveTab);
 }
 
@@ -704,11 +697,10 @@ function restoreAssistDraft(){
 }
 function assistTeamsCard(){
  var entries=draw&&Array.isArray(draw.entries)?draw.entries:[];
- var canAdd=!readonly&&assistStep===1&&!assistSaved;
- return '<section class="scs-tm-pool" style="margin-top:14px;border-color:#0f766e"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT TEAMS</small><h3>Teams ('+entries.length+')</h3></div><div class="scs-tm-pool-actions">'+(canAdd?'<button type="button" onclick="SCSTournament.assistAddTeam()" aria-label="Add team" title="Add team">+</button>':'')+'</div></div>'+
+ return '<section class="scs-tm-pool" style="margin-top:14px;border-color:#0f766e"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT TEAMS</small><h3>Teams ('+entries.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" onclick="SCSTournament.assistAddTeam()" aria-label="Add team" title="Add team">+</button></div></div>'+
  (entries.length?'<div style="display:grid;gap:10px;padding:12px">'+entries.map(function(e,i){
  var names=/^Entry \\d+$/.test(e.name||'')?[]:splitTeam(e.name||'').players;
- return '<div style="background:#142d4b;border:2px solid #3184df;border-left:7px solid #2899f0;border-radius:14px;padding:12px"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:0">'+(names.length?names.map(function(n){return '<div style="display:flex;align-items:center;gap:8px;margin:5px 0">'+tournamentPlayerRow(n)+'</div>'}).join(''):'<span style="color:#b9c9df">Select two players</span>')+'</div><button type="button" onclick="SCSTournament.editEntry('+e.id+')" aria-label="Edit team '+(i+1)+'">✎</button>'+(canAdd?'<button type="button" onclick="SCSTournament.assistRemoveTeam('+e.id+')" aria-label="Remove team '+(i+1)+'">−</button>':'')+'</div></div>'
+ return '<div style="background:#142d4b;border:2px solid #3184df;border-left:7px solid #2899f0;border-radius:14px;padding:12px"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:0">'+(names.length?names.map(function(n){return '<div style="display:flex;align-items:center;gap:8px;margin:5px 0">'+tournamentPlayerRow(n)+'</div>'}).join(''):'<span style="color:#b9c9df">Select two players</span>')+'</div><button type="button" onclick="SCSTournament.editEntry('+e.id+')" aria-label="Edit team '+(i+1)+'">✎</button><button type="button" onclick="SCSTournament.assistRemoveTeam('+e.id+')" aria-label="Remove team '+(i+1)+'">−</button></div></div>'
  }).join('')+'</div>':'<p style="padding:12px">Create teams, then select players using the existing assignment popup.</p>')+'</section>';
 }
 function assistAddTeam(){
