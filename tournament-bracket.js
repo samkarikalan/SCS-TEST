@@ -658,23 +658,33 @@ function organizeTournamentTabs(){
  if(!root||!draw||!draw.matches||!draw.matches.length)return;
  if(!readonly&&draw.live!==true&&draw.livePage!==true)return;
  var summary=root.querySelector('.scs-tm-tournament-dashboard,.scs-tm-pattern-dashboard');
- var pool=root.querySelector('.scs-tm-pool')||root.querySelector('[class*="scs-tm-pool"]');
+ var pool=root.querySelector('.scs-tm-pool');
  var workspace=root.querySelector('.scs-tm-workspace');
  var match=root.querySelector('.scs-tm-live-center,.scs-tm-start-panel');
  var hint=root.querySelector('.scs-tm-swap-hint');
  var details=root.querySelector('.scs-tm-details');
  var old=root.querySelector('.scs-tm-organized-tabs');if(old)old.remove();
  var live=draw.live===true||readonly;
- var tabs=live?(readonly?[['home','Home','⌂'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']]:[['home','Home','⌂'],['players','Players','♙'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']]):[['main','Main'],['players','Players'],['flowchart','Flowchart'],['match','Match Center']];
- var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs'+(live?' scs-tm-bottom-nav':'');bar.setAttribute('aria-label','Tournament sections');
+ var tabs=readonly?[['flowchart','Flowchart','⑂'],['match','Matches','▣']]:
+  [['home','Home','⌂'],['players','Players','♙'],['flowchart','Flowchart','⑂'],['match','Match Center','▣']];
+ var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs scs-tm-bottom-nav';bar.setAttribute('aria-label','Tournament sections');
  tabs.forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.setAttribute('data-tm-tab',item[0]);
-  if(live){var ico=document.createElement('span');ico.className='scs-tm-nav-icon';ico.setAttribute('aria-hidden','true');ico.textContent=item[2];var label=document.createElement('span');label.className='scs-tm-nav-label';label.textContent=item[1];btn.appendChild(ico);btn.appendChild(label)}else btn.textContent=item[1];
+  var ico=document.createElement('span');ico.className='scs-tm-nav-icon';ico.setAttribute('aria-hidden','true');ico.textContent=item[2];
+  var label=document.createElement('span');label.className='scs-tm-nav-label';label.textContent=item[1];btn.appendChild(ico);btn.appendChild(label);
   btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
- root.insertBefore(bar,root.firstChild);
- function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);root.appendChild(wrap);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
+ function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
  var organizerTeams=null;
  if(!readonly){organizerTeams=document.createElement('div');organizerTeams.innerHTML=assistTeamsCard();}
- panel('home',[summary]);panel('players',[pool,organizerTeams]);panel('flowchart',[workspace,hint,details]);panel('match',[match]);
+ var homePanel=panel('home',[summary]);
+ var playersPanel=panel('players',[pool,organizerTeams]);
+ var flowPanel=panel('flowchart',[workspace,hint,details]);
+ var matchPanel=panel('match',[match]);
+ // Prevent legacy combined-page fragments from appearing outside the selected tab.
+ // All top-level content belongs to one of the four panels.
+ root.replaceChildren(bar,homePanel,playersPanel,flowPanel,matchPanel);
+ if(!readonly&&!summary){
+  homePanel.innerHTML='<section class="scs-tm-tournament-dashboard"><h2>'+esc(draw.title||'Tournament')+'</h2><p>Tournament overview</p></section>';
+ }
  if(!readonly)hydrateTournamentPlayerCards();
  // Spectators reuse the live Match Center markup but cannot operate any court or match.
  if(readonly&&live){var viewPanel=root.querySelector('[data-tm-panel="match"]');if(viewPanel){viewPanel.querySelectorAll('button').forEach(function(btn){if(!btn.closest('.scs-tm-live-tabs'))btn.remove()});viewPanel.querySelectorAll('[onclick]').forEach(function(node){var call=node.getAttribute('onclick')||'';if(!/^SCSTournament\.liveTab\(/.test(call))node.removeAttribute('onclick')});}}
