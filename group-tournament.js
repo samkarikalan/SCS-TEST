@@ -1,12 +1,12 @@
 (function(){
 'use strict';
 const KEY='scs_group_tournament_ui_v1';
-let config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,tab='main',pool=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null;
+let config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',pool=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null;
 const el=()=>document.getElementById('scsGroupTournament');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v){config=v.config||config;created=!!v.created;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({config,created,pool,assignments,started,matches,courtCount,assignmentSerial}))}catch(e){}}
-function open(){load();if(!el()){let d=document.createElement('div');d.id='scsGroupTournament';d.className='scs-gt-overlay';document.body.appendChild(d)}render()}
+function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v){config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({config,created,assistMode,assistPatternReady,pool,assignments,started,matches,courtCount,assignmentSerial}))}catch(e){}}
+function open(){load();assistStep=0;if(!el()){let d=document.createElement('div');d.id='scsGroupTournament';d.className='scs-gt-overlay';document.body.appendChild(d)}render()}
 function close(){el()?.remove();if(window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
 function card(title,body){return '<section class="scs-gt-card"><h3>'+title+'</h3>'+body+'</section>'}
 function setup(){
@@ -132,7 +132,7 @@ function startTournament(){
  if(!confirm('Start Group Tournament and create all round-robin matches?'))return;
  matches=[];assignmentSerial=0;let n=1;
  for(let g=0;g<config.groups;g++)for(let i=0;i<config.per;i++)for(let j=i+1;j<config.per;j++)matches.push({id:'G'+(g+1)+'-M'+(n++),group:g,a:g+':'+i,b:g+':'+j,court:null,status:'pending'});
- started=true;tab='match';save();render();
+ started=true;assistMode=false;assistStep=0;tab='main';save();render();
 }
 function teamBusy(team){return matches.some(m=>['assigned','playing','score_ready'].includes(m.status)&&(m.a===team||m.b===team))}
 function lastUse(team){return matches.reduce((n,m)=>Math.max(n,(m.a===team||m.b===team)?Number(m.completedOrder||m.assignedOrder)||0:0),0)}
@@ -184,6 +184,35 @@ function scoreMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='pl
 function scoreUpdate(id,score,winner){const m=matches.find(x=>x.id===id);if(!m||!['playing','score_ready'].includes(m.status))return false;m.score=score;if(winner){m.winner=winner;m.status='score_ready'}save();render();return true}
 function approveMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='score_ready'||!['L','R'].includes(m.winner)||!m.score||!m.score.finished)return; m.status='approved';m.completedOrder=++assignmentSerial;m.completedCourt=m.court;m.court=null;save();render()}
 function assignCourt(id){let m=matches.find(x=>x.id===id);if(!m||m.court)return;if(teamBusy(m.a)||teamBusy(m.b)){alert('A team is already assigned to another court.');return}let free=Array.from({length:courtCount},(_,i)=>i+1).filter(n=>!matches.some(x=>x.court===n));assigningMatch=id;render()}
+// Group Assist uses existing player, setup, group assignment and match cards.
+// The local group record is a draft until Step 4 confirms it.
+function assistComplete(step){
+ if(step===1)return pool.length>=2;
+ if(step===2)return assistPatternReady&&Number.isInteger(config.groups)&&config.groups>=1&&Number.isInteger(config.per)&&config.per>=2&&config.top+(config.knockouts===2?config.bottom:0)<=config.per;
+ if(step===3){for(let g=0;g<config.groups;g++)for(let t=0;t<config.per;t++)if(!Array.isArray(assignments[g+':'+t])||assignments[g+':'+t].length!==2)return false;return true}
+ if(step===4)return created;
+ return false;
+}
+function assistIndex(){
+ const names=['Players and Teams','Setup Groups','Assign Teams to Groups','Confirm and Save','Start'];
+ const colors=['#0f766e','#47258b','#9a4e1a','#2145a0','#125b39'];
+ return '<div class="scs-gt-assist"><header><h2>Group Tournament Assist</h2><button data-action="close">Close</button></header><p>Complete each step to unlock the next.</p>'+names.map((name,i)=>{const available=i===0||assistComplete(i);const done=assistComplete(i+1);return '<button type="button" class="scs-gt-assist-step" style="background:'+colors[i]+';opacity:'+(available?1:.45)+'" data-assist-step="'+(i+1)+'" '+(available?'':'disabled')+'><b>'+(i+1)+'</b><span><strong>'+name+'</strong><small>'+(done?'Completed':available?'Open step':'Locked until previous step is complete')+'</small></span><span>'+(available?'›':'🔒')+'</span></button>'}).join('')+'</div>';
+}
+function assistView(){
+ const top='<div class="scs-gt-assist-top"><button type="button" data-assist-home>‹ Assist Home</button><small>GROUP TOURNAMENT · STEP '+assistStep+' OF 5</small></div>';
+ if(assistStep===1)return top+players()+card('Teams','<p>Use the existing player selection and group assignment cards in Step 3 to create each team.</p>')+'<button class="scs-gt-primary" data-assist-done="1">Done</button>';
+ if(assistStep===2)return top+setup().replace('data-action="create"','data-assist-done="2"').replace('Create Groups</button>','Confirm Groups</button>');
+ if(assistStep===3)return top+card('Assign Teams to Groups','<p>Tap each empty team position to select two players. All positions must be assigned before continuing.</p>')+groups()+'<button class="scs-gt-primary" data-assist-done="3">Done</button>';
+ if(assistStep===4)return top+card('Confirm and Save','<p>'+config.groups+' groups · '+config.per+' teams per group · '+config.knockouts+' knockout tournament'+(config.knockouts===1?'':'s')+'</p><p>'+Object.keys(assignments).length+' / '+(config.groups*config.per)+' teams assigned.</p><button class="scs-gt-primary" data-assist-done="4">Save Tournament</button>');
+ return top+card('Start Group Tournament','<p>Group tournament saved. Start when all teams are ready.</p><button class="scs-gt-primary" data-start>Start Tournament</button>');
+}
+function assistDone(step){
+ if(step===1&&!assistComplete(1)){alert('Select players using Players Manager first.');return}
+ if(step===2){if(config.per<2||config.groups<1||config.knockouts<1||config.knockouts>2||config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Check the group and qualifier settings.');return}assistPatternReady=true;assignments={};}
+ if(step===3&&!assistComplete(3)){alert('Assign two players to every team position first.');return}
+ if(step===4){if(!assistComplete(3)){alert('Complete team assignments first.');return}created=true;tab='main'}
+ save();assistStep=0;render();
+}
 function view(){
 if(tab==='main')return (started?card('Group Tournament Started','<p>'+matches.length+' round-robin matches generated.</p>'):card('Start Group Tournament','<p>Assign all teams before starting.</p><button class="scs-gt-primary" data-start>Start Group Tournament</button>'))+card('Tournament Overview','<p>'+config.groups+' groups · '+config.per+' teams per group · '+config.knockouts+' knockout tournament'+(config.knockouts===1?'':'s')+'</p><p>Teams assigned: '+Object.keys(assignments).length+' / '+config.groups*config.per+'</p>')+groups()+card('Knockout qualification','<p>Top: '+config.top+' per group'+(config.knockouts===2?' · Bottom: '+config.bottom+' per group':'')+'</p><p class="scs-gt-empty">Bracket will appear after qualification is implemented in Stage 2.</p>');
 if(tab==='players')return players();
@@ -193,9 +222,16 @@ return matchCenter();
 }
 function render(){
 if(!el())return;
-el().innerHTML='<div class="scs-gt-sheet" role="dialog" aria-modal="true"><header><strong>Group Tournament</strong><button data-action="close" aria-label="Close">✕</button></header>'+(created?'<nav class="scs-gt-tabs">'+[['main','Main'],['players','Players'],['groups','Groups'],['knockouts','Knockouts'],['match','Match Center']].map(([k,t])=>'<button data-tab="'+k+'" class="'+(tab===k?'active':'')+'">'+t+'</button>').join('')+'</nav>'+view()+'<button class="scs-gt-secondary" data-action="new">New Group Tournament</button>':setup())+'</div>';
-el().querySelector('[data-action="close"]').onclick=close;
-el().querySelectorAll('[data-config]').forEach(x=>x.onchange=()=>{let n=Number(x.value);if(!Number.isInteger(n)||n<1||n>64){alert('Enter a whole number between 1 and 64.');render();return}config[x.dataset.config]=x.dataset.config==='knockouts'?Math.min(2,n):n;save();render()});
+const assisting=assistMode&&!started;
+let body;
+if(assisting)body=assistStep===0?assistIndex():assistView();
+else body='<header><strong>Group Tournament</strong><button data-action="close" aria-label="Close">✕</button></header><nav class="scs-gt-tabs">'+[['main','Home'],['players','Players'],['groups','Groups'],['knockouts','Knockouts'],['match','Match Center']].map(([k,t])=>'<button data-tab="'+k+'" class="'+(tab===k?'active':'')+'">'+t+'</button>').join('')+'</nav>'+view()+'<button class="scs-gt-secondary" data-action="new">New Group Tournament</button>';
+el().innerHTML='<div class="scs-gt-sheet" role="dialog" aria-modal="true">'+body+'</div>';
+const closeButton=el().querySelector('[data-action="close"]');if(closeButton)closeButton.onclick=close;
+el().querySelectorAll('[data-assist-step]').forEach(x=>x.onclick=()=>{assistStep=Number(x.dataset.assistStep);render()});
+const back=el().querySelector('[data-assist-home]');if(back)back.onclick=()=>{assistStep=0;save();render()};
+el().querySelectorAll('[data-assist-done]').forEach(x=>x.onclick=()=>assistDone(Number(x.dataset.assistDone)));
+el().querySelectorAll('[data-config]').forEach(x=>x.onchange=()=>{let n=Number(x.value);if(!Number.isInteger(n)||n<1||n>64){alert('Enter a whole number between 1 and 64.');render();return}config[x.dataset.config]=x.dataset.config==='knockouts'?Math.min(2,n):n;assistPatternReady=false;save();render()});
 const toggle=el().querySelector('[data-toggle-pool]');if(toggle)toggle.onclick=()=>{poolExpanded=!poolExpanded;render()};const manager=el().querySelector('[data-open-manager]');if(manager)manager.onclick=openPlayersManager;hydratePlayerCards();
 el().querySelectorAll('[data-slot]').forEach(x=>x.onclick=()=>{if(!started)editor(x.dataset.slot)});
 let start=el().querySelector('[data-start]');if(start)start.onclick=startTournament;
@@ -210,7 +246,7 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
  const cancelCourt=el().querySelector('[data-cancel-court]');if(cancelCourt)cancelCourt.onclick=()=>{assigningMatch=null;render()};
  el().querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>{tab=x.dataset.tab;render()});
 let create=el().querySelector('[data-action="create"]');if(create)create.onclick=()=>{if(config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Qualifiers cannot exceed teams per group.');return}created=true;tab='main';save();render()};
-let fresh=el().querySelector('[data-action="new"]');if(fresh)fresh.onclick=()=>{if(confirm('Start a new group tournament setup?')){created=false;started=false;matches=[];assignmentSerial=0;assignments={};matchTab='waiting';assigningMatch=null;save();render()}};
+let fresh=el().querySelector('[data-action="new"]');if(fresh)fresh.onclick=()=>{if(confirm('Start a new group tournament setup?')){created=false;assistMode=true;assistStep=0;assistPatternReady=false;started=false;matches=[];assignmentSerial=0;assignments={};matchTab='waiting';assigningMatch=null;save();render()}};
 }
 window.SCSGroupTournament={open,close,playersManagerReturned,scoreUpdate,returnFromScore:function(){if(el())el().hidden=false}};
 })();
