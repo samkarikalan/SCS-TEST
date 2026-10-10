@@ -108,7 +108,7 @@ html,body{overscroll-behavior:none;}
   <script src="offline-db.js?v=V149" defer></script>
   <script src="snapshot.js?v=V149" defer></script>
 
-  <script src="supabase.js?v=V166" defer></script>
+  <script src="supabase.js?v=V167" defer></script>
 
   <script src="auth.js?v=V149" defer></script>
 
@@ -463,19 +463,33 @@ window.scsTournamentReturnManager=function(){
 };
 function scsCloseTournamentManager(){var e=document.getElementById('scsTournamentManager');if(e)e.hidden=true}
 function scsTournamentManagerStart(){scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();scsOpenTournamentTypePicker()}
-function scsTournamentManagerContinue(){
+async function scsTournamentManagerContinue(){
   scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();
   var box=document.getElementById('scsTournamentContinueList'),overlay=document.getElementById('scsTournamentContinue');if(!box||!overlay)return;
+  overlay.hidden=false;box.innerHTML='<div class="scs-tmgr-empty">Loading tournaments…</div>';
+  var rows=[];if(typeof window.dbListClubTournaments==='function')try{rows=await window.dbListClubTournaments(['draft','live'])||[]}catch(_){}
+  if(rows.length){
+    box.innerHTML=rows.map(function(row){var format=row.format==='group'?'group':'knockout',label=format==='group'?'GROUP TOURNAMENT':'KNOCKOUT',status=row.status==='live'?'LIVE':'IN PROGRESS',when=row.updated_at?new Date(row.updated_at).toLocaleString():'Saved online';return '<button class="scs-tmgr-tournament-card '+format+'" onclick="scsOpenContinueTournament(decodeURIComponent(\''+encodeURIComponent(row.id||'')+'\'),\''+format+'\')"><span><small>'+label+' · '+status+'</small><strong>'+scsTournamentEscape(row.title||(format==='group'?'Group Tournament':'Knockout Tournament'))+'</strong><em>Updated '+scsTournamentEscape(when)+'</em></span><b>Continue ›</b></button>'}).join('');return;
+  }
   var ko=null,gt=null;try{ko=JSON.parse(localStorage.getItem('scs_knockout_tournament_v94')||'null')}catch(_){}
   try{gt=JSON.parse(localStorage.getItem('scs_group_tournament_ui_v1')||'null')}catch(_){}
   var cards=[];
   if(gt&&(gt.created||gt.started||(Array.isArray(gt.teamDrafts)&&gt.teamDrafts.length)||Object.keys(gt.assignments||{}).length)){var gm=Array.isArray(gt.matches)?gt.matches:[],gc=gm.filter(function(m){return m&&(m.completed||m.approved||m.status==='completed')}).length;cards.push('<button class="scs-tmgr-tournament-card group" onclick="scsContinueGroupTournament()"><span><small>GROUP TOURNAMENT · '+(gt.started?'LIVE':gt.created?'IN PROGRESS':'DRAFT')+'</small><strong>'+String(gt.title||gt.name||'Group Tournament')+'</strong><em>'+gc+' / '+gm.length+' matches completed</em></span><b>Continue ›</b></button>')}
   if(ko){var km=Array.isArray(ko.matches)?ko.matches:[],kc=km.filter(function(m){return m&&(m.completed||m.winner||m.status==='completed')}).length;cards.push('<button class="scs-tmgr-tournament-card knockout" onclick="scsContinueKnockoutTournament()"><span><small>KNOCKOUT · '+(ko.live?'LIVE':'IN PROGRESS')+'</small><strong>'+String(ko.title||'Tournament')+'</strong><em>'+kc+' / '+km.length+' matches completed'+(ko.live?' · '+Math.max(1,Number(ko.numCourts)||1)+' courts':'')+'</em></span><b>Continue ›</b></button>')}
-  box.innerHTML=cards.length?cards.join(''):'<div class="scs-tmgr-empty">No tournament in progress on this device.</div>';overlay.hidden=false;
+  box.innerHTML=cards.length?cards.join(''):'<div class="scs-tmgr-empty">No tournament in progress for this club.</div>';
 }
 function scsCloseTournamentContinue(){var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true;if(window.scsTournamentReturnPage)scsReturnToTournamentParent()}
 function scsContinueGroupTournament(){try{localStorage.setItem('scs_last_tournament_type','group')}catch(_){}scsTournamentRememberParent('scsTournamentContinue');var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true;if(window.SCSGroupTournament)SCSGroupTournament.open()}
 function scsContinueKnockoutTournament(){try{localStorage.setItem('scs_last_tournament_type','knockout')}catch(_){}scsTournamentRememberParent('scsTournamentContinue');var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true;if(window.SCSTournament&&SCSTournament.enterSavedTournament)SCSTournament.enterSavedTournament()}
+async function scsOpenContinueTournament(id,format){
+  if(!id||typeof window.dbAdoptTournamentById!=='function'){alert('This tournament could not be loaded. Please try again.');return}
+  var row=null;try{row=await window.dbAdoptTournamentById(id)}catch(_){}if(!row){alert('This tournament could not be loaded. Please try again.');return}
+  try{localStorage.setItem('scs_last_tournament_type',format)}catch(_){}
+  scsTournamentRememberParent('scsTournamentContinue');var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true;
+  if(format==='group'&&window.SCSGroupTournament){SCSGroupTournament.open();return}
+  if(format==='knockout'&&window.SCSTournament&&SCSTournament.enterSavedTournament){SCSTournament.enterSavedTournament();return}
+  alert('Tournament view is still loading. Please try again.');
+}
 function scsTournamentEscape(value){return String(value==null?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
 async function scsTournamentManagerLive(){
   scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();
@@ -513,6 +527,7 @@ function scsTournamentManagerStatus(){
  c.textContent=has?'Tournament available':'No saved tournament detected';
  try{var st=SCSCourtCenter&&SCSCourtCenter.localSession&&SCSCourtCenter.localSession();l.textContent=st?'Live tournament available':'Open a live tournament';}catch(_){l.textContent='Open a live tournament'}
  if(l&&typeof window.dbListClubTournaments==='function')window.dbListClubTournaments(['live']).then(function(rows){l.textContent=rows.length?rows.length+' live tournament'+(rows.length===1?'':'s'):'No live tournaments'}).catch(function(){});
+ if(c&&typeof window.dbListClubTournaments==='function')window.dbListClubTournaments(['draft','live']).then(function(rows){c.textContent=rows.length?rows.length+' tournament'+(rows.length===1?'':'s')+' available':'No tournaments available'}).catch(function(){});
 }
 function scsOpenTournamentTypePicker(){var e=document.getElementById('scsTournamentTypePicker');if(e)e.hidden=false}
 function scsCloseTournamentTypePicker(){var e=document.getElementById('scsTournamentTypePicker');if(e)e.hidden=true;if(window.scsTournamentReturnPage)scsReturnToTournamentParent()}

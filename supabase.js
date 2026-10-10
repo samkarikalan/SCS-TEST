@@ -242,6 +242,19 @@ async function dbLoadTournamentById(id) {
   return row;
 }
 
+async function dbAdoptTournamentById(id) {
+  const row = await dbLoadTournamentById(id);
+  if (!row) return null;
+  const club = getMyClub();
+  if (!club || !club.id) return null;
+  const previous = _scsTournamentSaveTimers.get(row.format);
+  if (previous) clearTimeout(previous);
+  _scsTournamentSaveTimers.delete(row.format);
+  localStorage.setItem(_scsTournamentCloudIdKey(club.id, row.format), row.id);
+  localStorage.setItem(row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94', JSON.stringify(row.state));
+  return row;
+}
+
 async function scsTournamentHydrateCloud() {
   const tasks = [
     ['knockout', 'scs_knockout_tournament_v94'],
@@ -264,6 +277,7 @@ window.dbSaveTournamentState = dbSaveTournamentState;
 window.dbLoadLatestTournament = dbLoadLatestTournament;
 window.dbListClubTournaments = dbListClubTournaments;
 window.dbLoadTournamentById = dbLoadTournamentById;
+window.dbAdoptTournamentById = dbAdoptTournamentById;
 window.scsQueueTournamentCloudSave = scsQueueTournamentCloudSave;
 window.scsResetTournamentCloudIdentity = scsResetTournamentCloudIdentity;
 window.scsTournamentHydrateCloud = scsTournamentHydrateCloud;
