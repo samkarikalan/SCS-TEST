@@ -6,7 +6,24 @@ const el=()=>document.getElementById('scsGroupTournament');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v){config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify({config,created,assistMode,assistPatternReady,pool,assignments,started,matches,courtCount,assignmentSerial}))}catch(e){}}
-function open(){load();assistStep=0;if(!el()){let d=document.createElement('div');d.id='scsGroupTournament';d.className='scs-gt-overlay';document.body.appendChild(d)}render()}
+function open(mode){
+ load();assistStep=0;
+ // Creation must enter Assist, never the legacy organizer page.
+ // Continue retains an existing started tournament's organizer interface.
+ if(mode==='new'){
+  if(started||created){
+   if(!confirm('Start a new Group Tournament? Your existing saved tournament will be replaced.'))return;
+   config={groups:4,per:4,knockouts:1,top:2,bottom:1};pool=[];assignments={};matches=[];
+   started=false;created=false;assistPatternReady=false;assignmentSerial=0;
+  }
+  assistMode=true;save();
+ }else if(!started){
+  // Saved-but-unstarted tournaments return to the Assist index.
+  assistMode=true;save();
+ }
+ if(!el()){let d=document.createElement('div');d.id='scsGroupTournament';d.className='scs-gt-overlay';document.body.appendChild(d)}
+ render();
+}
 function close(){el()?.remove();if(window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
 function card(title,body){return '<section class="scs-gt-card"><h3>'+title+'</h3>'+body+'</section>'}
 function setup(){

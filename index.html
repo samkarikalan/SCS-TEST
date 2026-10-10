@@ -485,7 +485,7 @@ function scsTournamentManagerStatus(){
 }
 function scsOpenTournamentTypePicker(){var e=document.getElementById('scsTournamentTypePicker');if(e)e.hidden=false}
 function scsCloseTournamentTypePicker(){var e=document.getElementById('scsTournamentTypePicker');if(e)e.hidden=true;if(window.scsTournamentReturnPage)scsReturnToTournamentParent()}
-function scsStartGroupTournament(){scsTournamentRememberParent('scsTournamentTypePicker');var picker=document.getElementById('scsTournamentTypePicker');if(picker)picker.hidden=true;if(window.SCSGroupTournament)window.SCSGroupTournament.open();else alert("Group tournament is loading.");}
+function scsStartGroupTournament(){scsTournamentRememberParent('scsTournamentTypePicker');var picker=document.getElementById('scsTournamentTypePicker');if(picker)picker.hidden=true;if(window.SCSGroupTournament)window.SCSGroupTournament.open('new');else alert("Group tournament is loading.");}
 function scsStartKnockoutTournament(){
   scsTournamentRememberParent('scsTournamentTypePicker');var picker=document.getElementById('scsTournamentTypePicker');if(picker)picker.hidden=true;
   if(window.SCSTournament&&typeof window.SCSTournament.open==='function'){window.SCSTournament.open(window.SCSTournament.init(),false);return}
