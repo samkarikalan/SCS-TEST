@@ -617,7 +617,7 @@ function liveTournamentPanel(){
   });
   return SCSSharedMatchCenter.panel({courtCount,courts,tab,assigning:draw.assigningMatch,
    waiting:waiting.map(function(x){var g=x.g,started=g&&(g.score_status==='scoring'||g.score_status==='scored'||g.started_at||g.score),assigned=g&&g.court&&!started;return {number:x.m.id,left:x.info.a,right:x.info.b,label:started?(g.score_status==='scored'?'Score Ready':'In Progress'):assigned?'Assigned · Court '+g.court:'Assign',assigned:assigned,action:readonly?'':started?'':'onclick="SCSTournament.assign('+x.m.id+')"'}}),
-   completed:completed.map(function(x){var r=draw.results[x.m.id];return {number:x.m.id,left:x.info.a,right:x.info.b,leftPlayers:splitTeam(x.info.a).players,rightPlayers:splitTeam(x.info.b).players,score:scoreText(x.g),winner:r?(r.winner===x.info.a?'left':r.winner===x.info.b?'right':null):null}}),
+   completed:completed.map(function(x){var r=draw.results[x.m.id],winner=r?(r.winner===x.info.a?'left':r.winner===x.info.b?'right':null):null;if(!winner)winner=x.g&&x.g.winner==='L'?'left':x.g&&x.g.winner==='R'?'right':null;return {number:x.m.id,left:x.info.a,right:x.info.b,leftPlayers:splitTeam(x.info.a).players,rightPlayers:splitTeam(x.info.b).players,score:scoreText(x.g),winner:winner}}),
    attrs:{change:n=>'onclick="SCSTournament.changeLiveCourts('+n+')"',choose:n=>'onclick="SCSTournament.selectAssignmentCourt('+n+')"',cancel:'onclick="SCSTournament.cancelCourtSelection()"',tab:id=>'onclick="SCSTournament.liveTab(\''+id+'\')"'}
   });
 }

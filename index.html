@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V165" defer></script>
-  <script src="tournament-bracket.js?v=V172" defer></script>
+  <script src="tournament-bracket.js?v=V173" defer></script>
   <script src="court-center.js?v=V150" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -511,10 +511,16 @@ async function scsOpenLiveTournament(id,format){
   var row=null,state=null;if(id&&typeof window.dbLoadTournamentById==='function')try{row=await window.dbLoadTournamentById(id);state=row&&row.state}catch(_){}
   if(!state)try{state=JSON.parse(localStorage.getItem(format==='group'?'scs_group_tournament_ui_v1':'scs_knockout_tournament_v94')||'null')}catch(_){}
   if(!state){alert('This tournament could not be loaded. Please try again.');return}
+  // Read-only viewers still need the cloud identity so Court Center can resume
+  // the matching server session after a fresh browser load.
+  if(row&&row.id)state=Object.assign({},state,{_scsCloudTournamentId:row.id});
   try{localStorage.setItem('scs_last_tournament_type',format)}catch(_){}
   scsTournamentRememberParent('scsTournamentLive');var overlay=document.getElementById('scsTournamentLive');if(overlay)overlay.hidden=true;
   if(format==='group'&&window.SCSGroupTournament){if(typeof SCSGroupTournament.openLive==='function')SCSGroupTournament.openLive(state);else SCSGroupTournament.open();if(typeof SCSGroupTournament.openSection==='function')SCSGroupTournament.openSection('tournament');return}
-  if(format==='knockout'&&window.SCSTournament&&typeof SCSTournament.open==='function'){SCSTournament.open(Object.assign({},state,{live:true,livePage:true}),true);return}
+  if(format==='knockout'&&window.SCSTournament&&typeof SCSTournament.open==='function'){
+    if(window.SCSCourtCenter&&typeof SCSCourtCenter.resumeTournament==='function')try{await SCSCourtCenter.resumeTournament(state)}catch(_){}
+    SCSTournament.open(Object.assign({},state,{live:true,livePage:true}),true);return
+  }
   scsReturnToTournamentParent();alert('Tournament view is still loading. Please try again.')
 }
 function scsCloseTournamentLive(){var e=document.getElementById('scsTournamentLive');if(e)e.hidden=true;if(window.scsTournamentReturnPage)scsReturnToTournamentParent()}
