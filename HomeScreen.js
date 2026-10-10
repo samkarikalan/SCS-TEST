@@ -484,7 +484,7 @@ setModeBarVisible(vaultActionBar, false, 'block');
 if (isOrganiser) {
   homeUpdateStepper();
   orgInitSchedulingCarousel();
-  orgRefreshSchedulingControls();
+  if (typeof orgRefreshSchedulingControls === 'function') orgRefreshSchedulingControls();
 }
 var modeRefreshBtn = document.getElementById('homeModeRefreshBtn');
 if (modeRefreshBtn) modeRefreshBtn.style.display = '';
