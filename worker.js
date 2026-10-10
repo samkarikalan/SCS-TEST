@@ -703,6 +703,7 @@ var DB_TABLE_RULES = {
   player_sessions: ["get", "post", "patch"],
   players: ["get", "post", "patch"],
   sessions: ["get", "post", "patch"],
+  tournaments: ["get", "post", "patch"],
   slot_claims: ["get", "post", "patch", "delete"],
   slots: ["get", "post", "patch", "delete"],
   venues: ["get", "post", "patch", "delete"],

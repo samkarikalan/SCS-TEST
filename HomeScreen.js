@@ -1055,7 +1055,9 @@ function setMyHubTopTabView(view) {
   if (!view) view = 'home';
   // Personal My Slots gets its own page tint; all other user tabs keep the normal Home background.
   document.body.classList.toggle('my-slots-view', view === 'slots');
-  if (view === 'clubs' || view === 'report') _myHubMountExistingPage(view);
+  // Clubs is a shared app-level page, not part of the Practice/My Hub tabs.
+  // Report remains embedded because it is personal activity content.
+  if (view === 'report') _myHubMountExistingPage(view);
   _myHubRestoreEmbeddedPages(view);
 
   document.querySelectorAll('.myhub-tab-view').forEach(function(panel) {
@@ -1083,8 +1085,22 @@ function setMyHubTopTabView(view) {
 }
 
 function homeOpenMyHubTab(view) {
+  if (view === 'clubs') {
+    scsOpenStandaloneClubPage();
+    return;
+  }
   if (typeof showHomeScreen === 'function') showHomeScreen();
   setMyHubTopTabView(view);
+}
+
+function scsOpenStandaloneClubPage() {
+  // Undo any earlier My Hub mount so the page regains its own full-page
+  // positioning, header and close button.
+  _myHubRestoreEmbeddedPages();
+  homeHideScreen();
+  _navSource = 'scs-home';
+  if (typeof showPage === 'function') showPage('joinClubPage', null);
+  if (typeof _updateDynamicBackBtns === 'function') _updateDynamicBackBtns('joinClubPage');
 }
 
 /* Open the existing My Hub slot calendar instead of duplicating a slots page. */
@@ -1207,7 +1223,7 @@ function scsRestoreChildReturnState(state) {
 function homeGo(pageId, tabId) {
 if (!pageId) return;
 if (pageId === 'settingsPage' && typeof scsCaptureSettingsReturnState === 'function') scsCaptureSettingsReturnState();
-if (pageId === 'joinClubPage') { homeOpenMyHubTab('clubs'); return; }
+if (pageId === 'joinClubPage') { scsOpenStandaloneClubPage(); return; }
 if (pageId === 'vaultReport2Page') { homeOpenMyHubTab('report'); return; }
 if (pageId === 'playersPage' || pageId === 'fixedPairsPage') scsPushChildReturnState(pageId);
 homeHideScreen();
@@ -1940,6 +1956,10 @@ JOIN CLUB PAGE -- Viewer mode tile & full page
 /* Called every time home screen opens -- show/hide tile, refresh status */
 async function vclSetActiveClub(clubId, clubName) {
 if (typeof setMyClub === 'function') setMyClub(clubId, clubName);
+// The Clubs page owns the centralized app selection. An explicit switch here
+// updates both manager workspaces as well; background manager restoration does
+// not get to overwrite this choice.
+if (typeof syncRoundAndSlotManagerClub === 'function') syncRoundAndSlotManagerClub(clubId, clubName);
 localStorage.setItem('kbrr_club_mode', 'user');
 // Sync players from the newly active club
 if (typeof syncToLocal === 'function') syncToLocal();

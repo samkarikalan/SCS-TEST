@@ -142,6 +142,121 @@ async function sbUpsert(table, data, onConflict) {
   return res.json();
 }
 
+// ─────────────────────────────────────────────────────────────
+//  TOURNAMENTS — local-first snapshots, shared through the club
+// ─────────────────────────────────────────────────────────────
+const SCS_TOURNAMENT_STATE_VERSION = 1;
+const _scsTournamentSaveTimers = new Map();
+
+function _scsTournamentCloudIdKey(clubId, format) {
+  return `scs_tournament_cloud_id_${clubId}_${format}`;
+}
+
+function _scsTournamentStatus(format, state) {
+  if (state && (state.completed === true || state.status === 'completed')) return 'completed';
+  if (format === 'group') return state && state.started ? 'live' : 'draft';
+  return state && state.live === true ? 'live' : 'draft';
+}
+
+async function dbSaveTournamentState(format, state) {
+  if (!['knockout', 'group'].includes(format) || !state || typeof state !== 'object') return null;
+  const club = getMyClub();
+  if (!club || !club.id) return null;
+  const user = typeof authGetUser === 'function' ? authGetUser() : null;
+  const idKey = _scsTournamentCloudIdKey(club.id, format);
+  let id = localStorage.getItem(idKey) || '';
+  if (!id) {
+    const existing = await sbGet('tournaments',
+      `club_id=eq.${encodeURIComponent(club.id)}&format=eq.${format}&status=in.(draft,live)&order=updated_at.desc&limit=1&select=id`
+    ).catch(() => []);
+    id = existing && existing[0] ? String(existing[0].id || '') : '';
+  }
+  const now = new Date().toISOString();
+  const status = _scsTournamentStatus(format, state);
+  const payload = {
+    club_id: club.id,
+    format,
+    title: String(state.title || (format === 'group' ? 'Group Tournament' : 'Tournament')).slice(0, 120),
+    status,
+    state_version: SCS_TOURNAMENT_STATE_VERSION,
+    state,
+    created_by: user && user.id ? user.id : null,
+    updated_at: now
+  };
+  if (status === 'live') payload.started_at = state.startedAt || state.started_at || now;
+  if (status === 'completed') payload.completed_at = state.completedAt || state.completed_at || now;
+  if (id) {
+    await sbPatch('tournaments', `id=eq.${encodeURIComponent(id)}&club_id=eq.${encodeURIComponent(club.id)}`, payload);
+  } else {
+    const rows = await sbPost('tournaments', payload);
+    id = rows && rows[0] ? String(rows[0].id || '') : '';
+  }
+  if (id) localStorage.setItem(idKey, id);
+  return id || null;
+}
+
+function scsQueueTournamentCloudSave(format, state) {
+  if (!state || typeof state !== 'object') return;
+  let snapshot;
+  try { snapshot = JSON.parse(JSON.stringify(state)); } catch (_) { return; }
+  const previous = _scsTournamentSaveTimers.get(format);
+  if (previous) clearTimeout(previous);
+  _scsTournamentSaveTimers.set(format, setTimeout(() => {
+    _scsTournamentSaveTimers.delete(format);
+    dbSaveTournamentState(format, snapshot).catch(error => console.warn('Tournament cloud save:', error.message));
+  }, 700));
+}
+
+async function dbLoadLatestTournament(format) {
+  const club = getMyClub();
+  if (!club || !club.id || !['knockout', 'group'].includes(format)) return null;
+  const rows = await sbGet('tournaments',
+    `club_id=eq.${encodeURIComponent(club.id)}&format=eq.${format}&status=in.(draft,live)&order=updated_at.desc&limit=1&select=id,format,status,state_version,state,updated_at`
+  ).catch(() => []);
+  const row = rows && rows[0];
+  if (!row || Number(row.state_version || 1) > SCS_TOURNAMENT_STATE_VERSION || !row.state) return null;
+  localStorage.setItem(_scsTournamentCloudIdKey(club.id, format), row.id);
+  return row;
+}
+
+async function dbListClubTournaments(statuses = ['draft', 'live', 'completed']) {
+  const club = getMyClub();
+  if (!club || !club.id) return [];
+  const safe = statuses.filter(s => ['draft', 'live', 'completed', 'archived'].includes(s));
+  return sbGet('tournaments',
+    `club_id=eq.${encodeURIComponent(club.id)}&status=in.(${safe.join(',')})&order=updated_at.desc&select=id,format,title,status,state_version,created_by,started_at,completed_at,updated_at`
+  ).catch(() => []);
+}
+
+async function scsTournamentHydrateCloud() {
+  const tasks = [
+    ['knockout', 'scs_knockout_tournament_v94'],
+    ['group', 'scs_group_tournament_ui_v1']
+  ].map(async ([format, key]) => {
+    const local = localStorage.getItem(key);
+    if (local) {
+      // First cloud-enabled launch: promote the existing local tournament so
+      // users keep the exact setup they already tested on this device.
+      try { await dbSaveTournamentState(format, JSON.parse(local)); } catch (error) {
+        console.warn('Tournament first cloud sync:', error.message);
+      }
+      return false;
+    }
+    const row = await dbLoadLatestTournament(format);
+    if (!row || !row.state) return false;
+    localStorage.setItem(key, JSON.stringify(row.state));
+    return true;
+  });
+  const restored = await Promise.all(tasks);
+  return restored.some(Boolean);
+}
+
+window.dbSaveTournamentState = dbSaveTournamentState;
+window.dbLoadLatestTournament = dbLoadLatestTournament;
+window.dbListClubTournaments = dbListClubTournaments;
+window.scsQueueTournamentCloudSave = scsQueueTournamentCloudSave;
+window.scsTournamentHydrateCloud = scsTournamentHydrateCloud;
+
 
 // ─────────────────────────────────────────────────────────────
 //  BUILD 1120 — LOCAL-FIRST CLUB SNAPSHOT
@@ -168,6 +283,7 @@ async function scsDownloadClubSnapshot(clubId) {
     load('memberships', 'memberships', `club_id=eq.${id}&select=*`),
     load('slots', 'slots', `club_id=eq.${id}&select=*`),
     load('sessions', 'sessions', `club_id=eq.${id}&select=*`),
+    load('tournaments', 'tournaments', `club_id=eq.${id}&select=*`),
     load('activeSessions', 'active_sessions', `club_id=eq.${id}&select=*`),
     load('joinRequests', 'club_join_requests', `club_id=eq.${id}&select=*`),
     load('roles', 'user_club_roles', `club_id=eq.${id}&select=*`),
@@ -223,6 +339,7 @@ function setMyClub(id, name) {
   localStorage.setItem('kbrr_my_club_id',   id);
   localStorage.setItem('kbrr_my_club_name', name);
   if (typeof scsRefreshHomeClubCard === 'function') scsRefreshHomeClubCard();
+  if (typeof scsActivityRefreshClub === 'function') scsActivityRefreshClub();
   if (typeof updateWelcomeWorkspaceClubNames === 'function') updateWelcomeWorkspaceClubNames();
   if (typeof homeRefreshTiles        === 'function') homeRefreshTiles();
   if (typeof homeRefreshJoinClubTile === 'function') homeRefreshJoinClubTile();
@@ -243,6 +360,7 @@ function clearMyClub() {
   localStorage.removeItem('kbrr_my_club_id');
   localStorage.removeItem('kbrr_my_club_name');
   if (typeof scsRefreshHomeClubCard === 'function') scsRefreshHomeClubCard();
+  if (typeof scsActivityRefreshClub === 'function') scsActivityRefreshClub();
 }
 
 // ─────────────────────────────────────────────────────────────

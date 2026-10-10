@@ -1,11 +1,11 @@
 (function(){
 'use strict';
 const KEY='scs_group_tournament_ui_v1';
-let config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',pool=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null;
+ let config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null;
 const el=()=>document.getElementById('scsGroupTournament');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v){config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({config,created,assistMode,assistPatternReady,pool,assignments,started,matches,courtCount,assignmentSerial}))}catch(e){}}
+ function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v){config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
+ function save(){try{const state={config,created,assistMode,assistPatternReady,pool,teamDrafts,assignments,started,matches,courtCount,assignmentSerial};localStorage.setItem(KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('group',state)}catch(e){}}
 function open(mode){
  load();assistStep=0;
  // Creation must enter Assist, never the legacy organizer page.
@@ -13,7 +13,7 @@ function open(mode){
  if(mode==='new'){
   if(started||created){
    if(!confirm('Start a new Group Tournament? Your existing saved tournament will be replaced.'))return;
-   config={groups:4,per:4,knockouts:1,top:2,bottom:1};pool=[];assignments={};matches=[];
+    config={groups:4,per:4,knockouts:1,top:2,bottom:1};pool=[];teamDrafts=[];assignments={};matches=[];
    started=false;created=false;assistPatternReady=false;assignmentSerial=0;
   }
   assistMode=true;save();
@@ -79,8 +79,14 @@ function groupResults(g){
 }
 function groups(){
  return Array.from({length:config.groups},(_,g)=>{
-  const ranked=started?groupResults(g):Array.from({length:config.per},(_,j)=>({id:g+':'+j,w:0,l:0,gw:0,gl:0,pf:0,pa:0,played:0}));
-  return card('Group '+groupLabel(g),'<div class="scs-gt-standings"><div class="scs-gt-head"><span>Position</span><span>Team</span><span>W</span><span>GD</span><span>PD</span></div>'+ranked.map((t,i)=>{
+   const ranked=started?groupResults(g):Array.from({length:config.per},(_,j)=>({id:g+':'+j,w:0,l:0,gw:0,gl:0,pf:0,pa:0,played:0}));
+   if(!started){
+    return '<section class="scs-tm-pool scs-gt-team-pool"><div class="scs-tm-pool-heading"><div><small>GROUP '+groupLabel(g)+' TEAMS</small><h3>Teams ('+ranked.length+')</h3></div></div><div class="scs-gt-team-card-list">'+ranked.map((t,i)=>{
+     const players=assignments[t.id]||[];
+     return '<button type="button" class="scs-gt-knockout-team-card" data-slot="'+t.id+'" aria-label="Edit team '+(i+1)+' in Group '+groupLabel(g)+'"><span class="scs-gt-team-card-number">'+(i+1)+'</span><span class="scs-gt-team-card-players">'+(players.length?players.map(playerRow).join(''):'<span class="scs-gt-unassigned">Select two players</span>')+'</span><span class="scs-gt-team-card-edit" aria-hidden="true">✎</span></button>';
+    }).join('')+'</div></section>';
+   }
+   return card('Group '+groupLabel(g),'<div class="scs-gt-standings"><div class="scs-gt-head"><span>Position</span><span>Team</span><span>W</span><span>GD</span><span>PD</span></div>'+ranked.map((t,i)=>{
    const players=assignments[t.id]||[];
    const row='<span>'+(i+1)+'</span><span>'+(players.length?'<span class="scs-gt-team-players">'+players.map(playerRow).join('')+'</span>':'<span class="scs-gt-unassigned">Assign players</span>')+'</span><span>'+(started?t.w:'—')+'</span><span>'+(started?t.gw-t.gl:'—')+'</span><span>'+(started?t.pf-t.pa:'—')+'</span>';
    return started?'<div class="scs-gt-head scs-gt-team scs-gt-result-row">'+row+'</div>':'<button type="button" class="scs-gt-head scs-gt-team" data-slot="'+t.id+'">'+row+'</button>';
@@ -102,7 +108,13 @@ function hydratePlayerCards(){
  });
 }
 function players(){
- return '<section class="scs-tm-pool"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT PLAYERS</small><h3>Players ('+pool.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-toggle-pool>'+(poolExpanded?'Hide ▲':'Show ▼')+'</button><button type="button" data-open-manager>+ Players Manager</button></div></div>'+(poolExpanded?(pool.length?'<div class="scs-tm-pool-chips">'+pool.map(playerRow).join('')+'</div>':'<p>Select players using the existing Players Manager.</p>'):'')+'</section>';
+  return '<section class="scs-tm-pool"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT PLAYERS</small><h3>Players ('+pool.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-toggle-pool>'+(poolExpanded?'Hide ▲':'Show ▼')+'</button><button type="button" data-open-manager>+ Players Manager</button></div></div>'+(poolExpanded?(pool.length?'<div class="scs-tm-pool-chips">'+pool.map(playerRow).join('')+'</div>':'<p>Select players using the existing Players Manager.</p>'):'')+'</section>';
+}
+function teamsCard(){
+ return '<section class="scs-tm-pool scs-gt-team-pool"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT TEAMS</small><h3>Teams ('+teamDrafts.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-add-team aria-label="Add team" title="Add team">+</button></div></div>'+(teamDrafts.length?'<div class="scs-gt-team-card-list">'+teamDrafts.map((players,index)=>{
+  const selected=players.filter(Boolean);
+  return '<div class="scs-gt-knockout-team-card"><span class="scs-gt-team-card-number">'+(index+1)+'</span><button type="button" class="scs-gt-team-card-players" data-slot="draft:'+index+'" aria-label="Edit team '+(index+1)+'">'+(selected.length?selected.map(playerRow).join(''):'<span class="scs-gt-unassigned">Select two players</span>')+'</button><button type="button" class="scs-gt-team-card-edit" data-slot="draft:'+index+'" aria-label="Edit team '+(index+1)+'">✎</button><button type="button" class="scs-gt-team-card-remove" data-remove-team="'+index+'" aria-label="Remove team '+(index+1)+'">−</button></div>';
+ }).join('')+'</div>':'<p>Create teams, then select two players for each team.</p>')+'</section>';
 }
 let poolExpanded=false;
 function openPlayersManager(){
@@ -122,6 +134,20 @@ function playersManagerReturned(){
  save();if(el()){el().hidden=false;render()}return true;
 }
 function editor(id){
+ const draftMatch=/^draft:(\d+)$/.exec(id);
+ if(draftMatch){
+  const draftIndex=Number(draftMatch[1]);if(!Number.isInteger(draftIndex)||draftIndex<0||draftIndex>=teamDrafts.length)return;
+  const old=teamDrafts[draftIndex]||[];
+  const used=new Set(teamDrafts.filter((_,i)=>i!==draftIndex).flat().map(n=>String(n).toLowerCase()));
+  const names=(pool.length?pool:registry()).filter(n=>!used.has(n.toLowerCase()));
+  const modal=document.createElement('section');modal.className='scs-tm-entry-modal';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
+  modal.innerHTML='<div class="scs-tm-entry-editor"><button type="button" class="scs-tm-entry-close" data-cancel aria-label="Close player assignment">×</button><h3>Entry '+(draftIndex+1)+' · Assign Players</h3><p>Choose players from the tournament pool, or enter a name manually.</p>'+[1,2].map(num=>{let val=old[num-1]||'';return '<label>Player '+num+'<select class="scs-tm-player-select" data-player="'+num+'"><option value="">Select player</option>'+names.map(n=>'<option value="'+escapeHTML(n)+'"'+(n===val?' selected':'')+'>'+escapeHTML(n)+'</option>').join('')+'</select><input data-input="'+num+'" autocomplete="off" placeholder="Or type player name" value="'+escapeHTML(val)+'"></label>'}).join('')+'<div class="scs-tm-entry-player-preview">'+old.map(playerRow).join('')+'</div><div class="scs-tm-import-actions"><button type="button" data-add-next-team>+ Add Team</button><button type="button" class="scs-tm-primary" data-done>Done</button></div><p class="scs-tm-entry-status" role="status"></p></div>';
+  el().appendChild(modal);modal.querySelector('[data-cancel]').onclick=()=>modal.remove();modal.querySelectorAll('[data-player]').forEach(select=>select.onchange=()=>{if(select.value)modal.querySelector('[data-input="'+select.dataset.player+'"]').value=select.value});
+  const saveDraft=()=>{const picked=[1,2].map(n=>modal.querySelector('[data-input="'+n+'"]').value.trim()),error=modal.querySelector('.scs-tm-entry-status');if(picked.some(n=>!n)){error.textContent='Enter both player names to save this team.';return false}if(picked[0].toLowerCase()===picked[1].toLowerCase()){error.textContent='Choose two different players.';return false}if(picked.some(n=>used.has(n.toLowerCase()))){error.textContent='Player already assigned to another tournament team. Choose an available player.';return false}teamDrafts[draftIndex]=picked;save();return true};
+  modal.querySelector('[data-add-next-team]').onclick=()=>{if(!saveDraft())return;if(teamDrafts.length>=64){modal.querySelector('.scs-tm-entry-status').textContent='Maximum 64 teams.';return}teamDrafts.push(['','']);save();modal.remove();render();editor('draft:'+(teamDrafts.length-1))};
+  modal.querySelector('[data-done]').onclick=()=>{if(!saveDraft())return;modal.remove();render()};
+  hydratePlayerCards();modal.onclick=e=>{if(e.target===modal)modal.remove()};return;
+ }
  const [gi,ti]=id.split(':').map(Number);
  if(!Number.isInteger(gi)||!Number.isInteger(ti)||gi<0||ti<0||gi>=config.groups||ti>=config.per)return;
  const old=assignments[id]||[];
@@ -204,7 +230,7 @@ function assignCourt(id){let m=matches.find(x=>x.id===id);if(!m||m.court)return;
 // Group Assist uses existing player, setup, group assignment and match cards.
 // The local group record is a draft until Step 4 confirms it.
 function assistComplete(step){
- if(step===1)return pool.length>=2;
+ if(step===1)return teamDrafts.length>=2&&teamDrafts.every(team=>Array.isArray(team)&&team.length===2&&team[0]&&team[1]);
  if(step===2)return assistPatternReady&&Number.isInteger(config.groups)&&config.groups>=1&&Number.isInteger(config.per)&&config.per>=2&&config.top+(config.knockouts===2?config.bottom:0)<=config.per;
  if(step===3){for(let g=0;g<config.groups;g++)for(let t=0;t<config.per;t++)if(!Array.isArray(assignments[g+':'+t])||assignments[g+':'+t].length!==2)return false;return true}
  if(step===4)return created;
@@ -217,7 +243,7 @@ function assistIndex(){
 }
 function assistView(){
  const top='<div class="scs-gt-assist-top"><button type="button" data-assist-home>‹ Assist Home</button><small>GROUP TOURNAMENT · STEP '+assistStep+' OF 5</small></div>';
- if(assistStep===1)return top+players()+card('Teams','<p>Use the existing player selection and group assignment cards in Step 3 to create each team.</p>')+'<button class="scs-gt-primary" data-assist-done="1">Done</button>';
+ if(assistStep===1)return top+players()+teamsCard()+'<button class="scs-gt-primary" data-assist-done="1">Done</button>';
  if(assistStep===2)return top+setup().replace('data-action="create"','data-assist-done="2"').replace('Create Groups</button>','Confirm Groups</button>');
  if(assistStep===3)return top+card('Assign Teams to Groups','<p>Tap each empty team position to select two players. All positions must be assigned before continuing.</p>')+groups()+'<button class="scs-gt-primary" data-assist-done="3">Done</button>';
  if(assistStep===4)return top+card('Confirm and Save','<p>'+config.groups+' groups · '+config.per+' teams per group · '+config.knockouts+' knockout tournament'+(config.knockouts===1?'':'s')+'</p><p>'+Object.keys(assignments).length+' / '+(config.groups*config.per)+' teams assigned.</p><button class="scs-gt-primary" data-assist-done="4">Save Tournament</button>');
@@ -225,7 +251,7 @@ function assistView(){
 }
 function assistDone(step){
  if(step===1&&!assistComplete(1)){alert('Select players using Players Manager first.');return}
- if(step===2){if(config.per<2||config.groups<1||config.knockouts<1||config.knockouts>2||config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Check the group and qualifier settings.');return}assistPatternReady=true;assignments={};}
+ if(step===2){if(config.per<2||config.groups<1||config.knockouts<1||config.knockouts>2||config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Check the group and qualifier settings.');return}if(teamDrafts.length!==config.groups*config.per){alert('Team count must equal Groups × Teams per group ('+(config.groups*config.per)+').');return}assistPatternReady=true;assignments={};teamDrafts.forEach((team,index)=>{const g=Math.floor(index/config.per),t=index%config.per;assignments[g+':'+t]=team.slice()});}
  if(step===3&&!assistComplete(3)){alert('Assign two players to every team position first.');return}
  if(step===4){if(!assistComplete(3)){alert('Complete team assignments first.');return}created=true;tab='main'}
  save();assistStep=0;render();
@@ -237,19 +263,28 @@ if(tab==='groups')return groups();
 if(tab==='knockouts')return card('Knockout 1 — Top','<p>'+config.top+' qualifying positions per group</p><p class="scs-gt-empty">No qualified teams yet.</p>')+(config.knockouts===2?card('Knockout 2 — Bottom','<p>'+config.bottom+' qualifying positions per group</p><p class="scs-gt-empty">No qualified teams yet.</p>'):'');
 return matchCenter();
 }
+function tournamentBottomNav(assisting){
+ const active=assisting?(assistStep===1?'teams':assistStep>=2?'tournament':''):(tab==='players'?'teams':tab==='match'?'match':'tournament');
+ const tournamentReady=!assisting||assistComplete(1);
+ const liveReady=!assisting&&started;
+ const items=[['home','Home','⌂',true],['teams','Teams','♙',true],['tournament','Tournament','⑂',tournamentReady],['match','Match Center','▣',liveReady]];
+ return '<nav class="scs-tm-organized-tabs scs-tm-bottom-nav scs-gt-bottom-nav" aria-label="Group tournament sections">'+items.map(([key,label,icon,enabled])=>'<button type="button" data-group-nav="'+key+'" class="'+(active===key?'active':'')+'" '+(enabled?'':'disabled')+(active===key?' aria-current="page"':'')+'><span class="scs-tm-nav-icon" aria-hidden="true">'+icon+'</span><span class="scs-tm-nav-label">'+label+'</span></button>').join('')+'</nav>';
+}
 function render(){
 if(!el())return;
 const assisting=assistMode&&!started;
 let body;
 if(assisting)body=assistStep===0?assistIndex():assistView();
-else body='<header><strong>Group Tournament</strong><button data-action="close" aria-label="Close">✕</button></header><nav class="scs-gt-tabs">'+[['main','Home'],['players','Players'],['groups','Groups'],['knockouts','Knockouts'],['match','Match Center']].map(([k,t])=>'<button data-tab="'+k+'" class="'+(tab===k?'active':'')+'">'+t+'</button>').join('')+'</nav>'+view()+'<button class="scs-gt-secondary" data-action="new">New Group Tournament</button>';
-el().innerHTML='<div class="scs-gt-sheet" role="dialog" aria-modal="true">'+body+'</div>';
+else body='<header><strong>Group Tournament</strong><button data-action="close" aria-label="Close">✕</button></header>'+((tab==='main'||tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view()+'<button class="scs-gt-secondary" data-action="new">New Group Tournament</button>';
+el().innerHTML='<div class="scs-gt-sheet" role="dialog" aria-modal="true">'+body+'</div>'+tournamentBottomNav(assisting);
 const closeButton=el().querySelector('[data-action="close"]');if(closeButton)closeButton.onclick=close;
 el().querySelectorAll('[data-assist-step]').forEach(x=>x.onclick=()=>{assistStep=Number(x.dataset.assistStep);render()});
 const back=el().querySelector('[data-assist-home]');if(back)back.onclick=()=>{assistStep=0;save();render()};
 el().querySelectorAll('[data-assist-done]').forEach(x=>x.onclick=()=>assistDone(Number(x.dataset.assistDone)));
 el().querySelectorAll('[data-config]').forEach(x=>x.onchange=()=>{let n=Number(x.value);if(!Number.isInteger(n)||n<1||n>64){alert('Enter a whole number between 1 and 64.');render();return}config[x.dataset.config]=x.dataset.config==='knockouts'?Math.min(2,n):n;assistPatternReady=false;save();render()});
-const toggle=el().querySelector('[data-toggle-pool]');if(toggle)toggle.onclick=()=>{poolExpanded=!poolExpanded;render()};const manager=el().querySelector('[data-open-manager]');if(manager)manager.onclick=openPlayersManager;hydratePlayerCards();
+ const toggle=el().querySelector('[data-toggle-pool]');if(toggle)toggle.onclick=()=>{poolExpanded=!poolExpanded;render()};const manager=el().querySelector('[data-open-manager]');if(manager)manager.onclick=openPlayersManager;hydratePlayerCards();
+ const addTeam=el().querySelector('[data-add-team]');if(addTeam)addTeam.onclick=()=>{if(teamDrafts.length>=64){alert('Maximum 64 teams.');return}teamDrafts.push(['','']);save();render();editor('draft:'+(teamDrafts.length-1))};
+ el().querySelectorAll('[data-remove-team]').forEach(x=>x.onclick=e=>{e.stopPropagation();teamDrafts.splice(Number(x.dataset.removeTeam),1);save();render()});
 el().querySelectorAll('[data-slot]').forEach(x=>x.onclick=()=>{if(!started)editor(x.dataset.slot)});
 let start=el().querySelector('[data-start]');if(start)start.onclick=startTournament;
  el().querySelectorAll('[data-assign]').forEach(x=>x.onclick=()=>assignCourt(x.dataset.assign));
@@ -262,8 +297,13 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
  el().querySelectorAll('[data-choose-court]').forEach(x=>x.onclick=()=>{const n=Number(x.dataset.chooseCourt),m=matches.find(y=>y.id===assigningMatch);if(!m||m.court||teamBusy(m.a)||teamBusy(m.b))return;const occupant=matches.find(y=>y.court===n);if(occupant){if(occupant.status!=='assigned'){alert('This court has a started match.');return}if(!confirm('Replace '+occupant.id+' on Court '+n+'?'))return;occupant.court=null;occupant.status='pending';occupant.assignedOrder=0;}m.court=n;m.status='assigned';m.assignedOrder=++assignmentSerial;assigningMatch=null;save();render()});
  const cancelCourt=el().querySelector('[data-cancel-court]');if(cancelCourt)cancelCourt.onclick=()=>{assigningMatch=null;render()};
  el().querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>{tab=x.dataset.tab;render()});
+ el().querySelectorAll('[data-group-nav]').forEach(x=>x.onclick=()=>{
+  const target=x.dataset.groupNav;if(target==='home'){el()?.remove();if(typeof window.scsTournamentReturnManager==='function')window.scsTournamentReturnManager();else if(typeof window.scsOpenTournamentManager==='function')window.scsOpenTournamentManager();return}
+  if(assisting){if(target==='teams')assistStep=1;else if(target==='tournament'&&assistComplete(1))assistStep=Math.max(2,Math.min(5,assistStep||2));else return;save();render();return}
+  tab=target==='teams'?'players':target==='tournament'?(tab==='knockouts'?'knockouts':'groups'):target;save();render();
+ });
 let create=el().querySelector('[data-action="create"]');if(create)create.onclick=()=>{if(config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Qualifiers cannot exceed teams per group.');return}created=true;tab='main';save();render()};
-let fresh=el().querySelector('[data-action="new"]');if(fresh)fresh.onclick=()=>{if(confirm('Start a new group tournament setup?')){created=false;assistMode=true;assistStep=0;assistPatternReady=false;started=false;matches=[];assignmentSerial=0;assignments={};matchTab='waiting';assigningMatch=null;save();render()}};
+ let fresh=el().querySelector('[data-action="new"]');if(fresh)fresh.onclick=()=>{if(confirm('Start a new group tournament setup?')){created=false;assistMode=true;assistStep=0;assistPatternReady=false;started=false;matches=[];assignmentSerial=0;teamDrafts=[];assignments={};matchTab='waiting';assigningMatch=null;save();render()}};
 }
-window.SCSGroupTournament={open,close,playersManagerReturned,scoreUpdate,returnFromScore:function(){if(el())el().hidden=false}};
+window.SCSGroupTournament={open,close,playersManagerReturned,scoreUpdate,openSection:function(section){tab=section==='teams'?'players':section==='match'?'match':'groups';save();render()},returnFromScore:function(){if(el())el().hidden=false}};
 })();
