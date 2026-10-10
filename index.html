@@ -3792,9 +3792,39 @@ style="display:none;font-size:0.72rem;color:var(--accent);word-break:break-all;m
 <style id="scs-v158-home-style">
 #scsActivityHome[hidden]{display:none!important}#scsActivityHome{position:fixed;inset:0;z-index:2147480000;display:flex;align-items:center;justify-content:center;background:var(--bg,#111a2b);color:var(--text,#fff);padding:20px;overflow:auto} .scs-activity-panel{width:min(100%,480px);text-align:center}.scs-activity-panel h1{font-size:1.7rem;margin:0 0 6px}.scs-activity-panel p{opacity:.8;margin:0 0 25px}.scs-activity-choice{width:100%;min-height:125px;margin:0 0 15px;padding:22px;text-align:left;border:1px solid #7295c7;border-radius:18px;background:#253b60;color:#fff;display:flex;align-items:center;gap:18px;font-size:1.2rem;font-weight:800}.scs-activity-choice span{font-size:2.1rem}.scs-activity-choice small{display:block;font-size:.83rem;font-weight:400;color:#d6e5fa;margin-top:5px}.scs-activity-home-back{margin:8px 0 16px;padding:10px 18px;border-radius:12px;border:1px solid #8aa6d0;background:#263c5e;color:#fff;font-weight:700}#myHubTournamentCard{display:none!important}
 </style>
-<div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="SCS Home"><div class="scs-activity-panel"><h1>SCS Home</h1><p>Choose your activity</p><button class="scs-activity-choice" onclick="scsActivityChoose('practice')"><span>🏸</span><div>Practice<small>Clubs, slots, rounds and scores</small></div></button><button class="scs-activity-choice" onclick="scsActivityChoose('tournament')"><span>🏆</span><div>Tournament<small>Tournaments, courts, scoring and results</small></div></button></div></div>
+<div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="SCS Home">
+ <div class="scs-activity-panel scs-shared-club-card">
+  <header class="scs-shared-club-head">
+   <span class="scs-shared-club-icon" aria-hidden="true">👥</span>
+   <div class="scs-shared-club-identity"><span>CLUB</span><strong id="scsSharedClubName">Login</strong></div>
+   <button type="button" id="scsSharedClubAction" class="scs-shared-club-action" onclick="scsActivityClubAction()">Login</button>
+  </header>
+  <div class="scs-shared-club-divider"></div>
+  <button class="scs-activity-choice" onclick="scsActivityChoose('practice')"><span>🏸</span><div>Practice</div><b aria-hidden="true">›</b></button>
+  <button class="scs-activity-choice scs-shared-tournament" onclick="scsActivityChoose('tournament')"><span>🏆</span><div>Tournament</div><b aria-hidden="true">›</b></button>
+ </div>
+</div>
 <script>
-window.scsActivityShowHome=function(){var e=document.getElementById('scsActivityHome');if(e)e.hidden=false;};
+window.scsActivityRefreshClub=function(){
+ var name='',id='';
+ try{
+  id=localStorage.getItem('kbrr_vault_club_id')||localStorage.getItem('kbrr_org_club_id')||'';
+  name=id?(localStorage.getItem('kbrr_vault_club_name')||localStorage.getItem('kbrr_org_club_name')||''):'';
+ }catch(_){}
+ var label=document.getElementById('scsSharedClubName'),button=document.getElementById('scsSharedClubAction');
+ if(label)label.textContent=name||'Login';
+ if(button)button.textContent=id?'Switch Club':'Login';
+};
+window.scsActivityClubAction=function(){
+ var home=document.getElementById('scsActivityHome');if(home)home.hidden=true;
+ window.scsActivityMode='practice';
+ // Open the EXISTING club UI and its authentication functions, not a new login.
+ if(typeof homeOpenMyHubTab==='function')homeOpenMyHubTab('clubs');
+ else if(typeof showHomeScreen==='function')showHomeScreen();
+};
+window.scsActivityShowHome=function(){var e=document.getElementById('scsActivityHome');if(e)e.hidden=false;scsActivityRefreshClub();};
+window.addEventListener('storage',function(e){if(!e.key||/^kbrr_(vault|org)_club_(id|name)$/.test(e.key))scsActivityRefreshClub();});
+
 window.scsActivityChoose=function(mode){var e=document.getElementById('scsActivityHome');if(e)e.hidden=true;window.scsActivityMode=mode;if(mode==='tournament'){if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();}else if(typeof showHomeScreen==='function'){showHomeScreen();}};
 window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];window.scsTournamentReturnPage=null;['scsTournamentManager','scsTournamentContinue','scsTournamentTypePicker'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=true});window.scsActivityMode=null;scsActivityShowHome();};
 </script>

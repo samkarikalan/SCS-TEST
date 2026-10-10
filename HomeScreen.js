@@ -3321,6 +3321,7 @@ function scsRefreshHomeClubCard() {
   label.textContent = name || 'Login';
   var tournamentLabel = document.getElementById('myHubTournamentClubName');
   if (tournamentLabel) tournamentLabel.textContent = name || 'Login';
+  if (typeof window.scsActivityRefreshClub === 'function') window.scsActivityRefreshClub();
 }
 window.scsRefreshHomeClubCard = scsRefreshHomeClubCard;
 window.addEventListener('storage', function(event) {
