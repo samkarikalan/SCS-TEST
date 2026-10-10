@@ -302,6 +302,7 @@
 .scs-tm-completed-players{display:flex;flex-direction:column;gap:5px;min-width:0}
 .scs-tm-completed-team-score{font-size:1.35rem!important;font-weight:850;color:#e8f0ff!important;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 .scs-tm-completed-team.is-winner .scs-tm-completed-team-score{color:#62e4b4!important}
+.scs-tm-serving-player{display:flex;align-items:center;gap:6px;min-width:0}.scs-tm-serving-player>.scs-tm-shared-player{flex:1 1 auto}.scs-tm-server-shuttle{flex:0 0 auto;display:inline-grid;place-items:center;width:25px;height:25px;border-radius:50%;background:#f6c945;color:#101827;font-size:14px;line-height:1;box-shadow:0 0 0 2px rgba(246,201,69,.18)}
 .scs-tm-completed-vs{display:block;text-align:center;margin:4px 0;font-size:.72rem}
 .scs-tm-completed-winner{display:flex;align-items:center;gap:9px;margin-top:10px;padding:9px 12px;border:1px solid #20a67b;border-radius:11px;background:#103b39;min-width:0}
 .scs-tm-completed-winner>span:first-child{font-size:1.45rem;flex-shrink:0}

@@ -1,12 +1,12 @@
 // SCS_BUILD_50_MYHUB_EMBEDDED_CLUBS_REPORT
 /* Sports Club Scheduler service worker — complete installed-app updates. */
-const CACHE_NAME = 'scs-cache-V170';
-const APP_SHELL = './index.html?v=V174';
+const CACHE_NAME = 'scs-cache-V171';
+const APP_SHELL = './index.html?v=V175';
 
 const ASSETS = [
   APP_SHELL,
   './ui.css?v=V149', './rounds.css?v=V149',
-  './shared-match-center.js?v=V156', './group-tournament.js?v=V166', './group-tournament.css?v=V149', './tournament-bracket.js?v=V173', './tournament-bracket.css?v=V166', './scoring.js?v=V149', './court-center.js?v=V149', './offline-db.js?v=V149', './offline-rounds.js?v=V149', './full-schedule.js?v=V149', './snapshot.js?v=V149', './supabase.js?v=V149', './auth.js?v=V149',
+  './shared-match-center.js?v=V157', './group-tournament.js?v=V168', './group-tournament.css?v=V149', './tournament-bracket.js?v=V174', './tournament-bracket.css?v=V167', './scoring.js?v=V149', './court-center.js?v=V151', './offline-db.js?v=V149', './offline-rounds.js?v=V149', './full-schedule.js?v=V149', './snapshot.js?v=V149', './supabase.js?v=V149', './auth.js?v=V149',
   './authUI.js?v=V149', './subscription.js?v=V149', './HomeScreen.js?v=V149',
   './engjap.js?v=V149', './main.js?v=V149', './games.js?v=V149',
   './rounds.js?v=V149', './mbm.js?v=V149', './players.js?v=V149',
