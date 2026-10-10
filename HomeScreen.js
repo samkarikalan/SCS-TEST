@@ -3319,6 +3319,8 @@ function scsRefreshHomeClubCard() {
     else if (orgId) name = localStorage.getItem('kbrr_org_club_name') || '';
   } catch (_) {}
   label.textContent = name || 'Login';
+  var tournamentLabel = document.getElementById('myHubTournamentClubName');
+  if (tournamentLabel) tournamentLabel.textContent = name || 'Login';
 }
 window.scsRefreshHomeClubCard = scsRefreshHomeClubCard;
 window.addEventListener('storage', function(event) {

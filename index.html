@@ -443,7 +443,7 @@ body.light-mode .scs-tournament-type-card>p,html.app-light .scs-tournament-type-
 window.scsTournamentParentStack=[];
 window.scsTournamentRememberParent=function(id){var e=document.getElementById(id);if(!e)return;window.scsTournamentParentStack.push({id:id,top:e.scrollTop,windowTop:window.scrollY});window.scsTournamentReturnPage=id;};
 window.scsReturnToTournamentParent=function(){var stack=window.scsTournamentParentStack||[];var parent=stack.pop();window.scsTournamentReturnPage=stack.length?stack[stack.length-1].id:null;if(!parent)return;var e=document.getElementById(parent.id);if(e){e.hidden=false;requestAnimationFrame(function(){e.scrollTop=parent.top;window.scrollTo(0,parent.windowTop);});}};
-function scsOpenTournamentManager(){var e=document.getElementById('scsTournamentManager');if(e){scsTournamentManagerStatus();e.hidden=false}}
+function scsOpenTournamentManager(){if(typeof scsRefreshHomeClubCard==='function')scsRefreshHomeClubCard();var e=document.getElementById('scsTournamentManager');if(e){scsTournamentManagerStatus();e.hidden=false}}
 function scsCloseTournamentManager(){var e=document.getElementById('scsTournamentManager');if(e)e.hidden=true}
 function scsTournamentManagerStart(){scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();scsOpenTournamentTypePicker()}
 function scsTournamentManagerContinue(){
@@ -1835,7 +1835,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
     </div>
     <div class="scs-home-access-card scs-tournament-access" id="myHubTournamentCard">
       <span class="myhub-club-card-icon" aria-hidden="true">🏆</span>
-      <span class="myhub-club-card-copy"><strong>Tournament</strong><small>Manage tournaments &amp; matches</small></span>
+      <span class="myhub-club-card-copy"><strong>My Tournament Club</strong><small id="myHubTournamentClubName">Login</small></span>
       <button type="button" class="myhub-club-add" aria-label="Open Tournament Manager" onclick="scsOpenTournamentManager()">+</button>
     </div>
     <div class="myhub-home-group" id="myHubApprovePlayersGroup" hidden>
