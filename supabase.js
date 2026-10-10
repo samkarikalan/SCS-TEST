@@ -165,12 +165,6 @@ async function dbSaveTournamentState(format, state) {
   const user = typeof authGetUser === 'function' ? authGetUser() : null;
   const idKey = _scsTournamentCloudIdKey(club.id, format);
   let id = localStorage.getItem(idKey) || '';
-  if (!id) {
-    const existing = await sbGet('tournaments',
-      `club_id=eq.${encodeURIComponent(club.id)}&format=eq.${format}&status=in.(draft,live)&order=updated_at.desc&limit=1&select=id`
-    ).catch(() => []);
-    id = existing && existing[0] ? String(existing[0].id || '') : '';
-  }
   const now = new Date().toISOString();
   const status = _scsTournamentStatus(format, state);
   const payload = {
@@ -207,6 +201,15 @@ function scsQueueTournamentCloudSave(format, state) {
   }, 700));
 }
 
+function scsResetTournamentCloudIdentity(format) {
+  const club = getMyClub();
+  if (!club || !club.id || !['knockout', 'group'].includes(format)) return;
+  const previous = _scsTournamentSaveTimers.get(format);
+  if (previous) clearTimeout(previous);
+  _scsTournamentSaveTimers.delete(format);
+  localStorage.removeItem(_scsTournamentCloudIdKey(club.id, format));
+}
+
 async function dbLoadLatestTournament(format) {
   const club = getMyClub();
   if (!club || !club.id || !['knockout', 'group'].includes(format)) return null;
@@ -236,8 +239,6 @@ async function dbLoadTournamentById(id) {
   ).catch(() => []);
   const row = rows && rows[0];
   if (!row || !row.state || Number(row.state_version || 1) > SCS_TOURNAMENT_STATE_VERSION) return null;
-  localStorage.setItem(_scsTournamentCloudIdKey(club.id, row.format), row.id);
-  localStorage.setItem(row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94', JSON.stringify(row.state));
   return row;
 }
 
@@ -247,14 +248,9 @@ async function scsTournamentHydrateCloud() {
     ['group', 'scs_group_tournament_ui_v1']
   ].map(async ([format, key]) => {
     const local = localStorage.getItem(key);
-    if (local) {
-      // First cloud-enabled launch: promote the existing local tournament so
-      // users keep the exact setup they already tested on this device.
-      try { await dbSaveTournamentState(format, JSON.parse(local)); } catch (error) {
-        console.warn('Tournament first cloud sync:', error.message);
-      }
-      return false;
-    }
+    // A local snapshot must never be uploaded merely because the app opened.
+    // It may be older than a live cloud tournament from another device.
+    if (local) return false;
     const row = await dbLoadLatestTournament(format);
     if (!row || !row.state) return false;
     localStorage.setItem(key, JSON.stringify(row.state));
@@ -269,6 +265,7 @@ window.dbLoadLatestTournament = dbLoadLatestTournament;
 window.dbListClubTournaments = dbListClubTournaments;
 window.dbLoadTournamentById = dbLoadTournamentById;
 window.scsQueueTournamentCloudSave = scsQueueTournamentCloudSave;
+window.scsResetTournamentCloudIdentity = scsResetTournamentCloudIdentity;
 window.scsTournamentHydrateCloud = scsTournamentHydrateCloud;
 
 

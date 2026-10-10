@@ -3,7 +3,7 @@
 var assistStep=0,assistSaved=false,draw=null,readonly=false,selected=null,saveFn=null,assignFn=null,clearFn=null,root=null,scanImage=null,scanText='',scanBusy=false,scanRecognition=null,zoom=1,panX=0,panY=0,gesture=null,byeSelection=null;
 var LOCAL_TOURNAMENT_KEY='scs_knockout_tournament_v94';
 function localTournamentLoad(){try{var x=JSON.parse(localStorage.getItem(LOCAL_TOURNAMENT_KEY)||'null');return x&&x.matches&&x.matches.length?x:null}catch(_){return null}}
-function localTournamentSave(d){try{localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
+function localTournamentSave(d){try{if(readonly)return Promise.resolve(d);localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
 function localTournamentClear(){try{localStorage.removeItem(LOCAL_TOURNAMENT_KEY)}catch(_){ }return Promise.resolve()}
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}

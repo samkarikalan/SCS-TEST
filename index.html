@@ -108,7 +108,7 @@ html,body{overscroll-behavior:none;}
   <script src="offline-db.js?v=V149" defer></script>
   <script src="snapshot.js?v=V149" defer></script>
 
-  <script src="supabase.js?v=V165" defer></script>
+  <script src="supabase.js?v=V166" defer></script>
 
   <script src="auth.js?v=V149" defer></script>
 
@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V164" defer></script>
-  <script src="tournament-bracket.js?v=V169" defer></script>
+  <script src="tournament-bracket.js?v=V170" defer></script>
   <script src="court-center.js?v=V149" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -499,7 +499,7 @@ async function scsOpenLiveTournament(id,format){
   if(!state){alert('This tournament could not be loaded. Please try again.');return}
   try{localStorage.setItem('scs_last_tournament_type',format)}catch(_){}
   scsTournamentRememberParent('scsTournamentLive');var overlay=document.getElementById('scsTournamentLive');if(overlay)overlay.hidden=true;
-  if(format==='group'&&window.SCSGroupTournament){SCSGroupTournament.open();if(typeof SCSGroupTournament.openSection==='function')SCSGroupTournament.openSection('tournament');return}
+  if(format==='group'&&window.SCSGroupTournament){if(typeof SCSGroupTournament.openLive==='function')SCSGroupTournament.openLive(state);else SCSGroupTournament.open();if(typeof SCSGroupTournament.openSection==='function')SCSGroupTournament.openSection('tournament');return}
   if(format==='knockout'&&window.SCSTournament&&typeof SCSTournament.open==='function'){SCSTournament.open(Object.assign({},state,{live:true,livePage:true}),true);return}
   scsReturnToTournamentParent();alert('Tournament view is still loading. Please try again.')
 }
@@ -519,12 +519,13 @@ function scsCloseTournamentTypePicker(){var e=document.getElementById('scsTourna
 function scsStartGroupTournament(){try{localStorage.setItem('scs_last_tournament_type','group')}catch(_){}scsTournamentRememberParent('scsTournamentTypePicker');var picker=document.getElementById('scsTournamentTypePicker');if(picker)picker.hidden=true;if(window.SCSGroupTournament)window.SCSGroupTournament.open('new');else alert("Group tournament is loading.");}
 function scsStartKnockoutTournament(){
   try{localStorage.setItem('scs_last_tournament_type','knockout')}catch(_){}
+  if(typeof window.scsResetTournamentCloudIdentity==='function')window.scsResetTournamentCloudIdentity('knockout');
   scsTournamentRememberParent('scsTournamentTypePicker');var picker=document.getElementById('scsTournamentTypePicker');if(picker)picker.hidden=true;
   if(window.SCSTournament&&typeof window.SCSTournament.open==='function'){window.SCSTournament.open(window.SCSTournament.init(),false);return}
   alert('Tournament is still loading. Please try again.');
 }
 </script>
-<link rel="stylesheet" href="./group-tournament.css?v=V165"><script src="./shared-match-center.js?v=V155" defer></script><script src="./group-tournament.js?v=V166" defer></script>
+<link rel="stylesheet" href="./group-tournament.css?v=V165"><script src="./shared-match-center.js?v=V155" defer></script><script src="./group-tournament.js?v=V167" defer></script>
 
 <style id="scs-tournament-manager-v1">
 .scs-tmgr-overlay{position:fixed;inset:0;z-index:10038;background:rgba(3,8,18,.78);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;padding:16px}
