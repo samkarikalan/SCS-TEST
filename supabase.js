@@ -228,6 +228,19 @@ async function dbListClubTournaments(statuses = ['draft', 'live', 'completed']) 
   ).catch(() => []);
 }
 
+async function dbLoadTournamentById(id) {
+  const club = getMyClub();
+  if (!club || !club.id || !id) return null;
+  const rows = await sbGet('tournaments',
+    `id=eq.${encodeURIComponent(id)}&club_id=eq.${encodeURIComponent(club.id)}&select=id,format,title,status,state_version,state,updated_at&limit=1`
+  ).catch(() => []);
+  const row = rows && rows[0];
+  if (!row || !row.state || Number(row.state_version || 1) > SCS_TOURNAMENT_STATE_VERSION) return null;
+  localStorage.setItem(_scsTournamentCloudIdKey(club.id, row.format), row.id);
+  localStorage.setItem(row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94', JSON.stringify(row.state));
+  return row;
+}
+
 async function scsTournamentHydrateCloud() {
   const tasks = [
     ['knockout', 'scs_knockout_tournament_v94'],
@@ -254,6 +267,7 @@ async function scsTournamentHydrateCloud() {
 window.dbSaveTournamentState = dbSaveTournamentState;
 window.dbLoadLatestTournament = dbLoadLatestTournament;
 window.dbListClubTournaments = dbListClubTournaments;
+window.dbLoadTournamentById = dbLoadTournamentById;
 window.scsQueueTournamentCloudSave = scsQueueTournamentCloudSave;
 window.scsTournamentHydrateCloud = scsTournamentHydrateCloud;
 

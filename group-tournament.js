@@ -1,11 +1,11 @@
 (function(){
 'use strict';
 const KEY='scs_group_tournament_ui_v1';
- let config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null;
+ let title='Group Tournament',config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null;
 const el=()=>document.getElementById('scsGroupTournament');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v){config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
- function save(){try{const state={config,created,assistMode,assistPatternReady,pool,teamDrafts,assignments,started,matches,courtCount,assignmentSerial};localStorage.setItem(KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('group',state)}catch(e){}}
+ function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v){title=String(v.title||'Group Tournament');config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
+ function save(){try{const state={title,config,created,assistMode,assistPatternReady,pool,teamDrafts,assignments,started,matches,courtCount,assignmentSerial};localStorage.setItem(KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('group',state)}catch(e){}}
 function open(mode){
  load();assistStep=0;
  // Creation must enter Assist, never the legacy organizer page.
@@ -13,7 +13,7 @@ function open(mode){
  if(mode==='new'){
   if(started||created){
    if(!confirm('Start a new Group Tournament? Your existing saved tournament will be replaced.'))return;
-    config={groups:4,per:4,knockouts:1,top:2,bottom:1};pool=[];teamDrafts=[];assignments={};matches=[];
+    title='Group Tournament';config={groups:4,per:4,knockouts:1,top:2,bottom:1};pool=[];teamDrafts=[];assignments={};matches=[];
    started=false;created=false;assistPatternReady=false;assignmentSerial=0;
   }
   assistMode=true;save();
@@ -29,7 +29,7 @@ function card(title,body){return '<section class="scs-gt-card"><h3>'+title+'</h3
 function setup(){
 let fields=[['groups','Number of groups',config.groups],['per','Teams per group',config.per],['knockouts','Number of knockouts (1 or 2)',config.knockouts],['top',config.knockouts===1?'Qualifiers per group':'Top knockout qualifiers per group',config.top]];
 if(config.knockouts===2)fields.push(['bottom','Bottom knockout qualifiers per group',config.bottom]);
-return card('Create Group Tournament','<div class="scs-gt-fields">'+fields.map(([key,label,val])=>'<label>'+label+'<input type="number" min="1" '+(key==='knockouts'?'max="2"':'')+' data-config="'+key+'" value="'+val+'"></label>').join('')+'</div><p>Top knockout selects the highest-ranked teams in each group. Bottom knockout selects the next positions, without duplicates.</p><button class="scs-gt-primary" data-action="create">Create Groups</button>');
+return card('Create Group Tournament','<label class="scs-gt-title-field">Tournament name<input type="text" maxlength="120" data-title value="'+escapeHTML(title)+'" placeholder="e.g. Autumn Club Championship"></label><div class="scs-gt-fields">'+fields.map(([key,label,val])=>'<label>'+label+'<input type="number" min="1" '+(key==='knockouts'?'max="2"':'')+' data-config="'+key+'" value="'+val+'"></label>').join('')+'</div><p>Top knockout selects the highest-ranked teams in each group. Bottom knockout selects the next positions, without duplicates.</p><button class="scs-gt-primary" data-action="create">Create Groups</button>');
 }
 function registry(){
  const names=[];function add(items){(Array.isArray(items)?items:[]).forEach(p=>{let n=typeof p==='string'?p:p&&p.name;if(n&&String(n).trim())names.push(String(n).trim())})}
@@ -246,7 +246,7 @@ function assistView(){
  if(assistStep===1)return top+players()+teamsCard()+'<button class="scs-gt-primary" data-assist-done="1">Done</button>';
  if(assistStep===2)return top+setup().replace('data-action="create"','data-assist-done="2"').replace('Create Groups</button>','Confirm Groups</button>');
  if(assistStep===3)return top+card('Assign Teams to Groups','<p>Tap each empty team position to select two players. All positions must be assigned before continuing.</p>')+groups()+'<button class="scs-gt-primary" data-assist-done="3">Done</button>';
- if(assistStep===4)return top+card('Confirm and Save','<p>'+config.groups+' groups · '+config.per+' teams per group · '+config.knockouts+' knockout tournament'+(config.knockouts===1?'':'s')+'</p><p>'+Object.keys(assignments).length+' / '+(config.groups*config.per)+' teams assigned.</p><button class="scs-gt-primary" data-assist-done="4">Save Tournament</button>');
+ if(assistStep===4)return top+card('Confirm and Save','<h3>'+escapeHTML(title)+'</h3><p>'+config.groups+' groups · '+config.per+' teams per group · '+config.knockouts+' knockout tournament'+(config.knockouts===1?'':'s')+'</p><p>'+Object.keys(assignments).length+' / '+(config.groups*config.per)+' teams assigned.</p><button class="scs-gt-primary" data-assist-done="4">Save Tournament</button>');
  return top+card('Start Group Tournament','<p>Group tournament saved. Start when all teams are ready.</p><button class="scs-gt-primary" data-start>Start Tournament</button>');
 }
 function assistDone(step){
@@ -275,13 +275,14 @@ if(!el())return;
 const assisting=assistMode&&!started;
 let body;
 if(assisting)body=assistStep===0?assistIndex():assistView();
-else body='<header><strong>Group Tournament</strong><button data-action="close" aria-label="Close">✕</button></header>'+((tab==='main'||tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view()+'<button class="scs-gt-secondary" data-action="new">New Group Tournament</button>';
+else body='<header><strong>'+escapeHTML(title)+'</strong><button data-action="close" aria-label="Close">✕</button></header>'+((tab==='main'||tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view()+'<button class="scs-gt-secondary" data-action="new">New Group Tournament</button>';
 el().innerHTML='<div class="scs-gt-sheet" role="dialog" aria-modal="true">'+body+'</div>'+tournamentBottomNav(assisting);
 const closeButton=el().querySelector('[data-action="close"]');if(closeButton)closeButton.onclick=close;
 el().querySelectorAll('[data-assist-step]').forEach(x=>x.onclick=()=>{assistStep=Number(x.dataset.assistStep);render()});
 const back=el().querySelector('[data-assist-home]');if(back)back.onclick=()=>{assistStep=0;save();render()};
 el().querySelectorAll('[data-assist-done]').forEach(x=>x.onclick=()=>assistDone(Number(x.dataset.assistDone)));
 el().querySelectorAll('[data-config]').forEach(x=>x.onchange=()=>{let n=Number(x.value);if(!Number.isInteger(n)||n<1||n>64){alert('Enter a whole number between 1 and 64.');render();return}config[x.dataset.config]=x.dataset.config==='knockouts'?Math.min(2,n):n;assistPatternReady=false;save();render()});
+ const titleInput=el().querySelector('[data-title]');if(titleInput)titleInput.onchange=()=>{title=titleInput.value.trim().slice(0,120)||'Group Tournament';save();render()};
  const toggle=el().querySelector('[data-toggle-pool]');if(toggle)toggle.onclick=()=>{poolExpanded=!poolExpanded;render()};const manager=el().querySelector('[data-open-manager]');if(manager)manager.onclick=openPlayersManager;hydratePlayerCards();
  const addTeam=el().querySelector('[data-add-team]');if(addTeam)addTeam.onclick=()=>{if(teamDrafts.length>=64){alert('Maximum 64 teams.');return}teamDrafts.push(['','']);save();render();editor('draft:'+(teamDrafts.length-1))};
  el().querySelectorAll('[data-remove-team]').forEach(x=>x.onclick=e=>{e.stopPropagation();teamDrafts.splice(Number(x.dataset.removeTeam),1);save();render()});
@@ -303,7 +304,7 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
   tab=target==='teams'?'players':target==='tournament'?(tab==='knockouts'?'knockouts':'groups'):target;save();render();
  });
 let create=el().querySelector('[data-action="create"]');if(create)create.onclick=()=>{if(config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Qualifiers cannot exceed teams per group.');return}created=true;tab='main';save();render()};
- let fresh=el().querySelector('[data-action="new"]');if(fresh)fresh.onclick=()=>{if(confirm('Start a new group tournament setup?')){created=false;assistMode=true;assistStep=0;assistPatternReady=false;started=false;matches=[];assignmentSerial=0;teamDrafts=[];assignments={};matchTab='waiting';assigningMatch=null;save();render()}};
+ let fresh=el().querySelector('[data-action="new"]');if(fresh)fresh.onclick=()=>{if(confirm('Start a new group tournament setup?')){title='Group Tournament';created=false;assistMode=true;assistStep=0;assistPatternReady=false;started=false;matches=[];assignmentSerial=0;teamDrafts=[];assignments={};matchTab='waiting';assigningMatch=null;save();render()}};
 }
 window.SCSGroupTournament={open,close,playersManagerReturned,scoreUpdate,openSection:function(section){tab=section==='teams'?'players':section==='match'?'match':'groups';save();render()},returnFromScore:function(){if(el())el().hidden=false}};
 })();

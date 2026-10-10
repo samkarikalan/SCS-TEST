@@ -6,6 +6,8 @@ var __defProp2 = Object.defineProperty;
 var __name2 = /* @__PURE__ */ __name((target, value) => __defProp2(target, "name", { value, configurable: true }), "__name");
 var __defProp22 = Object.defineProperty;
 var __name22 = /* @__PURE__ */ __name2((target, value) => __defProp22(target, "name", { value, configurable: true }), "__name");
+var __defProp222 = Object.defineProperty;
+var __name222 = /* @__PURE__ */ __name22((target, value) => __defProp222(target, "name", { value, configurable: true }), "__name");
 var worker_default = {
   async fetch(request, env) {
     if (request.method === "OPTIONS") {
@@ -79,6 +81,7 @@ function json(data, status = 200) {
 __name(json, "json");
 __name2(json, "json");
 __name22(json, "json");
+__name222(json, "json");
 function cors(response) {
   const r = new Response(response.body, response);
   r.headers.set("Access-Control-Allow-Origin", "*");
@@ -89,6 +92,7 @@ function cors(response) {
 __name(cors, "cors");
 __name2(cors, "cors");
 __name22(cors, "cors");
+__name222(cors, "cors");
 function sbHeaders(env) {
   return {
     "apikey": env.SUPABASE_KEY,
@@ -100,6 +104,7 @@ function sbHeaders(env) {
 __name(sbHeaders, "sbHeaders");
 __name2(sbHeaders, "sbHeaders");
 __name22(sbHeaders, "sbHeaders");
+__name222(sbHeaders, "sbHeaders");
 async function sbGet(env, table, query = "") {
   const url = env.SUPABASE_URL + "/rest/v1/" + table + (query ? "?" + query : "");
   const res = await fetch(url, { headers: sbHeaders(env) });
@@ -112,6 +117,7 @@ async function sbGet(env, table, query = "") {
 __name(sbGet, "sbGet");
 __name2(sbGet, "sbGet");
 __name22(sbGet, "sbGet");
+__name222(sbGet, "sbGet");
 async function sbPost(env, table, body, prefer = "return=representation") {
   const res = await fetch(env.SUPABASE_URL + "/rest/v1/" + table, {
     method: "POST",
@@ -127,6 +133,7 @@ async function sbPost(env, table, body, prefer = "return=representation") {
 __name(sbPost, "sbPost");
 __name2(sbPost, "sbPost");
 __name22(sbPost, "sbPost");
+__name222(sbPost, "sbPost");
 async function sbPatch(env, table, query, body, prefer = "return=minimal") {
   const res = await fetch(env.SUPABASE_URL + "/rest/v1/" + table + "?" + query, {
     method: "PATCH",
@@ -142,6 +149,7 @@ async function sbPatch(env, table, query, body, prefer = "return=minimal") {
 __name(sbPatch, "sbPatch");
 __name2(sbPatch, "sbPatch");
 __name22(sbPatch, "sbPatch");
+__name222(sbPatch, "sbPatch");
 async function sbDelete(env, table, query) {
   const res = await fetch(env.SUPABASE_URL + "/rest/v1/" + table + "?" + query, {
     method: "DELETE",
@@ -153,6 +161,7 @@ async function sbDelete(env, table, query) {
 __name(sbDelete, "sbDelete");
 __name2(sbDelete, "sbDelete");
 __name22(sbDelete, "sbDelete");
+__name222(sbDelete, "sbDelete");
 async function sbUpsert(env, table, body, onConflict) {
   const url = env.SUPABASE_URL + "/rest/v1/" + table + "?on_conflict=" + encodeURIComponent(onConflict);
   const res = await fetch(url, {
@@ -169,6 +178,7 @@ async function sbUpsert(env, table, body, onConflict) {
 __name(sbUpsert, "sbUpsert");
 __name2(sbUpsert, "sbUpsert");
 __name22(sbUpsert, "sbUpsert");
+__name222(sbUpsert, "sbUpsert");
 var OFFLINE_LIBRARY_ENGINE = "round-engine-2026-08-28-v2";
 function normalizeOfflineLibrarySpec(raw) {
   const spec = raw && typeof raw === "object" ? raw : {};
@@ -226,6 +236,7 @@ function normalizeOfflineLibrarySpec(raw) {
 __name(normalizeOfflineLibrarySpec, "normalizeOfflineLibrarySpec");
 __name2(normalizeOfflineLibrarySpec, "normalizeOfflineLibrarySpec");
 __name22(normalizeOfflineLibrarySpec, "normalizeOfflineLibrarySpec");
+__name222(normalizeOfflineLibrarySpec, "normalizeOfflineLibrarySpec");
 function offlineLibrarySignature(spec) {
   const parts = [
     spec.engineVersion,
@@ -247,6 +258,7 @@ function offlineLibrarySignature(spec) {
 __name(offlineLibrarySignature, "offlineLibrarySignature");
 __name2(offlineLibrarySignature, "offlineLibrarySignature");
 __name22(offlineLibrarySignature, "offlineLibrarySignature");
+__name222(offlineLibrarySignature, "offlineLibrarySignature");
 function parseOfflineLibrarySignature(signature) {
   const parts = String(signature || "").split("|");
   if (parts.length < 6 || parts[0] !== OFFLINE_LIBRARY_ENGINE) throw new Error("Unsupported offline library signature.");
@@ -286,6 +298,7 @@ function parseOfflineLibrarySignature(signature) {
 __name(parseOfflineLibrarySignature, "parseOfflineLibrarySignature");
 __name2(parseOfflineLibrarySignature, "parseOfflineLibrarySignature");
 __name22(parseOfflineLibrarySignature, "parseOfflineLibrarySignature");
+__name222(parseOfflineLibrarySignature, "parseOfflineLibrarySignature");
 async function requireOfflineLibrarySession(body, env) {
   const accountId = String(body && (body.accountId || body.userAccountId) || "").trim();
   const sessionToken = String(body && body.sessionToken || "").trim();
@@ -297,6 +310,7 @@ async function requireOfflineLibrarySession(body, env) {
 __name(requireOfflineLibrarySession, "requireOfflineLibrarySession");
 __name2(requireOfflineLibrarySession, "requireOfflineLibrarySession");
 __name22(requireOfflineLibrarySession, "requireOfflineLibrarySession");
+__name222(requireOfflineLibrarySession, "requireOfflineLibrarySession");
 async function offlineLibraryVersionToken(env) {
   const rows = await sbGet(env, "offline_round_libraries", "engine_version=eq." + encodeURIComponent(OFFLINE_LIBRARY_ENGINE) + "&select=signature,updated_at&order=signature.asc");
   const material = (rows || []).map((row) => String(row.signature || "") + "@" + String(row.updated_at || "")).join("\n");
@@ -307,6 +321,7 @@ async function offlineLibraryVersionToken(env) {
 __name(offlineLibraryVersionToken, "offlineLibraryVersionToken");
 __name2(offlineLibraryVersionToken, "offlineLibraryVersionToken");
 __name22(offlineLibraryVersionToken, "offlineLibraryVersionToken");
+__name222(offlineLibraryVersionToken, "offlineLibraryVersionToken");
 async function handleOfflineLibraryManifest(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const body = await request.json().catch(() => ({}));
@@ -321,6 +336,7 @@ async function handleOfflineLibraryManifest(request, env) {
 __name(handleOfflineLibraryManifest, "handleOfflineLibraryManifest");
 __name2(handleOfflineLibraryManifest, "handleOfflineLibraryManifest");
 __name22(handleOfflineLibraryManifest, "handleOfflineLibraryManifest");
+__name222(handleOfflineLibraryManifest, "handleOfflineLibraryManifest");
 async function handleOfflineLibraryAll(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const body = await request.json().catch(() => ({}));
@@ -345,11 +361,12 @@ async function handleOfflineLibraryAll(request, env) {
 __name(handleOfflineLibraryAll, "handleOfflineLibraryAll");
 __name2(handleOfflineLibraryAll, "handleOfflineLibraryAll");
 __name22(handleOfflineLibraryAll, "handleOfflineLibraryAll");
+__name222(handleOfflineLibraryAll, "handleOfflineLibraryAll");
 function validateOfflineLibraryPayload(payload, spec) {
   if (!payload || typeof payload !== "object") throw new Error("Offline library payload is required.");
   const records = Array.isArray(payload.records) ? payload.records : [];
   if (records.length !== spec.roundCount) throw new Error("Offline library record count does not match the signature.");
-  const validName = /* @__PURE__ */ __name22((name) => {
+  const validName = /* @__PURE__ */ __name222((name) => {
     const match = /^Offline Player (\d{1,3})$/.exec(String(name || "").split("#")[0]);
     return !!match && Number(match[1]) <= spec.playerCount;
   }, "validName");
@@ -396,6 +413,7 @@ function validateOfflineLibraryPayload(payload, spec) {
 __name(validateOfflineLibraryPayload, "validateOfflineLibraryPayload");
 __name2(validateOfflineLibraryPayload, "validateOfflineLibraryPayload");
 __name22(validateOfflineLibraryPayload, "validateOfflineLibraryPayload");
+__name222(validateOfflineLibraryPayload, "validateOfflineLibraryPayload");
 async function handleOfflineLibraryGet(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const body = await request.json();
@@ -418,6 +436,7 @@ async function handleOfflineLibraryGet(request, env) {
 __name(handleOfflineLibraryGet, "handleOfflineLibraryGet");
 __name2(handleOfflineLibraryGet, "handleOfflineLibraryGet");
 __name22(handleOfflineLibraryGet, "handleOfflineLibraryGet");
+__name222(handleOfflineLibraryGet, "handleOfflineLibraryGet");
 async function handleOfflineLibraryPut(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const body = await request.json();
@@ -450,6 +469,7 @@ async function handleOfflineLibraryPut(request, env) {
 __name(handleOfflineLibraryPut, "handleOfflineLibraryPut");
 __name2(handleOfflineLibraryPut, "handleOfflineLibraryPut");
 __name22(handleOfflineLibraryPut, "handleOfflineLibraryPut");
+__name222(handleOfflineLibraryPut, "handleOfflineLibraryPut");
 async function handleOfflineLibraryDelete(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const body = await request.json();
@@ -466,6 +486,7 @@ async function handleOfflineLibraryDelete(request, env) {
 __name(handleOfflineLibraryDelete, "handleOfflineLibraryDelete");
 __name2(handleOfflineLibraryDelete, "handleOfflineLibraryDelete");
 __name22(handleOfflineLibraryDelete, "handleOfflineLibraryDelete");
+__name222(handleOfflineLibraryDelete, "handleOfflineLibraryDelete");
 async function signToken(payload, secret) {
   const data = JSON.stringify(payload);
   const key = await crypto.subtle.importKey(
@@ -482,6 +503,7 @@ async function signToken(payload, secret) {
 __name(signToken, "signToken");
 __name2(signToken, "signToken");
 __name22(signToken, "signToken");
+__name222(signToken, "signToken");
 async function verifyToken(token, secret) {
   try {
     const [dataB64, sigHex] = token.split(".");
@@ -507,6 +529,7 @@ async function verifyToken(token, secret) {
 __name(verifyToken, "verifyToken");
 __name2(verifyToken, "verifyToken");
 __name22(verifyToken, "verifyToken");
+__name222(verifyToken, "verifyToken");
 var TRIAL_DAYS = 60;
 function addTrialDays(date = /* @__PURE__ */ new Date()) {
   const d = new Date(date);
@@ -516,12 +539,14 @@ function addTrialDays(date = /* @__PURE__ */ new Date()) {
 __name(addTrialDays, "addTrialDays");
 __name2(addTrialDays, "addTrialDays");
 __name22(addTrialDays, "addTrialDays");
+__name222(addTrialDays, "addTrialDays");
 function cleanSubEmail(email) {
   return email ? String(email).trim().toLowerCase() : null;
 }
 __name(cleanSubEmail, "cleanSubEmail");
 __name2(cleanSubEmail, "cleanSubEmail");
 __name22(cleanSubEmail, "cleanSubEmail");
+__name222(cleanSubEmail, "cleanSubEmail");
 async function resolveSubIdentity(body, env, requireSession = true) {
   const accountId = String(body.accountId || body.userAccountId || "").trim();
   let email = cleanSubEmail(body.email);
@@ -554,12 +579,14 @@ async function resolveSubIdentity(body, env, requireSession = true) {
 __name(resolveSubIdentity, "resolveSubIdentity");
 __name2(resolveSubIdentity, "resolveSubIdentity");
 __name22(resolveSubIdentity, "resolveSubIdentity");
+__name222(resolveSubIdentity, "resolveSubIdentity");
 function subIdentityFilter(identity) {
   return identity.accountId ? "account_id=eq." + encodeURIComponent(identity.accountId) : "email=eq." + encodeURIComponent(identity.email);
 }
 __name(subIdentityFilter, "subIdentityFilter");
 __name2(subIdentityFilter, "subIdentityFilter");
 __name22(subIdentityFilter, "subIdentityFilter");
+__name222(subIdentityFilter, "subIdentityFilter");
 async function findSubPlan(env, identity, select = "account_id,email,display_name,auth_provider,plan,expires_at,device_id,activated_at") {
   let rows = [];
   if (identity.accountId) {
@@ -610,6 +637,7 @@ async function findSubPlan(env, identity, select = "account_id,email,display_nam
 __name(findSubPlan, "findSubPlan");
 __name2(findSubPlan, "findSubPlan");
 __name22(findSubPlan, "findSubPlan");
+__name222(findSubPlan, "findSubPlan");
 async function saveSubPlan(env, identity, values) {
   const rows = await findSubPlan(env, identity);
   const identityValues = {
@@ -627,6 +655,7 @@ async function saveSubPlan(env, identity, values) {
 __name(saveSubPlan, "saveSubPlan");
 __name2(saveSubPlan, "saveSubPlan");
 __name22(saveSubPlan, "saveSubPlan");
+__name222(saveSubPlan, "saveSubPlan");
 async function handleSubVerify(request, env) {
   const body = await request.json();
   const deviceId = body.deviceId;
@@ -690,6 +719,7 @@ async function handleSubVerify(request, env) {
 __name(handleSubVerify, "handleSubVerify");
 __name2(handleSubVerify, "handleSubVerify");
 __name22(handleSubVerify, "handleSubVerify");
+__name222(handleSubVerify, "handleSubVerify");
 var DB_ACTIONS = ["get", "post", "patch", "delete", "upsert"];
 var DB_TABLE_RULES = {
   active_sessions: ["get", "post", "delete", "upsert"],
@@ -703,9 +733,9 @@ var DB_TABLE_RULES = {
   player_sessions: ["get", "post", "patch"],
   players: ["get", "post", "patch"],
   sessions: ["get", "post", "patch"],
-  tournaments: ["get", "post", "patch"],
   slot_claims: ["get", "post", "patch", "delete"],
   slots: ["get", "post", "patch", "delete"],
+  tournaments: ["get", "post", "patch"],
   venues: ["get", "post", "patch", "delete"],
   user_accounts: ["get", "post", "patch"],
   user_club_roles: ["get", "upsert"]
@@ -727,6 +757,7 @@ function isDbRequestAllowed(action, table) {
 __name(isDbRequestAllowed, "isDbRequestAllowed");
 __name2(isDbRequestAllowed, "isDbRequestAllowed");
 __name22(isDbRequestAllowed, "isDbRequestAllowed");
+__name222(isDbRequestAllowed, "isDbRequestAllowed");
 async function handleDb(request, env, path) {
   const body = await request.json().catch(() => ({}));
   const { table, query = "", data, onConflict, prefer } = body;
@@ -759,6 +790,7 @@ async function handleDb(request, env, path) {
 __name(handleDb, "handleDb");
 __name2(handleDb, "handleDb");
 __name22(handleDb, "handleDb");
+__name222(handleDb, "handleDb");
 async function handleSendOtp(request, env) {
   const { email } = await request.json();
   if (!email) return json({ error: "email required" }, 400);
@@ -774,6 +806,7 @@ async function handleSendOtp(request, env) {
 __name(handleSendOtp, "handleSendOtp");
 __name2(handleSendOtp, "handleSendOtp");
 __name22(handleSendOtp, "handleSendOtp");
+__name222(handleSendOtp, "handleSendOtp");
 async function handleVerifyOtp(request, env) {
   const { email, otp } = await request.json();
   if (!email || !otp) return json({ error: "email and otp required" }, 400);
@@ -789,6 +822,7 @@ async function handleVerifyOtp(request, env) {
 __name(handleVerifyOtp, "handleVerifyOtp");
 __name2(handleVerifyOtp, "handleVerifyOtp");
 __name22(handleVerifyOtp, "handleVerifyOtp");
+__name222(handleVerifyOtp, "handleVerifyOtp");
 async function handleSupabaseOtp(request, env) {
   const { email } = await request.json();
   const res = await fetch(env.SUPABASE_URL + "/auth/v1/otp", {
@@ -805,6 +839,7 @@ async function handleSupabaseOtp(request, env) {
 __name(handleSupabaseOtp, "handleSupabaseOtp");
 __name2(handleSupabaseOtp, "handleSupabaseOtp");
 __name22(handleSupabaseOtp, "handleSupabaseOtp");
+__name222(handleSupabaseOtp, "handleSupabaseOtp");
 async function handleSupabaseVerify(request, env) {
   const { email, token } = await request.json();
   const res = await fetch(env.SUPABASE_URL + "/auth/v1/verify", {
@@ -821,6 +856,7 @@ async function handleSupabaseVerify(request, env) {
 __name(handleSupabaseVerify, "handleSupabaseVerify");
 __name2(handleSupabaseVerify, "handleSupabaseVerify");
 __name22(handleSupabaseVerify, "handleSupabaseVerify");
+__name222(handleSupabaseVerify, "handleSupabaseVerify");
 async function handleSubCheck(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
   if (identity.error) return json({ valid: false, reason: identity.error });
@@ -834,6 +870,7 @@ async function handleSubCheck(request, env) {
 __name(handleSubCheck, "handleSubCheck");
 __name2(handleSubCheck, "handleSubCheck");
 __name22(handleSubCheck, "handleSubCheck");
+__name222(handleSubCheck, "handleSubCheck");
 async function handleSubActivate(request, env) {
   const body = await request.json();
   const { key } = body;
@@ -859,6 +896,7 @@ async function handleSubActivate(request, env) {
 __name(handleSubActivate, "handleSubActivate");
 __name2(handleSubActivate, "handleSubActivate");
 __name22(handleSubActivate, "handleSubActivate");
+__name222(handleSubActivate, "handleSubActivate");
 async function handleSubRestore(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
   if (identity.error) return json({ restored: false, reason: identity.error });
@@ -872,6 +910,7 @@ async function handleSubRestore(request, env) {
 __name(handleSubRestore, "handleSubRestore");
 __name2(handleSubRestore, "handleSubRestore");
 __name22(handleSubRestore, "handleSubRestore");
+__name222(handleSubRestore, "handleSubRestore");
 async function handleSubRegisterSession(request, env) {
   const body = await request.json();
   const identity = await resolveSubIdentity(body, env);
@@ -884,6 +923,7 @@ async function handleSubRegisterSession(request, env) {
 __name(handleSubRegisterSession, "handleSubRegisterSession");
 __name2(handleSubRegisterSession, "handleSubRegisterSession");
 __name22(handleSubRegisterSession, "handleSubRegisterSession");
+__name222(handleSubRegisterSession, "handleSubRegisterSession");
 async function handleSubValidateSession(request, env) {
   const body = await request.json();
   const identity = await resolveSubIdentity(body, env);
@@ -897,6 +937,7 @@ async function handleSubValidateSession(request, env) {
 __name(handleSubValidateSession, "handleSubValidateSession");
 __name2(handleSubValidateSession, "handleSubValidateSession");
 __name22(handleSubValidateSession, "handleSubValidateSession");
+__name222(handleSubValidateSession, "handleSubValidateSession");
 async function handlePurchaseRequest(request, env) {
   const body = await request.json();
   const identity = await resolveSubIdentity(body, env);
@@ -923,6 +964,7 @@ async function handlePurchaseRequest(request, env) {
 __name(handlePurchaseRequest, "handlePurchaseRequest");
 __name2(handlePurchaseRequest, "handlePurchaseRequest");
 __name22(handlePurchaseRequest, "handlePurchaseRequest");
+__name222(handlePurchaseRequest, "handlePurchaseRequest");
 async function handlePurchaseStatus(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
   if (identity.error) return json({ found: false, reason: identity.error });
@@ -941,6 +983,7 @@ async function handlePurchaseStatus(request, env) {
 __name(handlePurchaseStatus, "handlePurchaseStatus");
 __name2(handlePurchaseStatus, "handlePurchaseStatus");
 __name22(handlePurchaseStatus, "handlePurchaseStatus");
+__name222(handlePurchaseStatus, "handlePurchaseStatus");
 async function handlePurchaseCancel(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
   if (identity.error) return json({ ok: false, reason: identity.error });
@@ -951,6 +994,7 @@ async function handlePurchaseCancel(request, env) {
 __name(handlePurchaseCancel, "handlePurchaseCancel");
 __name2(handlePurchaseCancel, "handlePurchaseCancel");
 __name22(handlePurchaseCancel, "handlePurchaseCancel");
+__name222(handlePurchaseCancel, "handlePurchaseCancel");
 async function handleAppConfig(request, env) {
   const rows = await sbGet(env, "app_config", "select=key,value").catch(() => []);
   const cfg = {};
@@ -962,6 +1006,7 @@ async function handleAppConfig(request, env) {
 __name(handleAppConfig, "handleAppConfig");
 __name2(handleAppConfig, "handleAppConfig");
 __name22(handleAppConfig, "handleAppConfig");
+__name222(handleAppConfig, "handleAppConfig");
 async function handleAdminRequests(request, env) {
   const rows = await sbGet(
     env,
@@ -981,6 +1026,7 @@ async function handleAdminRequests(request, env) {
 __name(handleAdminRequests, "handleAdminRequests");
 __name2(handleAdminRequests, "handleAdminRequests");
 __name22(handleAdminRequests, "handleAdminRequests");
+__name222(handleAdminRequests, "handleAdminRequests");
 async function handleAdminActivate(request, env) {
   const body = await request.json();
   let { email, plan, expiresAt, requestId } = body;
@@ -1007,12 +1053,13 @@ async function handleAdminActivate(request, env) {
   if (!identity.accountId && !identity.email || !plan) return json({ success: false, error: "account and plan required" });
   function genKey() {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    const seg = /* @__PURE__ */ __name22(() => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join(""), "seg");
+    const seg = /* @__PURE__ */ __name222(() => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join(""), "seg");
     return [seg(), seg(), seg(), seg()].join("-");
   }
   __name(genKey, "genKey");
   __name2(genKey, "genKey");
   __name22(genKey, "genKey");
+  __name222(genKey, "genKey");
   const key = genKey();
   try {
     await saveSubPlan(env, identity, {
@@ -1037,6 +1084,7 @@ async function handleAdminActivate(request, env) {
 __name(handleAdminActivate, "handleAdminActivate");
 __name2(handleAdminActivate, "handleAdminActivate");
 __name22(handleAdminActivate, "handleAdminActivate");
+__name222(handleAdminActivate, "handleAdminActivate");
 async function handlePurchaseCancelById(request, env) {
   const { requestId } = await request.json();
   if (!requestId) return json({ ok: false });
@@ -1047,6 +1095,7 @@ async function handlePurchaseCancelById(request, env) {
 __name(handlePurchaseCancelById, "handlePurchaseCancelById");
 __name2(handlePurchaseCancelById, "handlePurchaseCancelById");
 __name22(handlePurchaseCancelById, "handlePurchaseCancelById");
+__name222(handlePurchaseCancelById, "handlePurchaseCancelById");
 async function handleRegisterTrial(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
   if (identity.error) return json({ ok: false, reason: identity.error });
@@ -1078,6 +1127,7 @@ async function handleRegisterTrial(request, env) {
 __name(handleRegisterTrial, "handleRegisterTrial");
 __name2(handleRegisterTrial, "handleRegisterTrial");
 __name22(handleRegisterTrial, "handleRegisterTrial");
+__name222(handleRegisterTrial, "handleRegisterTrial");
 async function handleAdminClubs(request, env) {
   const clubs = await sbGet(env, "clubs", "select=id,name,created_at,created_by&order=created_at.asc").catch(() => []);
   if (!clubs.length) return json({ clubs: [] });
@@ -1103,6 +1153,7 @@ async function handleAdminClubs(request, env) {
 __name(handleAdminClubs, "handleAdminClubs");
 __name2(handleAdminClubs, "handleAdminClubs");
 __name22(handleAdminClubs, "handleAdminClubs");
+__name222(handleAdminClubs, "handleAdminClubs");
 async function handleAdminSubscribers(request, env) {
   const rows = await sbGet(
     env,
@@ -1122,6 +1173,7 @@ async function handleAdminSubscribers(request, env) {
 __name(handleAdminSubscribers, "handleAdminSubscribers");
 __name2(handleAdminSubscribers, "handleAdminSubscribers");
 __name22(handleAdminSubscribers, "handleAdminSubscribers");
+__name222(handleAdminSubscribers, "handleAdminSubscribers");
 var MAX_CLUBS_PER_OWNER = 5;
 async function handleClubCreate(request, env) {
   const { userAccountId, name, select_password, admin_password } = await request.json();
@@ -1149,6 +1201,7 @@ async function handleClubCreate(request, env) {
 __name(handleClubCreate, "handleClubCreate");
 __name2(handleClubCreate, "handleClubCreate");
 __name22(handleClubCreate, "handleClubCreate");
+__name222(handleClubCreate, "handleClubCreate");
 async function handleClubMyClubs(request, env) {
   const { userAccountId } = await request.json();
   if (!userAccountId) return json({ error: "userAccountId required" }, 400);
@@ -1183,6 +1236,7 @@ async function handleClubMyClubs(request, env) {
 __name(handleClubMyClubs, "handleClubMyClubs");
 __name2(handleClubMyClubs, "handleClubMyClubs");
 __name22(handleClubMyClubs, "handleClubMyClubs");
+__name222(handleClubMyClubs, "handleClubMyClubs");
 async function handleClubOrganizers(request, env) {
   const { clubId, userAccountId, adminPassword } = await request.json();
   if (!clubId) return json({ error: "clubId required" }, 400);
@@ -1206,6 +1260,7 @@ async function handleClubOrganizers(request, env) {
 __name(handleClubOrganizers, "handleClubOrganizers");
 __name2(handleClubOrganizers, "handleClubOrganizers");
 __name22(handleClubOrganizers, "handleClubOrganizers");
+__name222(handleClubOrganizers, "handleClubOrganizers");
 async function handleClubGrantOrganizer(request, env) {
   const { clubId, userAccountId, targetUserAccountId, adminPassword } = await request.json();
   if (!clubId || !targetUserAccountId) return json({ error: "clubId and targetUserAccountId required" }, 400);
@@ -1234,6 +1289,7 @@ async function handleClubGrantOrganizer(request, env) {
 __name(handleClubGrantOrganizer, "handleClubGrantOrganizer");
 __name2(handleClubGrantOrganizer, "handleClubGrantOrganizer");
 __name22(handleClubGrantOrganizer, "handleClubGrantOrganizer");
+__name222(handleClubGrantOrganizer, "handleClubGrantOrganizer");
 async function handleClubRevokeOrganizer(request, env) {
   const { clubId, userAccountId, targetUserAccountId, adminPassword } = await request.json();
   if (!clubId || !targetUserAccountId) return json({ error: "clubId and targetUserAccountId required" }, 400);
@@ -1255,6 +1311,7 @@ async function handleClubRevokeOrganizer(request, env) {
 __name(handleClubRevokeOrganizer, "handleClubRevokeOrganizer");
 __name2(handleClubRevokeOrganizer, "handleClubRevokeOrganizer");
 __name22(handleClubRevokeOrganizer, "handleClubRevokeOrganizer");
+__name222(handleClubRevokeOrganizer, "handleClubRevokeOrganizer");
 async function handleClubSearchMembers(request, env) {
   const { clubId, userAccountId, query = "", adminPassword } = await request.json();
   if (!clubId) return json({ error: "clubId required" }, 400);
@@ -1290,18 +1347,21 @@ async function handleClubSearchMembers(request, env) {
 __name(handleClubSearchMembers, "handleClubSearchMembers");
 __name2(handleClubSearchMembers, "handleClubSearchMembers");
 __name22(handleClubSearchMembers, "handleClubSearchMembers");
+__name222(handleClubSearchMembers, "handleClubSearchMembers");
 function pairKey(a, b) {
   return [a, b].sort().join("&");
 }
 __name(pairKey, "pairKey");
 __name2(pairKey, "pairKey");
 __name22(pairKey, "pairKey");
+__name222(pairKey, "pairKey");
 function gameKey(p1, p2) {
   return [[p1[0], p1[1]].sort().join("&"), [p2[0], p2[1]].sort().join("&")].sort().join(":");
 }
 __name(gameKey, "gameKey");
 __name2(gameKey, "gameKey");
 __name22(gameKey, "gameKey");
+__name222(gameKey, "gameKey");
 function shuffle(arr) {
   arr = [...arr];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -1313,6 +1373,7 @@ function shuffle(arr) {
 __name(shuffle, "shuffle");
 __name2(shuffle, "shuffle");
 __name22(shuffle, "shuffle");
+__name222(shuffle, "shuffle");
 function getRating(name, allPlayers) {
   const p = allPlayers.find((p2) => p2.name === name);
   if (!p) return 1;
@@ -1321,6 +1382,7 @@ function getRating(name, allPlayers) {
 __name(getRating, "getRating");
 __name2(getRating, "getRating");
 __name22(getRating, "getRating");
+__name222(getRating, "getRating");
 function getGender(name, allPlayers) {
   const p = allPlayers.find((p2) => p2.name === name);
   return p ? p.gender : null;
@@ -1328,6 +1390,7 @@ function getGender(name, allPlayers) {
 __name(getGender, "getGender");
 __name2(getGender, "getGender");
 __name22(getGender, "getGender");
+__name222(getGender, "getGender");
 function selectRestingAndPlaying(state) {
   const { activeplayers, numCourts, fixedPairs, restQueue, courtFormats = [], courtTypes = [], allPlayers = [], pairPlayedSet, opponentMap = {} } = state;
   const total = activeplayers.length;
@@ -1354,7 +1417,7 @@ function selectRestingAndPlaying(state) {
     }
   }
   if (fullyGenderConstrained && !fixedPairs.length) {
-    const genderOf = /* @__PURE__ */ __name22((player) => String(getGender(player, allPlayers) || "").toLowerCase(), "genderOf");
+    const genderOf = /* @__PURE__ */ __name222((player) => String(getGender(player, allPlayers) || "").toLowerCase(), "genderOf");
     const activeMen = activeplayers.filter((player) => genderOf(player) === "male");
     const activeWomen = activeplayers.filter((player) => genderOf(player) === "female");
     const ordered = [
@@ -1370,16 +1433,13 @@ function selectRestingAndPlaying(state) {
     playing = activeplayers.filter((player) => !resting.includes(player));
     return { resting, playing };
   }
-  // Rest positions are assigned to individual players, independently of
-  // fixed pairs. A fixed mate who is selected to play is free to pair with
-  // another eligible player when their usual partner rests.
   resting = [...new Set(restQueue.filter((p) => activeplayers.includes(p)))].slice(0, numResting);
   playing = activeplayers.filter((p) => !resting.includes(p)).slice(0, playersPerRound);
   const hasTypedCourts = courtTypes.some(
     (t) => t === "MD" || t === "LD" || t === "WD" || t === "XD" || t === "men" || t === "ladies" || t === "singles-men" || t === "singles-women"
   );
   if (hasTypedCourts && numResting > 0) {
-    let swapIn = /* @__PURE__ */ __name2(function(needed, currentPlaying, restPool, surplusPlaying) {
+    let swapIn = /* @__PURE__ */ __name22(function(needed, currentPlaying, restPool, surplusPlaying) {
       const shortfall = needed - currentPlaying.length;
       if (shortfall <= 0) return;
       const canSwap = Math.min(shortfall, restPool.length, surplusPlaying.length);
@@ -1392,8 +1452,8 @@ function selectRestingAndPlaying(state) {
         playing.push(pullIn);
       }
     }, "swapIn");
-    __name22(swapIn, "swapIn");
-    const genderOf = /* @__PURE__ */ __name22((p) => {
+    __name222(swapIn, "swapIn");
+    const genderOf = /* @__PURE__ */ __name222((p) => {
       const pl = allPlayers.find((x) => x.name === p);
       return pl ? pl.gender : "Male";
     }, "genderOf");
@@ -1431,6 +1491,7 @@ function selectRestingAndPlaying(state) {
 __name(selectRestingAndPlaying, "selectRestingAndPlaying");
 __name2(selectRestingAndPlaying, "selectRestingAndPlaying");
 __name22(selectRestingAndPlaying, "selectRestingAndPlaying");
+__name222(selectRestingAndPlaying, "selectRestingAndPlaying");
 function reorderFreePlayersByLastRound(freePlayers, lastRound, numCourts) {
   if (!numCourts || !freePlayers.length) return [...freePlayers];
   const total = freePlayers.length;
@@ -1442,7 +1503,7 @@ function reorderFreePlayersByLastRound(freePlayers, lastRound, numCourts) {
   const played = freePlayers.filter((p) => lrSet.has(p));
   const courts = Array.from({ length: numCourts }, () => []);
   let c = 0;
-  const distribute = /* @__PURE__ */ __name22((list) => {
+  const distribute = /* @__PURE__ */ __name222((list) => {
     for (const p of list) {
       while (courts[c].length >= caps[c]) c = (c + 1) % numCourts;
       courts[c].push(p);
@@ -1456,6 +1517,7 @@ function reorderFreePlayersByLastRound(freePlayers, lastRound, numCourts) {
 __name(reorderFreePlayersByLastRound, "reorderFreePlayersByLastRound");
 __name2(reorderFreePlayersByLastRound, "reorderFreePlayersByLastRound");
 __name22(reorderFreePlayersByLastRound, "reorderFreePlayersByLastRound");
+__name222(reorderFreePlayersByLastRound, "reorderFreePlayersByLastRound");
 function getNextFixedPairGames(state, fixedPairs, numCourts) {
   const hash = JSON.stringify(fixedPairs);
   if (!state.fixedPairGameQueue || !state.fixedPairGameQueue.length || state.fixedPairGameQueueHash !== hash) {
@@ -1479,6 +1541,7 @@ function getNextFixedPairGames(state, fixedPairs, numCourts) {
 __name(getNextFixedPairGames, "getNextFixedPairGames");
 __name2(getNextFixedPairGames, "getNextFixedPairGames");
 __name22(getNextFixedPairGames, "getNextFixedPairGames");
+__name222(getNextFixedPairGames, "getNextFixedPairGames");
 function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
   const allPairs = [], unused = [], used = [];
   for (let i = 0; i < playing.length; i++) {
@@ -1507,6 +1570,7 @@ function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
   __name(oppScore, "oppScore");
   __name2(oppScore, "oppScore");
   __name22(oppScore, "oppScore");
+  __name222(oppScore, "oppScore");
   function pickBest(candidates) {
     const usedP = /* @__PURE__ */ new Set(), sel = [];
     let best = null, branches = 0;
@@ -1533,12 +1597,14 @@ function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
     __name(dfs, "dfs");
     __name2(dfs, "dfs");
     __name22(dfs, "dfs");
+    __name222(dfs, "dfs");
     dfs(0, 0);
     return best ? best.pairs : null;
   }
   __name(pickBest, "pickBest");
   __name2(pickBest, "pickBest");
   __name22(pickBest, "pickBest");
+  __name222(pickBest, "pickBest");
   if (unused.length >= required) {
     const r = pickBest(unused);
     if (r) return r;
@@ -1557,6 +1623,7 @@ function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
 __name(findDisjointPairs, "findDisjointPairs");
 __name2(findDisjointPairs, "findDisjointPairs");
 __name22(findDisjointPairs, "findDisjointPairs");
+__name222(findDisjointPairs, "findDisjointPairs");
 function getMatchupScores(allPairs, opponentMap) {
   const scores = [];
   for (let i = 0; i < allPairs.length; i++) {
@@ -1588,6 +1655,7 @@ function getMatchupScores(allPairs, opponentMap) {
 __name(getMatchupScores, "getMatchupScores");
 __name2(getMatchupScores, "getMatchupScores");
 __name22(getMatchupScores, "getMatchupScores");
+__name222(getMatchupScores, "getMatchupScores");
 function buildGroupedUniqueGames(state, playing) {
   const { numCourts, pairPlayedSet, opponentMap = {}, allRounds = [] } = state;
   if (!numCourts || playing.length !== numCourts * 4) return null;
@@ -1608,6 +1676,7 @@ function buildGroupedUniqueGames(state, playing) {
   __name(arrangements, "arrangements");
   __name2(arrangements, "arrangements");
   __name22(arrangements, "arrangements");
+  __name222(arrangements, "arrangements");
   function scoreGame(pair1, pair2) {
     const partnerRepeats = (pairPlayedSet.has(pairKey(pair1[0], pair1[1])) ? 1 : 0) + (pairPlayedSet.has(pairKey(pair2[0], pair2[1])) ? 1 : 0);
     let opponentRepeats = 0;
@@ -1619,6 +1688,7 @@ function buildGroupedUniqueGames(state, playing) {
   __name(scoreGame, "scoreGame");
   __name2(scoreGame, "scoreGame");
   __name22(scoreGame, "scoreGame");
+  __name222(scoreGame, "scoreGame");
   let best = null;
   const attempts = Math.max(300, numCourts * 250);
   for (let attempt = 0; attempt < attempts; attempt++) {
@@ -1658,6 +1728,7 @@ function buildGroupedUniqueGames(state, playing) {
 __name(buildGroupedUniqueGames, "buildGroupedUniqueGames");
 __name2(buildGroupedUniqueGames, "buildGroupedUniqueGames");
 __name22(buildGroupedUniqueGames, "buildGroupedUniqueGames");
+__name222(buildGroupedUniqueGames, "buildGroupedUniqueGames");
 function randomRound(state) {
   const { numCourts, fixedPairs, restCount, opponentMap, pairPlayedSet, lastRound = [] } = state;
   const { resting, playing } = selectRestingAndPlaying(state);
@@ -1730,6 +1801,7 @@ function randomRound(state) {
 __name(randomRound, "randomRound");
 __name2(randomRound, "randomRound");
 __name22(randomRound, "randomRound");
+__name222(randomRound, "randomRound");
 function calculateTiers(activeplayers, allPlayers) {
   const ratingMap = {};
   for (const p of allPlayers || []) {
@@ -1747,8 +1819,9 @@ function calculateTiers(activeplayers, allPlayers) {
 __name(calculateTiers, "calculateTiers");
 __name2(calculateTiers, "calculateTiers");
 __name22(calculateTiers, "calculateTiers");
+__name222(calculateTiers, "calculateTiers");
 function getGameTierRule(pair1, pair2, tierMap) {
-  const sig = /* @__PURE__ */ __name22((pair) => [...pair].map((p) => tierMap[p] || "inter").sort().join("+"), "sig");
+  const sig = /* @__PURE__ */ __name222((pair) => [...pair].map((p) => tierMap[p] || "inter").sort().join("+"), "sig");
   const s1 = sig(pair1), s2 = sig(pair2);
   if (["strong+strong", "inter+inter", "weak+weak"].includes(s1) && s1 === s2) return 1;
   if (["inter+strong", "strong+weak", "inter+weak"].includes(s1) && s1 === s2) return 2;
@@ -1759,6 +1832,7 @@ function getGameTierRule(pair1, pair2, tierMap) {
 __name(getGameTierRule, "getGameTierRule");
 __name2(getGameTierRule, "getGameTierRule");
 __name22(getGameTierRule, "getGameTierRule");
+__name222(getGameTierRule, "getGameTierRule");
 function buildRepetitionHistory(allRounds) {
   const pairSet = /* @__PURE__ */ new Set(), gameSet = /* @__PURE__ */ new Set();
   for (const rnd of allRounds) {
@@ -1777,6 +1851,7 @@ function buildRepetitionHistory(allRounds) {
 __name(buildRepetitionHistory, "buildRepetitionHistory");
 __name2(buildRepetitionHistory, "buildRepetitionHistory");
 __name22(buildRepetitionHistory, "buildRepetitionHistory");
+__name222(buildRepetitionHistory, "buildRepetitionHistory");
 function isGameRepeated(game, gameSet) {
   if (!game?.pair1 || !game?.pair2) return false;
   const k1 = pairKey(game.pair1[0], game.pair1[1]);
@@ -1786,6 +1861,7 @@ function isGameRepeated(game, gameSet) {
 __name(isGameRepeated, "isGameRepeated");
 __name2(isGameRepeated, "isGameRepeated");
 __name22(isGameRepeated, "isGameRepeated");
+__name222(isGameRepeated, "isGameRepeated");
 function getOppFreshness(t1, t2, opponentMap) {
   let f = 0;
   for (const a of t1) for (const b of t2) if (!(opponentMap[a] || {})[b]) f++;
@@ -1794,6 +1870,7 @@ function getOppFreshness(t1, t2, opponentMap) {
 __name(getOppFreshness, "getOppFreshness");
 __name2(getOppFreshness, "getOppFreshness");
 __name22(getOppFreshness, "getOppFreshness");
+__name222(getOppFreshness, "getOppFreshness");
 function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   const { opponentMap, allRounds = [], allPlayers = [] } = state;
   const ratingMap = {};
@@ -1803,13 +1880,15 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   }
   __name(getRating2, "getRating2");
   __name2(getRating2, "getRating2");
-  __name22(getRating2, "getRating");
+  __name22(getRating2, "getRating2");
+  __name222(getRating2, "getRating");
   function pk(a, b) {
     return [a, b].sort().join("&");
   }
   __name(pk, "pk");
   __name2(pk, "pk");
   __name22(pk, "pk");
+  __name222(pk, "pk");
   function isPairRepeated(a, b) {
     const key = pk(a, b);
     for (const rnd of allRounds) {
@@ -1825,12 +1904,14 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name(isPairRepeated, "isPairRepeated");
   __name2(isPairRepeated, "isPairRepeated");
   __name22(isPairRepeated, "isPairRepeated");
+  __name222(isPairRepeated, "isPairRepeated");
   function isFullGameRepeated(p1, p2) {
     return isGameRepeated({ pair1: p1, pair2: p2 }, gameSet);
   }
   __name(isFullGameRepeated, "isFullGameRepeated");
   __name2(isFullGameRepeated, "isFullGameRepeated");
   __name22(isFullGameRepeated, "isFullGameRepeated");
+  __name222(isFullGameRepeated, "isFullGameRepeated");
   function pairAge(a, b) {
     const key = pk(a, b);
     let lastRound = -1;
@@ -1848,6 +1929,7 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name(pairAge, "pairAge");
   __name2(pairAge, "pairAge");
   __name22(pairAge, "pairAge");
+  __name222(pairAge, "pairAge");
   const gameScores = [];
   const n = playing.length;
   for (let i = 0; i < n - 1; i++) {
@@ -1887,6 +1969,7 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name(greedyFrom, "greedyFrom");
   __name2(greedyFrom, "greedyFrom");
   __name22(greedyFrom, "greedyFrom");
+  __name222(greedyFrom, "greedyFrom");
   function countRepeats(games) {
     let count = 0;
     for (const g of games) {
@@ -1898,6 +1981,7 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name(countRepeats, "countRepeats");
   __name2(countRepeats, "countRepeats");
   __name22(countRepeats, "countRepeats");
+  __name222(countRepeats, "countRepeats");
   function applySwapFix(games) {
     const tolerances = [0.5, 1, 1.5, Infinity];
     for (const tolerance of tolerances) {
@@ -1949,6 +2033,7 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name(applySwapFix, "applySwapFix");
   __name2(applySwapFix, "applySwapFix");
   __name22(applySwapFix, "applySwapFix");
+  __name222(applySwapFix, "applySwapFix");
   const BEAM_SIZE = Math.min(12, gameScores.length);
   let bestResult = null, bestRepeats = Infinity;
   for (let b = 0; b < BEAM_SIZE; b++) {
@@ -1973,6 +2058,7 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
 __name(findBestCourtCombination, "findBestCourtCombination");
 __name2(findBestCourtCombination, "findBestCourtCombination");
 __name22(findBestCourtCombination, "findBestCourtCombination");
+__name222(findBestCourtCombination, "findBestCourtCombination");
 function updateAfterRound(state, games) {
   for (const [t1, t2] of games) {
     if (!t1 || !t2) continue;
@@ -1989,6 +2075,7 @@ function updateAfterRound(state, games) {
 __name(updateAfterRound, "updateAfterRound");
 __name2(updateAfterRound, "updateAfterRound");
 __name22(updateAfterRound, "updateAfterRound");
+__name222(updateAfterRound, "updateAfterRound");
 function resetForCompetitive(state) {
   if (!state.opponentMap || typeof state.opponentMap !== "object") {
     state.opponentMap = {};
@@ -2005,6 +2092,7 @@ function resetForCompetitive(state) {
 __name(resetForCompetitive, "resetForCompetitive");
 __name2(resetForCompetitive, "resetForCompetitive");
 __name22(resetForCompetitive, "resetForCompetitive");
+__name222(resetForCompetitive, "resetForCompetitive");
 function competitiveRound(state) {
   const { activeplayers, numCourts, restCount, allRounds, allPlayers } = state;
   const tierMap = calculateTiers(activeplayers, allPlayers);
@@ -2049,6 +2137,7 @@ function competitiveRound(state) {
 __name(competitiveRound, "competitiveRound");
 __name2(competitiveRound, "competitiveRound");
 __name22(competitiveRound, "competitiveRound");
+__name222(competitiveRound, "competitiveRound");
 function cloneBalancedCandidateState(state, candidateIndex) {
   const clone = { ...state };
   clone.activeplayers = [...state.activeplayers || []];
@@ -2068,6 +2157,7 @@ function cloneBalancedCandidateState(state, candidateIndex) {
 __name(cloneBalancedCandidateState, "cloneBalancedCandidateState");
 __name2(cloneBalancedCandidateState, "cloneBalancedCandidateState");
 __name22(cloneBalancedCandidateState, "cloneBalancedCandidateState");
+__name222(cloneBalancedCandidateState, "cloneBalancedCandidateState");
 function balancedRoundScore(round, state) {
   if (!round || !Array.isArray(round.games)) return -Infinity;
   const ratings = {};
@@ -2120,6 +2210,7 @@ function balancedRoundScore(round, state) {
 __name(balancedRoundScore, "balancedRoundScore");
 __name2(balancedRoundScore, "balancedRoundScore");
 __name22(balancedRoundScore, "balancedRoundScore");
+__name222(balancedRoundScore, "balancedRoundScore");
 function copyBalancedCandidateState(target, source) {
   target.restQueue = [...source.restQueue || []];
   target.restCount = { ...source.restCount || {} };
@@ -2136,6 +2227,7 @@ function copyBalancedCandidateState(target, source) {
 __name(copyBalancedCandidateState, "copyBalancedCandidateState");
 __name2(copyBalancedCandidateState, "copyBalancedCandidateState");
 __name22(copyBalancedCandidateState, "copyBalancedCandidateState");
+__name222(copyBalancedCandidateState, "copyBalancedCandidateState");
 function generateBestBalancedRound(state) {
   const candidates = [];
   for (let candidateIndex = 0; candidateIndex < 3; candidateIndex++) {
@@ -2159,6 +2251,7 @@ function generateBestBalancedRound(state) {
 __name(generateBestBalancedRound, "generateBestBalancedRound");
 __name2(generateBestBalancedRound, "generateBestBalancedRound");
 __name22(generateBestBalancedRound, "generateBestBalancedRound");
+__name222(generateBestBalancedRound, "generateBestBalancedRound");
 function validateRound(rnd, state) {
   const fails = [];
   if (!rnd?.games) return { valid: false, hardFails: ["No games"] };
@@ -2226,6 +2319,7 @@ function validateRound(rnd, state) {
 __name(validateRound, "validateRound");
 __name2(validateRound, "validateRound");
 __name22(validateRound, "validateRound");
+__name222(validateRound, "validateRound");
 function mbmBestGame(pool, waitQueue, state) {
   const { opponentMap = {}, allRounds = [], allPlayers = [] } = state;
   function pairAge(a, b) {
@@ -2244,6 +2338,7 @@ function mbmBestGame(pool, waitQueue, state) {
   __name(pairAge, "pairAge");
   __name2(pairAge, "pairAge");
   __name22(pairAge, "pairAge");
+  __name222(pairAge, "pairAge");
   function oppFreshness(t1, t2) {
     let fresh = 0;
     for (const a of t1) for (const b of t2)
@@ -2253,6 +2348,7 @@ function mbmBestGame(pool, waitQueue, state) {
   __name(oppFreshness, "oppFreshness");
   __name2(oppFreshness, "oppFreshness");
   __name22(oppFreshness, "oppFreshness");
+  __name222(oppFreshness, "oppFreshness");
   function waitWeight(players) {
     let w = 0;
     for (const p of players) {
@@ -2264,6 +2360,7 @@ function mbmBestGame(pool, waitQueue, state) {
   __name(waitWeight, "waitWeight");
   __name2(waitWeight, "waitWeight");
   __name22(waitWeight, "waitWeight");
+  __name222(waitWeight, "waitWeight");
   function scoreGame(pair1, pair2) {
     const opp = oppFreshness(pair1, pair2);
     const age = pairAge(pair1[0], pair1[1]) + pairAge(pair2[0], pair2[1]);
@@ -2273,6 +2370,7 @@ function mbmBestGame(pool, waitQueue, state) {
   __name(scoreGame, "scoreGame");
   __name2(scoreGame, "scoreGame");
   __name22(scoreGame, "scoreGame");
+  __name222(scoreGame, "scoreGame");
   let best = null;
   const n = pool.length;
   for (let i = 0; i < n - 3; i++) {
@@ -2300,6 +2398,7 @@ function mbmBestGame(pool, waitQueue, state) {
 __name(mbmBestGame, "mbmBestGame");
 __name2(mbmBestGame, "mbmBestGame");
 __name22(mbmBestGame, "mbmBestGame");
+__name222(mbmBestGame, "mbmBestGame");
 function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   const active = [...state.activeplayers || []];
   const allPlayers = state.allPlayers || [];
@@ -2308,8 +2407,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   const seats = formats.reduce((sum, format) => sum + (format === "singles" ? 2 : 4), 0);
   const restNeeded = Math.max(0, active.length - seats);
   if (active.length < seats) throw new Error("Not enough active players for the selected courts");
-  const rating = /* @__PURE__ */ __name22((name) => getRating(name, allPlayers), "rating");
-  const gender = /* @__PURE__ */ __name22((name) => String(getGender(name, allPlayers) || "").toLowerCase(), "gender");
+  const rating = /* @__PURE__ */ __name222((name) => getRating(name, allPlayers), "rating");
+  const gender = /* @__PURE__ */ __name222((name) => String(getGender(name, allPlayers) || "").toLowerCase(), "gender");
   const rankedActive = [...active].sort((a, b) => rating(b) - rating(a) || String(a).localeCompare(String(b)));
   const activeHalf = Math.ceil(rankedActive.length / 2);
   const suppliedBand = state.frozenBalancedBands;
@@ -2348,7 +2447,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   ]);
   const mustPlay = new Set((state.allRounds || []).length && previousPlaying.size ? active.filter((name) => !historicalPlayers.has(name) || previousRoster.size >= seats && !previousRoster.has(name)) : []);
   const hasPlayPriority = mustPlay.size > 0;
-  const priorityRestScore = /* @__PURE__ */ __name((resting) => hasPlayPriority ? [
+  const priorityRestScore = /* @__PURE__ */ __name2((resting) => hasPlayPriority ? [
     resting.reduce((sum, name) => sum + Number(!historicalPlayers.has(name)), 0),
     resting.reduce((sum, name) => sum + Number(historicalPlayers.has(name) && !previousRoster.has(name)), 0)
   ] : [0, 0], "priorityRestScore");
@@ -2392,6 +2491,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(randomCycleOrder, "randomCycleOrder");
   __name2(randomCycleOrder, "randomCycleOrder");
   __name22(randomCycleOrder, "randomCycleOrder");
+  __name222(randomCycleOrder, "randomCycleOrder");
   let updatedRestQueue = null;
   function standardFreeResting() {
     const selected = [];
@@ -2415,6 +2515,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(standardFreeResting, "standardFreeResting");
   __name2(standardFreeResting, "standardFreeResting");
   __name22(standardFreeResting, "standardFreeResting");
+  __name222(standardFreeResting, "standardFreeResting");
   function standardXdResting() {
     const requiredPerGender = formats.length * 2;
     const men = active.filter((name) => gender(name) === "male");
@@ -2455,6 +2556,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name(selectGroup, "selectGroup");
     __name2(selectGroup, "selectGroup");
     __name22(selectGroup, "selectGroup");
+    __name222(selectGroup, "selectGroup");
     const selected = /* @__PURE__ */ new Set([
       ...selectGroup(men, men.length - requiredPerGender),
       ...selectGroup(women, women.length - requiredPerGender)
@@ -2464,6 +2566,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(standardXdResting, "standardXdResting");
   __name2(standardXdResting, "standardXdResting");
   __name22(standardXdResting, "standardXdResting");
+  __name222(standardXdResting, "standardXdResting");
   function standardMixedResting() {
     const men = active.filter((name) => gender(name) === "male");
     const women = active.filter((name) => gender(name) === "female");
@@ -2491,6 +2594,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name(preview, "preview");
     __name2(preview, "preview");
     __name22(preview, "preview");
+    __name222(preview, "preview");
     let allocation = null;
     const minimumPlayingMen = Math.max(menMinimum, totalPlaying - women.length);
     const maximumPlayingMen = Math.min(men.length, menMinimum + freeSeats);
@@ -2513,7 +2617,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     let currentOrder = updatedRestQueue || queue;
     if (types.length === 3 && types.filter((type) => type === "md").length === 1 && types.filter((type) => type === "ld" || type === "wd").length === 1 && types.filter((type) => type === "xd").length === 1 && allocation.menRest === 2 && allocation.womenRest === 1) {
       const mdIndex = types.indexOf("md"), ldIndex = types.findIndex((type) => type === "ld" || type === "wd"), xdIndex = types.indexOf("xd");
-      const spread = /* @__PURE__ */ __name22((pool, history, selected2) => {
+      const spread = /* @__PURE__ */ __name222((pool, history, selected2) => {
         const set = new Set(selected2), values = pool.map((name) => (history.counts[name] || 0) + Number(set.has(name)));
         return Math.max(...values) - Math.min(...values);
       }, "spread");
@@ -2573,6 +2677,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name(opportunityProgress, "opportunityProgress");
     __name2(opportunityProgress, "opportunityProgress");
     __name22(opportunityProgress, "opportunityProgress");
+    __name222(opportunityProgress, "opportunityProgress");
     function selectGroup(pool, needed) {
       const selected2 = [], selectedSet = /* @__PURE__ */ new Set();
       const initialCycle = pool.length ? Math.min(...pool.map((name) => restCount[name] || 0)) : 0;
@@ -2604,6 +2709,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name(selectGroup, "selectGroup");
     __name2(selectGroup, "selectGroup");
     __name22(selectGroup, "selectGroup");
+    __name222(selectGroup, "selectGroup");
     const selected = /* @__PURE__ */ new Set([
       ...selectGroup(men, allocation.menRest),
       ...selectGroup(women, allocation.womenRest)
@@ -2613,6 +2719,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(standardMixedResting, "standardMixedResting");
   __name2(standardMixedResting, "standardMixedResting");
   __name22(standardMixedResting, "standardMixedResting");
+  __name222(standardMixedResting, "standardMixedResting");
   function combinations(items, needed, start = 0, chosen = [], output = []) {
     if (chosen.length === needed) {
       output.push([...chosen]);
@@ -2628,17 +2735,15 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(combinations, "combinations");
   __name2(combinations, "combinations");
   __name22(combinations, "combinations");
+  __name222(combinations, "combinations");
   function fixedRestOK(resting) {
     const set = new Set(resting);
-    // Rest fairness takes precedence over fixed-team grouping. When only one
-    // rest seat exists, a fixed-pair member may rest alone; their mate can
-    // partner another player for this round. Both play together when available.
-    // The same rule applies in Standard and Balanced generation.
     return true;
   }
   __name(fixedRestOK, "fixedRestOK");
   __name2(fixedRestOK, "fixedRestOK");
   __name22(fixedRestOK, "fixedRestOK");
+  __name222(fixedRestOK, "fixedRestOK");
   function restScore(resting) {
     const set = new Set(resting);
     const projected = active.map((name) => (restCount[name] || 0) + (set.has(name) ? 1 : 0));
@@ -2665,7 +2770,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(restScore, "restScore");
   __name2(restScore, "restScore");
   __name22(restScore, "restScore");
-  const compareVector = /* @__PURE__ */ __name22((a, b) => {
+  __name222(restScore, "restScore");
+  const compareVector = /* @__PURE__ */ __name222((a, b) => {
     for (let i = 0; i < Math.max(a.length, b.length); i++) if ((a[i] || 0) !== (b[i] || 0)) return (a[i] || 0) - (b[i] || 0);
     return 0;
   }, "compareVector");
@@ -2689,9 +2795,51 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(historyForType, "historyForType");
   __name2(historyForType, "historyForType");
   __name22(historyForType, "historyForType");
+  __name222(historyForType, "historyForType");
   const typeHistory = formats.map((_, index) => historyForType(index));
-  const restOptions = restNeeded ? fastStandardFree ? [{ resting: standardFreeResting(), score: [] }] : fastStandardXD ? [{ resting: standardXdResting(), score: [] }] : fastStandardMixed ? [{ resting: standardMixedResting(), score: [] }] : combinations(queue, restNeeded).filter(fixedRestOK).map((resting) => ({ resting, score: restScore(resting) })).sort((a, b) => compareVector(a.score, b.score)) : [{ resting: [], score: [] }];
-  const pkey = /* @__PURE__ */ __name22((a, b) => [a, b].sort().join("&"), "pkey");
+  function boundedRandomBalancedRestOptions() {
+    const ordered = [...queue].sort(
+      (a, b) => (restCount[a] || 0) - (restCount[b] || 0) || Number(previousRest.has(a)) - Number(previousRest.has(b)) || (qpos.get(a) ?? active.length) - (qpos.get(b) ?? active.length)
+    );
+    const base = ordered.slice(0, restNeeded);
+    const playing = ordered.slice(restNeeded);
+    const candidates = [base];
+    for (const out of base) {
+      for (const into of playing) {
+        candidates.push(base.map((name) => name === out ? into : name));
+      }
+    }
+    const unique = /* @__PURE__ */ new Map();
+    for (const resting of candidates) {
+      if (!fixedRestOK(resting)) continue;
+      const key = [...resting].sort().join("|");
+      if (!unique.has(key)) unique.set(key, { resting, score: restScore(resting) });
+    }
+    const options = [...unique.values()].sort((a, b) => compareVector(a.score, b.score));
+    if (!options.length) return [];
+    const fairnessLength2 = restNeeded === 1 ? 2 : 3;
+    const bestFairness2 = options[0].score.slice(0, fairnessLength2);
+    const equallyFair2 = options.filter(
+      (option) => compareVector(option.score.slice(0, fairnessLength2), bestFairness2) === 0
+    );
+    const feasible = equallyFair2.filter((option) => {
+      const resting = new Set(option.resting);
+      const playingTopCount = active.reduce(
+        (sum, name) => sum + Number(!resting.has(name) && activeBand.get(name) === 1),
+        0
+      );
+      return playingTopCount % 2 === 0;
+    });
+    const pool = feasible.length ? feasible : equallyFair2;
+    return [pool[Math.floor(Math.random() * pool.length)]];
+  }
+  __name(boundedRandomBalancedRestOptions, "boundedRandomBalancedRestOptions");
+  __name2(boundedRandomBalancedRestOptions, "boundedRandomBalancedRestOptions");
+  __name22(boundedRandomBalancedRestOptions, "boundedRandomBalancedRestOptions");
+  __name222(boundedRandomBalancedRestOptions, "boundedRandomBalancedRestOptions");
+  const fastRandomBalancedFree = fastBalancedFree && state.randomPlayerOrder === true;
+  const restOptions = restNeeded ? fastStandardFree ? [{ resting: standardFreeResting(), score: [] }] : fastStandardXD ? [{ resting: standardXdResting(), score: [] }] : fastStandardMixed ? [{ resting: standardMixedResting(), score: [] }] : fastRandomBalancedFree ? boundedRandomBalancedRestOptions() : combinations(queue, restNeeded).filter(fixedRestOK).map((resting) => ({ resting, score: restScore(resting) })).sort((a, b) => compareVector(a.score, b.score)) : [{ resting: [], score: [] }];
+  const pkey = /* @__PURE__ */ __name222((a, b) => [a, b].sort().join("&"), "pkey");
   const priorPairs = /* @__PURE__ */ new Map(), priorOpponents = /* @__PURE__ */ new Map(), priorGames = /* @__PURE__ */ new Map(), priorPlayerGroups = /* @__PURE__ */ new Map();
   for (const round of state.allRounds || []) for (const game of round.games || []) {
     if (game.pair1?.length === 2 && game.pair2?.length === 2) {
@@ -2716,7 +2864,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     }
   }
   const preferMixedBalancedRound = (state.allRounds || []).length % 2 === 1;
-  const singlesTypeKey = /* @__PURE__ */ __name22((type) => ["md", "men", "singles-men"].includes(type) ? "singles-men" : ["ld", "wd", "women", "ladies", "singles-women"].includes(type) ? "singles-women" : "singles-free", "singlesTypeKey");
+  const singlesTypeKey = /* @__PURE__ */ __name222((type) => ["md", "men", "singles-men"].includes(type) ? "singles-men" : ["ld", "wd", "women", "ladies", "singles-women"].includes(type) ? "singles-women" : "singles-free", "singlesTypeKey");
   const priorSinglesMeetings = /* @__PURE__ */ new Map();
   for (const round of state.allRounds || []) for (const game of round.games || []) {
     if ((game.pair1 || []).length !== 1 || (game.pair2 || []).length !== 1) continue;
@@ -2742,6 +2890,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(combinedRoundRobinOrder, "combinedRoundRobinOrder");
   __name2(combinedRoundRobinOrder, "combinedRoundRobinOrder");
   __name22(combinedRoundRobinOrder, "combinedRoundRobinOrder");
+  __name222(combinedRoundRobinOrder, "combinedRoundRobinOrder");
   const combinedRoundRobin = new Map(types.map((type) => [singlesTypeKey(type), combinedRoundRobinOrder(type)]));
   const standardFreeMode = !useBalancedBands && formats.every((format) => format === "doubles") && types.every((type) => type === "free");
   function canFormFreshNonFixedPairs(resting) {
@@ -2750,7 +2899,6 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     const fixedPlayersPlaying = /* @__PURE__ */ new Set();
     for (const [player, mate] of fixedMate) {
       const playerIn = playing.includes(player), mateIn = playing.includes(mate);
-      // One available fixed-pair member is treated like any other free player.
       if (playerIn && mateIn) {
         fixedPlayersPlaying.add(player);
         fixedPlayersPlaying.add(mate);
@@ -2779,11 +2927,13 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name(match, "match");
     __name2(match, "match");
     __name22(match, "match");
+    __name222(match, "match");
     return match(free);
   }
   __name(canFormFreshNonFixedPairs, "canFormFreshNonFixedPairs");
   __name2(canFormFreshNonFixedPairs, "canFormFreshNonFixedPairs");
   __name22(canFormFreshNonFixedPairs, "canFormFreshNonFixedPairs");
+  __name222(canFormFreshNonFixedPairs, "canFormFreshNonFixedPairs");
   function canFormFreshTypedGames(resting) {
     const restSet = new Set(resting), playing = active.filter((name) => !restSet.has(name));
     const courtCandidates = types.map((type) => {
@@ -2820,11 +2970,13 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name(assign, "assign");
     __name2(assign, "assign");
     __name22(assign, "assign");
+    __name222(assign, "assign");
     return assign(0, new Set(playing));
   }
   __name(canFormFreshTypedGames, "canFormFreshTypedGames");
   __name2(canFormFreshTypedGames, "canFormFreshTypedGames");
   __name22(canFormFreshTypedGames, "canFormFreshTypedGames");
+  __name222(canFormFreshTypedGames, "canFormFreshTypedGames");
   function freeRestAlternatives() {
     if (!standardFreeMode || !restNeeded || !fastStandardFree) return restOptions;
     let combinationTotal = 1;
@@ -2848,6 +3000,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(freeRestAlternatives, "freeRestAlternatives");
   __name2(freeRestAlternatives, "freeRestAlternatives");
   __name22(freeRestAlternatives, "freeRestAlternatives");
+  __name222(freeRestAlternatives, "freeRestAlternatives");
   const freeOptions = freeRestAlternatives();
   const fairnessLength = restNeeded === 1 ? 2 : 3;
   const bestFairness = freeOptions[0]?.score.slice(0, fairnessLength) || [];
@@ -2873,6 +3026,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(doubleRestRotationScore, "doubleRestRotationScore");
   __name2(doubleRestRotationScore, "doubleRestRotationScore");
   __name22(doubleRestRotationScore, "doubleRestRotationScore");
+  __name222(doubleRestRotationScore, "doubleRestRotationScore");
   const relaxedRestOptions = canRelaxForUniqueMatch ? freeOptions.filter((option) => option.resting.every((name) => !restedLastTwoRounds.has(name))).sort((a, b) => compareVector(doubleRestRotationScore(a), doubleRestRotationScore(b))) : [];
   const fifoRestingKey = [...fifoRestOption?.resting || []].sort().join("|");
   let prioritizedRestOptions = standardFreeMode ? [
@@ -2926,35 +3080,23 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   const fifoRestMode = formats.every((format) => format === "doubles") && types.every((type) => type === "free");
   const randomBalancedRestMode = fifoRestMode && useBalancedBands && state.randomPlayerOrder === true;
   if (fifoRestMode && restNeeded && !randomBalancedRestMode) {
-    // Round 1 must start from the stable active-player order. Do not let a
-    // pre-generation/randomized restQueue change the first resting group.
-    // After the first committed round, keep using the existing restQueue FIFO
-    // rotation exactly as before.
     const fifoQueue = (state.allRounds || []).length ? queue : [...active];
     const withoutPriority = fifoQueue.filter((name) => !mustPlay.has(name));
     const priorityEligible = withoutPriority.length >= restNeeded ? withoutPriority : fifoQueue;
     const withoutConsecutive = priorityEligible.filter((name) => !previousRest.has(name));
     const fifoEligible = restNeeded < seats && withoutConsecutive.length >= restNeeded ? withoutConsecutive : priorityEligible;
-    // Fixed pairs affect pairing only, never the FIFO rest candidate.
     const resting = fifoEligible.slice(0, restNeeded);
     prioritizedRestOptions = [{ resting, score: restScore(resting) }];
   }
-  if (randomBalancedRestMode && restNeeded) {
-    // Random Order in Balanced mode may choose any equally rested player(s)
-    // that let the rating-aware solver form the best complete round.  Keep
-    // rest-cycle fairness hard: nobody enters the next rest cycle while an
-    // eligible player is still in the current minimum-rest layer.
-    const fairnessLength = restNeeded === 1 ? 2 : 3;
-    const bestFairness = prioritizedRestOptions[0]?.score.slice(0, fairnessLength) || [];
+  if (randomBalancedRestMode && state.balancedRandomRestOrderLocked === true && restNeeded) {
+    const resting = queue.slice(0, restNeeded);
+    prioritizedRestOptions = [{ resting, score: restScore(resting) }];
+  } else if (randomBalancedRestMode && restNeeded) {
+    const fairnessLength2 = restNeeded === 1 ? 2 : 3;
+    const bestFairness2 = prioritizedRestOptions[0]?.score.slice(0, fairnessLength2) || [];
     prioritizedRestOptions = prioritizedRestOptions.filter(
-      (option) => compareVector(option.score.slice(0, fairnessLength), bestFairness) === 0
+      (option) => compareVector(option.score.slice(0, fairnessLength2), bestFairness2) === 0
     );
-
-    // Every Balanced doubles court has equal Top-band totals on both sides,
-    // so the complete playing pool must contain an even number of Top players.
-    // Reject impossible rest groups before invoking the expensive court solver.
-    // Large zero-rest pools can otherwise expand into hundreds of equivalent
-    // choices (15 choose 3 = 455) and make the UI appear to find no match.
     const balancedFeasible = prioritizedRestOptions.filter((option) => {
       const resting = new Set(option.resting);
       const playingTopCount = active.reduce(
@@ -2963,10 +3105,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       );
       return playingTopCount % 2 === 0;
     });
-    // Rating feasibility must never override the shared FIFO/rest fairness.
-    // Keep the existing candidate order and let the match solver select from
-    // it; a rating fallback is preferable to repeatedly skipping rest turns.
-    if (balancedFeasible.length) prioritizedRestOptions = balancedFeasible.slice(0, 48);
+    if (balancedFeasible.length) prioritizedRestOptions = [balancedFeasible[0]];
   }
   function typeGenderOK(pair1, pair2, format, type) {
     const names = [...pair1, ...pair2], men = names.filter((name) => gender(name) === "male").length, women = names.filter((name) => gender(name) === "female").length;
@@ -2983,6 +3122,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(typeGenderOK, "typeGenderOK");
   __name2(typeGenderOK, "typeGenderOK");
   __name22(typeGenderOK, "typeGenderOK");
+  __name222(typeGenderOK, "typeGenderOK");
   function fixedOK(pair1, pair2, playingSet) {
     const court = /* @__PURE__ */ new Set([...pair1, ...pair2]);
     for (const player of court) {
@@ -2996,12 +3136,14 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name(fixedOK, "fixedOK");
   __name2(fixedOK, "fixedOK");
   __name22(fixedOK, "fixedOK");
+  __name222(fixedOK, "fixedOK");
   function hasFixedTeam(pair) {
     return pair.length === 2 && fixedMate.get(pair[0]) === pair[1];
   }
   __name(hasFixedTeam, "hasFixedTeam");
   __name2(hasFixedTeam, "hasFixedTeam");
   __name22(hasFixedTeam, "hasFixedTeam");
+  __name222(hasFixedTeam, "hasFixedTeam");
   function solve(playing) {
     if (!useBalancedBands) playing = reorderStandardPlayingByFairness(playing, state.allRounds || []);
     const rankedPlaying = [...playing].sort((a, b) => rating(b) - rating(a) || String(a).localeCompare(String(b)));
@@ -3010,7 +3152,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     const band = useBalancedBands ? suppliedBand ? activeBand : allSingles ? activeBand : new Map(rankedPlaying.map((name, index) => [name, index < playingHalf ? 1 : 0])) : new Map(playing.map((name) => [name, 0]));
     const playingSet = new Set(playing);
     if (fastStandardFree || fastBalancedFree) {
-      let bounded = /* @__PURE__ */ __name2(function(position, available, games, score, enforceReturningSpread = true) {
+      let bounded = /* @__PURE__ */ __name22(function(position, available, games, score, enforceReturningSpread = true) {
         if (++nodes2 > (fastBalancedFree ? 5e3 : 2500)) return;
         if (position === formats.length) {
           if (!best2 || compareVector(score, best2.score) < 0) best2 = { score, games: [...games] };
@@ -3031,7 +3173,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
           if (nodes2 > (fastBalancedFree ? 5e3 : 2500)) return;
         }
       }, "bounded");
-      __name22(bounded, "bounded");
+      __name222(bounded, "bounded");
       const history = typeHistory[0];
       const returningRested = new Set(playing.filter((name) => previousRest.has(name)));
       const maxReturningPerCourt = Math.ceil(returningRested.size / Math.max(1, formats.length));
@@ -3091,7 +3233,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       }));
     }
     if (fastStandardXD) {
-      let boundedXd = /* @__PURE__ */ __name2(function(position, available, games, score) {
+      let boundedXd = /* @__PURE__ */ __name22(function(position, available, games, score) {
         if (++nodes2 > 3e3) return;
         if (position === formats.length) {
           if (!best2 || compareVector(score, best2.score) < 0) best2 = { score, games: [...games] };
@@ -3107,7 +3249,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
           if (nodes2 > 3e3) return;
         }
       }, "boundedXd");
-      __name22(boundedXd, "boundedXd");
+      __name222(boundedXd, "boundedXd");
       const men = playing.filter((name) => gender(name) === "male");
       const women = playing.filter((name) => gender(name) === "female");
       const candidates = [];
@@ -3140,7 +3282,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       const men = playing.filter((name) => gender(name) === "male");
       const women = playing.filter((name) => gender(name) === "female");
       if (men.length !== 6 || women.length !== 6) return null;
-      const projectedSpread = /* @__PURE__ */ __name22((pool, history, selected) => {
+      const projectedSpread = /* @__PURE__ */ __name222((pool, history, selected) => {
         const set = new Set(selected);
         const values = pool.map((name) => (history.counts[name] || 0) + Number(set.has(name)));
         return Math.max(...values) - Math.min(...values);
@@ -3164,7 +3306,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         }
       }
       if (!allocation) return null;
-      const bestSameGenderGame = /* @__PURE__ */ __name22((group) => {
+      const bestSameGenderGame = /* @__PURE__ */ __name222((group) => {
         const arrangements = [
           [[group[0], group[1]], [group[2], group[3]]],
           [[group[0], group[2]], [group[1], group[3]]],
@@ -3262,6 +3404,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name(mixedCompletionScore, "mixedCompletionScore");
     __name2(mixedCompletionScore, "mixedCompletionScore");
     __name22(mixedCompletionScore, "mixedCompletionScore");
+    __name222(mixedCompletionScore, "mixedCompletionScore");
     function dfs(position, available, games, score) {
       if (++nodes > 1e6) return;
       if (best && fixedMate.size > 0 && best.score[0] === 0 && best.score[1] === 0) return;
@@ -3287,12 +3430,14 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name(dfs, "dfs");
     __name2(dfs, "dfs");
     __name22(dfs, "dfs");
+    __name222(dfs, "dfs");
     dfs(0, new Set(playing), [], useBalancedBands ? [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] : [0, 0, 0, 0, 0, 0, 0]);
     return best?.games || null;
   }
   __name(solve, "solve");
   __name2(solve, "solve");
   __name22(solve, "solve");
+  __name222(solve, "solve");
   let bestSinglesResult = null;
   let bestSinglesScore = null;
   let bestFixedResult = null;
@@ -3329,8 +3474,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         0
       ), 0);
       const ratingGap = games.reduce((sum, game) => sum + Math.abs(
-        game.pair1.reduce((team, name) => team + rating(name), 0) -
-        game.pair2.reduce((team, name) => team + rating(name), 0)
+        game.pair1.reduce((team, name) => team + rating(name), 0) - game.pair2.reduce((team, name) => team + rating(name), 0)
       ), 0);
       const completeRepeats = games.reduce((sum, game) => {
         const key = [pkey(game.pair1[0], game.pair1[1]), pkey(game.pair2[0], game.pair2[1])].sort().join(":");
@@ -3432,6 +3576,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
 __name(sharedRoundStrict, "sharedRoundStrict");
 __name2(sharedRoundStrict, "sharedRoundStrict");
 __name22(sharedRoundStrict, "sharedRoundStrict");
+__name222(sharedRoundStrict, "sharedRoundStrict");
 function reorderStandardPlayingByFairness(playing, allRounds) {
   const original = new Map((playing || []).map((name, index) => [name, index]));
   const sharedGames = new Map((playing || []).map((name) => [name, /* @__PURE__ */ new Set()]));
@@ -3458,24 +3603,28 @@ function reorderStandardPlayingByFairness(playing, allRounds) {
 __name(reorderStandardPlayingByFairness, "reorderStandardPlayingByFairness");
 __name2(reorderStandardPlayingByFairness, "reorderStandardPlayingByFairness");
 __name22(reorderStandardPlayingByFairness, "reorderStandardPlayingByFairness");
+__name222(reorderStandardPlayingByFairness, "reorderStandardPlayingByFairness");
 function standardFreeDoublesRound(state) {
   return sharedRoundStrict(state, false, "free");
 }
 __name(standardFreeDoublesRound, "standardFreeDoublesRound");
 __name2(standardFreeDoublesRound, "standardFreeDoublesRound");
 __name22(standardFreeDoublesRound, "standardFreeDoublesRound");
+__name222(standardFreeDoublesRound, "standardFreeDoublesRound");
 function standardXdDoublesRound(state) {
   return sharedRoundStrict(state, false, "xd");
 }
 __name(standardXdDoublesRound, "standardXdDoublesRound");
 __name2(standardXdDoublesRound, "standardXdDoublesRound");
 __name22(standardXdDoublesRound, "standardXdDoublesRound");
+__name222(standardXdDoublesRound, "standardXdDoublesRound");
 function standardMixedTypedDoublesRound(state) {
   return sharedRoundStrict(state, false, "typed");
 }
 __name(standardMixedTypedDoublesRound, "standardMixedTypedDoublesRound");
 __name2(standardMixedTypedDoublesRound, "standardMixedTypedDoublesRound");
 __name22(standardMixedTypedDoublesRound, "standardMixedTypedDoublesRound");
+__name222(standardMixedTypedDoublesRound, "standardMixedTypedDoublesRound");
 function standardCombinedRound(state) {
   const courtCount = state.numCourts || 0;
   const formats = Array.from({ length: courtCount }, (_, index) => String((state.courtFormats || [])[index] || "doubles").toLowerCase());
@@ -3487,6 +3636,7 @@ function standardCombinedRound(state) {
 __name(standardCombinedRound, "standardCombinedRound");
 __name2(standardCombinedRound, "standardCombinedRound");
 __name22(standardCombinedRound, "standardCombinedRound");
+__name222(standardCombinedRound, "standardCombinedRound");
 function standardSinglesRound(state) {
   const courtCount = state.numCourts || 0;
   const formats = Array.from({ length: courtCount }, (_, index) => String((state.courtFormats || [])[index] || "doubles").toLowerCase());
@@ -3498,13 +3648,13 @@ function standardSinglesRound(state) {
   const types = Array.from({ length: courtCount }, (_, index) => String((state.courtTypes || [])[index] || "free").toLowerCase());
   const seats = courtCount * 2;
   if (active.length < seats) throw new Error("Not enough active players for the selected Singles courts");
-  const gender = /* @__PURE__ */ __name22((name) => String(getGender(name, allPlayers) || "").toLowerCase(), "gender");
-  const eligible = /* @__PURE__ */ __name22((name, type) => {
+  const gender = /* @__PURE__ */ __name222((name) => String(getGender(name, allPlayers) || "").toLowerCase(), "gender");
+  const eligible = /* @__PURE__ */ __name222((name, type) => {
     if (["md", "men", "singles-men"].includes(type)) return gender(name) === "male";
     if (["ld", "wd", "women", "ladies", "singles-women"].includes(type)) return gender(name) === "female";
     return true;
   }, "eligible");
-  const choose = /* @__PURE__ */ __name22((items, needed, start = 0, picked = [], output = []) => {
+  const choose = /* @__PURE__ */ __name222((items, needed, start = 0, picked = [], output = []) => {
     if (picked.length === needed) {
       output.push([...picked]);
       return output;
@@ -3523,7 +3673,7 @@ function standardSinglesRound(state) {
     ...active.filter((name) => !(state.restQueue || []).includes(name))
   ];
   const queuePosition = new Map(queue.map((name, index) => [name, index]));
-  const typeKey = /* @__PURE__ */ __name22((type) => ["md", "men", "singles-men"].includes(type) ? "singles-men" : ["ld", "wd", "women", "ladies", "singles-women"].includes(type) ? "singles-women" : "singles-free", "typeKey");
+  const typeKey = /* @__PURE__ */ __name222((type) => ["md", "men", "singles-men"].includes(type) ? "singles-men" : ["ld", "wd", "women", "ladies", "singles-women"].includes(type) ? "singles-women" : "singles-free", "typeKey");
   const appearances = Object.fromEntries(types.map((type) => [typeKey(type), Object.fromEntries(active.map((name) => [name, 0]))]));
   const meetings = /* @__PURE__ */ new Map();
   for (const round of state.allRounds || []) for (const game of round.games || []) {
@@ -3553,12 +3703,13 @@ function standardSinglesRound(state) {
   __name(roundRobinOrder, "roundRobinOrder");
   __name2(roundRobinOrder, "roundRobinOrder");
   __name22(roundRobinOrder, "roundRobinOrder");
+  __name222(roundRobinOrder, "roundRobinOrder");
   const roundRobin = {
     "singles-men": roundRobinOrder(active.filter((name) => gender(name) === "male")),
     "singles-women": roundRobinOrder(active.filter((name) => gender(name) === "female")),
     "singles-free": roundRobinOrder(active)
   };
-  const compare = /* @__PURE__ */ __name22((left, right) => {
+  const compare = /* @__PURE__ */ __name222((left, right) => {
     for (let index = 0; index < Math.max(left.length, right.length); index++) {
       if ((left[index] || 0) !== (right[index] || 0)) return (left[index] || 0) - (right[index] || 0);
     }
@@ -3568,7 +3719,7 @@ function standardSinglesRound(state) {
   let best = null;
   const restOptions = restNeeded ? choose(queue, restNeeded) : [[]];
   for (const resting of restOptions) {
-    let search = /* @__PURE__ */ __name2(function(position, available, games) {
+    let search = /* @__PURE__ */ __name22(function(position, available, games) {
       if (position === order.length) {
         const typeSpreads = [];
         for (const key of [...new Set(types.map(typeKey))]) {
@@ -3601,7 +3752,7 @@ function standardSinglesRound(state) {
         search(position + 1, next, [...games, { court: courtIndex + 1, pair: candidate.pair, type: candidate.type, key: candidate.key }]);
       }
     }, "search");
-    __name22(search, "search");
+    __name222(search, "search");
     const restSet = new Set(resting);
     const playing = active.filter((name) => !restSet.has(name));
     const projectedRest = active.map((name) => (restCount[name] || 0) + Number(restSet.has(name)));
@@ -3635,6 +3786,7 @@ function standardSinglesRound(state) {
 __name(standardSinglesRound, "standardSinglesRound");
 __name2(standardSinglesRound, "standardSinglesRound");
 __name22(standardSinglesRound, "standardSinglesRound");
+__name222(standardSinglesRound, "standardSinglesRound");
 function standardRoundStrict(state) {
   const courtCount = state.numCourts || 0;
   const formats = Array.from({ length: courtCount }, (_, index) => String((state.courtFormats || [])[index] || "doubles").toLowerCase());
@@ -3650,12 +3802,14 @@ function standardRoundStrict(state) {
 __name(standardRoundStrict, "standardRoundStrict");
 __name2(standardRoundStrict, "standardRoundStrict");
 __name22(standardRoundStrict, "standardRoundStrict");
+__name222(standardRoundStrict, "standardRoundStrict");
 function balancedRoundStrict(state) {
   return sharedRoundStrict(state, true);
 }
 __name(balancedRoundStrict, "balancedRoundStrict");
 __name2(balancedRoundStrict, "balancedRoundStrict");
 __name22(balancedRoundStrict, "balancedRoundStrict");
+__name222(balancedRoundStrict, "balancedRoundStrict");
 function restartGenerationCycleFromLatestRound(state) {
   const latest = Array.isArray(state.allRounds) && state.allRounds.length ? state.allRounds[state.allRounds.length - 1] : null;
   state.allRounds = latest ? [latest] : [];
@@ -3675,6 +3829,7 @@ function restartGenerationCycleFromLatestRound(state) {
 __name(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatestRound");
 __name2(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatestRound");
 __name22(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatestRound");
+__name222(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatestRound");
 async function handleGenerateRound(request, env) {
   const req = await request.json();
   const restCount = Object.fromEntries(req.restCount || []);
@@ -3712,6 +3867,7 @@ async function handleGenerateRound(request, env) {
     balancedGamesMode: req.balancedGamesMode || req.gameGenerationMode === "balanced",
     gameGenerationMode: req.gameGenerationMode || (req.balancedGamesMode ? "balanced" : "standard"),
     randomPlayerOrder: req.randomPlayerOrder === true,
+    balancedRandomRestOrderLocked: req.balancedRandomRestOrderLocked === true,
     frozenBalancedBands: req.balancedBands && typeof req.balancedBands === "object" ? req.balancedBands : null
   };
   if (req._mbmCall) {
@@ -3796,6 +3952,7 @@ async function handleGenerateRound(request, env) {
 __name(handleGenerateRound, "handleGenerateRound");
 __name2(handleGenerateRound, "handleGenerateRound");
 __name22(handleGenerateRound, "handleGenerateRound");
+__name222(handleGenerateRound, "handleGenerateRound");
 function lineAppUrl(env) {
   try {
     const url = new URL(env.LINE_APP_URL || "https://scs-app.com/");
@@ -3810,6 +3967,7 @@ function lineAppUrl(env) {
 __name(lineAppUrl, "lineAppUrl");
 __name2(lineAppUrl, "lineAppUrl");
 __name22(lineAppUrl, "lineAppUrl");
+__name222(lineAppUrl, "lineAppUrl");
 function lineCallbackUrl(request, env) {
   if (env.LINE_CALLBACK_URL) return env.LINE_CALLBACK_URL;
   return new URL("/auth/line/callback", request.url).toString();
@@ -3817,6 +3975,7 @@ function lineCallbackUrl(request, env) {
 __name(lineCallbackUrl, "lineCallbackUrl");
 __name2(lineCallbackUrl, "lineCallbackUrl");
 __name22(lineCallbackUrl, "lineCallbackUrl");
+__name222(lineCallbackUrl, "lineCallbackUrl");
 function lineRedirect(env, key, value) {
   const target = lineAppUrl(env);
   target.hash = key + "=" + encodeURIComponent(String(value || "unknown"));
@@ -3832,6 +3991,7 @@ function lineRedirect(env, key, value) {
 __name(lineRedirect, "lineRedirect");
 __name2(lineRedirect, "lineRedirect");
 __name22(lineRedirect, "lineRedirect");
+__name222(lineRedirect, "lineRedirect");
 function lineRandom(bytes = 24) {
   const data = new Uint8Array(bytes);
   crypto.getRandomValues(data);
@@ -3842,6 +4002,7 @@ function lineRandom(bytes = 24) {
 __name(lineRandom, "lineRandom");
 __name2(lineRandom, "lineRandom");
 __name22(lineRandom, "lineRandom");
+__name222(lineRandom, "lineRandom");
 function readCookie(request, name) {
   const cookie = request.headers.get("Cookie") || "";
   for (const part of cookie.split(";")) {
@@ -3858,12 +4019,14 @@ function readCookie(request, name) {
 __name(readCookie, "readCookie");
 __name2(readCookie, "readCookie");
 __name22(readCookie, "readCookie");
+__name222(readCookie, "readCookie");
 function lineStateCookie(value, maxAge) {
   return "scs_line_state=" + encodeURIComponent(value || "") + "; Path=/auth/line; HttpOnly; Secure; SameSite=Lax; Max-Age=" + String(maxAge);
 }
 __name(lineStateCookie, "lineStateCookie");
 __name2(lineStateCookie, "lineStateCookie");
 __name22(lineStateCookie, "lineStateCookie");
+__name222(lineStateCookie, "lineStateCookie");
 function lineSafeNickname(value) {
   const nickname = String(value || "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 60);
   return nickname || "LINE Player";
@@ -3871,6 +4034,7 @@ function lineSafeNickname(value) {
 __name(lineSafeNickname, "lineSafeNickname");
 __name2(lineSafeNickname, "lineSafeNickname");
 __name22(lineSafeNickname, "lineSafeNickname");
+__name222(lineSafeNickname, "lineSafeNickname");
 async function lineVerifierHash(value) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(value || "")));
   return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -3878,12 +4042,14 @@ async function lineVerifierHash(value) {
 __name(lineVerifierHash, "lineVerifierHash");
 __name2(lineVerifierHash, "lineVerifierHash");
 __name22(lineVerifierHash, "lineVerifierHash");
+__name222(lineVerifierHash, "lineVerifierHash");
 function lineValidHandoff(id, verifier) {
   return /^[a-f0-9-]{36}$/i.test(String(id || "")) && /^[A-Za-z0-9_-]{40,128}$/.test(String(verifier || ""));
 }
 __name(lineValidHandoff, "lineValidHandoff");
 __name2(lineValidHandoff, "lineValidHandoff");
 __name22(lineValidHandoff, "lineValidHandoff");
+__name222(lineValidHandoff, "lineValidHandoff");
 async function handleLineStart(request, env) {
   if (!env.LINE_CHANNEL_ID || !env.LINE_CHANNEL_SECRET || !env.TOKEN_SECRET) {
     return lineRedirect(env, "line_error", "not_configured");
@@ -3939,6 +4105,7 @@ async function handleLineStart(request, env) {
 __name(handleLineStart, "handleLineStart");
 __name2(handleLineStart, "handleLineStart");
 __name22(handleLineStart, "handleLineStart");
+__name222(handleLineStart, "handleLineStart");
 async function handleLineHandoffCreate(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   if (!env.TOKEN_SECRET) return json({ error: "Social login is not configured" }, 503);
@@ -3969,6 +4136,7 @@ async function handleLineHandoffCreate(request, env) {
 __name(handleLineHandoffCreate, "handleLineHandoffCreate");
 __name2(handleLineHandoffCreate, "handleLineHandoffCreate");
 __name22(handleLineHandoffCreate, "handleLineHandoffCreate");
+__name222(handleLineHandoffCreate, "handleLineHandoffCreate");
 async function handleLineDevice(request, env) {
   if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
   const url = new URL(request.url);
@@ -3997,6 +4165,7 @@ async function handleLineDevice(request, env) {
 __name(handleLineDevice, "handleLineDevice");
 __name2(handleLineDevice, "handleLineDevice");
 __name22(handleLineDevice, "handleLineDevice");
+__name222(handleLineDevice, "handleLineDevice");
 async function handleLineCallback(request, env) {
   const url = new URL(request.url);
   const clearCookie = lineStateCookie("", 0);
@@ -4181,6 +4350,7 @@ async function handleLineCallback(request, env) {
 __name(handleLineCallback, "handleLineCallback");
 __name2(handleLineCallback, "handleLineCallback");
 __name22(handleLineCallback, "handleLineCallback");
+__name222(handleLineCallback, "handleLineCallback");
 async function handleLineHandoffStatus(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   if (!env.TOKEN_SECRET) return json({ error: "Social login is not configured" }, 503);
@@ -4225,6 +4395,7 @@ async function handleLineHandoffStatus(request, env) {
 __name(handleLineHandoffStatus, "handleLineHandoffStatus");
 __name2(handleLineHandoffStatus, "handleLineHandoffStatus");
 __name22(handleLineHandoffStatus, "handleLineHandoffStatus");
+__name222(handleLineHandoffStatus, "handleLineHandoffStatus");
 async function handleLineComplete(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   if (!env.TOKEN_SECRET) return json({ error: "LINE Login is not configured" }, 503);
@@ -4257,6 +4428,7 @@ async function handleLineComplete(request, env) {
 __name(handleLineComplete, "handleLineComplete");
 __name2(handleLineComplete, "handleLineComplete");
 __name22(handleLineComplete, "handleLineComplete");
+__name222(handleLineComplete, "handleLineComplete");
 async function handleLineNickname(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   if (!env.TOKEN_SECRET) return json({ error: "LINE Login is not configured" }, 503);
@@ -4295,6 +4467,7 @@ async function handleLineNickname(request, env) {
 __name(handleLineNickname, "handleLineNickname");
 __name2(handleLineNickname, "handleLineNickname");
 __name22(handleLineNickname, "handleLineNickname");
+__name222(handleLineNickname, "handleLineNickname");
 function googleAppUrl(env) {
   try {
     const url = new URL(env.GOOGLE_APP_URL || env.LINE_APP_URL || "https://scs-app.com/");
@@ -4309,6 +4482,7 @@ function googleAppUrl(env) {
 __name(googleAppUrl, "googleAppUrl");
 __name2(googleAppUrl, "googleAppUrl");
 __name22(googleAppUrl, "googleAppUrl");
+__name222(googleAppUrl, "googleAppUrl");
 function googleCallbackUrl(request, env) {
   if (env.GOOGLE_CALLBACK_URL) return env.GOOGLE_CALLBACK_URL;
   return new URL("/auth/google/callback", request.url).toString();
@@ -4316,6 +4490,7 @@ function googleCallbackUrl(request, env) {
 __name(googleCallbackUrl, "googleCallbackUrl");
 __name2(googleCallbackUrl, "googleCallbackUrl");
 __name22(googleCallbackUrl, "googleCallbackUrl");
+__name222(googleCallbackUrl, "googleCallbackUrl");
 function googleRedirect(env, key, value) {
   const target = googleAppUrl(env);
   target.hash = key + "=" + encodeURIComponent(String(value || "unknown"));
@@ -4331,12 +4506,14 @@ function googleRedirect(env, key, value) {
 __name(googleRedirect, "googleRedirect");
 __name2(googleRedirect, "googleRedirect");
 __name22(googleRedirect, "googleRedirect");
+__name222(googleRedirect, "googleRedirect");
 function googleStateCookie(value, maxAge) {
   return "scs_google_state=" + encodeURIComponent(value || "") + "; Path=/auth/google; HttpOnly; Secure; SameSite=Lax; Max-Age=" + String(maxAge);
 }
 __name(googleStateCookie, "googleStateCookie");
 __name2(googleStateCookie, "googleStateCookie");
 __name22(googleStateCookie, "googleStateCookie");
+__name222(googleStateCookie, "googleStateCookie");
 function googleSafeDisplayName(value) {
   const name = String(value || "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 60);
   return name || "Google Player";
@@ -4344,6 +4521,7 @@ function googleSafeDisplayName(value) {
 __name(googleSafeDisplayName, "googleSafeDisplayName");
 __name2(googleSafeDisplayName, "googleSafeDisplayName");
 __name22(googleSafeDisplayName, "googleSafeDisplayName");
+__name222(googleSafeDisplayName, "googleSafeDisplayName");
 function mergeAuthProvider(existing, provider) {
   const providers = String(existing || "").split("_").map((value) => value.trim()).filter(Boolean);
   if (!providers.includes(provider)) providers.push(provider);
@@ -4352,6 +4530,7 @@ function mergeAuthProvider(existing, provider) {
 __name(mergeAuthProvider, "mergeAuthProvider");
 __name2(mergeAuthProvider, "mergeAuthProvider");
 __name22(mergeAuthProvider, "mergeAuthProvider");
+__name222(mergeAuthProvider, "mergeAuthProvider");
 async function handleGoogleStart(request, env) {
   if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.TOKEN_SECRET) {
     return googleRedirect(env, "google_error", "not_configured");
@@ -4406,6 +4585,7 @@ async function handleGoogleStart(request, env) {
 __name(handleGoogleStart, "handleGoogleStart");
 __name2(handleGoogleStart, "handleGoogleStart");
 __name22(handleGoogleStart, "handleGoogleStart");
+__name222(handleGoogleStart, "handleGoogleStart");
 async function handleGoogleDevice(request, env) {
   if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
   const url = new URL(request.url);
@@ -4434,6 +4614,7 @@ async function handleGoogleDevice(request, env) {
 __name(handleGoogleDevice, "handleGoogleDevice");
 __name2(handleGoogleDevice, "handleGoogleDevice");
 __name22(handleGoogleDevice, "handleGoogleDevice");
+__name222(handleGoogleDevice, "handleGoogleDevice");
 async function handleGoogleCallback(request, env) {
   const url = new URL(request.url);
   const clearCookie = googleStateCookie("", 0);
@@ -4608,6 +4789,7 @@ async function handleGoogleCallback(request, env) {
 __name(handleGoogleCallback, "handleGoogleCallback");
 __name2(handleGoogleCallback, "handleGoogleCallback");
 __name22(handleGoogleCallback, "handleGoogleCallback");
+__name222(handleGoogleCallback, "handleGoogleCallback");
 async function handleGoogleComplete(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   if (!env.TOKEN_SECRET) return json({ error: "Google Login is not configured" }, 503);
@@ -4640,6 +4822,7 @@ async function handleGoogleComplete(request, env) {
 __name(handleGoogleComplete, "handleGoogleComplete");
 __name2(handleGoogleComplete, "handleGoogleComplete");
 __name22(handleGoogleComplete, "handleGoogleComplete");
+__name222(handleGoogleComplete, "handleGoogleComplete");
 async function handleGoogleNickname(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   if (!env.TOKEN_SECRET) return json({ error: "Google Login is not configured" }, 503);
@@ -4678,6 +4861,7 @@ async function handleGoogleNickname(request, env) {
 __name(handleGoogleNickname, "handleGoogleNickname");
 __name2(handleGoogleNickname, "handleGoogleNickname");
 __name22(handleGoogleNickname, "handleGoogleNickname");
+__name222(handleGoogleNickname, "handleGoogleNickname");
 async function handleNicknameUpdate(request, env) {
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
   const body = await request.json().catch(() => ({}));
@@ -4715,6 +4899,7 @@ async function handleNicknameUpdate(request, env) {
 __name(handleNicknameUpdate, "handleNicknameUpdate");
 __name2(handleNicknameUpdate, "handleNicknameUpdate");
 __name22(handleNicknameUpdate, "handleNicknameUpdate");
+__name222(handleNicknameUpdate, "handleNicknameUpdate");
 export {
   worker_default as default
 };

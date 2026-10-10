@@ -1,0 +1,7 @@
+{
+  "name": "scs-pairing",
+  "main": "pairing-worker.js",
+  "compatibility_date": "2026-09-06",
+  "workers_dev": true,
+  "preview_urls": false
+}
