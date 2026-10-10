@@ -210,6 +210,12 @@ function scsResetTournamentCloudIdentity(format) {
   localStorage.removeItem(_scsTournamentCloudIdKey(club.id, format));
 }
 
+function scsGetTournamentCloudIdentity(format) {
+  const club = getMyClub();
+  if (!club || !club.id || !['knockout', 'group'].includes(format)) return '';
+  return localStorage.getItem(_scsTournamentCloudIdKey(club.id, format)) || '';
+}
+
 async function dbLoadLatestTournament(format) {
   const club = getMyClub();
   if (!club || !club.id || !['knockout', 'group'].includes(format)) return null;
@@ -250,6 +256,7 @@ async function dbAdoptTournamentById(id) {
   const previous = _scsTournamentSaveTimers.get(row.format);
   if (previous) clearTimeout(previous);
   _scsTournamentSaveTimers.delete(row.format);
+  row.state._scsCloudTournamentId = row.id;
   localStorage.setItem(_scsTournamentCloudIdKey(club.id, row.format), row.id);
   localStorage.setItem(row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94', JSON.stringify(row.state));
   return row;
@@ -280,6 +287,7 @@ window.dbLoadTournamentById = dbLoadTournamentById;
 window.dbAdoptTournamentById = dbAdoptTournamentById;
 window.scsQueueTournamentCloudSave = scsQueueTournamentCloudSave;
 window.scsResetTournamentCloudIdentity = scsResetTournamentCloudIdentity;
+window.scsGetTournamentCloudIdentity = scsGetTournamentCloudIdentity;
 window.scsTournamentHydrateCloud = scsTournamentHydrateCloud;
 
 
@@ -1242,6 +1250,28 @@ async function dbUpdateLiveMatchScore(sessionId, roundNumber, courtNumber, pair1
     return true;
   } catch(e) { console.warn('dbUpdateLiveMatchScore error:', e.message); return false; }
 }
+
+async function dbFinishTournamentConductMatch(sessionId, ccid) {
+  if (!sessionId || !ccid) return false;
+  try {
+    const rows = await sbGet('sessions', `id=eq.${encodeURIComponent(sessionId)}&status=eq.live&select=id,rounds_data`);
+    if (!rows || !rows[0]) return false;
+    const rounds = Array.isArray(rows[0].rounds_data) ? rows[0].rounds_data : [];
+    let found = false;
+    rounds.forEach(round => (round.games || []).forEach(game => {
+      if (game.ccid === ccid && game.score_status === 'scored') {
+        game.conduct_finished = true;
+        game.conduct_finished_at = new Date().toISOString();
+        found = true;
+      }
+    }));
+    if (!found) return false;
+    await sbPatch('sessions', `id=eq.${encodeURIComponent(sessionId)}`, { rounds_data: rounds, updated_at: new Date().toISOString() });
+    return true;
+  } catch(e) { console.warn('dbFinishTournamentConductMatch error:', e.message); return false; }
+}
+
+window.dbFinishTournamentConductMatch = dbFinishTournamentConductMatch;
 
 async function dbPullExternalLiveScores() {
   const sessionId = (typeof getMySessionId === 'function') ? getMySessionId() : null;
