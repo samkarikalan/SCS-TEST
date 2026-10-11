@@ -1,6 +1,6 @@
 /* V37: editable OCR entries and player/club parsing; input-driven knockout draw. OCR reads text; the organizer confirms teams and connections. */
 (function(){'use strict';
-var assistStep=0,assistSaved=false,draw=null,readonly=false,selected=null,saveFn=null,assignFn=null,clearFn=null,root=null,scanImage=null,scanText='',scanBusy=false,scanRecognition=null,zoom=1,panX=0,panY=0,gesture=null,byeSelection=null;
+var assistStep=0,assistSaved=false,draw=null,readonly=false,selected=null,saveFn=null,assignFn=null,clearFn=null,root=null,scanImage=null,scanText='',scanBusy=false,scanRecognition=null,zoom=1,panX=0,panY=0,gesture=null,byeSelection=null,lastLiveRenderSignature='';
 var LOCAL_TOURNAMENT_KEY='scs_knockout_tournament_v94';
 function localTournamentLoad(){try{var x=JSON.parse(localStorage.getItem(LOCAL_TOURNAMENT_KEY)||'null');return x&&x.matches&&x.matches.length?x:null}catch(_){return null}}
 function localTournamentSave(d){try{if(readonly)return Promise.resolve(d);localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
@@ -909,9 +909,23 @@ function example(){alert('Enter teams or import your own photograph; no predefin
 function renderLiveSafe(){
   /* V108: Court Center polls every 2 seconds. Never rebuild the tournament DOM while
      the organizer is typing a late team entry; otherwise mobile Safari loses focus. */
+  if(root&&root.querySelector('.scs-tm-entry-modal'))return;
   var a=document.activeElement;
   if(a&&root&&root.contains(a)&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'||a.tagName==='SELECT'))return;
+  /* Polling must not rebuild an unchanged live screen. Replacing the DOM every
+     two seconds resets the organizer's scroll position and can move a button
+     between pointer-down and click on mobile. Only redraw when court state
+     actually changed, and preserve the page position across that redraw. */
+  var state=window.SCSCourtCenter&&SCSCourtCenter.liveState?SCSCourtCenter.liveState():null;
+  var round=state&&state.tournament?state:null;
+  var signature='';
+  try{signature=JSON.stringify(round&&{t:round.tournament&&round.tournament.id,c:round.tournament&&round.tournament.courtCount,g:(round.games||[]).map(function(g){return [g.ccid,g.tournament_match,g.court,g.court_center_status,g.score_status,g.score,g.winner,g.started_at,g.completed_at]})})}catch(_){signature=String(Date.now())}
+  if(!lastLiveRenderSignature){lastLiveRenderSignature=signature;return}
+  if(signature===lastLiveRenderSignature)return;
+  lastLiveRenderSignature=signature;
+  var y=window.scrollY||document.documentElement.scrollTop||0;
   render();
+  requestAnimationFrame(function(){window.scrollTo(0,y)});
 }
 function liveTab(name){if(!draw)return;draw.liveTab=name;render();}
 function approveLive(id){var g=window.SCSCourtCenter&&SCSCourtCenter.tournamentGame&&SCSCourtCenter.tournamentGame(id);if(!g)return;if(g.score_status!=='scored'){alert('Complete the score first.');return;}if(window.SCSCourtCenter&&SCSCourtCenter.approve)SCSCourtCenter.approve(g.ccid).then(function(){draw.liveTab='completed';localTournamentSave(draw);render();});}
