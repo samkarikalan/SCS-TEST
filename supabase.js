@@ -262,6 +262,25 @@ async function dbAdoptTournamentById(id) {
   return row;
 }
 
+async function dbDeleteTournamentById(id) {
+  const club = getMyClub();
+  if (!club || !club.id || !id) return false;
+  const row = await dbLoadTournamentById(id);
+  if (!row) throw new Error('Tournament not found or already deleted.');
+  await sbDelete('tournaments',
+    `id=eq.${encodeURIComponent(id)}&club_id=eq.${encodeURIComponent(club.id)}`
+  );
+  const idKey = _scsTournamentCloudIdKey(club.id, row.format);
+  if (localStorage.getItem(idKey) === String(id)) {
+    const previous = _scsTournamentSaveTimers.get(row.format);
+    if (previous) clearTimeout(previous);
+    _scsTournamentSaveTimers.delete(row.format);
+    localStorage.removeItem(idKey);
+    localStorage.removeItem(row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94');
+  }
+  return true;
+}
+
 async function scsTournamentHydrateCloud() {
   const tasks = [
     ['knockout', 'scs_knockout_tournament_v94'],
@@ -285,6 +304,7 @@ window.dbLoadLatestTournament = dbLoadLatestTournament;
 window.dbListClubTournaments = dbListClubTournaments;
 window.dbLoadTournamentById = dbLoadTournamentById;
 window.dbAdoptTournamentById = dbAdoptTournamentById;
+window.dbDeleteTournamentById = dbDeleteTournamentById;
 window.scsQueueTournamentCloudSave = scsQueueTournamentCloudSave;
 window.scsResetTournamentCloudIdentity = scsResetTournamentCloudIdentity;
 window.scsGetTournamentCloudIdentity = scsGetTournamentCloudIdentity;
