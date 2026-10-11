@@ -20,9 +20,10 @@ function scoredBody(o){
  const names=(v,fallback)=>Array.isArray(v)&&v.length?v:[fallback];
  const sets=String(o.score||'').split(/\s*\|\s*/).map(x=>x.match(/^\s*(\d+)\s*[-–—:]\s*(\d+)\s*$/)).filter(Boolean);
  const teamScore=i=>sets.length?sets.map(x=>x[i+1]).join(' | '):'';
- const line=(team,raw,score,win)=>'<div class="scs-tm-completed-team '+(win?'is-winner':'')+'"><div class="scs-tm-completed-players">'+names(team,raw).map(n=>'<span class="scs-tm-serving-player"><span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(n)+'"></span><span class="scs-tm-shared-name">'+esc(n)+'</span></span>'+serverMark(n,o.server)+'</span>').join('')+'</div>'+(score?'<strong class="scs-tm-completed-team-score">'+esc(score)+'</strong>':'')+'</div>';
+ const current=sets.length?sets[sets.length-1]:null,leftLeading=!o.winner&&current&&Number(current[1])>Number(current[2]),rightLeading=!o.winner&&current&&Number(current[2])>Number(current[1]);
+ const line=(team,raw,score,win,leading)=>'<div class="scs-tm-completed-team '+(win?'is-winner ':'')+(leading?'is-leading':'')+'"><div class="scs-tm-completed-players">'+names(team,raw).map(n=>'<span class="scs-tm-serving-player"><span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(n)+'"></span><span class="scs-tm-shared-name">'+esc(n)+'</span></span>'+serverMark(n,o.server)+'</span>').join('')+'</div>'+(score?'<strong class="scs-tm-completed-team-score">'+esc(score)+'</strong>':'')+'</div>';
  const winner=o.winner==='left'?o.left:o.winner==='right'?o.right:'';
- return '<div class="scs-tm-completed-content"><div class="scs-tm-completed-teams">'+line(o.leftPlayers,o.left,teamScore(0),o.winner==='left')+'<span class="scs-tm-completed-vs">VS</span>'+line(o.rightPlayers,o.right,teamScore(1),o.winner==='right')+'</div>'+(winner?'<div class="scs-tm-completed-winner"><span aria-hidden="true">🏆</span><span><small>Winner</small><b>'+esc(winner)+'</b></span></div>':'')+'</div>';
+ return '<div class="scs-tm-completed-content"><div class="scs-tm-completed-teams">'+line(o.leftPlayers,o.left,teamScore(0),o.winner==='left',leftLeading)+'<span class="scs-tm-completed-vs">VS</span>'+line(o.rightPlayers,o.right,teamScore(1),o.winner==='right',rightLeading)+'</div>'+(winner?'<div class="scs-tm-completed-winner"><span aria-hidden="true">🏆</span><span><small>Winner</small><b>'+esc(winner)+'</b></span></div>':'')+'</div>';
 }
 function completed(o){
  const title=o.title||('Match '+esc(o.number));
