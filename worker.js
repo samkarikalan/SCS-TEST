@@ -735,7 +735,7 @@ var DB_TABLE_RULES = {
   sessions: ["get", "post", "patch"],
   slot_claims: ["get", "post", "patch", "delete"],
   slots: ["get", "post", "patch", "delete"],
-  tournaments: ["get", "post", "patch"],
+  tournaments: ["get", "post", "patch", "delete"],
   venues: ["get", "post", "patch", "delete"],
   user_accounts: ["get", "post", "patch"],
   user_club_roles: ["get", "upsert"]
