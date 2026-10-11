@@ -3888,6 +3888,15 @@ style="display:none;font-size:0.72rem;color:var(--accent);word-break:break-all;m
 @media(max-width:440px){#scsActivityHome{padding:calc(env(safe-area-inset-top,0px) + 12px) 14px calc(env(safe-area-inset-bottom,0px) + 12px)}#scsActivityHome .scs-activity-panel{gap:14px}}
 @media(max-width:350px){#scsActivityHome .scs-shared-club-head{grid-template-columns:40px minmax(0,1fr) auto}#scsActivityHome .scs-shared-club-action{grid-column:auto;width:auto;min-height:38px}#scsActivityHome .scs-shared-club-status{font-size:.65rem}}
 @media(max-height:650px){#scsActivityHome{align-items:flex-start}#scsActivityHome .scs-activity-panel{gap:10px}#scsActivityHome .scs-shared-club-head{padding:10px}}
+/* Equal-width home cards: one shared box model and one image aspect ratio. */
+#scsActivityHome .scs-activity-panel{width:min(100%,480px)!important;max-width:480px!important;box-sizing:border-box!important;align-items:stretch!important}
+#scsActivityHome .scs-shared-club-head,
+#scsActivityHome .scs-activity-choice.scs-art-card,
+#scsActivityHome .scs-activity-choice.scs-art-card.scs-shared-tournament{display:block;box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important;margin-left:0!important;margin-right:0!important;transform-origin:center}
+#scsActivityHome .scs-shared-club-head{display:grid}
+#scsActivityHome .scs-activity-choice.scs-art-card,
+#scsActivityHome .scs-activity-choice.scs-art-card.scs-shared-tournament{height:auto!important;aspect-ratio:51 / 20!important;min-height:0!important;padding:0!important;overflow:hidden!important}
+#scsActivityHome .scs-activity-choice.scs-art-card .scs-card-art{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important}
 </style>
 <div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="SCS Home">
  <div class="scs-activity-panel scs-shared-club-card">
@@ -3897,8 +3906,8 @@ style="display:none;font-size:0.72rem;color:var(--accent);word-break:break-all;m
    <button type="button" id="scsSharedClubAction" class="scs-shared-club-action" onclick="scsActivityClubAction()">Login</button>
   </header>
   <div class="scs-shared-club-divider"></div>
-  <button class="scs-activity-choice scs-art-card" aria-label="Practice — Quick games, sessions and training" onclick="scsActivityChoose('practice')"><img class="scs-card-art" src="scs-practice-card.png" alt="Practice — Quick games, sessions and training"></button>
-  <button class="scs-activity-choice scs-art-card scs-shared-tournament" aria-label="Tournament — Create, manage and follow tournaments" onclick="scsActivityChoose('tournament')"><img class="scs-card-art" src="scs-tournament-card.png" alt="Tournament — Create, manage and follow tournaments"></button>
+  <button class="scs-activity-choice scs-art-card" aria-label="Practice — Quick games, sessions and training" onclick="scsActivityChoose('practice')"><img class="scs-card-art" src="scs-practice-card.png?v=V197" alt="Practice — Quick games, sessions and training"></button>
+  <button class="scs-activity-choice scs-art-card scs-shared-tournament" aria-label="Tournament — Create, manage and follow tournaments" onclick="scsActivityChoose('tournament')"><img class="scs-card-art" src="scs-tournament-card.png?v=V197" alt="Tournament — Create, manage and follow tournaments"></button>
  </div>
 </div>
 <script>
