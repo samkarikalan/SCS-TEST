@@ -1,11 +1,11 @@
 // SCS_BUILD_50_MYHUB_EMBEDDED_CLUBS_REPORT
 /* Sports Club Scheduler service worker — complete installed-app updates. */
-const CACHE_NAME = 'scs-cache-V192';
-const APP_SHELL = './index.html?v=V196';
+const CACHE_NAME = 'scs-cache-V201';
+const APP_SHELL = './index.html?v=V201';
 
 const ASSETS = [
   APP_SHELL,
-  './scs-practice-card.png', './scs-tournament-card.png',
+  './scs-practice-card-pro.png', './scs-tournament-card-pro.png',
   './ui.css?v=V149', './rounds.css?v=V149',
   './shared-match-center.js?v=V158', './group-tournament.js?v=V168', './group-tournament.css?v=V149', './tournament-bracket.js?v=V186', './tournament-bracket.css?v=V172', './scoring.js?v=V149', './court-center.js?v=V151', './offline-db.js?v=V149', './offline-rounds.js?v=V149', './full-schedule.js?v=V149', './snapshot.js?v=V149', './supabase.js?v=V149', './auth.js?v=V149',
   './authUI.js?v=V149', './subscription.js?v=V149', './HomeScreen.js?v=V149',
