@@ -123,8 +123,8 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V165" defer></script>
-  <script src="tournament-bracket.js?v=V186" defer></script>
-  <script src="court-center.js?v=V151" defer></script>
+  <script src="tournament-bracket.js?v=V191" defer></script>
+  <script src="court-center.js?v=V155" defer></script>
 
   <script src="games.js?v=V149" defer></script>
 
@@ -487,7 +487,7 @@ async function scsOpenContinueTournament(id,format){
   try{localStorage.setItem('scs_last_tournament_type',format)}catch(_){}
   scsTournamentRememberParent('scsTournamentContinue');var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true;
   if(format==='group'&&window.SCSGroupTournament){SCSGroupTournament.open();return}
-  if(format==='knockout'&&window.SCSTournament&&SCSTournament.enterSavedTournament){await SCSTournament.enterSavedTournament();return}
+  if(format==='knockout'&&window.SCSTournament&&SCSTournament.enterSavedTournament){SCSTournament.enterSavedTournament();return}
   alert('Tournament view is still loading. Please try again.');
 }
 function scsTournamentEscape(value){return String(value==null?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
