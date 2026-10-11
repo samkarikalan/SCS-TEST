@@ -211,6 +211,7 @@
 /* V127 tournament-only controls */
 .scs-tm-pool-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .scs-tm-pool-actions button{min-height:42px}
+.scs-tm-team-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:14px}.scs-tm-roster-card{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:10px;padding:12px;border:1px solid #42618b;border-radius:14px;background:#132640}.scs-tm-roster-number{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#244a78;color:#fff;font-weight:900}.scs-tm-roster-card .scs-tm-shared-player{margin:4px 0}.scs-tm-roster-card>small{color:#f7c957;font-weight:900}.scs-tm-roster-empty{color:#9eacc1}
 .scs-tm-bracket-shell{border:1px solid #506582;border-radius:18px;background:#172235;padding:12px;margin-bottom:14px;min-width:0;width:100%;box-sizing:border-box}
 .scs-tm-bracket-shell .scs-tm-zoom-bar{margin:0 0 8px!important}
 .scs-tm-bracket-shell .scs-tm-scroll,.scs-tm-workspace[data-live-tournament="true"] .scs-tm-bracket-shell .scs-tm-scroll{margin:0!important;min-height:0!important;border-radius:12px;height:520px}
