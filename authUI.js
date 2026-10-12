@@ -1222,10 +1222,15 @@ async function authAfterLogin(user) {
         return { club_id: m.club_id, nickname: m.nickname, club_name: clubMap[m.club_id] || '' };
       });
 
-      // Set nickname from first membership (all should share same nickname)
-      var firstMem = linkedMemberships[0];
+      // Preserve the club the user explicitly selected on the Clubs page.
+      // Falling back to the first membership is only correct when there is no
+      // saved selection (or that selection is no longer a valid membership).
+      var savedClub = (typeof getMyClub === 'function') ? getMyClub() : null;
+      var activeMem = savedClub && savedClub.id
+        ? linkedMemberships.find(function(m) { return String(m.club_id) === String(savedClub.id); })
+        : null;
+      var firstMem = activeMem || linkedMemberships[0];
       if (typeof setMyPlayer === 'function') setMyPlayer({ name: firstMem.nickname, gender: user.gender || 'Male' });
-      // Set active club to first membership as default (used by organiser/vault modes)
       if (typeof setMyClub === 'function') setMyClub(firstMem.club_id, firstMem.club_name);
       authHideOverlay();
       if (typeof authShowModeLauncher === 'function') authShowModeLauncher();
@@ -1254,6 +1259,13 @@ async function authShowModeLauncher() {
   document.querySelectorAll('.page').forEach(function(page) { page.style.display = 'none'; });
   if (typeof syncExperienceModeUI === 'function') syncExperienceModeUI();
   if (typeof _refreshWelcomeSubtitle === 'function') _refreshWelcomeSubtitle();
+
+  // Account login opened from the shared SCS Home club control is complete.
+  // Club is global to both activities, so return to SCS Home rather than
+  // allowing the legacy viewer launcher to drop the user into Practice.
+  if (typeof scsActivityCompleteClubAction === 'function' && scsActivityCompleteClubAction()) {
+    return;
+  }
 
   // When login was opened from Organiser or Club Manager on Welcome, continue
   // to that same protected workspace after successful account login. Its own

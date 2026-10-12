@@ -198,11 +198,9 @@ function syncRoundAndSlotManagerClub(clubId, clubName) {
   localStorage.setItem('kbrr_org_club_name', clubName);
   localStorage.setItem('kbrr_vault_club_id', clubId);
   localStorage.setItem('kbrr_vault_club_name', clubName);
-  // Database session helpers read the shared active-club keys. Keep them in
-  // lockstep when a manager club is restored automatically as well as when
-  // the user changes it manually.
-  localStorage.setItem('kbrr_my_club_id', clubId);
-  localStorage.setItem('kbrr_my_club_name', clubName);
+  // Do not overwrite the app-wide active club here. This helper also runs
+  // during background role restoration, where manager caches must never undo
+  // the user's explicit selection on the Clubs page.
 }
 
 function hasVerifiedWorkspaceRole(role) {
@@ -4549,7 +4547,14 @@ function scsGuideReturnFromJoinClub(){
   var fromAssist=false;
   var assistRole='viewer';
   try{fromAssist=sessionStorage.getItem('scs_join_club_from_assist')==='1';}catch(e){}
-  if(!fromAssist){if(typeof showHomeScreen==='function')showHomeScreen();return;}
+  if(!fromAssist){
+    var standaloneClubPage=document.getElementById('joinClubPage');
+    if(standaloneClubPage)standaloneClubPage.style.display='none';
+    if(typeof scsActivityCompleteClubAction==='function'&&scsActivityCompleteClubAction())return;
+    if(typeof scsActivityReturnHome==='function'){scsActivityReturnHome();return;}
+    if(typeof showHomeScreen==='function')showHomeScreen();
+    return;
+  }
   try{assistRole=sessionStorage.getItem('scs_join_club_assist_role')||'viewer';}catch(e){}
 
   // Club Search launched from Assist is only a popup above Assist.
