@@ -1,6 +1,5 @@
- .scs-gt-overlay{position:fixed;inset:0;z-index:999999;background:rgba(5,12,25,.82);overflow:auto;padding:12px 12px calc(104px + env(safe-area-inset-bottom));color:#eef4ff}.scs-gt-sheet{max-width:850px;margin:8px auto 28px;padding:16px;background:#17253c;border:1px solid #466187;border-radius:17px;font:inherit}.scs-gt-sheet header{display:flex;justify-content:space-between;align-items:center;font-size:1.15rem;margin-bottom:14px}.scs-gt-sheet > header button,.scs-gt-sheet > nav button,.scs-gt-card button{cursor:pointer;min-height:40px;border-radius:9px;border:1px solid #55749f;background:#263c5d;color:#fff;padding:8px}.scs-gt-card{padding:14px;background:#243957;border:1px solid #526d94;border-radius:13px;margin:12px 0}.scs-gt-card h3{margin:0 0 12px}.scs-gt-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.scs-gt-fields label{display:flex;flex-direction:column;gap:6px}.scs-gt-fields input{min-width:0;padding:10px;border-radius:8px;background:#10213a;color:white;border:1px solid #7293c0;font-size:1rem}.scs-gt-primary,.scs-gt-tabs .active,.scs-gt-context-tabs .active{background:#3167b6!important}.scs-gt-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:12px 0}.scs-gt-tabs button{font-size:.75rem;min-width:0;padding:5px 2px;overflow-wrap:anywhere}.scs-gt-context-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:4px 0 14px;padding:5px;border:1px solid #466187;border-radius:13px;background:#10213a}.scs-gt-context-tabs button{border:0!important;border-radius:9px!important;background:transparent!important;font-weight:800}.scs-gt-context-tabs button.active{background:#3167b6!important}.scs-gt-bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr))!important;z-index:1000002}.scs-gt-bottom-nav button:disabled{opacity:.38!important;cursor:not-allowed!important}.scs-gt-bottom-nav .scs-tm-nav-label{font-size:11px}.scs-gt-standings{overflow-x:auto}.scs-gt-head{display:grid;grid-template-columns:60px minmax(95px,1fr) 32px 36px 36px;gap:5px;padding:9px 2px;border-bottom:1px solid #526d94;font-size:.85rem}.scs-gt-empty{color:#c0cce0}.scs-gt-secondary{margin-top:12px}@media(max-width:420px){.scs-gt-sheet{padding:10px}.scs-gt-fields{grid-template-columns:1fr}.scs-gt-tabs button{font-size:.68rem}}
+ .scs-gt-overlay{position:fixed;inset:0;z-index:999999;background:rgba(5,12,25,.82);overflow:auto;padding:12px;color:#eef4ff}.scs-gt-sheet{max-width:850px;margin:8px auto 28px;padding:16px;background:#17253c;border:1px solid #466187;border-radius:17px;font:inherit}.scs-gt-sheet header{display:flex;justify-content:space-between;align-items:center;font-size:1.15rem;margin-bottom:14px}.scs-gt-sheet > header button,.scs-gt-sheet > nav button,.scs-gt-card button{cursor:pointer;min-height:40px;border-radius:9px;border:1px solid #55749f;background:#263c5d;color:#fff;padding:8px}.scs-gt-card{padding:14px;background:#243957;border:1px solid #526d94;border-radius:13px;margin:12px 0}.scs-gt-card h3{margin:0 0 12px}.scs-gt-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.scs-gt-fields label{display:flex;flex-direction:column;gap:6px}.scs-gt-fields input{min-width:0;padding:10px;border-radius:8px;background:#10213a;color:white;border:1px solid #7293c0;font-size:1rem}.scs-gt-primary,.scs-gt-tabs .active{background:#3167b6!important}.scs-gt-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin:12px 0}.scs-gt-tabs button{font-size:.75rem;min-width:0;padding:5px 2px;overflow-wrap:anywhere}.scs-gt-standings{overflow-x:auto}.scs-gt-head{display:grid;grid-template-columns:60px minmax(95px,1fr) 32px 36px 36px;gap:5px;padding:9px 2px;border-bottom:1px solid #526d94;font-size:.85rem}.scs-gt-empty{color:#c0cce0}.scs-gt-secondary{margin-top:12px}@media(max-width:420px){.scs-gt-sheet{padding:10px}.scs-gt-fields{grid-template-columns:1fr}.scs-gt-tabs button{font-size:.68rem}}
 .scs-gt-team{width:100%;text-align:left;background:transparent!important;border:0!important;border-bottom:1px solid #526d94!important;border-radius:0!important;color:inherit!important}
-.scs-gt-title-field{display:grid;gap:7px;margin:0 0 14px;font-weight:800}.scs-gt-title-field input{width:100%;box-sizing:border-box;padding:12px;border-radius:9px;background:#10213a;color:#fff;border:1px solid #7293c0;font:inherit}
 .scs-gt-player{display:flex;gap:12px;align-items:center;padding:10px;border-bottom:1px solid #526d94}
 .scs-gt-player input{width:20px;height:20px}
 .scs-gt-editor-backdrop{position:fixed;inset:0;z-index:1000001;background:#000a;display:flex;align-items:center;justify-content:center;padding:14px}
@@ -15,23 +14,6 @@
 .scs-gt-team-players .scs-tm-ring-slot{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
 .scs-gt-unassigned{opacity:.85}
 .scs-gt-head{grid-template-columns:60px minmax(125px,1fr) 32px 36px 36px}
-
-/* Group setup uses the same team-card language as Knockout Assist. */
-.scs-gt-team-pool{margin-top:14px!important;border-color:#0f766e!important}
-.scs-gt-team-card-list{display:grid;gap:10px;padding:12px 0 0}
-.scs-gt-knockout-team-card{display:grid!important;grid-template-columns:34px minmax(0,1fr) 42px 42px;align-items:center;gap:10px;width:100%;min-height:78px;padding:12px!important;text-align:left;background:#142d4b!important;border:2px solid #3184df!important;border-left:7px solid #2899f0!important;border-radius:14px!important;color:#f3f6ff!important;box-shadow:0 3px 10px rgba(3,14,30,.2)}
-.scs-gt-team-card-list>button.scs-gt-knockout-team-card{grid-template-columns:34px minmax(0,1fr) 42px}
-.scs-gt-team-card-number{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#294b72;color:#cfe5ff;font-weight:850;font-size:.82rem}
-.scs-gt-team-card-players{display:flex;flex-direction:column;gap:6px;min-width:0}
-.scs-gt-team-card-group{color:#8fc5ff;font-size:.65rem;font-weight:850;letter-spacing:.1em}
-.scs-gt-team-card-players .scs-tm-shared-player{display:flex;align-items:center;gap:8px;min-width:0}
-.scs-gt-team-card-players .scs-tm-shared-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
-.scs-gt-team-card-edit{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#4269d7;color:#fff;font-size:1rem;font-weight:850}
-.scs-gt-team-card-players{border:0!important;background:transparent!important;padding:0!important;color:inherit!important;text-align:left!important}
-.scs-gt-team-card-remove{display:grid;place-items:center;width:36px;height:36px;padding:0!important;border:1px solid #a85e78!important;border-radius:10px!important;background:#542b40!important;color:#fff!important;font-size:1.25rem!important}
-.scs-gt-knockout-team-card:hover{border-color:#62aaf5!important;background:#183657!important}
-.scs-gt-knockout-team-card:focus-visible{outline:3px solid #8fc5ff;outline-offset:2px}
-@media(max-width:380px){.scs-gt-knockout-team-card{grid-template-columns:28px minmax(0,1fr) 35px 35px;padding:10px!important;gap:6px}.scs-gt-team-card-number{width:27px;height:27px}.scs-gt-team-card-edit,.scs-gt-team-card-remove{width:33px;height:33px}}
 
 .scs-gt-court,.scs-gt-fixture{padding:12px;margin:8px 0;border:1px solid #5a7aa7;border-radius:11px;background:#1b2e4a}.scs-gt-fixture div{padding:7px 0}.scs-gt-court-controls{display:flex;justify-content:space-between;align-items:center}.scs-gt-fixture button{margin-left:10px}
 
@@ -54,45 +36,3 @@
 .scs-gt-standings .scs-gt-team-players .scs-tm-shared-name{overflow-wrap:anywhere;word-break:normal}
 .scs-gt-standings .scs-gt-team>span:nth-child(3){border-left:1px solid #416082;padding-left:3px}
 @media(max-width:380px){.scs-gt-standings .scs-gt-head{grid-template-columns:44px minmax(0,1fr) 25px 28px 30px;gap:3px;font-size:.69rem}.scs-gt-standings .scs-gt-result-row,.scs-gt-standings button.scs-gt-team{padding:11px 5px!important}.scs-gt-standings .scs-gt-team>span:first-child{width:30px;height:30px}}
-
-/* Group Assist index: follows the existing Knockout Assist five-step interface. */
-.scs-gt-assist{max-width:720px;margin:auto;padding:12px 4px}.scs-gt-assist header{margin-bottom:28px!important}.scs-gt-assist h2{margin:0}.scs-gt-assist>p{margin:24px 0}.scs-gt-assist-step{display:flex;align-items:center;gap:15px;width:100%;text-align:left;color:white;border:0;border-radius:16px;padding:22px 18px;margin:12px 0;min-height:90px}.scs-gt-assist-step>b{font-size:28px}.scs-gt-assist-step>span:nth-child(2){flex:1;display:grid;gap:3px}.scs-gt-assist-step small{font-size:12px}.scs-gt-assist-step:disabled{cursor:not-allowed}.scs-gt-assist-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.scs-gt-assist-top button{padding:10px;border-radius:20px;background:#263c5d;color:white;border:1px solid #55749f}.scs-gt-assist-top small{color:#aec8f3;font-weight:700}.scs-gt-sheet>[data-assist-done],.scs-gt-sheet>.scs-gt-primary{padding:12px 22px;border-radius:12px;color:#fff;border:1px solid #7293c0;min-height:48px}
-
-/* V195: Team Tournament uses existing Group Tournament player rows.
-   Override the older generic tournament editor label/input rules only here. */
-.scs-tm-entry-modal .scs-tm-pool[data-player-list]{
-  display:flex;flex-direction:column;gap:0;max-height:min(42dvh,360px);
-  overflow-y:auto;overflow-x:hidden;padding:4px 12px;margin:12px 0;
-  -webkit-overflow-scrolling:touch;min-width:0;
-}
-.scs-tm-entry-modal .scs-tm-pool .scs-gt-player{
-  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;
-  gap:12px;min-height:54px;margin:0;padding:9px 4px;
-  width:100%;box-sizing:border-box;min-width:0;
-  border-bottom:1px solid #526d94;cursor:pointer;
-}
-.scs-tm-entry-modal .scs-tm-pool .scs-gt-player input[type="checkbox"]{
-  display:block;flex:0 0 22px;width:22px;height:22px;min-height:22px;
-  padding:0;margin:0;accent-color:#399bff;
-}
-.scs-tm-entry-modal .scs-tm-pool .scs-gt-player>span{
-  display:flex;align-items:center;flex:1 1 auto;min-width:0;width:auto;
-}
-.scs-tm-entry-modal .scs-tm-pool .scs-tm-shared-player{
-  display:flex;align-items:center;flex-direction:row;gap:10px;min-width:0;width:100%;
-}
-.scs-tm-entry-modal .scs-tm-pool .scs-tm-shared-name{
-  display:block;min-width:0;overflow-wrap:normal;word-break:normal;
-  white-space:normal;line-height:1.3;text-align:left;
-}
-.scs-tm-entry-modal .scs-tm-import-actions{
-  position:sticky;bottom:-24px;z-index:2;background:#21324b;
-  padding:12px 0 6px;margin-top:8px;
-}
-.scs-tm-entry-modal .scs-tm-pool-heading{flex-wrap:wrap;align-items:center}
-.scs-tm-entry-modal .scs-tm-pool-heading h3{padding-right:0;min-width:0}
-@media(max-width:480px){
- .scs-tm-entry-modal{padding:10px}
- .scs-tm-entry-modal .scs-tm-entry-editor{padding:18px 14px;max-height:90dvh}
- .scs-tm-entry-modal .scs-tm-pool[data-player-list]{max-height:38dvh}
-}
