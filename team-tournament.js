@@ -60,7 +60,7 @@ function clubEditor(i){
  if(state.encounters.length){alert('Club rosters are locked after fixtures have been generated.');return}
  const c=clubDraft&&editingClub===i?clubDraft:(state.clubs[i]||{name:'',players:[]});
  editingClub=i;
- const selected=new Set(c.players);
+ const selected=new Set((c.players||[]).filter(n=>!reservedByOtherClub(n,i)));
  const getNames=()=>[...new Map([...registry(),...selected].filter(n=>!reservedByOtherClub(n,i)||selected.has(n)).map(n=>[playerKey(n),n])).values()];
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal';
  // Display the current club roster first. The shared registry is only a source for adding players.
@@ -71,7 +71,7 @@ function clubEditor(i){
   const members=names.filter(n=>selected.has(n));
   const available=names.filter(n=>!selected.has(n));
   const row=n=>'<label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label>';
-  return members.map(row).join('')+(showAvailable?'<div class="scs-team-available-title">Available players · '+available.length+'</div>'+available.map(row).join(''):'');
+  return members.map(row).join('')+(showAvailable?'<div class="scs-team-available-title">Available players · '+available.length+'</div>'+(available.length?available.map(row).join(''):'<p class="scs-team-no-available">All registered players are already assigned to clubs.</p>'):'');
  };
  modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-editor-head"><h3>Club players</h3><p>Register a club and choose its players</p></div><label>Club name<input data-club-name value="'+esc(c.name)+'"></label><div class="scs-tm-pool-heading"><h3>Select players ('+selected.size+')</h3><button type="button" class="scs-team-manager" data-open-manager>＋ Add players</button></div><p>This club has its own roster. Add players from the existing player list.</p><div class="scs-tm-pool" data-player-list>'+playerChoices()+'</div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
  root().appendChild(modal);
@@ -81,10 +81,13 @@ function clubEditor(i){
  modal.querySelector('[data-cancel]').onclick=()=>{editingClub=null;clubDraft=null;modal.remove()};
  modal.querySelector('[data-open-manager]').onclick=()=>{
   const available=getNames().filter(n=>!selected.has(n));
+  // Never navigate to the global Players Manager: it shows the global selection.
+  // The club-specific picker always stays within this modal.
   if(!showAvailable&&!available.length){
-   clubDraft={name:modal.querySelector('[data-club-name]').value,players:[...selected]};
-   modal.remove();openPlayersManager();return;
+   modal.querySelector('[data-error]').textContent='No unassigned players available. Register new players in the main Players Manager, then return here.';
+   return;
   }
+  modal.querySelector('[data-error]').textContent='';
   showAvailable=!showAvailable;
   modal.querySelector('[data-open-manager]').textContent=showAvailable?'Hide available players':'＋ Add players';
   redraw();
