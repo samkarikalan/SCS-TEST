@@ -22,11 +22,19 @@ function reservedByOtherClub(name,clubIndex){return state.clubs.some((c,i)=>i!==
 function setup(){return '<section class="scs-gt-card scs-team-setup"><div class="scs-team-intro"><span class="scs-team-step">01</span><div><h2>Create Team Tournament</h2></div></div><label class="scs-team-field">Tournament name<input id="team-title" value="'+esc(state.title)+'" placeholder="Club championship"></label><div class="scs-team-section-title"><h3>Clubs <span class="scs-team-count">'+state.clubs.length+'</span></h3></div><div class="scs-team-club-list">'+(state.clubs.length?state.clubs.map((c,i)=>'<div class="scs-team-club scs-team-club-color-'+clubColor(c,i)+'"><div class="scs-team-club-head"><button type="button" class="scs-team-expand" data-expand="'+i+'" aria-expanded="'+expandedClubs.has(i)+'" aria-label="Toggle '+esc(c.name)+' players">'+(expandedClubs.has(i)?'⌃':'⌄')+'</button><div class="scs-team-club-name"><strong>'+esc(c.name)+'</strong><small>'+c.players.length+' players</small></div><button data-edit="'+i+'">Edit</button><button data-remove="'+i+'" aria-label="Remove club">×</button></div>'+(expandedClubs.has(i)?'<div class="scs-team-roster">'+c.players.map((name,j)=>'<div class="scs-team-roster-player"><span class="scs-team-player-number">'+(j+1)+'</span>'+playerRow(name)+'</div>').join('')+'</div>':'')+'</div>').join(''):'<div class="scs-team-empty"><strong>No clubs added yet</strong><small>Add a club and select players using Players Manager.</small></div>')+'</div><button class="scs-gt-secondary scs-team-add" data-add>＋ Add club and players</button><div class="scs-team-footer"><button class="scs-gt-primary scs-team-generate" data-generate>Generate club fixtures →</button></div></section>'}
 
 function registry(){
- const names=[];const add=items=>(Array.isArray(items)?items:[]).forEach(p=>{const n=typeof p==='string'?p:p&&p.name;if(n&&String(n).trim())names.push(String(n).trim())});
+ // Read the same master player sources used by SCS Players Manager.
+ // Never write to these stores or mutate their objects.
+ const names=[];
+ const add=items=>(Array.isArray(items)?items:[]).forEach(p=>{
+  const n=typeof p==='string'?p:p&&(p.name||p.displayName);
+  if(n&&String(n).trim())names.push(String(n).trim());
+ });
  try{if(typeof schedulerState!=='undefined'&&schedulerState)add(schedulerState.allPlayers)}catch(e){}
- try{add(JSON.parse(localStorage.getItem('schedulerPlayers')||'[]'))}catch(e){}
+ for(const key of ['newImportHistory','newImportFavorites','schedulerPlayers']){
+  try{add(JSON.parse(localStorage.getItem(key)||'[]'))}catch(e){}
+ }
  try{if(window.SCSCourtCenter&&typeof window.SCSCourtCenter.playerNames==='function')add(window.SCSCourtCenter.playerNames())}catch(e){}
- return [...new Map(names.map(n=>[n.toLocaleLowerCase(),n])).values()].sort((a,b)=>a.localeCompare(b));
+ return [...new Map(names.map(n=>[playerKey(n),n])).values()].sort((a,b)=>a.localeCompare(b));
 }
 function playerRow(name){return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span></span>'}
 function hydratePlayerCards(){
@@ -34,7 +42,7 @@ function hydratePlayerCards(){
  root()?.querySelectorAll('.scs-tm-ring-slot[data-tm-player]').forEach(slot=>{
   if(slot.firstChild)return;const name=slot.dataset.tmPlayer;const list=[];
   try{if(typeof schedulerState!=='undefined'&&schedulerState&&Array.isArray(schedulerState.allPlayers))list.push(...schedulerState.allPlayers)}catch(e){}
-  try{let a=JSON.parse(localStorage.getItem('schedulerPlayers')||'[]');if(Array.isArray(a))list.push(...a)}catch(e){}
+  for(const key of ['schedulerPlayers','newImportHistory','newImportFavorites']){try{let a=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(a))list.push(...a.map(p=>({...p,name:p.name||p.displayName})))}catch(e){}}
   const player=list.find(p=>p&&typeof p==='object'&&String(p.name||'').toLowerCase()===name.toLowerCase());
   const rating=Number(player&&(player.activeRating||player.clubRating||player.rating));
   try{slot.appendChild(createRatingRing(name,player&&(player.gender||player.sex)||'Male',Number.isFinite(rating)&&rating>=1?rating:null))}catch(e){}
@@ -84,7 +92,7 @@ function clubEditor(i){
   // Never navigate to the global Players Manager: it shows the global selection.
   // The club-specific picker always stays within this modal.
   if(!showAvailable&&!available.length){
-   modal.querySelector('[data-error]').textContent='No unassigned players available. Register new players in the main Players Manager, then return here.';
+   modal.querySelector('[data-error]').textContent='No unassigned players in the SCS player database. Add new players in the main Players Manager, then reopen this club.';
    return;
   }
   modal.querySelector('[data-error]').textContent='';
