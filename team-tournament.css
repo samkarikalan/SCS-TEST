@@ -1,0 +1,65 @@
+
+.scs-team-overlay{background:rgba(5,12,25,.88);padding:12px 12px calc(60px + env(safe-area-inset-bottom))}
+.scs-team-sheet{max-width:720px;background:#192840;border:1px solid #4c6386;border-radius:18px;padding:16px;box-sizing:border-box}
+.scs-team-sheet>header{border-bottom:1px solid #3c5272;padding:0 0 14px;margin:0 0 14px;gap:10px}
+.scs-team-sheet>header strong{font-size:1.15rem}
+.scs-team-sheet>header button{min-width:42px;min-height:42px}
+.scs-team-sheet .scs-gt-card{background:#213551;border-color:#476184;border-radius:15px;padding:16px;margin:0 0 12px;min-width:0}
+.scs-team-intro{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.scs-team-step{display:grid;place-items:center;width:42px;height:42px;flex:none;background:#3566b1;border-radius:12px;font-weight:800}
+.scs-team-intro h2{font-size:1.16rem;margin:0 0 4px;line-height:1.3}
+.scs-team-intro p,.scs-team-section-title small{font-size:.83rem;color:#b8cbe4;margin:0}
+.scs-team-field{display:grid!important;gap:8px;font-size:.89rem;font-weight:700}
+.scs-team-field input{display:block;box-sizing:border-box;width:100%;min-width:0;min-height:46px;margin:0;padding:11px 13px;border:1px solid #6989b3;border-radius:10px;background:#11223b;color:#fff;font:inherit;font-size:16px}
+.scs-team-chips{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0 25px}
+.scs-team-chips span{background:#304969;color:#e0ebff;border:1px solid #48688f;padding:6px 10px;border-radius:24px;font-size:.75rem}
+.scs-team-section-title{margin-bottom:13px}
+.scs-team-section-title h3{display:flex;align-items:center;gap:9px;margin:0 0 5px;font-size:1.04rem}
+.scs-team-count{border-radius:30px;background:#365781;padding:2px 9px;font-size:.78rem}
+.scs-team-empty{border:1px dashed #6884ab;border-radius:12px;background:#1a2e49;padding:25px 15px;text-align:center;display:grid;gap:7px}
+.scs-team-empty small{color:#b6c9e4;line-height:1.5}
+.scs-team-club-list{display:grid;gap:8px}
+.scs-team-club{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid #516c90;border-radius:11px;background:#1a304d}
+.scs-team-club>div{flex:1;min-width:0;display:grid;gap:3px}
+.scs-team-club strong{overflow-wrap:anywhere}
+.scs-team-club small{color:#b9cbe4}
+.scs-team-club button{min-height:38px}
+.scs-team-add{width:100%;margin-top:12px!important;min-height:48px!important;font-weight:700;background:#28466f!important}
+.scs-team-footer{border-top:1px solid #425979;margin-top:22px;padding-top:14px}
+.scs-team-footer p{font-size:.83rem;color:#b8cbe4;line-height:1.45}
+.scs-team-generate{display:block;width:100%;min-height:48px!important;font-weight:800}
+.scs-team-sheet .scs-gt-context-tabs{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.scs-team-sheet .scs-gt-context-tabs button{font-size:.8rem;min-width:0}
+.scs-team-overlay .scs-tm-entry-modal{box-sizing:border-box;padding:12px;background:rgba(3,9,20,.74)}
+.scs-team-overlay .scs-team-club-editor{box-sizing:border-box;width:min(100%,520px);max-width:520px;max-height:85dvh;overflow:auto;padding:20px 16px;background:#223650;border:1px solid #6683ac;border-radius:17px;box-shadow:0 16px 48px #0007}
+.scs-team-overlay .scs-team-editor-head h3{margin:0 0 5px;font-size:1.24rem}
+.scs-team-overlay .scs-team-editor-head p{margin:0 0 17px;font-size:.84rem;color:#b9cbe4}
+.scs-team-overlay .scs-team-club-editor label{font-size:.88rem}
+.scs-team-overlay .scs-team-club-editor input[data-club-name]{box-sizing:border-box;min-height:46px;width:100%;background:#11233d;color:#fff;border:1px solid #7192bb;border-radius:10px;font-size:16px;padding:11px}
+.scs-team-overlay .scs-tm-pool-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:18px}
+.scs-team-overlay .scs-tm-pool-heading h3{font-size:1rem;margin:0}
+.scs-team-overlay .scs-team-manager{background:#315fa8;color:white;border:1px solid #739fe2;border-radius:10px;padding:9px 11px;min-height:42px;font-weight:700;font-size:.82rem}
+.scs-team-overlay .scs-team-club-editor>p{color:#c3d3e9;font-size:.85rem;line-height:1.5}
+.scs-team-overlay .scs-tm-pool[data-player-list]{box-sizing:border-box;min-height:94px;max-height:36dvh;overflow:auto;background:#152842;border:1px solid #526e93;border-radius:12px;padding:8px;margin:13px 0}
+.scs-team-overlay .scs-tm-pool[data-player-list]:empty:after{content:'No players available yet. Add players using Players Manager.';display:block;text-align:center;color:#bbcee7;font-size:.85rem;line-height:1.5;padding:18px 10px}
+.scs-team-overlay .scs-tm-pool .scs-gt-player{display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid #385371}
+.scs-team-overlay .scs-tm-pool .scs-gt-player:last-child{border-bottom:0}
+.scs-team-overlay .scs-tm-pool .scs-gt-player input{flex:none;width:20px;height:20px;accent-color:#538ce4}
+.scs-team-overlay .scs-tm-import-actions{display:flex;gap:10px;margin-top:16px}
+.scs-team-overlay .scs-tm-import-actions button{flex:1;min-height:46px;border-radius:11px;background:#354a66;color:#fff;border:1px solid #7186a4;font-weight:700}
+.scs-team-overlay .scs-tm-import-actions [data-save]{background:#3268ba;border-color:#78a6ed}
+@media(max-width:420px){.scs-team-sheet{padding:12px}.scs-team-sheet .scs-gt-card{padding:13px}.scs-team-overlay .scs-team-club-editor{padding:16px 13px}.scs-team-overlay .scs-tm-pool-heading{flex-wrap:wrap}.scs-team-overlay .scs-team-manager{margin-left:auto}}
+
+/* Team Tournament only: retain existing Group Tournament controls while improving readability. */
+.scs-team-overlay .scs-team-sheet{width:min(100%,720px);max-height:calc(100dvh - 28px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.scs-team-overlay .scs-gt-card{box-sizing:border-box;max-width:100%}
+.scs-team-overlay .scs-team-club-editor{color:#f0f5ff}
+.scs-team-overlay .scs-team-club-editor .scs-tm-pool{background:#14243d!important;border:1px solid #607da5!important;min-height:100px;max-height:40dvh;overflow-y:auto}
+.scs-team-overlay .scs-team-club-editor .scs-gt-player{color:#eef4ff;min-height:50px;box-sizing:border-box}
+.scs-team-overlay .scs-team-club-editor .scs-tm-shared-name{color:#eef4ff;font-weight:600;overflow-wrap:anywhere}
+.scs-team-overlay .scs-team-club-editor .scs-tm-import-actions{display:flex;gap:10px;position:sticky;bottom:0;background:#223650;padding:12px 0 0}
+.scs-team-overlay .scs-team-club-editor .scs-tm-import-actions button{flex:1;min-height:46px}
+.scs-team-overlay .scs-team-club-editor .scs-tm-pool-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.scs-team-overlay .scs-team-club-editor .scs-tm-pool-heading h3{margin:0;font-size:1rem}
+.scs-team-overlay button:focus-visible,.scs-team-overlay input:focus-visible{outline:2px solid #94bcff;outline-offset:2px}
+@media(max-width:480px){.scs-team-overlay{padding:8px 8px calc(20px + env(safe-area-inset-bottom))}.scs-team-overlay .scs-team-sheet{max-height:calc(100dvh - 16px)}.scs-team-overlay .scs-team-club-editor{width:100%;max-height:88dvh}.scs-team-overlay .scs-team-club{flex-wrap:wrap}}
