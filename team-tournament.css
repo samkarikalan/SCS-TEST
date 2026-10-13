@@ -63,3 +63,27 @@
 .scs-team-overlay .scs-team-club-editor .scs-tm-pool-heading h3{margin:0;font-size:1rem}
 .scs-team-overlay button:focus-visible,.scs-team-overlay input:focus-visible{outline:2px solid #94bcff;outline-offset:2px}
 @media(max-width:480px){.scs-team-overlay{padding:8px 8px calc(20px + env(safe-area-inset-bottom))}.scs-team-overlay .scs-team-sheet{max-height:calc(100dvh - 16px)}.scs-team-overlay .scs-team-club-editor{width:100%;max-height:88dvh}.scs-team-overlay .scs-team-club{flex-wrap:wrap}}
+
+/* Team Tournament club accordion: isolated from other tournament pages */
+.scs-team-setup .scs-team-section-title{margin-top:22px}
+.scs-team-setup .scs-team-club{display:block;padding:0;overflow:hidden;border-color:var(--club-border,#526d91);background:var(--club-bg,#1a304d)}
+.scs-team-setup .scs-team-club-head{display:flex;align-items:center;gap:9px;padding:11px}
+.scs-team-setup .scs-team-club-name{display:grid;gap:3px;flex:1;min-width:0}
+.scs-team-setup .scs-team-club-name strong{overflow-wrap:anywhere}
+.scs-team-setup .scs-team-club-name small{color:#bed0e8}
+.scs-team-setup .scs-team-expand{flex:none;min-width:38px;min-height:38px;font-size:23px;background:#172943;color:#f2f6ff;border:1px solid var(--club-border,#526d91);border-radius:10px}
+.scs-team-setup .scs-team-roster{padding:0 10px 11px;display:grid;gap:5px}
+.scs-team-setup .scs-team-roster-player{display:flex;align-items:center;gap:12px;min-height:56px;padding:6px 10px;background:#101e34;border:1px solid var(--club-border,#526d91);border-radius:10px;box-sizing:border-box}
+.scs-team-setup .scs-team-player-number{width:19px;flex:none;color:#b8cbe4;font-size:.85rem}
+.scs-team-setup .scs-tm-shared-player{display:flex;align-items:center;gap:11px;flex:1;min-width:0}
+.scs-team-setup .scs-tm-shared-name{overflow-wrap:anywhere;color:#f3f7ff;font-weight:650}
+.scs-team-setup .scs-tm-ring-slot{flex:none}
+.scs-team-setup .scs-team-club-color-0{--club-border:#427fca;--club-bg:#193252}
+.scs-team-setup .scs-team-club-color-1{--club-border:#368f80;--club-bg:#193e40}
+.scs-team-setup .scs-team-club-color-2{--club-border:#a179ce;--club-bg:#362c52}
+.scs-team-setup .scs-team-club-color-3{--club-border:#c18c48;--club-bg:#44372b}
+.scs-team-setup .scs-team-club-color-4{--club-border:#c76f8c;--club-bg:#442b42}
+.scs-team-setup .scs-team-club-color-5{--club-border:#5b9bb0;--club-bg:#223e4d}
+.scs-team-setup .scs-team-club-color-6{--club-border:#9d9a55;--club-bg:#3d402b}
+.scs-team-setup .scs-team-club-color-7{--club-border:#9d7e70;--club-bg:#40332f}
+.scs-team-setup .scs-team-footer{margin-top:20px}
