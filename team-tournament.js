@@ -19,7 +19,7 @@ let expandedClubs=new Set();
 const playerKey=name=>String(name||'').trim().toLocaleLowerCase();
 function clubColor(c,i){return Number.isInteger(c.colorIndex)?c.colorIndex%8:i%8;}
 function reservedByOtherClub(name,clubIndex){return state.clubs.some((c,i)=>i!==clubIndex&&c.players.some(p=>playerKey(p)===playerKey(name)));}
-function setup(){return '<section class="scs-gt-card scs-team-setup"><div class="scs-team-intro"><span class="scs-team-step">01</span><div><h2>Create Team Tournament</h2></div></div><label class="scs-team-field">Tournament name<input id="team-title" value="'+esc(state.title)+'" placeholder="Club championship"></label><div class="scs-team-section-title"><h3>Clubs <span class="scs-team-count">'+state.clubs.length+'</span></h3></div><div class="scs-team-club-list">'+(state.clubs.length?state.clubs.map((c,i)=>'<div class="scs-team-club scs-team-club-color-'+i%8+'"><div class="scs-team-club-head"><button type="button" class="scs-team-expand" data-expand="'+i+'" aria-expanded="'+expandedClubs.has(i)+'" aria-label="Toggle '+esc(c.name)+' players">'+(expandedClubs.has(i)?'⌃':'⌄')+'</button><div class="scs-team-club-name"><strong>'+esc(c.name)+'</strong><small>'+c.players.length+' players</small></div><button data-edit="'+i+'">Edit</button><button data-remove="'+i+'" aria-label="Remove club">×</button></div>'+(expandedClubs.has(i)?'<div class="scs-team-roster">'+c.players.map((name,j)=>'<div class="scs-team-roster-player"><span class="scs-team-player-number">'+(j+1)+'</span>'+playerRow(name)+'</div>').join('')+'</div>':'')+'</div>').join(''):'<div class="scs-team-empty"><strong>No clubs added yet</strong><small>Add a club and select players using Players Manager.</small></div>')+'</div><button class="scs-gt-secondary scs-team-add" data-add>＋ Add club and players</button><div class="scs-team-footer"><button class="scs-gt-primary scs-team-generate" data-generate>Generate club fixtures →</button></div></section>'}
+function setup(){return '<section class="scs-gt-card scs-team-setup"><div class="scs-team-intro"><span class="scs-team-step">01</span><div><h2>Create Team Tournament</h2></div></div><label class="scs-team-field">Tournament name<input id="team-title" value="'+esc(state.title)+'" placeholder="Club championship"></label><div class="scs-team-section-title"><h3>Clubs <span class="scs-team-count">'+state.clubs.length+'</span></h3></div><div class="scs-team-club-list">'+(state.clubs.length?state.clubs.map((c,i)=>'<div class="scs-team-club scs-team-club-color-'+clubColor(c,i)+'"><div class="scs-team-club-head"><button type="button" class="scs-team-expand" data-expand="'+i+'" aria-expanded="'+expandedClubs.has(i)+'" aria-label="Toggle '+esc(c.name)+' players">'+(expandedClubs.has(i)?'⌃':'⌄')+'</button><div class="scs-team-club-name"><strong>'+esc(c.name)+'</strong><small>'+c.players.length+' players</small></div><button data-edit="'+i+'">Edit</button><button data-remove="'+i+'" aria-label="Remove club">×</button></div>'+(expandedClubs.has(i)?'<div class="scs-team-roster">'+c.players.map((name,j)=>'<div class="scs-team-roster-player"><span class="scs-team-player-number">'+(j+1)+'</span>'+playerRow(name)+'</div>').join('')+'</div>':'')+'</div>').join(''):'<div class="scs-team-empty"><strong>No clubs added yet</strong><small>Add a club and select players using Players Manager.</small></div>')+'</div><button class="scs-gt-secondary scs-team-add" data-add>＋ Add club and players</button><div class="scs-team-footer"><button class="scs-gt-primary scs-team-generate" data-generate>Generate club fixtures →</button></div></section>'}
 
 function registry(){
  const names=[];const add=items=>(Array.isArray(items)?items:[]).forEach(p=>{const n=typeof p==='string'?p:p&&p.name;if(n&&String(n).trim())names.push(String(n).trim())});
@@ -58,19 +58,26 @@ function playersManagerReturned(){
 }
 function clubEditor(i){
  if(state.encounters.length){alert('Club rosters are locked after fixtures have been generated.');return}
- editingClub=i;
  const c=clubDraft&&editingClub===i?clubDraft:(state.clubs[i]||{name:'',players:[]});
- const names=registry().filter(n=>!reservedByOtherClub(n,i)||c.players.some(p=>playerKey(p)===playerKey(n))),selected=new Set(c.players);
+ editingClub=i;
+ const selected=new Set(c.players);
+ const names=registry().filter(n=>!reservedByOtherClub(n,i)||selected.has(n));
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal';
- // Use the exact Group Tournament player row and shared player badge, not a custom card.
- const playerChoices=()=>names.map(n=>'<label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label>').join('');
- modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-editor-head"><h3>Club players</h3><p>Register a club and choose its players</p></div><label>Club name<input data-club-name value="'+esc(c.name)+'"></label><div class="scs-tm-pool-heading"><h3>Select players ('+selected.size+')</h3><button type="button" class="scs-team-manager" data-open-manager>＋ Players Manager</button></div><p>Choose at least six players from the existing Players Manager.</p><div class="scs-tm-pool" data-player-list>'+playerChoices()+'</div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
+ // Display the current club roster first. The shared registry is only a source for adding players.
+ let showAvailable=false;
+ const playerChoices=()=>{
+  const members=names.filter(n=>selected.has(n));
+  const available=names.filter(n=>!selected.has(n));
+  const row=n=>'<label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label>';
+  return members.map(row).join('')+(showAvailable?'<div class="scs-team-available-title">Available players · '+available.length+'</div>'+available.map(row).join(''):'');
+ };
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-editor-head"><h3>Club players</h3><p>Register a club and choose its players</p></div><label>Club name<input data-club-name value="'+esc(c.name)+'"></label><div class="scs-tm-pool-heading"><h3>Select players ('+selected.size+')</h3><button type="button" class="scs-team-manager" data-open-manager>＋ Add players</button></div><p>This club has its own roster. Add players from the existing player list.</p><div class="scs-tm-pool" data-player-list>'+playerChoices()+'</div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
  root().appendChild(modal);
  const redraw=()=>{modal.querySelector('[data-player-list]').innerHTML=playerChoices();modal.querySelector('.scs-tm-pool-heading h3').textContent='Select players ('+selected.size+')';bindChoices();hydratePlayerCards()};
  const bindChoices=()=>modal.querySelectorAll('[data-player-choice]').forEach(btn=>btn.onchange=()=>{const n=btn.dataset.playerChoice;if(btn.checked)selected.add(n);else selected.delete(n);redraw()});
  bindChoices();hydratePlayerCards();
  modal.querySelector('[data-cancel]').onclick=()=>{editingClub=null;clubDraft=null;modal.remove()};
- modal.querySelector('[data-open-manager]').onclick=()=>{clubDraft={name:modal.querySelector('[data-club-name]').value,players:[...selected]};modal.remove();openPlayersManager()};
+ modal.querySelector('[data-open-manager]').onclick=()=>{showAvailable=!showAvailable;modal.querySelector('[data-open-manager]').textContent=showAvailable?'Hide available players':'＋ Add players';redraw()};
  modal.querySelector('[data-save]').onclick=()=>{
   const name=modal.querySelector('[data-club-name]').value.trim(),players=[...selected];
   if(!name||players.length<6||players.some(p=>reservedByOtherClub(p,i))||state.clubs.some((x,j)=>j!==i&&x.name.toLowerCase()===name.toLowerCase())){modal.querySelector('[data-error]').textContent='Enter a unique club name and select at least six players.';return}

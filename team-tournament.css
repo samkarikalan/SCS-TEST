@@ -87,3 +87,6 @@
 .scs-team-setup .scs-team-club-color-6{--club-border:#9d9a55;--club-bg:#3d402b}
 .scs-team-setup .scs-team-club-color-7{--club-border:#9d7e70;--club-bg:#40332f}
 .scs-team-setup .scs-team-footer{margin-top:20px}
+
+/* Team-only independent roster picker */
+.scs-team-available-title{padding:12px 8px 6px;color:#b8ccec;font-weight:700;border-top:1px solid #405572;margin-top:10px}
