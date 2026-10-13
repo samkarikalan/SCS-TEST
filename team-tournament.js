@@ -61,11 +61,13 @@ function clubEditor(i){
  const c=clubDraft&&editingClub===i?clubDraft:(state.clubs[i]||{name:'',players:[]});
  editingClub=i;
  const selected=new Set(c.players);
- const names=registry().filter(n=>!reservedByOtherClub(n,i)||selected.has(n));
+ const getNames=()=>[...new Map([...registry(),...selected].filter(n=>!reservedByOtherClub(n,i)||selected.has(n)).map(n=>[playerKey(n),n])).values()];
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal';
  // Display the current club roster first. The shared registry is only a source for adding players.
+ // Keep this dialog club-scoped; never modify the global player selection state.
  let showAvailable=false;
  const playerChoices=()=>{
+  const names=getNames();
   const members=names.filter(n=>selected.has(n));
   const available=names.filter(n=>!selected.has(n));
   const row=n=>'<label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label>';
@@ -77,7 +79,16 @@ function clubEditor(i){
  const bindChoices=()=>modal.querySelectorAll('[data-player-choice]').forEach(btn=>btn.onchange=()=>{const n=btn.dataset.playerChoice;if(btn.checked)selected.add(n);else selected.delete(n);redraw()});
  bindChoices();hydratePlayerCards();
  modal.querySelector('[data-cancel]').onclick=()=>{editingClub=null;clubDraft=null;modal.remove()};
- modal.querySelector('[data-open-manager]').onclick=()=>{showAvailable=!showAvailable;modal.querySelector('[data-open-manager]').textContent=showAvailable?'Hide available players':'＋ Add players';redraw()};
+ modal.querySelector('[data-open-manager]').onclick=()=>{
+  const available=getNames().filter(n=>!selected.has(n));
+  if(!showAvailable&&!available.length){
+   clubDraft={name:modal.querySelector('[data-club-name]').value,players:[...selected]};
+   modal.remove();openPlayersManager();return;
+  }
+  showAvailable=!showAvailable;
+  modal.querySelector('[data-open-manager]').textContent=showAvailable?'Hide available players':'＋ Add players';
+  redraw();
+ };
  modal.querySelector('[data-save]').onclick=()=>{
   const name=modal.querySelector('[data-club-name]').value.trim(),players=[...selected];
   if(!name||players.length<6||players.some(p=>reservedByOtherClub(p,i))||state.clubs.some((x,j)=>j!==i&&x.name.toLowerCase()===name.toLowerCase())){modal.querySelector('[data-error]').textContent='Enter a unique club name and select at least six players.';return}
