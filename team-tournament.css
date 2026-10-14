@@ -103,3 +103,7 @@
 .scs-team-match-player{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;background:#203650;margin-top:5px;color:#f3f7ff;overflow-wrap:anywhere}
 .scs-team-player-icon{color:#3bb5ff;font-size:19px}
 .scs-team-match-unselected{color:#b8c9df;font-size:.85rem;padding:5px 0}
+
+/* Team Tournament result labels only */
+.scs-team-sheet .scs-team-winning-club{font-weight:700;color:#8de1c0;margin-top:5px;font-size:.9em}
+.scs-team-sheet .scs-team-encounter-winner{font-weight:700;color:#8de1c0}
