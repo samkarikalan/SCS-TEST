@@ -290,3 +290,20 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs{backg
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{background:#e0e7f1!important}
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:first-child{background:color-mix(in srgb,var(--team-left) 20%,#fff)!important}
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child{background:color-mix(in srgb,var(--team-right) 20%,#fff)!important}
+
+/* V216: spacing-only adjustment to the existing V215 Team Tournament match cards.
+   Do not change layout, player order, team colors, buttons or shared SCS modules. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-content{padding:0!important}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-teams{gap:0!important}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:first-child,
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child{
+  padding:6px 10px!important;gap:4px!important;min-height:0!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-players{gap:2px!important}
+.scs-team-sheet .scs-team-match-shell .scs-team-card-club{margin:0 0 3px!important}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs{
+  margin:0!important;padding:0 10px!important;min-height:0!important;
+  line-height:1.05!important;gap:8px!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs::before,
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs::after{margin:0!important}
