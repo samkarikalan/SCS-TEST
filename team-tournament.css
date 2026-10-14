@@ -207,3 +207,36 @@ body.light-mode .scs-team-sheet .scs-team-setup .scs-team-club {
 }
 body.light-mode .scs-team-sheet .scs-team-setup .scs-team-club-name strong { color: #18273c; }
 body.light-mode .scs-team-sheet .scs-team-setup .scs-team-club-name small { color: #35465e; }
+
+/* V214: club identity fills each TEAM SECTION, not the match shell.
+   Retain the proven SCS match structure, player rings and VS divider. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:first-child,
+.scs-team-sheet .scs-tm-court-result .scs-tm-completed-team:first-child,
+.scs-team-sheet .scs-tm-live-center>.scs-tm-completed-row .scs-tm-completed-team:first-child {
+  border-left:0 !important;
+  background:color-mix(in srgb, var(--team-left) 25%, #12213a) !important;
+  border-radius:9px 9px 0 0;
+  padding:12px !important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child,
+.scs-team-sheet .scs-tm-court-result .scs-tm-completed-team:last-child,
+.scs-team-sheet .scs-tm-live-center>.scs-tm-completed-row .scs-tm-completed-team:last-child {
+  border-left:0 !important;
+  background:color-mix(in srgb, var(--team-right) 25%, #12213a) !important;
+  border-radius:0 0 9px 9px;
+  padding:12px !important;
+}
+/* Existing encounter pair editor: readable SCS primary action, not a dark thin bar. */
+.scs-team-sheet .scs-team-fixtures button.scs-team-pair-action {
+  display:flex !important;align-items:center;justify-content:center;
+  width:100% !important;min-height:46px !important;
+  padding:11px 16px !important;margin:12px 0 22px !important;
+  border:1px solid #6b9fe5 !important;border-radius:11px !important;
+  background:#3269b5 !important;color:#fff !important;
+  font-size:1rem !important;font-weight:700 !important;
+  line-height:1.35 !important;opacity:1 !important;
+  cursor:pointer;appearance:none;
+}
+.scs-team-sheet .scs-team-fixtures button.scs-team-pair-action:focus-visible {outline:3px solid #9cc8ff;outline-offset:2px}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:first-child {background:color-mix(in srgb, var(--team-left) 17%, #fff) !important}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child {background:color-mix(in srgb, var(--team-right) 17%, #fff) !important}
