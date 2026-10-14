@@ -90,3 +90,16 @@
 
 /* Team-only independent roster picker */
 .scs-team-available-title{padding:12px 8px 6px;color:#b8ccec;font-weight:700;border-top:1px solid #405572;margin-top:10px}
+
+/* Encounter cards, scoped exclusively to Team Tournament */
+.scs-team-fixtures .scs-team-encounter{border:1px solid #49617f;border-radius:15px;padding:14px;margin:12px 0;background:#192b45}
+.scs-team-encounter h4{margin:0 0 5px;font-size:1.05rem}
+.scs-team-encounter>p{margin:0 0 14px;color:#b6c8e2}
+.scs-team-match-card{border:1px solid #425b7c;border-radius:14px;padding:12px;margin:12px 0;background:#12213a}
+.scs-team-match-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.scs-team-match-head span{font-size:.78rem;color:#bdd0e8}
+.scs-team-match-club{border:1px solid var(--team-accent);border-radius:12px;padding:10px;margin:9px 0;background:#17283e}
+.scs-team-match-club-title{font-weight:750;color:var(--team-accent);margin-bottom:8px}
+.scs-team-match-player{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;background:#203650;margin-top:5px;color:#f3f7ff;overflow-wrap:anywhere}
+.scs-team-player-icon{color:#3bb5ff;font-size:19px}
+.scs-team-match-unselected{color:#b8c9df;font-size:.85rem;padding:5px 0}
