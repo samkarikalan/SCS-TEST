@@ -152,3 +152,21 @@
 .scs-team-sheet .scs-team-setup .scs-team-club{background:transparent}
 .scs-team-sheet .scs-team-setup .scs-team-club-head{background:transparent}
 .scs-team-sheet .scs-tm-completed-row,.scs-team-sheet .scs-tm-court-card{max-width:none;width:100%;box-sizing:border-box}
+
+/* V211: approved SCS reference card — team names above LEFT-aligned players, scores on right. */
+.scs-team-sheet .scs-team-match-shell{margin:9px 0;width:100%;max-width:none}
+.scs-team-sheet .scs-team-match-shell>.scs-tm-completed-row{width:100%;margin:0;box-sizing:border-box}
+.scs-team-sheet .scs-tm-completed-team{display:grid;grid-template-columns:minmax(0,1fr) auto!important;align-items:center;gap:8px;min-width:0}
+.scs-team-sheet .scs-tm-completed-players{grid-column:1;grid-row:1;display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.scs-team-sheet .scs-tm-completed-team-score{grid-column:2;grid-row:1;text-align:right}
+.scs-team-sheet .scs-team-card-club{align-self:flex-start;margin:0 0 7px}
+.scs-team-sheet .scs-team-card-club .scs-team-club-label{border:0;background:var(--team-accent);color:#081c30;padding:4px 10px;border-radius:7px;font-weight:850}
+.scs-team-sheet .scs-tm-completed-team:first-child{border-left:4px solid var(--team-left);padding-left:10px}
+.scs-team-sheet .scs-tm-completed-team:last-child{border-left:4px solid var(--team-right);padding-left:10px}
+.scs-team-sheet .scs-tm-completed-title{min-width:0}
+.scs-team-sheet .scs-tm-completed-title>b{min-width:0;flex:1;overflow-wrap:anywhere}
+.scs-team-sheet .scs-team-pending-icon{display:grid;place-items:center;flex:none;width:30px;height:30px;border:1px solid #7896c2;border-radius:50%;color:#a9c4e7}
+.scs-team-sheet .scs-team-header-status{font-size:.72rem;text-transform:capitalize;color:#b9c9e2;white-space:nowrap}
+.scs-team-sheet .scs-tm-completed-winner .scs-team-club-label{background:var(--team-accent);color:#081c30;padding:3px 8px;border-radius:6px}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-content{padding:8px 0 3px}
+.scs-team-sheet .scs-team-fixtures{padding:0 2px}

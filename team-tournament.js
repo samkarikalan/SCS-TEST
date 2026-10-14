@@ -118,11 +118,15 @@ function editEncounter(id){let e=state.encounters.find(x=>x.id===id);if(!e)retur
 function matchCard(m){
  const e=encounterFor(m),done=m.status==='approved',ready=m.pairs.every(p=>p.length===2);
  const pair=i=>m.pairs[i]||[];
- const base={number:m.id,title:clubName(e.a)+' vs '+clubName(e.b)+' · Doubles '+(m.index+1),left:pair(0).join(' / '),right:pair(1).join(' / '),leftPlayers:pair(0),rightPlayers:pair(1),score:scoreText(m),winner:m.winner==='L'?'left':m.winner==='R'?'right':null};
- // Reuse the proven scored card body from SCSSharedMatchCenter for every Team Tournament match.
- const card=SCSSharedMatchCenter.completed(base);
- return '<div class="scs-team-match-shell" style="--team-left:'+esc(clubAccent(e.a))+';--team-right:'+esc(clubAccent(e.b))+'" data-match-id="'+esc(m.id)+'">'+card.replace('<div class="scs-tm-completed-title">','<div class="scs-tm-completed-title">').replace('<div class="scs-tm-completed-team ', '<div class="scs-tm-completed-team ')+
- '<div class="scs-team-match-actions">'+(!done?'<span class="scs-team-match-status">'+esc(ready?m.status:'Select pairs')+'</span>':'')+'</div></div>';
+ const base={number:m.id,title:clubName(e.a)+' vs '+clubName(e.b)+' · Doubles '+(m.index+1),left:pair(0).join(' / '),right:pair(1).join(' / '),leftPlayers:pair(0),rightPlayers:pair(1),score:scoreText(m),winner:done?(m.winner==='L'?'left':m.winner==='R'?'right':null):null};
+ // Preserve the existing SCS scored match card. Only pending header state and club identity differ.
+ let card=SCSSharedMatchCenter.completed(base);
+ if(!done){
+  const status=ready?m.status.replace(/_/g,' '):'Select pairs';
+  card=card.replace('<span class="scs-tm-completed-check">✓</span>','<span class="scs-team-pending-icon" aria-hidden="true">○</span>')
+   .replace('</b></div><div class="scs-tm-completed-content">','</b><span class="scs-team-header-status">'+esc(status)+'</span></div><div class="scs-tm-completed-content">');
+ }
+ return '<div class="scs-team-match-shell" style="--team-left:'+esc(clubAccent(e.a))+';--team-right:'+esc(clubAccent(e.b))+'" data-match-id="'+esc(m.id)+'">'+card+'</div>';
 }
 function fixtures(){
  return '<section class="scs-team-fixtures"><h3>Club encounters</h3>'+state.encounters.map(e=>{const done=e.matches.filter(m=>m.status==='approved'),a=done.filter(m=>m.winner==='L').length,b=done.filter(m=>m.winner==='R').length;const winning=done.length===3?(a>b?e.a:e.b):null;return '<div class="scs-team-encounter-heading"><strong>'+clubLabel(e.a)+' vs '+clubLabel(e.b)+'</strong><span>'+a+' – '+b+' · '+done.length+'/3 completed</span></div>'+e.matches.map(matchCard).join('')+(winning===null?'':'<div class="scs-team-encounter-winner" '+clubStyle(winning)+'>🏆 Encounter winner: '+esc(clubName(winning))+'</div>')+(viewOnly?'':'<button class="scs-gt-secondary scs-team-pair-action" data-encounter="'+e.id+'">Select / change pairs</button>')}).join('')+'</section>';
@@ -133,7 +137,7 @@ function decorateTeamCard(card,m){
  const e=encounterFor(m);if(!e)return;
  card.style.setProperty('--team-left',clubAccent(e.a));card.style.setProperty('--team-right',clubAccent(e.b));
  const teams=card.querySelectorAll('.scs-tm-completed-team');
- teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.prepend(label)}});
+ teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.querySelector('.scs-tm-completed-players')?.prepend(label)}});
  const win=card.querySelector('.scs-tm-completed-winner');
  if(win&&m.winner){const id=winnerClub(m);const b=win.querySelector('b');if(b)b.innerHTML=clubLabel(id)+' <span class="scs-team-winning-pair">'+esc(m.pairs[m.winner==='L'?0:1].join(' / '))+'</span>'}
 }
