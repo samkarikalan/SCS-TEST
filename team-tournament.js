@@ -153,7 +153,7 @@ function decorateTeamCard(card,m){
  const e=encounterFor(m);if(!e)return;
  card.style.setProperty('--team-left',clubAccent(e.a));card.style.setProperty('--team-right',clubAccent(e.b));
  const teams=card.querySelectorAll('.scs-tm-completed-team');
- teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.querySelector('.scs-tm-completed-players')?.prepend(label)}});
+ teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.prepend(label)}});
  const win=card.querySelector('.scs-tm-completed-winner');
  if(win&&m.winner){const id=winnerClub(m);const b=win.querySelector('b');if(b)b.innerHTML=clubLabel(id)+' <span class="scs-team-winning-pair">'+esc(m.pairs[m.winner==='L'?0:1].join(' / '))+'</span>'}
 }

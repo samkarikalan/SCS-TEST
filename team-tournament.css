@@ -324,3 +324,25 @@ body.light-mode .scs-team-standing{background:color-mix(in srgb,var(--club-accen
 
 /* V219: readable two-line encounter and doubles statistics at current SCS font size */
 .scs-team-standing-info{gap:4px}.scs-team-standing-info small{display:block;line-height:1.35;white-space:normal}.scs-team-standing-head{align-items:center}
+
+/* V220 — full-width, compact club-name banners on Team Tournament match cards only. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:first-child,
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child{
+  padding:0!important;gap:0!important;overflow:hidden;
+}
+.scs-team-sheet .scs-team-match-shell .scs-team-card-club{
+  display:block;align-self:stretch;width:100%;margin:0!important;
+  padding:0!important;text-align:center;box-sizing:border-box;
+}
+.scs-team-sheet .scs-team-match-shell .scs-team-card-club .scs-team-club-label{
+  display:block;width:100%;box-sizing:border-box;margin:0!important;
+  padding:5px 10px!important;border:0!important;border-radius:0!important;
+  background:var(--team-left)!important;color:#fff!important;
+  font:inherit;font-weight:750;line-height:1.35;text-align:center;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child .scs-team-card-club .scs-team-club-label{
+  background:var(--team-right)!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-players{
+  width:100%;box-sizing:border-box;padding:7px 10px!important;
+}
