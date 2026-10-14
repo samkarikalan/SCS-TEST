@@ -307,3 +307,17 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:las
 }
 .scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs::before,
 .scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs::after{margin:0!important}
+
+/* V217: club-colored expandable ranking and scrollable round-robin matrix */
+.scs-team-ranking,.scs-team-matrix{width:100%;min-width:0}
+.scs-team-ranking-help,.scs-team-matrix>p{color:var(--text-muted,#aabbd1);margin:0 0 12px}
+.scs-team-standing{border:1px solid var(--club-accent);border-radius:18px;margin:10px 0;overflow:hidden;background:color-mix(in srgb,var(--club-accent) 29%,#13253d)}
+.scs-team-standing-head{width:100%;display:flex;align-items:center;gap:12px;padding:14px 12px;border:0;background:transparent;color:inherit;text-align:left;font:inherit;cursor:pointer}
+.scs-team-rank{display:grid;place-items:center;min-width:38px;min-height:42px;border:1px solid var(--club-accent);border-radius:10px;font-weight:700}
+.scs-team-standing-info{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}.scs-team-standing-info strong{overflow-wrap:anywhere}.scs-team-standing-info small,.scs-team-standing-points small{font-size:.83em;color:inherit;opacity:.9}
+.scs-team-standing-points{display:flex;flex-direction:column;align-items:center;min-width:48px}.scs-team-standing-points b{font-size:1.3em}
+.scs-team-standing-history{padding:0 10px 12px}.scs-team-opponent{background:color-mix(in srgb,var(--opponent-accent) 32%,#12233a);border:1px solid var(--opponent-accent);border-radius:12px;padding:10px;margin:8px 0}
+.scs-team-opponent-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:6px}.scs-team-result-line{display:flex;flex-wrap:wrap;gap:4px 10px;padding:7px 0;border-top:1px solid #ffffff24}.scs-team-result-line>span:nth-child(2){flex:1;min-width:110px}.scs-team-result-status{font-weight:600}
+.scs-team-matrix-scroll{width:100%;overflow-x:auto;overscroll-behavior-x:contain;border-radius:12px}.scs-team-matrix-table{border-collapse:separate;border-spacing:2px;min-width:max-content;width:max-content}.scs-team-matrix-table th,.scs-team-matrix-table td{padding:8px;border:1px solid #526a87;background:#162940;text-align:center;min-width:104px}.scs-team-matrix-table th{background:color-mix(in srgb,var(--matrix-accent,#223d60) 40%,#14273e)}.scs-team-matrix-sticky{position:sticky;left:0;z-index:2;min-width:100px!important;max-width:135px;overflow-wrap:anywhere}.scs-team-matrix-table thead .scs-team-matrix-sticky{z-index:3}.scs-team-matrix-self{background:#22344a!important;color:#7e94af}.scs-team-matrix-cell{display:flex;flex-direction:column;gap:4px;align-items:center;width:100%;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer}.scs-team-matrix-cell small{opacity:.75}.scs-team-matrix-cell strong{font-size:.92em}.scs-team-matrix-detail{margin-top:14px}.scs-team-matrix-detail-row{display:flex;flex-wrap:wrap;gap:6px 12px;padding:10px 0;border-bottom:1px solid #ffffff25}.scs-team-matrix-detail-row span:nth-child(2){flex:1;min-width:130px}
+.scs-team-sheet .scs-gt-context-tabs{display:flex;flex-wrap:wrap}.scs-team-sheet .scs-gt-context-tabs button{flex:1 1 auto;min-width:0}
+body.light-mode .scs-team-standing{background:color-mix(in srgb,var(--club-accent) 22%,white)}body.light-mode .scs-team-opponent{background:color-mix(in srgb,var(--opponent-accent) 22%,white)}
