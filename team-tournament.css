@@ -107,3 +107,25 @@
 /* Team Tournament result labels only */
 .scs-team-sheet .scs-team-winning-club{font-weight:700;color:#8de1c0;margin-top:5px;font-size:.9em}
 .scs-team-sheet .scs-team-encounter-winner{font-weight:700;color:#8de1c0}
+/* V208: compact, unified Team Tournament presentation. Shared modules untouched. */
+.scs-team-sheet .scs-team-encounter{margin:12px 0;padding:12px;border:1px solid #486381;border-radius:14px;background:#172940}
+.scs-team-sheet .scs-team-encounter-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:9px}
+.scs-team-sheet .scs-team-encounter-head>strong{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.scs-team-sheet .scs-team-encounter-head>span{color:#c1d0e7;font-size:.82rem}
+.scs-team-sheet .scs-team-club-label{color:var(--team-accent);font-weight:750}
+.scs-team-sheet .scs-team-compact-match{padding:11px 12px;border:1px solid #486381;border-radius:12px;margin:9px 0;background:#122139}
+.scs-team-sheet .scs-team-compact-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px}
+.scs-team-sheet .scs-team-compact-head small{color:#afc4df}
+.scs-team-sheet .scs-team-compact-side{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-left:3px solid var(--team-accent);padding-left:10px}
+.scs-team-sheet .scs-team-compact-side>strong{color:var(--team-accent);flex:0 0 25%;overflow-wrap:anywhere}
+.scs-team-sheet .scs-team-compact-side>span{display:flex;flex:1;gap:4px;flex-direction:column;min-width:0}
+.scs-team-sheet .scs-team-compact-side .scs-tm-shared-player{display:flex;align-items:center;gap:6px}
+.scs-team-sheet .scs-team-compact-side .scs-tm-ring-slot{flex:none}
+.scs-team-sheet .scs-team-compact-vs{text-align:center;font-size:.7rem;color:#94aeca;line-height:1.1}
+.scs-team-sheet .scs-team-winner-note,.scs-team-sheet .scs-team-encounter-winner{border-left:4px solid var(--team-accent);padding:7px 10px;margin:8px 0;color:var(--team-accent);font-weight:750;background:rgba(34,60,81,.35);border-radius:6px}
+.scs-team-sheet .scs-team-winner-note small{display:block;font-size:.8rem;color:#d5e5f7;margin-top:3px}
+.scs-team-sheet .scs-team-match-club-names{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:8px 12px;font-size:.85rem}
+.scs-team-sheet .scs-team-match-club-names>span:not(.scs-team-club-label){color:#8ea6c6}
+.scs-team-sheet .scs-tm-court-result .scs-tm-completed-team:first-child,.scs-team-sheet .scs-tm-completed-row .scs-tm-completed-team:first-child{border-left:3px solid var(--team-left);padding-left:8px}
+.scs-team-sheet .scs-tm-court-result .scs-tm-completed-team:last-child,.scs-team-sheet .scs-tm-completed-row .scs-tm-completed-team:last-child{border-left:3px solid var(--team-right);padding-left:8px}
+.scs-team-sheet .scs-team-setup .scs-team-club{border-color:var(--team-accent)}
