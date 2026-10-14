@@ -170,3 +170,15 @@
 .scs-team-sheet .scs-tm-completed-winner .scs-team-club-label{background:var(--team-accent);color:#081c30;padding:3px 8px;border-radius:6px}
 .scs-team-sheet .scs-team-match-shell .scs-tm-completed-content{padding:8px 0 3px}
 .scs-team-sheet .scs-team-fixtures{padding:0 2px}
+
+/* V212: Club identity comes from the same saved club color in setup and all match states. */
+.scs-team-sheet .scs-team-setup .scs-team-club{border-color:var(--club-border)!important;background:transparent!important}
+.scs-team-sheet .scs-team-setup .scs-team-expand{border-color:var(--club-border)!important}
+.scs-team-sheet .scs-team-match-shell>.scs-tm-completed-row{border-left:1px solid #456b9b!important}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{border-left:0!important}
+.scs-team-sheet .scs-team-waiting-entry{width:100%;margin:10px 0}
+.scs-team-sheet .scs-team-waiting-entry>button{width:100%;min-height:42px;border:0;border-radius:10px;background:#315d9b;color:#fff;font-weight:750;margin-top:6px}
+.scs-team-sheet .scs-team-waiting-status{font-size:.82rem;color:#b9c9e2;text-align:right;margin:5px 3px}
+.scs-team-sheet .scs-tm-court-card:not(.is-free){padding:10px}
+.scs-team-sheet .scs-tm-court-card .scs-team-match-shell{margin:9px 0}
+.scs-team-sheet .scs-tm-court-card>button{margin-top:8px}

@@ -144,12 +144,33 @@ function decorateTeamCard(card,m){
 function decorateMatchCenter(r){
  r.querySelectorAll('.scs-team-match-shell').forEach(shell=>{const m=allMatches().find(x=>String(x.id)===shell.dataset.matchId);if(m)decorateTeamCard(shell,m)});
  if(tab!=='match')return;
- r.querySelectorAll('.scs-tm-court-card:not(.is-free)').forEach(card=>{const title=card.querySelector('small'),m=title&&allMatches().find(x=>title.textContent===matchName(x));if(!m)return;const e=encounterFor(m);card.style.setProperty('--team-left',clubAccent(e.a));card.style.setProperty('--team-right',clubAccent(e.b));const head=card.querySelector('.scs-tm-court-head');if(head&&!card.querySelector('.scs-team-match-club-names')){const names=document.createElement('div');names.className='scs-team-match-club-names';names.innerHTML=clubLabel(e.a)+' <span>vs</span> '+clubLabel(e.b);head.after(names)}decorateTeamCard(card,m)});
- if(matchTab==='completed'){const done=allMatches().filter(m=>m.status==='approved');r.querySelectorAll('.scs-tm-live-center > .scs-tm-completed-row').forEach((card,i)=>{if(done[i])decorateTeamCard(card,done[i])})}
+ // Keep the proven SCS panel/court controls, but use the exact same SCS card
+ // for every Team Tournament match state, including waiting and assigned.
+ r.querySelectorAll('.scs-tm-court-card:not(.is-free)').forEach(card=>{
+  const label=card.querySelector('small');const m=label&&allMatches().find(x=>label.textContent===matchName(x));if(!m)return;
+  const head=card.querySelector('.scs-tm-court-head')?.outerHTML||'';
+  const action=card.querySelector('button[data-start],button[data-score],button[data-approve]')?.outerHTML||'';
+  card.innerHTML=head+matchCard(m)+action;
+ });
+ if(matchTab==='waiting'){
+  const pending=allMatches().filter(m=>m.status!=='approved');
+  r.querySelectorAll('.scs-tm-live-center > .scs-tm-waiting-match').forEach((card,i)=>{
+   const m=pending[i];if(!m)return;
+   const action=card.querySelector('button[data-assign]')?.outerHTML||'';
+   const status=m.court?'Court '+m.court:m.pairs.every(p=>p.length===2)?'Ready to assign':'Select pairs';
+   card.outerHTML='<div class="scs-team-waiting-entry">'+matchCard(m)+(action||'<div class="scs-team-waiting-status">'+esc(status)+'</div>')+'</div>';
+  });
+ }
+ if(matchTab==='completed'){
+  const done=allMatches().filter(m=>m.status==='approved');
+  r.querySelectorAll('.scs-tm-live-center > .scs-tm-completed-row').forEach((card,i)=>{if(done[i])card.outerHTML=matchCard(done[i])});
+ }
+ // Newly inserted cards also need the existing SCS player rings and club labels.
+ r.querySelectorAll('.scs-team-match-shell').forEach(shell=>{const m=allMatches().find(x=>String(x.id)===shell.dataset.matchId);if(m)decorateTeamCard(shell,m)});
 }
 
 function render(){let r=root();if(!r)return;r.innerHTML='<div class="scs-gt-sheet scs-team-sheet" role="dialog"><header><strong>'+esc(state.title||'Team Tournament')+'</strong><button data-close>✕</button></header>'+(state.encounters.length?'<nav class="scs-gt-context-tabs"><button data-tab="fixtures">Encounters</button><button data-tab="match">Match Center</button><button data-tab="ranking">Ranking</button></nav>':'')+(tab==='setup'?setup():tab==='match'?matchCenter():tab==='ranking'?standings():fixtures())+'</div>';r.querySelector('[data-close]').onclick=close;r.querySelector('#team-title')?.addEventListener('input',e=>{state.title=e.target.value;save()});hydratePlayerCards();
-decorateMatchCenter(r);
+decorateMatchCenter(r);hydratePlayerCards();
 r.querySelector('[data-add]')?.addEventListener('click',()=>clubEditor(state.clubs.length));r.querySelectorAll('[data-expand]').forEach(x=>x.onclick=()=>{let i=Number(x.dataset.expand);expandedClubs.has(i)?expandedClubs.delete(i):expandedClubs.add(i);render()});r.querySelectorAll('[data-edit]').forEach(x=>x.onclick=()=>clubEditor(Number(x.dataset.edit)));r.querySelectorAll('[data-remove]').forEach(x=>x.onclick=()=>{if(state.encounters.length){alert('Club membership cannot be removed after fixtures have been generated.');return}if(!confirm('Remove this club and its roster from the tournament?'))return;state.clubs.splice(Number(x.dataset.remove),1);expandedClubs.clear();save();render()});r.querySelector('[data-generate]')?.addEventListener('click',generate);r.querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>{tab=x.dataset.tab;render()});r.querySelectorAll('[data-encounter]').forEach(x=>x.onclick=()=>editEncounter(x.dataset.encounter));r.querySelectorAll('[data-matchtab]').forEach(x=>x.onclick=()=>{matchTab=x.dataset.matchtab;render()});r.querySelectorAll('[data-courts]').forEach(x=>x.onclick=()=>{state.courtCount=Math.max(1,Math.min(12,state.courtCount+Number(x.dataset.courts),...allMatches().filter(m=>m.court).map(m=>m.court)));save();render()});r.querySelectorAll('[data-assign]').forEach(x=>x.onclick=()=>{assigning=x.dataset.assign;render()});r.querySelector('[data-cancel]')?.addEventListener('click',()=>{assigning=null;render()});r.querySelectorAll('[data-choose]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===assigning),n=Number(x.dataset.choose);if(!m||m.status!=='pending')return;let occupying=allMatches().find(y=>y.court===n&&y.status!=='approved');if(occupying){alert('Court is occupied. Select a free court.');return}m.court=n;m.status='assigned';assigning=null;save();render()});r.querySelectorAll('[data-start]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===x.dataset.start);m.status='playing';save();render()});r.querySelectorAll('[data-score]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===x.dataset.score);if(!window.SCSScoring)return;root().hidden=true;SCSScoring.openGroupMatch({sessionId:'local-team-'+m.id,round:1,court:m.court,pair1:m.pairs[0],pair2:m.pairs[1],courtCenter:true,groupId:m.id})});r.querySelectorAll('[data-approve]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===x.dataset.approve);if(m.status!=='score_ready'||!m.score?.finished)return;m.status='approved';m.court=null;save();render()});}
 function scoreUpdate(id,score,winner){let m=allMatches().find(x=>x.id===id);if(!m||!['playing','score_ready'].includes(m.status))return false;m.score=score;if(winner){m.winner=winner;m.status='score_ready'}save();render();return true}
 window.SCSTeamTournament={open,close,scoreUpdate,playersManagerReturned,returnFromScore(){if(root())root().hidden=false},getState(){load();return state}};
