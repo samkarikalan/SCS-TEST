@@ -129,3 +129,26 @@
 .scs-team-sheet .scs-tm-court-result .scs-tm-completed-team:first-child,.scs-team-sheet .scs-tm-completed-row .scs-tm-completed-team:first-child{border-left:3px solid var(--team-left);padding-left:8px}
 .scs-team-sheet .scs-tm-court-result .scs-tm-completed-team:last-child,.scs-team-sheet .scs-tm-completed-row .scs-tm-completed-team:last-child{border-left:3px solid var(--team-right);padding-left:8px}
 .scs-team-sheet .scs-team-setup .scs-team-club{border-color:var(--team-accent)}
+
+/* V210: Team Tournament only — reuse shared scored cards, full width, no encounter card nesting. */
+.scs-team-sheet .scs-team-fixtures{width:100%;max-width:none;padding:0 6px;margin:0;background:transparent;border:0}
+.scs-team-sheet .scs-team-encounter-heading{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 3px 5px;margin-top:8px}
+.scs-team-sheet .scs-team-encounter-heading>span{font-size:.82rem;color:#b7c8df}
+.scs-team-sheet .scs-team-match-shell{width:100%;margin:9px 0}
+.scs-team-sheet .scs-team-match-shell>.scs-tm-completed-row{width:100%;max-width:none;margin:0;box-sizing:border-box}
+.scs-team-sheet .scs-team-match-actions{display:flex;justify-content:flex-end}
+.scs-team-sheet .scs-team-match-status{font-size:.75rem;color:#aabdd5;margin:3px 7px}
+.scs-team-sheet .scs-team-pair-action{width:100%;margin:6px 0 18px}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:first-child,
+.scs-team-sheet .scs-tm-court-result .scs-tm-completed-team:first-child,
+.scs-team-sheet .scs-tm-live-center>.scs-tm-completed-row .scs-tm-completed-team:first-child{border-left:4px solid var(--team-left);padding-left:10px}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child,
+.scs-team-sheet .scs-tm-court-result .scs-tm-completed-team:last-child,
+.scs-team-sheet .scs-tm-live-center>.scs-tm-completed-row .scs-tm-completed-team:last-child{border-left:4px solid var(--team-right);padding-left:10px}
+.scs-team-sheet .scs-team-card-club{margin:0 0 7px}
+.scs-team-sheet .scs-team-card-club .scs-team-club-label{display:inline-block;padding:3px 9px;border:1px solid var(--team-accent);border-radius:7px;color:var(--team-accent);background:transparent}
+.scs-team-sheet .scs-tm-completed-winner .scs-team-club-label{color:var(--team-accent);margin-right:7px}
+.scs-team-sheet .scs-team-winning-pair{color:inherit}
+.scs-team-sheet .scs-team-setup .scs-team-club{background:transparent}
+.scs-team-sheet .scs-team-setup .scs-team-club-head{background:transparent}
+.scs-team-sheet .scs-tm-completed-row,.scs-team-sheet .scs-tm-court-card{max-width:none;width:100%;box-sizing:border-box}
