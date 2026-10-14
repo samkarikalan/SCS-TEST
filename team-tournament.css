@@ -240,3 +240,53 @@ body.light-mode .scs-team-sheet .scs-team-setup .scs-team-club-name small { colo
 .scs-team-sheet .scs-team-fixtures button.scs-team-pair-action:focus-visible {outline:3px solid #9cc8ff;outline-offset:2px}
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:first-child {background:color-mix(in srgb, var(--team-left) 17%, #fff) !important}
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child {background:color-mix(in srgb, var(--team-right) 17%, #fff) !important}
+
+/* V215 — Team Tournament only: one full-width SCS match card, no nested court panel.
+   Neutral match chrome is intentionally distinct from BOTH club-colored team areas. */
+.scs-team-sheet .scs-tm-live-center{
+  width:100%;max-width:none;box-sizing:border-box;
+  margin:8px 0 12px!important;padding:0!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+}
+.scs-team-sheet .scs-tm-live-courts{grid-template-columns:minmax(0,1fr)!important;gap:10px;width:100%}
+.scs-team-sheet .scs-tm-court-card:not(.is-free){
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;padding:0!important;margin:0!important;width:100%;max-width:none;
+}
+.scs-team-sheet .scs-tm-court-card:not(.is-free)>.scs-tm-court-head{
+  margin:0 0 5px;padding:5px 2px;background:transparent;
+}
+.scs-team-sheet .scs-tm-court-card .scs-team-match-shell{margin:0!important;width:100%}
+.scs-team-sheet .scs-team-match-shell>.scs-tm-completed-row{
+  background:#101d30!important;border:1px solid #456b9b!important;
+  border-radius:15px;box-shadow:none!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{
+  background:#1a2940!important;border-left:0!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-content{
+  background:#101d30!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs{
+  background:#101d30!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:first-child{
+  background:color-mix(in srgb,var(--team-left) 27%,#101d30)!important;
+  border-radius:0!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child{
+  background:color-mix(in srgb,var(--team-right) 27%,#101d30)!important;
+  border-radius:0!important;
+}
+.scs-team-sheet .scs-tm-court-card:not(.is-free)>button{
+  display:block;width:100%;margin:8px 0 12px!important;
+}
+.scs-team-sheet .scs-team-waiting-entry{border:0;background:transparent;padding:0;width:100%}
+.scs-team-sheet .scs-team-waiting-entry .scs-team-match-shell{margin:0}
+.scs-team-sheet .scs-team-sheet,.scs-team-sheet .scs-team-fixtures{max-width:none}
+body.light-mode .scs-team-sheet .scs-team-match-shell>.scs-tm-completed-row,
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-content,
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs{background:#f0f3f8!important}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{background:#e0e7f1!important}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:first-child{background:color-mix(in srgb,var(--team-left) 20%,#fff)!important}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child{background:color-mix(in srgb,var(--team-right) 20%,#fff)!important}
