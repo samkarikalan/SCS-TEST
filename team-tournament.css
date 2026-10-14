@@ -182,3 +182,28 @@
 .scs-team-sheet .scs-tm-court-card:not(.is-free){padding:10px}
 .scs-team-sheet .scs-tm-court-card .scs-team-match-shell{margin:9px 0}
 .scs-team-sheet .scs-tm-court-card>button{margin-top:8px}
+
+/* V213: Existing SCS My Activity colored-card treatment for club roster cards only.
+   Match cards intentionally remain unchanged. Color is derived from the saved club identity. */
+.scs-team-sheet .scs-team-setup .scs-team-club {
+  border: 1px solid color-mix(in srgb, var(--club-accent) 52%, #60738d) !important;
+  background: color-mix(in srgb, var(--club-accent) 32%, #1c2b43) !important;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.scs-team-sheet .scs-team-setup .scs-team-club-head {
+  background: transparent !important;
+}
+.scs-team-sheet .scs-team-setup .scs-team-expand {
+  border-color: var(--club-accent) !important;
+}
+.scs-team-sheet .scs-team-setup .scs-team-club-name strong { color: #f5f8ff; }
+.scs-team-sheet .scs-team-setup .scs-team-club-name small { color: #e0e9f5; }
+.scs-team-sheet .scs-team-setup .scs-team-roster {
+  background: color-mix(in srgb, #101f34 78%, var(--club-accent) 22%);
+}
+body.light-mode .scs-team-sheet .scs-team-setup .scs-team-club {
+  background: color-mix(in srgb, var(--club-accent) 19%, #ffffff) !important;
+}
+body.light-mode .scs-team-sheet .scs-team-setup .scs-team-club-name strong { color: #18273c; }
+body.light-mode .scs-team-sheet .scs-team-setup .scs-team-club-name small { color: #35465e; }
