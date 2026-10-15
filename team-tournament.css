@@ -416,3 +416,37 @@ body.light-mode .scs-team-standing{background:color-mix(in srgb,var(--club-accen
 }
 .scs-team-sheet .scs-team-header-status{white-space:normal;text-align:right}
 .scs-team-sheet .scs-gt-context-tabs button{min-height:42px;white-space:normal}
+
+/* V223: complete Team Tournament text audit. Previous V222 rules only covered
+   selected descendants of .scs-team-sheet and missed setup buttons, empty
+   state text, club-editor modal, and shared Group Tournament control labels.
+   Scope every rule to Team Tournament overlay, not shared tournament screens. */
+.scs-team-overlay :is(
+  button, input, select, textarea, label, small,
+  .scs-team-empty, .scs-team-empty small,
+  .scs-team-add, .scs-team-generate,
+  .scs-team-club small, .scs-team-club-editor p,
+  .scs-tm-pool, .scs-tm-pool-heading,
+  .scs-tm-import-actions button,
+  .scs-gt-context-tabs button, .scs-gt-player,
+  .scs-team-count, .scs-team-chips span,
+  .scs-team-match-status, .scs-team-header-status,
+  .scs-team-waiting-status, .scs-team-match-head span,
+  .scs-team-encounter-head>span, .scs-team-encounter-heading>span,
+  .scs-team-standing-info small, .scs-team-standing-points small,
+  .scs-team-matrix-cell small, .scs-team-matrix-cell strong,
+  .scs-team-matrix-table td, .scs-team-matrix-table th,
+  .scs-team-result-line, .scs-team-opponent,
+  .scs-team-ranking-help, .scs-team-footer p,
+  .scs-team-section-title small, .scs-team-editor-head p,
+  .scs-team-manager, .scs-team-player-number
+){font-size:max(1rem,1em)!important;line-height:1.4;}
+/* Also cover text-only elements not given a dedicated component class. */
+.scs-team-overlay :is(p,li,td,th,dt,dd){font-size:max(1rem,1em);line-height:1.45;}
+.scs-team-overlay :is(button, .scs-team-club, .scs-team-standing-head,
+ .scs-team-matrix-table th, .scs-team-matrix-table td){min-width:0;overflow-wrap:anywhere;}
+.scs-team-overlay :is(.scs-team-add,.scs-team-generate,.scs-tm-import-actions button){
+ min-height:48px;white-space:normal;text-wrap:pretty;
+}
+.scs-team-overlay .scs-team-empty{gap:10px;}
+.scs-team-overlay .scs-team-empty small{display:block;}
