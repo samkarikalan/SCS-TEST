@@ -2,7 +2,7 @@
 create table if not exists public.tournaments (
   id uuid primary key default gen_random_uuid(),
   club_id uuid not null references public.clubs(id) on delete cascade,
-  format text not null check (format in ('knockout', 'group')),
+  format text not null check (format in ('knockout', 'group', 'team')),
   title text not null default 'Tournament',
   status text not null default 'draft' check (status in ('draft', 'live', 'completed', 'archived')),
   state_version integer not null default 1 check (state_version > 0),

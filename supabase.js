@@ -155,11 +155,12 @@ function _scsTournamentCloudIdKey(clubId, format) {
 function _scsTournamentStatus(format, state) {
   if (state && (state.completed === true || state.status === 'completed')) return 'completed';
   if (format === 'group') return state && state.started ? 'live' : 'draft';
+  if (format === 'team') return state && state.encounters && state.encounters.some(e => e.matches && e.matches.some(m => m.status !== 'pending')) ? 'live' : 'draft';
   return state && state.live === true ? 'live' : 'draft';
 }
 
 async function dbSaveTournamentState(format, state) {
-  if (!['knockout', 'group'].includes(format) || !state || typeof state !== 'object') return null;
+  if (!['knockout', 'group', 'team'].includes(format) || !state || typeof state !== 'object') return null;
   const club = getMyClub();
   if (!club || !club.id) return null;
   const user = typeof authGetUser === 'function' ? authGetUser() : null;
@@ -170,7 +171,7 @@ async function dbSaveTournamentState(format, state) {
   const payload = {
     club_id: club.id,
     format,
-    title: String(state.title || (format === 'group' ? 'Group Tournament' : 'Tournament')).slice(0, 120),
+    title: String(state.title || (format === 'group' ? 'Group Tournament' : format === 'team' ? 'Team Tournament' : 'Tournament')).slice(0, 120),
     status,
     state_version: SCS_TOURNAMENT_STATE_VERSION,
     state,
@@ -203,7 +204,7 @@ function scsQueueTournamentCloudSave(format, state) {
 
 function scsResetTournamentCloudIdentity(format) {
   const club = getMyClub();
-  if (!club || !club.id || !['knockout', 'group'].includes(format)) return;
+  if (!club || !club.id || !['knockout', 'group', 'team'].includes(format)) return;
   const previous = _scsTournamentSaveTimers.get(format);
   if (previous) clearTimeout(previous);
   _scsTournamentSaveTimers.delete(format);
@@ -212,13 +213,13 @@ function scsResetTournamentCloudIdentity(format) {
 
 function scsGetTournamentCloudIdentity(format) {
   const club = getMyClub();
-  if (!club || !club.id || !['knockout', 'group'].includes(format)) return '';
+  if (!club || !club.id || !['knockout', 'group', 'team'].includes(format)) return '';
   return localStorage.getItem(_scsTournamentCloudIdKey(club.id, format)) || '';
 }
 
 async function dbLoadLatestTournament(format) {
   const club = getMyClub();
-  if (!club || !club.id || !['knockout', 'group'].includes(format)) return null;
+  if (!club || !club.id || !['knockout', 'group', 'team'].includes(format)) return null;
   const rows = await sbGet('tournaments',
     `club_id=eq.${encodeURIComponent(club.id)}&format=eq.${format}&status=in.(draft,live)&order=updated_at.desc&limit=1&select=id,format,status,state_version,state,updated_at`
   ).catch(() => []);
@@ -258,7 +259,7 @@ async function dbAdoptTournamentById(id) {
   _scsTournamentSaveTimers.delete(row.format);
   row.state._scsCloudTournamentId = row.id;
   localStorage.setItem(_scsTournamentCloudIdKey(club.id, row.format), row.id);
-  localStorage.setItem(row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94', JSON.stringify(row.state));
+  localStorage.setItem(row.format === 'team' ? 'scs_team_tournament_v1' : row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94', JSON.stringify(row.state));
   return row;
 }
 
@@ -276,7 +277,7 @@ async function dbDeleteTournamentById(id) {
     if (previous) clearTimeout(previous);
     _scsTournamentSaveTimers.delete(row.format);
     localStorage.removeItem(idKey);
-    localStorage.removeItem(row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94');
+    localStorage.removeItem(row.format === 'team' ? 'scs_team_tournament_v1' : row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94');
   }
   return true;
 }
@@ -284,7 +285,8 @@ async function dbDeleteTournamentById(id) {
 async function scsTournamentHydrateCloud() {
   const tasks = [
     ['knockout', 'scs_knockout_tournament_v94'],
-    ['group', 'scs_group_tournament_ui_v1']
+    ['group', 'scs_group_tournament_ui_v1'],
+    ['team', 'scs_team_tournament_v1']
   ].map(async ([format, key]) => {
     const local = localStorage.getItem(key);
     // A local snapshot must never be uploaded merely because the app opened.
