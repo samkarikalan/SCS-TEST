@@ -3990,10 +3990,18 @@ body.app-light #scsActivityHome .scs-activity-choice.scs-art-card,body.light-mod
 body.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament,body.light-mode #scsActivityHome .scs-activity-choice.scs-shared-tournament,html.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament{background:linear-gradient(145deg,#ffb52d,#f26b19 55%,#ffa525)!important;color:white!important;}
 body.app-light #scsActivityHome .scs-art-live-copy,body.light-mode #scsActivityHome .scs-art-live-copy,html.app-light #scsActivityHome .scs-art-live-copy,body.app-light #scsActivityHome .scs-art-live-copy small,body.light-mode #scsActivityHome .scs-art-live-copy small,html.app-light #scsActivityHome .scs-art-live-copy small{color:#fff!important;}
 @media(max-width:370px){#scsActivityHome .scs-v237-card-grid{gap:8px}#scsActivityHome .scs-activity-choice.scs-art-card{padding:10px!important;border-radius:16px}#scsActivityHome .scs-art-live-copy strong{font-size:clamp(15px,calc(4.1vw * var(--app-font-scale,1)),23px)!important}#scsActivityHome .scs-art-live-copy small{font-size:clamp(9px,calc(2.5vw * var(--app-font-scale,1)),14px)!important}}
+
+/* V240: Home Settings entry, aligned with the existing logo; no additional card. */
+#scsActivityHome .scs-v237-brand{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+#scsActivityHome .scs-v237-brand-identity{min-width:0;flex:1}
+#scsActivityHome .scs-activity-settings{flex:0 0 46px;width:46px;height:46px;display:grid;place-items:center;cursor:pointer;border:1px solid #5a87b9;border-radius:15px;background:rgba(22,53,90,.75);color:#e9f5ff;box-shadow:0 3px 10px #0002;-webkit-tap-highlight-color:transparent}
+#scsActivityHome .scs-activity-settings:focus-visible{outline:3px solid #4bd5ff;outline-offset:3px}
+#scsActivityHome .scs-activity-settings:active{transform:scale(.96)}
+body.app-light #scsActivityHome .scs-activity-settings,body.light-mode #scsActivityHome .scs-activity-settings,html.app-light #scsActivityHome .scs-activity-settings{background:#fff;color:#1459a6;border-color:#9dc8f1}
 </style>
 <div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="SCS Home">
  <div class="scs-activity-panel scs-shared-club-card">
-  <div class="scs-v237-brand"><div class="scs-v237-logo" aria-label="SCS">S<span>C</span>S</div><div class="scs-v237-brand-sub">Sports Center Scheduler</div></div>
+  <div class="scs-v237-brand"><div class="scs-v237-brand-identity"><div class="scs-v237-logo" aria-label="SCS">S<span>C</span>S</div><div class="scs-v237-brand-sub">Sports Club Scheduler</div></div><button type="button" class="scs-activity-settings" onclick="scsActivityOpenSettings()" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.52V20h-2.7v-.08a1.65 1.65 0 0 0-1-1.52 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.9 15a1.65 1.65 0 0 0-1.52-1H6.3v-2.7h.08a1.65 1.65 0 0 0 1.52-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.52V5.3H15v.08a1.65 1.65 0 0 0 1 1.52 1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10.3a1.65 1.65 0 0 0 1.52 1H21v2.7h-.08A1.65 1.65 0 0 0 19.4 15Z"/></svg></button></div>
   <div class="scs-v237-hero"><div class="scs-v237-hero-text"><strong data-scs-home-text="welcome">Welcome back!</strong><span data-scs-home-text="tagline">Play · Connect · Enjoy</span></div></div>
   <header class="scs-shared-club-head">
    <span class="scs-shared-club-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><circle cx="18" cy="17" r="7" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="19" r="6" stroke="currentColor" stroke-width="3" opacity=".72"/><path d="M6.5 39c.8-9 5-13 11.5-13s10.7 4 11.5 13H6.5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M27 28c7-2 12.2 2 13 10H30" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".72"/></svg></span>
@@ -4009,6 +4017,16 @@ body.app-light #scsActivityHome .scs-art-live-copy,body.light-mode #scsActivityH
 </div>
 <script>
 
+// Settings uses the existing SCS Settings page and retains the calling Home surface.
+window.scsActivityOpenSettings=function(){
+ var activity=document.getElementById('scsActivityHome');
+ if(!activity || activity.hidden)return;
+ if(typeof scsCaptureSettingsReturnState==='function')scsCaptureSettingsReturnState();
+ if(window.__scsSettingsReturnState)window.__scsSettingsReturnState.activityHome=true;
+ activity.hidden=true;
+ if(typeof homeGo==='function')homeGo('settingsPage','tabBtnSettings');
+ else if(typeof showPage==='function')showPage('settingsPage',document.getElementById('tabBtnSettings'));
+};
 window.scsActivityUpdateLanguage=function(){
  var jp=(localStorage.getItem('appLanguage')||'en')==='jp';
  var strings=jp?{active:'アクティブクラブ',practice:'練習',practiceSub:'ゲーム・セッション・トレーニング',tournament:'大会',tournamentSub:'大会の作成・管理・観戦',welcome:'おかえりなさい！',tagline:'プレー・つながる・楽しむ'}:{active:'Active club',practice:'Practice',practiceSub:'Quick games, sessions & training',tournament:'Tournament',tournamentSub:'Create, manage & follow tournaments',welcome:'Welcome back!',tagline:'Play · Connect · Enjoy'};

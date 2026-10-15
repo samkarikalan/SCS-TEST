@@ -6066,6 +6066,12 @@ function scsCloseSettings() {
 
   var state = window.__scsSettingsReturnState;
   window.__scsSettingsReturnState = null;
+  // Settings launched from the standalone SCS Home must return there,
+  // not to the underlying Practice/My Hub page.
+  if (state && state.activityHome) {
+    if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
+    return;
+  }
   if (!state) {
     if (typeof showHomeScreen === 'function') showHomeScreen();
     return;
