@@ -450,3 +450,14 @@ body.light-mode .scs-team-standing{background:color-mix(in srgb,var(--club-accen
 }
 .scs-team-overlay .scs-team-empty{gap:10px;}
 .scs-team-overlay .scs-team-empty small{display:block;}
+
+/* V224: encounter size setting, consistent with SCS form controls */
+.scs-team-setup #team-match-count{display:block;width:100%;box-sizing:border-box;min-height:44px;padding:12px;border:1px solid #708eb6;border-radius:12px;background:#14243e;color:inherit;font:inherit;font-size:max(1rem,1em)}
+.scs-team-match-count-hint{font-size:1rem;line-height:1.5;color:#b8c9e2;margin:8px 0 16px}
+
+/* V225: reuse the proven Group Tournament bottom navigation without altering match workflows. */
+.scs-team-overlay{padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+.scs-team-overlay .scs-team-bottom-nav{z-index:1000002}
+.scs-team-overlay .scs-team-bottom-nav .scs-tm-nav-label{font-size:clamp(12px, .85rem, 16px)!important}
+.scs-team-home [data-team-go]{min-height:44px;padding:10px 16px}
+.scs-team-clubs-view .scs-team-club{margin:12px 0}
