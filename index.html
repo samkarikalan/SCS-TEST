@@ -559,7 +559,7 @@ function scsStartKnockoutTournament(){
   alert('Tournament is still loading. Please try again.');
 }
 </script>
-<link rel="stylesheet" href="./group-tournament.css?v=V195"><script src="./shared-match-center.js?v=V158" defer></script><script src="./group-tournament.js?v=V168" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V231"><script src="./team-tournament.js?v=V231" defer></script>
+<link rel="stylesheet" href="./group-tournament.css?v=V195"><script src="./shared-match-center.js?v=V158" defer></script><script src="./group-tournament.js?v=V168" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V232"><script src="./team-tournament.js?v=V232" defer></script>
 
 <style id="scs-tournament-manager-v1">
 .scs-tmgr-overlay{position:fixed;inset:0;z-index:10038;background:rgba(3,8,18,.78);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;padding:16px}
@@ -3573,7 +3573,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V231', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V232', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when

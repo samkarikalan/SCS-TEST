@@ -529,3 +529,19 @@ body.light-mode .scs-team-standing{background:color-mix(in srgb,var(--club-accen
 .scs-team-overlay .scs-team-encounter-back{margin-bottom:18px}
 .scs-team-overlay .scs-team-encounter-progress{color:#c6d6eb;margin-bottom:16px}
 .scs-team-overlay .scs-team-encounter-detail .scs-team-pair-action{margin-bottom:16px}
+
+/* V232: neutral match-title strip; club colors remain exclusively on team sections. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{
+  background:#34445c!important;
+  color:#f4f7ff!important;
+  border-color:#536783!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-title b,
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-title strong,
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-title span{color:#f4f7ff!important}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{
+  background:#d5deea!important;color:#24344b!important;
+}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title b,
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title strong,
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title span{color:#24344b!important}
