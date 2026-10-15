@@ -461,3 +461,31 @@ body.light-mode .scs-team-standing{background:color-mix(in srgb,var(--club-accen
 .scs-team-overlay .scs-team-bottom-nav .scs-tm-nav-label{font-size:clamp(12px, .85rem, 16px)!important}
 .scs-team-home [data-team-go]{min-height:44px;padding:10px 16px}
 .scs-team-clubs-view .scs-team-club{margin:12px 0}
+
+/* V227: Team Tournament dialogs must sit above bottom navigation on iPhone.
+   Hide navigation only while a Team Tournament dialog is present. */
+.scs-team-overlay:has(.scs-tm-entry-modal) .scs-team-bottom-nav{display:none!important}
+.scs-team-overlay .scs-tm-entry-modal{
+  z-index:1000010!important;
+  inset:0!important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  padding:calc(12px + env(safe-area-inset-top)) 12px calc(16px + env(safe-area-inset-bottom));
+}
+.scs-team-overlay .scs-tm-entry-modal .scs-tm-entry-editor{
+  max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  margin:auto;
+}
+.scs-team-overlay .scs-tm-entry-modal .scs-tm-import-actions{
+  position:sticky;
+  bottom:0;
+  z-index:2;
+  background:#223650;
+  padding:12px 0 calc(8px + env(safe-area-inset-bottom));
+}
