@@ -605,3 +605,8 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-match-subtitle{c
 .scs-team-pair-player select{box-sizing:border-box;width:100%;min-width:0;min-height:43px;padding:9px;background:#0d2039;color:#fff;border:1px solid #6c8ab2;border-radius:9px;font-size:16px}
 .scs-team-pair-editor .scs-tm-import-actions{flex:none;position:static!important;margin-top:10px;padding-top:10px;border-top:1px solid #557092}
 .scs-team-pair-editor [data-error]{flex:none;margin:5px 0 0;max-height:52px;overflow-y:auto}
+
+/* V248: Team overlay sits above the shared scoreboard's original z-index.
+   Give the existing scorer priority while Team Tournament is mounted. */
+#scsTeamTournament[hidden]{display:none!important}
+body:has(#scsTeamTournament) #scsScoringOverlay:not([hidden]){z-index:1000030!important}
