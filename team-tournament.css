@@ -550,3 +550,29 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title sp
 .scs-team-overlay .scs-team-match-encounter-list{padding:12px 0}
 .scs-team-overlay .scs-team-match-encounter-list .scs-tm-live-tabs{margin-bottom:18px}
 .scs-team-overlay .scs-team-match-back{padding:12px 4px}
+
+/* V234: stronger separation between neutral match header and club banners.
+   Only Team Tournament match cards; retain original club hues/player panels. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{
+  background:#25344a!important;
+  border-color:#425773!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-team-card-club .scs-team-club-label{
+  background:color-mix(in srgb,var(--team-left) 85%,white 15%)!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child .scs-team-card-club .scs-team-club-label{
+  background:color-mix(in srgb,var(--team-right) 85%,white 15%)!important;
+}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{
+  background:#c4cfdf!important;
+  border-color:#8c9db5!important;
+}
+
+/* V235: bold yellow match heading; restrained club bars only ~8% lighter than players. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-title > b{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0}
+.scs-team-sheet .scs-team-match-shell .scs-team-doubles-heading{color:#ffce3d!important;font-weight:850!important;line-height:1.2}
+.scs-team-sheet .scs-team-match-shell .scs-team-match-subtitle{color:#a8c0e2!important;font-size:.8em!important;font-weight:500!important;line-height:1.25}
+.scs-team-sheet .scs-team-match-shell .scs-team-card-club .scs-team-club-label{background:color-mix(in srgb,var(--team-left) 38%,#1c385d 62%)!important;color:#e4edff!important;font-weight:600!important}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child .scs-team-card-club .scs-team-club-label{background:color-mix(in srgb,var(--team-right) 38%,#164648 62%)!important;color:#e4edff!important;font-weight:600!important}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-doubles-heading{color:#805600!important}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-match-subtitle{color:#405674!important}

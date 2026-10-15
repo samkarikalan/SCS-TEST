@@ -173,6 +173,14 @@ function matchCenter(){
 function decorateTeamCard(card,m){
  const e=encounterFor(m);if(!e)return;
  card.style.setProperty('--team-left',clubAccent(e.a));card.style.setProperty('--team-right',clubAccent(e.b));
+ // V235: emphasize the doubles number, with matchup as a secondary subtitle.
+ const heading=card.querySelector('.scs-tm-completed-title > b');
+ if(heading && !heading.querySelector('.scs-team-doubles-heading')){
+  heading.textContent='';
+  const main=document.createElement('span');main.className='scs-team-doubles-heading';main.textContent='Doubles '+(m.index+1);
+  const sub=document.createElement('small');sub.className='scs-team-match-subtitle';sub.textContent=clubName(e.a)+' vs '+clubName(e.b);
+  heading.append(main,sub);
+ }
  const teams=card.querySelectorAll('.scs-tm-completed-team');
  teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.prepend(label)}});
  const win=card.querySelector('.scs-tm-completed-winner');
