@@ -576,3 +576,13 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{
 .scs-team-sheet .scs-team-match-shell .scs-tm-completed-team:last-child .scs-team-card-club .scs-team-club-label{background:color-mix(in srgb,var(--team-right) 38%,#164648 62%)!important;color:#e4edff!important;font-weight:600!important}
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-doubles-heading{color:#805600!important}
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-match-subtitle{color:#405674!important}
+
+/* V242: explicit save control, mobile-safe header layout */
+.scs-team-sheet>header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.scs-team-sheet>header strong{min-width:0;flex:1 1 120px;overflow-wrap:anywhere}
+.scs-team-save-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto;max-width:100%}
+.scs-team-save-actions [data-team-save]{background:#16a374;color:#fff;border:1px solid #75e0bc;border-radius:10px;font-weight:700;padding:10px 12px;min-height:42px;white-space:nowrap}
+.scs-team-save-actions [data-team-save]:disabled{opacity:.55}
+.scs-team-save-status{font-size:.82rem;line-height:1.35;overflow-wrap:anywhere;margin:-6px 0 8px;color:#bceadf}
+.scs-team-save-status:empty{display:none}
+@media(max-width:380px){.scs-team-save-actions [data-team-save]{font-size:.78rem;padding:8px}.scs-team-sheet>header strong{font-size:1rem}}
