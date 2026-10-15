@@ -48,6 +48,7 @@ if (picker) picker.style.display = picker.style.display === 'none' ? '' : 'none'
 function setLanguage(lang) {
   currentLang = lang;
   localStorage.setItem("appLanguage", lang);
+  if (typeof window.scsActivityUpdateLanguage === "function") window.scsActivityUpdateLanguage();
   document.documentElement.lang = lang === 'jp' ? 'ja' : lang;
   document.documentElement.classList.toggle('lang-jp', lang === 'jp');
   document.body?.classList.toggle('lang-jp', lang === 'jp');

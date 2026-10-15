@@ -137,7 +137,7 @@ html,body{overscroll-behavior:none;}
 
   <script src="importPlayers.js?v=V149" defer></script>
 
-  <script src="settings.js?v=V149" defer></script>
+  <script src="settings.js?v=V236" defer></script>
 
   <script src="summary.js?v=V149" defer></script>
 
@@ -3573,7 +3573,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V235', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V236', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -3889,6 +3889,15 @@ style="display:none;font-size:0.72rem;color:var(--accent);word-break:break-all;m
 .scs-activity-home-back{margin:8px 0 16px;padding:10px 18px;border-radius:12px;border:1px solid #8aa6d0;background:#263c5e;color:#fff;font-weight:700}#myHubTournamentCard{display:none!important}
 @media(max-width:440px){#scsActivityHome{align-items:center;padding:calc(env(safe-area-inset-top,0px) + 18px) 14px calc(env(safe-area-inset-bottom,0px) + 18px)}.scs-shared-club-head{grid-template-columns:50px minmax(0,1fr) auto;padding:15px;gap:12px;border-radius:21px}.scs-shared-club-icon{width:50px;height:50px;border-radius:16px}.scs-shared-club-icon svg{width:31px;height:31px}.scs-shared-club-action{min-height:42px;padding:0 13px}.scs-activity-choice{min-height:164px;grid-template-columns:88px minmax(0,1fr) 44px;padding:22px 20px;gap:18px;border-radius:25px}.scs-activity-choice-icon{width:88px;height:88px;border-radius:25px}.scs-activity-choice-icon svg{width:68px;height:68px}.scs-activity-choice-go{width:44px;height:44px}}
 @media(max-width:350px){.scs-shared-club-head{grid-template-columns:44px minmax(0,1fr);}.scs-shared-club-icon{width:44px;height:44px}.scs-shared-club-action{grid-column:1/-1;width:100%}.scs-activity-choice{min-height:145px;grid-template-columns:70px minmax(0,1fr) 36px;padding:17px 14px;gap:12px}.scs-activity-choice-icon{width:70px;height:70px;border-radius:21px}.scs-activity-choice-icon svg{width:54px;height:54px}.scs-activity-choice-go{width:36px;height:36px;font-size:1.6rem}}
+
+/* V236: preserve original image artwork; only the lettering is live HTML. */
+#scsActivityHome .scs-art-card{position:relative;overflow:hidden}
+#scsActivityHome .scs-art-live-copy{position:absolute;left:40.6%;top:30%;width:42%;height:50%;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:clamp(1px,.5vw,5px);text-align:left;pointer-events:none;color:#fff}
+#scsActivityHome .scs-shared-tournament .scs-art-live-copy{left:31%;width:52%;top:28%;height:54%}
+#scsActivityHome .scs-art-live-copy strong{display:block;max-width:100%;font-size:clamp(11px,calc(1.35rem * var(--app-font-scale,1)),30px);line-height:1.12;font-weight:800;letter-spacing:-.02em;overflow-wrap:anywhere;text-shadow:0 2px 5px #00152c}
+#scsActivityHome .scs-art-live-copy small{display:block;max-width:100%;font-size:clamp(8px,calc(.71rem * var(--app-font-scale,1)),17px);line-height:1.24;font-weight:550;color:#bdd8f6;overflow-wrap:anywhere;text-shadow:0 1px 4px #00152c}
+#scsActivityHome .scs-shared-tournament .scs-art-live-copy small{color:#f3d8a5}
+@media(max-width:420px){#scsActivityHome .scs-art-live-copy strong{font-size:clamp(10px,calc(1.05rem * var(--app-font-scale,1)),24px)}#scsActivityHome .scs-art-live-copy small{font-size:clamp(7px,calc(.54rem * var(--app-font-scale,1)),13px)}}
 </style>
 <div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="SCS Home">
  <div class="scs-activity-panel scs-shared-club-card">
@@ -3898,11 +3907,19 @@ style="display:none;font-size:0.72rem;color:var(--accent);word-break:break-all;m
    <button type="button" id="scsSharedClubAction" class="scs-shared-club-action" onclick="scsActivityClubAction()">Login</button>
   </header>
   <div class="scs-shared-club-divider"></div>
-  <button class="scs-activity-choice scs-art-card" aria-label="Practice — Quick games, sessions and training" onclick="scsActivityChoose('practice')"><img class="scs-card-art" src="scs-practice-card-pro.png" alt="Practice — Quick games, sessions and training"></button>
-  <button class="scs-activity-choice scs-art-card scs-shared-tournament" aria-label="Tournament — Create, manage and follow tournaments" onclick="scsActivityChoose('tournament')"><img class="scs-card-art" src="scs-tournament-card-pro.png" alt="Tournament — Create, manage and follow tournaments"></button>
+  <button class="scs-activity-choice scs-art-card" aria-label="Practice — Quick games, sessions and training" onclick="scsActivityChoose('practice')"><img class="scs-card-art" src="scs-practice-card-textfree.png" alt="" aria-hidden="true"><span class="scs-art-live-copy"><strong data-scs-home-text="practice">Practice</strong><small data-scs-home-text="practiceSub">Quick games, sessions &amp; training</small></span></button>
+  <button class="scs-activity-choice scs-art-card scs-shared-tournament" aria-label="Tournament — Create, manage and follow tournaments" onclick="scsActivityChoose('tournament')"><img class="scs-card-art" src="scs-tournament-card-textfree.png" alt="" aria-hidden="true"><span class="scs-art-live-copy"><strong data-scs-home-text="tournament">Tournament</strong><small data-scs-home-text="tournamentSub">Create, manage &amp; follow tournaments</small></span></button>
  </div>
 </div>
 <script>
+
+window.scsActivityUpdateLanguage=function(){
+ var jp=(localStorage.getItem('appLanguage')||'en')==='jp';
+ var strings=jp?{active:'アクティブクラブ',practice:'練習',practiceSub:'ゲーム・セッション・トレーニング',tournament:'大会',tournamentSub:'大会の作成・管理・観戦'}:{active:'Active club',practice:'Practice',practiceSub:'Quick games, sessions & training',tournament:'Tournament',tournamentSub:'Create, manage & follow tournaments'};
+ var active=document.querySelector('#scsActivityHome .scs-shared-club-identity > span');if(active)active.textContent=strings.active;
+ document.querySelectorAll('#scsActivityHome [data-scs-home-text]').forEach(function(el){var key=el.getAttribute('data-scs-home-text');if(strings[key])el.textContent=strings[key]});
+ [['practice','practiceSub'],['tournament','tournamentSub']].forEach(function(keys,i){var b=document.querySelectorAll('#scsActivityHome .scs-art-card')[i];if(b)b.setAttribute('aria-label',strings[keys[0]]+' — '+strings[keys[1]])});
+};
 window.scsActivityRefreshClub=function(){
  var name='',id='';
  try{
@@ -3913,10 +3930,11 @@ window.scsActivityRefreshClub=function(){
   name=id?(localStorage.getItem('kbrr_my_club_name')||''):'';
  }catch(_){}
  var label=document.getElementById('scsSharedClubName'),status=document.getElementById('scsSharedClubStatus'),button=document.getElementById('scsSharedClubAction'),head=document.querySelector('.scs-shared-club-head');
- if(label)label.textContent=name||'No club selected';
- if(status)status.textContent=id?'Logged in':'Not logged in';
+ if(typeof scsActivityUpdateLanguage==='function')scsActivityUpdateLanguage();
+ if(label)label.textContent=name||(localStorage.getItem('appLanguage')==='jp'?'クラブ未選択':'No club selected');
+ if(status)status.textContent=localStorage.getItem('appLanguage')==='jp'?(id?'ログイン中':'未ログイン'):(id?'Logged in':'Not logged in');
  if(head)head.classList.toggle('is-logged-in',!!id);
- if(button){button.textContent=id?'Switch Club':'Club Login';button.setAttribute('aria-label',id?'Switch from '+(name||'current club'):'Log in to a club');}
+ if(button){button.textContent=localStorage.getItem('appLanguage')==='jp'?(id?'クラブ切替':'クラブログイン'):(id?'Switch Club':'Club Login');button.setAttribute('aria-label',id?'Switch from '+(name||'current club'):'Log in to a club');}
 };
 window.scsActivityClubAction=function(){
  var home=document.getElementById('scsActivityHome');if(home)home.hidden=true;
@@ -3936,7 +3954,7 @@ window.scsActivityCompleteClubAction=function(){
  return true;
 };
 window.scsActivityShowHome=function(){var e=document.getElementById('scsActivityHome');if(e)e.hidden=false;scsActivityRefreshClub();};
-window.addEventListener('storage',function(e){if(!e.key||/^kbrr_my_club_(id|name)$/.test(e.key))scsActivityRefreshClub();});
+window.addEventListener('storage',function(e){if(!e.key||e.key==='appLanguage'||/^kbrr_my_club_(id|name)$/.test(e.key))scsActivityRefreshClub();});
 
 window.scsActivityChoose=function(mode){var e=document.getElementById('scsActivityHome');if(e)e.hidden=true;window.scsActivityMode=mode;if(mode==='tournament'){if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();}else if(typeof showHomeScreen==='function'){showHomeScreen();}};
 window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];window.scsTournamentReturnPage=null;['scsTournamentManager','scsTournamentContinue','scsTournamentLive','scsTournamentTypePicker'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=true});window.scsActivityMode=null;scsActivityShowHome();};
