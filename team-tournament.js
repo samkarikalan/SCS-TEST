@@ -153,7 +153,45 @@ function clubEditor(i){
  };
 }
 function generate(){let name=(root().querySelector('#team-title')?.value??state.title??'').trim();if(!name||state.clubs.length<2||state.clubs.some(c=>c.players.length<state.matchesPerEncounter*2)){alert('Enter a tournament name and at least two clubs with '+(state.matchesPerEncounter*2)+' players each.');return}state.title=name;state.encounters=[];let n=0;for(let i=0;i<state.clubs.length;i++)for(let j=i+1;j<state.clubs.length;j++){let id='E'+(++n);state.encounters.push({id,a:i,b:j,date:'',time:'',matches:Array.from({length:state.matchesPerEncounter},(_,k)=>({id:id+'-D'+(k+1),index:k,pairs:[[],[]],court:null,status:'pending'}))})}selectedEncounterId=null;save();switchTeamTab('fixtures');render()}
-function editEncounter(id){let e=state.encounters.find(x=>x.id===id);if(!e)return;let modal=document.createElement('section');modal.className='scs-tm-entry-modal';let select=(side,m,slot)=>{let club=state.clubs[side==='L'?e.a:e.b];let chosen=m.pairs[side==='L'?0:1][slot]||'';return '<select aria-label="'+esc(club.name)+' player" data-pair="'+m.index+'-'+side+'-'+slot+'"><option value="" disabled>'+esc(club.name)+'</option><option value="">Select player</option>'+club.players.map(p=>'<option value="'+esc(p)+'" '+(p===chosen?'selected':'')+'>'+esc(p)+'</option>').join('')+'</select>'};modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><h3>'+esc(clubName(e.a))+' vs '+esc(clubName(e.b))+'</h3>'+e.matches.map(m=>'<h4>Doubles '+(m.index+1)+(m.status!=='pending'?' · '+esc(m.status):'')+'</h4><b>'+esc(clubName(e.a))+'</b>'+select('L',m,0)+select('L',m,1)+'<b>'+esc(clubName(e.b))+'</b>'+select('R',m,0)+select('R',m,1)).join('')+'<div class="scs-tm-import-actions"><button data-cancel>Cancel</button><button class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';root().appendChild(modal);const refreshChoices=()=>{let selects=[...modal.querySelectorAll('select[data-pair]')];for(let sel of selects){let side=sel.dataset.pair.split('-')[1];let used=new Set(selects.filter(other=>other!==sel&&other.dataset.pair.split('-')[1]===side).map(other=>other.value).filter(Boolean));for(let opt of sel.options){if(opt.value)opt.disabled=used.has(opt.value)}}};modal.querySelectorAll('select[data-pair]').forEach(sel=>sel.addEventListener('change',refreshChoices));refreshChoices();modal.querySelector('[data-cancel]').onclick=()=>modal.remove();modal.querySelector('[data-save]').onclick=()=>{let pairs=e.matches.map(m=>[0,1].map((side)=>[0,1].map(slot=>modal.querySelector('[data-pair="'+m.index+'-'+(side?'R':'L')+'-'+slot+'"]')?.value||'')));let left=pairs.flatMap(p=>p[0]),right=pairs.flatMap(p=>p[1]);if([...left,...right].some(x=>!x)||new Set(left.map(x=>x.toLowerCase())).size!==e.matches.length*2||new Set(right.map(x=>x.toLowerCase())).size!==e.matches.length*2){modal.querySelector('[data-error]').textContent='Select '+(e.matches.length*2)+' different players for each club, with no duplicates.';return}if(e.matches.some((m,i)=>m.status!=='pending'&&JSON.stringify(m.pairs)!==JSON.stringify(pairs[i]))){modal.querySelector('[data-error]').textContent='Players cannot be changed after a match has been assigned or started.';return}e.matches.forEach((m,i)=>m.pairs=pairs[i]);save();modal.remove();render()}}
+function editEncounter(id){
+ const e=state.encounters.find(x=>x.id===id);if(!e)return;
+ const modal=document.createElement('section');modal.className='scs-tm-entry-modal scs-team-pair-modal';
+ const select=(side,m,slot)=>{
+  const id=side==='L'?e.a:e.b,club=state.clubs[id],chosen=m.pairs[side==='L'?0:1][slot]||'';
+  return '<div class="scs-team-pair-player"><span class="scs-team-pair-player-preview">'+(chosen?playerRow(chosen):'<span class="scs-team-pair-placeholder">Player '+(slot+1)+'</span>')+'</span><select aria-label="'+esc(club.name)+' player '+(slot+1)+'" data-pair="'+m.index+'-'+side+'-'+slot+'"><option value="">Select player</option>'+club.players.map(p=>'<option value="'+esc(p)+'" '+(p===chosen?'selected':'')+'>'+esc(p)+'</option>').join('')+'</select></div>';
+ };
+ const clubBlock=(id,side,m)=>'<section class="scs-team-pair-club" style="--team-accent:'+esc(clubAccent(id))+'"><h5>'+esc(clubName(id))+'</h5>'+select(side,m,0)+select(side,m,1)+'</section>';
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor scs-team-pair-editor"><h3>'+esc(clubName(e.a))+' vs '+esc(clubName(e.b))+'</h3><p class="scs-team-pair-help">Choose two different players from each club for every doubles match.</p><div class="scs-team-pair-scroll">'+e.matches.map(m=>'<article class="scs-team-pair-match"><h4>Doubles '+(m.index+1)+(m.status!=='pending'?' · '+esc(m.status):'')+'</h4>'+clubBlock(e.a,'L',m)+clubBlock(e.b,'R',m)+'</article>').join('')+'</div><div class="scs-tm-import-actions"><button data-cancel>Cancel</button><button class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
+ root().appendChild(modal);
+ const selects=[...modal.querySelectorAll('select[data-pair]')];
+ const refreshChoices=()=>{
+  for(const sel of selects){
+   const side=sel.dataset.pair.split('-')[1];
+   const used=new Set(selects.filter(other=>other!==sel&&other.dataset.pair.split('-')[1]===side).map(other=>other.value).filter(Boolean));
+   for(const opt of sel.options)if(opt.value)opt.disabled=used.has(opt.value);
+  }
+ };
+ const refreshPreview=sel=>{
+  const slot=sel.closest('.scs-team-pair-player')?.querySelector('.scs-team-pair-player-preview');
+  if(!slot)return;
+  slot.innerHTML=sel.value?playerRow(sel.value):'<span class="scs-team-pair-placeholder">Choose a player</span>';
+  hydratePlayerCards();
+ };
+ selects.forEach(sel=>sel.addEventListener('change',()=>{refreshChoices();refreshPreview(sel)}));
+ refreshChoices();hydratePlayerCards();
+ modal.querySelector('[data-cancel]').onclick=()=>modal.remove();
+ modal.querySelector('[data-save]').onclick=()=>{
+  const pairs=e.matches.map(m=>[0,1].map(side=>[0,1].map(slot=>modal.querySelector('[data-pair="'+m.index+'-'+(side?'R':'L')+'-'+slot+'"]')?.value||'')));
+  const left=pairs.flatMap(p=>p[0]),right=pairs.flatMap(p=>p[1]);
+  if([...left,...right].some(x=>!x)||new Set(left.map(x=>x.toLowerCase())).size!==e.matches.length*2||new Set(right.map(x=>x.toLowerCase())).size!==e.matches.length*2){
+   modal.querySelector('[data-error]').textContent='Select '+(e.matches.length*2)+' different players for each club, with no duplicates.';return;
+  }
+  if(e.matches.some((m,i)=>m.status!=='pending'&&JSON.stringify(m.pairs)!==JSON.stringify(pairs[i]))){
+   modal.querySelector('[data-error]').textContent='Players cannot be changed after a match has been assigned or started.';return;
+  }
+  e.matches.forEach((m,i)=>m.pairs=pairs[i]);save();modal.remove();render();
+ };
+}
 function matchCard(m){
  const e=encounterFor(m),done=m.status==='approved',ready=m.pairs.every(p=>p.length===2);
  const pair=i=>m.pairs[i]||[];

@@ -586,3 +586,22 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-match-subtitle{c
 .scs-team-save-status{font-size:.82rem;line-height:1.35;overflow-wrap:anywhere;margin:-6px 0 8px;color:#bceadf}
 .scs-team-save-status:empty{display:none}
 @media(max-width:380px){.scs-team-save-actions [data-team-save]{font-size:.78rem;padding:8px}.scs-team-sheet>header strong{font-size:1rem}}
+
+/* V246: club-colored player selection using existing rating rings. */
+.scs-team-pair-modal .scs-team-pair-editor{display:flex;flex-direction:column;max-height:min(88dvh,850px);overflow:hidden}
+.scs-team-pair-editor>h3{margin:0 0 6px}
+.scs-team-pair-editor .scs-team-pair-help{margin:0 0 12px;color:#c3d3e9}
+.scs-team-pair-scroll{overflow-y:auto;min-height:0;flex:1;overscroll-behavior:contain;padding-right:3px}
+.scs-team-pair-match{padding:12px 0;border-top:1px solid #557092}
+.scs-team-pair-match h4{margin:0 0 10px;font-size:1.08rem;color:#ffce3d}
+.scs-team-pair-club{border:1px solid var(--team-accent);border-radius:12px;background:color-mix(in srgb,var(--team-accent) 17%,#14243d);padding:10px;margin:10px 0}
+.scs-team-pair-club h5{margin:0 0 8px;padding:7px 10px;border-radius:8px;background:color-mix(in srgb,var(--team-accent) 35%,#172943);color:#fff;font-size:1rem}
+.scs-team-pair-player{display:grid;gap:6px;margin:8px 0;padding:8px;background:#11223b;border-radius:10px;min-width:0}
+.scs-team-pair-player-preview{min-height:30px;display:flex;align-items:center;min-width:0}
+.scs-team-pair-player-preview .scs-tm-shared-player{display:flex;align-items:center;gap:9px;min-width:0}
+.scs-team-pair-player-preview .scs-tm-shared-name{overflow-wrap:anywhere;min-width:0}
+.scs-team-pair-player-preview .scs-tm-ring-slot{display:inline-flex;align-items:center;flex:none}
+.scs-team-pair-placeholder{color:#a7bddb;font-size:.86rem}
+.scs-team-pair-player select{box-sizing:border-box;width:100%;min-width:0;min-height:43px;padding:9px;background:#0d2039;color:#fff;border:1px solid #6c8ab2;border-radius:9px;font-size:16px}
+.scs-team-pair-editor .scs-tm-import-actions{flex:none;position:static!important;margin-top:10px;padding-top:10px;border-top:1px solid #557092}
+.scs-team-pair-editor [data-error]{flex:none;margin:5px 0 0;max-height:52px;overflow-y:auto}
