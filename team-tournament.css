@@ -610,3 +610,16 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-match-subtitle{c
    Give the existing scorer priority while Team Tournament is mounted. */
 #scsTeamTournament[hidden]{display:none!important}
 body:has(#scsTeamTournament) #scsScoringOverlay:not([hidden]){z-index:1000030!important}
+
+/* V249: result colors only. Keep the established Team Tournament card layout. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team.scs-team-losing-players {
+ background:#712a36!important;
+}
+/* The club title retains its original per-club color. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team.scs-team-losing-players .scs-team-card-club .scs-team-club-label {
+ background:color-mix(in srgb,var(--team-accent) 38%,#164648 62%)!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-winner.scs-team-neutral-winner {
+ background:#243449!important;
+ border-color:#4c6789!important;
+}

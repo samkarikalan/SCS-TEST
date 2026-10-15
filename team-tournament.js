@@ -239,9 +239,9 @@ function decorateTeamCard(card,m){
   heading.append(main,sub);
  }
  const teams=card.querySelectorAll('.scs-tm-completed-team');
- teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.prepend(label)}});
+ teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.prepend(label)}team.classList.toggle('scs-team-losing-players',m.status==='approved'&&['L','R'].includes(m.winner)&&(i===(m.winner==='L'?1:0)))});
  const win=card.querySelector('.scs-tm-completed-winner');
- if(win&&m.winner){const id=winnerClub(m);const b=win.querySelector('b');if(b)b.innerHTML=clubLabel(id)+' <span class="scs-team-winning-pair">'+esc(m.pairs[m.winner==='L'?0:1].join(' / '))+'</span>'}
+ if(win&&m.winner){const id=winnerClub(m);win.classList.add('scs-team-neutral-winner');const b=win.querySelector('b');if(b)b.innerHTML=clubLabel(id)+' <span class="scs-team-winning-pair">'+esc(m.pairs[m.winner==='L'?0:1].join(' / '))+'</span>'}
 }
 function decorateMatchCenter(r){
  r.querySelectorAll('.scs-team-match-shell').forEach(shell=>{const m=allMatches().find(x=>String(x.id)===shell.dataset.matchId);if(m)decorateTeamCard(shell,m)});
