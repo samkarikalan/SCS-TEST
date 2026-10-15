@@ -545,3 +545,8 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title{
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title b,
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title strong,
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-tm-completed-title span{color:#24344b!important}
+
+/* V233 encounter navigation in Match Center */
+.scs-team-overlay .scs-team-match-encounter-list{padding:12px 0}
+.scs-team-overlay .scs-team-match-encounter-list .scs-tm-live-tabs{margin-bottom:18px}
+.scs-team-overlay .scs-team-match-back{padding:12px 4px}
