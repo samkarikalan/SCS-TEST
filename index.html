@@ -3937,11 +3937,39 @@ body.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament,body.
 body.app-light #scsActivityHome .scs-art-live-copy,body.light-mode #scsActivityHome .scs-art-live-copy,html.app-light #scsActivityHome .scs-art-live-copy{color:#092352}
 body.app-light #scsActivityHome .scs-art-live-copy small,body.light-mode #scsActivityHome .scs-art-live-copy small,html.app-light #scsActivityHome .scs-art-live-copy small{color:#375e86}
 @media(max-width:350px){#scsActivityHome .scs-v237-card-grid{gap:8px}#scsActivityHome .scs-art-live-copy{padding-left:9px;padding-right:9px}#scsActivityHome .scs-v237-arrow{width:34px;height:34px;font-size:33px}}
+
+/* V238: approved compact mockup proportions; real text + original application actions. */
+#scsActivityHome{justify-content:flex-start!important;align-items:flex-start!important;padding:calc(env(safe-area-inset-top,0px) + 22px) 18px calc(env(safe-area-inset-bottom,0px) + 24px)!important;min-height:100dvh;box-sizing:border-box}
+#scsActivityHome .scs-activity-panel{margin:0 auto!important;max-width:520px}
+#scsActivityHome .scs-v237-brand{margin:0 3px 24px}
+#scsActivityHome .scs-v237-logo{font-size:clamp(40px,10vw,57px);line-height:1}
+#scsActivityHome .scs-v237-hero{height:clamp(118px,31vw,152px);min-height:0;margin:0 0 12px;padding:14px 13px;border:0;border-radius:0;overflow:hidden;background:linear-gradient(110deg,#091c39 0%,#073565 65%,#005c9d 100%)!important}
+#scsActivityHome .scs-v237-hero::after{content:'';position:absolute;inset:0 0 0 34%;background:url('scs-v238-hero-dark.png') center right / contain no-repeat;pointer-events:none}
+#scsActivityHome .scs-v237-shuttle{display:none}
+#scsActivityHome .scs-v237-hero-text{max-width:72%;z-index:2}
+#scsActivityHome .scs-v237-hero-text strong{font-size:calc(clamp(20px,5.3vw,28px) * var(--app-font-scale,1))}
+#scsActivityHome .scs-shared-club-head{margin:0 0 12px;border-radius:19px;box-shadow:0 5px 20px #0002}
+#scsActivityHome .scs-shared-club-divider{display:none}
+#scsActivityHome .scs-v237-card-grid{gap:10px;align-items:stretch}
+#scsActivityHome .scs-activity-choice.scs-art-card{height:auto;min-height:0;aspect-ratio:1/0.91;display:flex;flex-direction:column;border-radius:17px;overflow:hidden;box-shadow:0 4px 15px #0004;outline-offset:2px}
+#scsActivityHome .scs-v237-card-image{height:52%;width:100%;background-size:cover;background-position:24% 50%;mask-image:none;flex:none}
+#scsActivityHome .scs-art-live-copy,#scsActivityHome .scs-shared-tournament .scs-art-live-copy{position:relative;inset:auto;flex:1;width:100%;height:auto;padding:7px 9px 12px;gap:4px;display:flex;flex-direction:column;justify-content:flex-start;align-items:flex-start;min-width:0}
+#scsActivityHome .scs-art-live-copy strong{font-size:calc(clamp(16px,4.4vw,23px) * var(--app-font-scale,1));line-height:1.12;letter-spacing:-.03em;overflow-wrap:anywhere}
+#scsActivityHome .scs-art-live-copy small,#scsActivityHome .scs-shared-tournament .scs-art-live-copy small{font-size:calc(clamp(10px,2.7vw,13px) * var(--app-font-scale,1));line-height:1.26;max-width:calc(100% - 22px);overflow-wrap:anywhere}
+#scsActivityHome .scs-v237-arrow{right:8px;bottom:8px;width:34px;height:34px;font-size:31px;box-shadow:0 2px 10px #0018}
+#scsActivityHome .scs-activity-choice.scs-art-card:focus-visible{outline:3px solid #fff}
+#scsActivityHome .scs-activity-choice.scs-art-card:active{transform:scale(.975)}
+body.app-light #scsActivityHome .scs-v237-hero,body.light-mode #scsActivityHome .scs-v237-hero,html.app-light #scsActivityHome .scs-v237-hero{background:linear-gradient(110deg,#e3f6ff,#b9ecff)!important}
+body.app-light #scsActivityHome .scs-v237-hero::after,body.light-mode #scsActivityHome .scs-v237-hero::after,html.app-light #scsActivityHome .scs-v237-hero::after{background-image:url('scs-v238-hero-light.png')}
+body.app-light #scsActivityHome .scs-activity-choice.scs-art-card,body.light-mode #scsActivityHome .scs-activity-choice.scs-art-card,html.app-light #scsActivityHome .scs-activity-choice.scs-art-card{background:linear-gradient(180deg,#dbffff,#e8f9fc);color:#09234b}
+body.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament,body.light-mode #scsActivityHome .scs-activity-choice.scs-shared-tournament,html.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament{background:linear-gradient(180deg,#fff0c5,#fff8ed)}
+body.app-light #scsActivityHome .scs-art-live-copy small,body.light-mode #scsActivityHome .scs-art-live-copy small,html.app-light #scsActivityHome .scs-art-live-copy small{color:#345a82;text-shadow:none}
+@media(max-width:365px){#scsActivityHome{padding-left:12px!important;padding-right:12px!important}#scsActivityHome .scs-v237-card-grid{gap:8px}#scsActivityHome .scs-v237-arrow{width:29px;height:29px;font-size:27px}#scsActivityHome .scs-art-live-copy small{max-width:100%}}
 </style>
 <div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="SCS Home">
  <div class="scs-activity-panel scs-shared-club-card">
   <div class="scs-v237-brand"><div class="scs-v237-logo" aria-label="SCS">S<span>C</span>S</div><div class="scs-v237-brand-sub">Sports Center Scheduler</div></div>
-  <div class="scs-v237-hero"><div class="scs-v237-hero-text"><strong data-scs-home-text="welcome">Welcome back!</strong><span data-scs-home-text="tagline">Play · Connect · Enjoy</span></div><span class="scs-v237-shuttle" aria-hidden="true">🏸</span></div>
+  <div class="scs-v237-hero"><div class="scs-v237-hero-text"><strong data-scs-home-text="welcome">Welcome back!</strong><span data-scs-home-text="tagline">Play · Connect · Enjoy</span></div></div>
   <header class="scs-shared-club-head">
    <span class="scs-shared-club-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><circle cx="18" cy="17" r="7" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="19" r="6" stroke="currentColor" stroke-width="3" opacity=".72"/><path d="M6.5 39c.8-9 5-13 11.5-13s10.7 4 11.5 13H6.5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M27 28c7-2 12.2 2 13 10H30" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".72"/></svg></span>
    <div class="scs-shared-club-identity"><span>Active club</span><strong id="scsSharedClubName">No club selected</strong><span id="scsSharedClubStatus" class="scs-shared-club-status">Not logged in</span></div>
