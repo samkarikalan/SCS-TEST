@@ -3898,24 +3898,67 @@ style="display:none;font-size:0.72rem;color:var(--accent);word-break:break-all;m
 #scsActivityHome .scs-art-live-copy small{display:block;max-width:100%;font-size:clamp(8px,calc(.71rem * var(--app-font-scale,1)),17px);line-height:1.24;font-weight:550;color:#bdd8f6;overflow-wrap:anywhere;text-shadow:0 1px 4px #00152c}
 #scsActivityHome .scs-shared-tournament .scs-art-live-copy small{color:#f3d8a5}
 @media(max-width:420px){#scsActivityHome .scs-art-live-copy strong{font-size:clamp(10px,calc(1.05rem * var(--app-font-scale,1)),24px)}#scsActivityHome .scs-art-live-copy small{font-size:clamp(7px,calc(.54rem * var(--app-font-scale,1)),13px)}}
+
+/* V237: compact, tappable, two-column SCS home; respects existing app theme, language and font scale. */
+#scsActivityHome{align-items:flex-start;justify-content:center;overscroll-behavior:contain;background:radial-gradient(ellipse at 90% 8%,#12375b 0%,transparent 48%),linear-gradient(155deg,#07182e,#08101e);padding:max(28px,env(safe-area-inset-top,0px)) 18px max(24px,env(safe-area-inset-bottom,0px));color:#f7fbff}
+#scsActivityHome .scs-activity-panel{width:min(100%,540px);margin:auto 0}
+#scsActivityHome .scs-v237-brand{margin:6px 5px 18px}
+#scsActivityHome .scs-v237-logo{font-size:clamp(37px,11vw,60px);font-weight:1000;font-style:italic;letter-spacing:-.10em;line-height:1;color:#2699ff;text-shadow:0 2px 14px #1a6ac540}
+#scsActivityHome .scs-v237-logo span{color:#15ce83}
+#scsActivityHome .scs-v237-brand-sub{font-size:clamp(11px,3vw,15px);font-weight:800;letter-spacing:.015em;color:inherit}
+#scsActivityHome .scs-v237-hero{position:relative;min-height:132px;display:flex;align-items:center;padding:18px 16px;margin-bottom:12px;border-radius:22px;overflow:hidden;background:linear-gradient(115deg,rgba(9,46,91,.96) 10%,rgba(5,89,143,.55)),url('scs-practice-card-textfree.png') center / cover}
+#scsActivityHome .scs-v237-hero-text{position:relative;z-index:1;max-width:74%;display:flex;flex-direction:column;gap:6px;text-shadow:0 2px 8px #001d39}
+#scsActivityHome .scs-v237-hero-text strong{font-size:calc(clamp(20px,5vw,28px) * var(--app-font-scale,1));line-height:1.13}
+#scsActivityHome .scs-v237-hero-text span{font-size:calc(14px * var(--app-font-scale,1));color:#a9dcff;font-weight:650}
+#scsActivityHome .scs-v237-shuttle{position:absolute;right:8%;font-size:64px;transform:rotate(-23deg);filter:drop-shadow(0 7px 10px #002a50)}
+#scsActivityHome .scs-shared-club-head{margin-bottom:15px;border-radius:21px}
+#scsActivityHome .scs-v237-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#scsActivityHome .scs-activity-choice.scs-art-card{position:relative;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;aspect-ratio:auto;min-height:clamp(244px,68vw,305px);margin:0;padding:0;border:2px solid #00cafa;border-radius:23px;background:linear-gradient(180deg,#075a9d 0%,#063c78 64%,#042953 100%);color:white;overflow:hidden;box-shadow:0 5px 0 #00bdfb18,0 10px 24px #00152665;transition:transform .12s,box-shadow .12s}
+#scsActivityHome .scs-activity-choice.scs-shared-tournament{border-color:#ffc238;background:linear-gradient(180deg,#b16b12,#4e2c0b 65%,#281a0a)}
+#scsActivityHome .scs-activity-choice.scs-art-card:active{transform:scale(.97);box-shadow:0 1px 9px #0008}
+#scsActivityHome .scs-v237-card-image{display:block;flex:none;height:58%;width:100%;background-position:left center;background-repeat:no-repeat;background-size:auto 100%;mask-image:linear-gradient(#000 80%,transparent 100%)}
+#scsActivityHome .scs-v237-practice-image{background-image:url('scs-practice-card-textfree.png')}
+#scsActivityHome .scs-v237-tournament-image{background-image:url('scs-tournament-card-textfree.png')}
+#scsActivityHome .scs-art-live-copy,#scsActivityHome .scs-shared-tournament .scs-art-live-copy{position:relative;inset:auto;width:100%;height:auto;display:flex;align-items:flex-start;justify-content:flex-start;padding:0 12px 50px;gap:6px;color:#fff;text-shadow:none}
+#scsActivityHome .scs-art-live-copy strong{font-size:calc(clamp(18px,5.2vw,25px) * var(--app-font-scale,1));line-height:1.12;letter-spacing:-.025em;overflow-wrap:normal}
+#scsActivityHome .scs-art-live-copy small,#scsActivityHome .scs-shared-tournament .scs-art-live-copy small{font-size:calc(clamp(11px,3vw,14px) * var(--app-font-scale,1));line-height:1.28;color:#e2efff;font-weight:500}
+#scsActivityHome .scs-shared-tournament .scs-art-live-copy small{color:#fff0d2}
+#scsActivityHome .scs-v237-arrow{position:absolute;right:10px;bottom:9px;width:41px;height:41px;border-radius:50%;display:grid;place-items:center;font-size:40px;line-height:1;color:#fff;background:linear-gradient(150deg,#04c4ff,#1262f5);border:2px solid #85e9ff;box-shadow:0 0 0 3px #03bbfa25,0 3px 14px #00aaff80}
+#scsActivityHome .scs-shared-tournament .scs-v237-arrow{background:linear-gradient(145deg,#ffb90c,#ff7a08);border-color:#ffdb68;box-shadow:0 0 0 3px #ffc30020,0 3px 14px #f90a}
+body.app-light #scsActivityHome,body.light-mode #scsActivityHome,html.app-light #scsActivityHome{background:radial-gradient(ellipse at 88% 5%,#c4f3ec 0%,transparent 44%),linear-gradient(160deg,#f5fbff,#e8f5ff 70%,#f8fbff);color:#091c4d}
+body.app-light #scsActivityHome .scs-v237-hero,body.light-mode #scsActivityHome .scs-v237-hero,html.app-light #scsActivityHome .scs-v237-hero{background:linear-gradient(100deg,#d9f3ffef,#d7fff0aa),url('scs-practice-card-textfree.png') center / cover}
+body.app-light #scsActivityHome .scs-v237-hero-text,body.light-mode #scsActivityHome .scs-v237-hero-text,html.app-light #scsActivityHome .scs-v237-hero-text{text-shadow:none}
+body.app-light #scsActivityHome .scs-v237-hero-text span,body.light-mode #scsActivityHome .scs-v237-hero-text span,html.app-light #scsActivityHome .scs-v237-hero-text span{color:#326aa3}
+body.app-light #scsActivityHome .scs-shared-club-head,body.light-mode #scsActivityHome .scs-shared-club-head,html.app-light #scsActivityHome .scs-shared-club-head{background:#fff;border-color:#e0ecfa;box-shadow:0 6px 22px #234d771a}
+body.app-light #scsActivityHome .scs-shared-club-identity strong,body.light-mode #scsActivityHome .scs-shared-club-identity strong,html.app-light #scsActivityHome .scs-shared-club-identity strong{color:#081b46}
+body.app-light #scsActivityHome .scs-shared-club-action,body.light-mode #scsActivityHome .scs-shared-club-action,html.app-light #scsActivityHome .scs-shared-club-action{color:#0567ce;background:#f5faff;border-color:#77b9ff}
+body.app-light #scsActivityHome .scs-activity-choice.scs-art-card,body.light-mode #scsActivityHome .scs-activity-choice.scs-art-card,html.app-light #scsActivityHome .scs-activity-choice.scs-art-card{background:linear-gradient(#cffdff,#defbfa);color:#081b46;box-shadow:0 8px 20px #0074a526}
+body.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament,body.light-mode #scsActivityHome .scs-activity-choice.scs-shared-tournament,html.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament{background:linear-gradient(#fff0bc,#fff7e9)}
+body.app-light #scsActivityHome .scs-art-live-copy,body.light-mode #scsActivityHome .scs-art-live-copy,html.app-light #scsActivityHome .scs-art-live-copy{color:#092352}
+body.app-light #scsActivityHome .scs-art-live-copy small,body.light-mode #scsActivityHome .scs-art-live-copy small,html.app-light #scsActivityHome .scs-art-live-copy small{color:#375e86}
+@media(max-width:350px){#scsActivityHome .scs-v237-card-grid{gap:8px}#scsActivityHome .scs-art-live-copy{padding-left:9px;padding-right:9px}#scsActivityHome .scs-v237-arrow{width:34px;height:34px;font-size:33px}}
 </style>
 <div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="SCS Home">
  <div class="scs-activity-panel scs-shared-club-card">
+  <div class="scs-v237-brand"><div class="scs-v237-logo" aria-label="SCS">S<span>C</span>S</div><div class="scs-v237-brand-sub">Sports Center Scheduler</div></div>
+  <div class="scs-v237-hero"><div class="scs-v237-hero-text"><strong data-scs-home-text="welcome">Welcome back!</strong><span data-scs-home-text="tagline">Play · Connect · Enjoy</span></div><span class="scs-v237-shuttle" aria-hidden="true">🏸</span></div>
   <header class="scs-shared-club-head">
    <span class="scs-shared-club-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><circle cx="18" cy="17" r="7" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="19" r="6" stroke="currentColor" stroke-width="3" opacity=".72"/><path d="M6.5 39c.8-9 5-13 11.5-13s10.7 4 11.5 13H6.5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M27 28c7-2 12.2 2 13 10H30" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".72"/></svg></span>
    <div class="scs-shared-club-identity"><span>Active club</span><strong id="scsSharedClubName">No club selected</strong><span id="scsSharedClubStatus" class="scs-shared-club-status">Not logged in</span></div>
    <button type="button" id="scsSharedClubAction" class="scs-shared-club-action" onclick="scsActivityClubAction()">Login</button>
   </header>
   <div class="scs-shared-club-divider"></div>
-  <button class="scs-activity-choice scs-art-card" aria-label="Practice — Quick games, sessions and training" onclick="scsActivityChoose('practice')"><img class="scs-card-art" src="scs-practice-card-textfree.png" alt="" aria-hidden="true"><span class="scs-art-live-copy"><strong data-scs-home-text="practice">Practice</strong><small data-scs-home-text="practiceSub">Quick games, sessions &amp; training</small></span></button>
-  <button class="scs-activity-choice scs-art-card scs-shared-tournament" aria-label="Tournament — Create, manage and follow tournaments" onclick="scsActivityChoose('tournament')"><img class="scs-card-art" src="scs-tournament-card-textfree.png" alt="" aria-hidden="true"><span class="scs-art-live-copy"><strong data-scs-home-text="tournament">Tournament</strong><small data-scs-home-text="tournamentSub">Create, manage &amp; follow tournaments</small></span></button>
+  <div class="scs-v237-card-grid">
+   <button class="scs-activity-choice scs-art-card" aria-label="Practice" onclick="scsActivityChoose('practice')"><span class="scs-v237-card-image scs-v237-practice-image" aria-hidden="true"></span><span class="scs-art-live-copy"><strong data-scs-home-text="practice">Practice</strong><small data-scs-home-text="practiceSub">Quick games, sessions &amp; training</small></span><span class="scs-v237-arrow" aria-hidden="true">›</span></button>
+   <button class="scs-activity-choice scs-art-card scs-shared-tournament" aria-label="Tournament" onclick="scsActivityChoose('tournament')"><span class="scs-v237-card-image scs-v237-tournament-image" aria-hidden="true"></span><span class="scs-art-live-copy"><strong data-scs-home-text="tournament">Tournament</strong><small data-scs-home-text="tournamentSub">Create, manage &amp; follow tournaments</small></span><span class="scs-v237-arrow" aria-hidden="true">›</span></button>
+  </div>
  </div>
 </div>
 <script>
 
 window.scsActivityUpdateLanguage=function(){
  var jp=(localStorage.getItem('appLanguage')||'en')==='jp';
- var strings=jp?{active:'アクティブクラブ',practice:'練習',practiceSub:'ゲーム・セッション・トレーニング',tournament:'大会',tournamentSub:'大会の作成・管理・観戦'}:{active:'Active club',practice:'Practice',practiceSub:'Quick games, sessions & training',tournament:'Tournament',tournamentSub:'Create, manage & follow tournaments'};
+ var strings=jp?{active:'アクティブクラブ',practice:'練習',practiceSub:'ゲーム・セッション・トレーニング',tournament:'大会',tournamentSub:'大会の作成・管理・観戦',welcome:'おかえりなさい！',tagline:'プレー・つながる・楽しむ'}:{active:'Active club',practice:'Practice',practiceSub:'Quick games, sessions & training',tournament:'Tournament',tournamentSub:'Create, manage & follow tournaments',welcome:'Welcome back!',tagline:'Play · Connect · Enjoy'};
  var active=document.querySelector('#scsActivityHome .scs-shared-club-identity > span');if(active)active.textContent=strings.active;
  document.querySelectorAll('#scsActivityHome [data-scs-home-text]').forEach(function(el){var key=el.getAttribute('data-scs-home-text');if(strings[key])el.textContent=strings[key]});
  [['practice','practiceSub'],['tournament','tournamentSub']].forEach(function(keys,i){var b=document.querySelectorAll('#scsActivityHome .scs-art-card')[i];if(b)b.setAttribute('aria-label',strings[keys[0]]+' — '+strings[keys[1]])});

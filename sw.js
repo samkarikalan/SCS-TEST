@@ -1,7 +1,7 @@
 // SCS_BUILD_50_MYHUB_EMBEDDED_CLUBS_REPORT
 /* Sports Club Scheduler service worker — complete installed-app updates. */
-const CACHE_NAME = 'scs-cache-V236';
-const APP_SHELL = './index.html?v=V236';
+const CACHE_NAME = 'scs-cache-V237';
+const APP_SHELL = './index.html?v=V237';
 
 const ASSETS = [
   APP_SHELL,
