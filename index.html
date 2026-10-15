@@ -3965,6 +3965,31 @@ body.app-light #scsActivityHome .scs-activity-choice.scs-art-card,body.light-mod
 body.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament,body.light-mode #scsActivityHome .scs-activity-choice.scs-shared-tournament,html.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament{background:linear-gradient(180deg,#fff0c5,#fff8ed)}
 body.app-light #scsActivityHome .scs-art-live-copy small,body.light-mode #scsActivityHome .scs-art-live-copy small,html.app-light #scsActivityHome .scs-art-live-copy small{color:#345a82;text-shadow:none}
 @media(max-width:365px){#scsActivityHome{padding-left:12px!important;padding-right:12px!important}#scsActivityHome .scs-v237-card-grid{gap:8px}#scsActivityHome .scs-v237-arrow{width:29px;height:29px;font-size:27px}#scsActivityHome .scs-art-live-copy small{max-width:100%}}
+
+/* V239: Approved home — flat informational areas, three actionable cards only. */
+#scsActivityHome{overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+#scsActivityHome .scs-activity-panel{width:min(100%,520px);min-width:0;}
+#scsActivityHome .scs-v237-brand{margin:0 2px 14px;}
+#scsActivityHome .scs-v237-hero{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:12px 6px!important;margin:0 0 14px!important;height:clamp(120px,32vw,170px);overflow:hidden;}
+#scsActivityHome .scs-v237-hero::after{inset:0 0 0 32%;background-size:contain;background-position:right center;}
+#scsActivityHome .scs-v237-hero-text{max-width:62%;}
+#scsActivityHome .scs-shared-club-head{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:8px 2px 14px!important;margin:0 0 8px!important;}
+#scsActivityHome .scs-shared-club-head::before,#scsActivityHome .scs-shared-club-head::after{display:none!important;}
+#scsActivityHome .scs-shared-club-action{border-radius:15px;box-shadow:0 5px 16px #0003;}
+#scsActivityHome .scs-v237-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start;width:100%;}
+#scsActivityHome .scs-activity-choice.scs-art-card{box-sizing:border-box;position:relative;display:flex;align-items:center;justify-content:center;aspect-ratio:1/1!important;width:100%;height:auto!important;min-height:0!important;max-height:none!important;padding:clamp(10px,3.5vw,22px)!important;overflow:hidden;border:2px solid #13d8ff;border-radius:20px;background:linear-gradient(145deg,#079cfa 0%,#0861e5 48%,#0aa9f3 100%)!important;color:#fff!important;box-shadow:0 10px 25px #00142c6b, inset 0 1px 0 #ffffff38;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+#scsActivityHome .scs-activity-choice.scs-shared-tournament{border-color:#ffdb4e;background:linear-gradient(145deg,#ffb928 0%,#f66b15 51%,#ff9716 100%)!important;}
+#scsActivityHome .scs-activity-choice.scs-art-card::before,#scsActivityHome .scs-activity-choice.scs-art-card::after{display:none!important;}
+#scsActivityHome .scs-art-live-copy,#scsActivityHome .scs-shared-tournament .scs-art-live-copy{position:relative!important;inset:auto!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:clamp(6px,1.6vw,12px)!important;width:100%!important;height:auto!important;min-height:0!important;min-width:0!important;padding:0!important;margin:0!important;pointer-events:none;color:#fff!important;text-align:left;}
+#scsActivityHome .scs-art-live-copy strong{font-size:clamp(16px,calc(4.4vw * var(--app-font-scale,1)),28px)!important;line-height:1.13!important;font-weight:800;letter-spacing:-.025em;overflow-wrap:anywhere;word-break:normal;max-width:100%;text-shadow:0 1px 2px #0018;}
+#scsActivityHome .scs-art-live-copy small,#scsActivityHome .scs-shared-tournament .scs-art-live-copy small{font-size:clamp(10px,calc(2.75vw * var(--app-font-scale,1)),17px)!important;line-height:1.25!important;font-weight:500;color:#fff!important;max-width:100%!important;overflow-wrap:anywhere;text-shadow:0 1px 2px #0017;}
+#scsActivityHome .scs-v237-card-image,#scsActivityHome .scs-v237-arrow{display:none!important;}
+#scsActivityHome .scs-activity-choice.scs-art-card:focus-visible{outline:3px solid #fff;outline-offset:3px;}
+#scsActivityHome .scs-activity-choice.scs-art-card:active{transform:scale(.97);filter:brightness(1.07);}
+body.app-light #scsActivityHome .scs-activity-choice.scs-art-card,body.light-mode #scsActivityHome .scs-activity-choice.scs-art-card,html.app-light #scsActivityHome .scs-activity-choice.scs-art-card{background:linear-gradient(145deg,#11bafa,#1161e8 55%,#04a1ef)!important;color:white!important;}
+body.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament,body.light-mode #scsActivityHome .scs-activity-choice.scs-shared-tournament,html.app-light #scsActivityHome .scs-activity-choice.scs-shared-tournament{background:linear-gradient(145deg,#ffb52d,#f26b19 55%,#ffa525)!important;color:white!important;}
+body.app-light #scsActivityHome .scs-art-live-copy,body.light-mode #scsActivityHome .scs-art-live-copy,html.app-light #scsActivityHome .scs-art-live-copy,body.app-light #scsActivityHome .scs-art-live-copy small,body.light-mode #scsActivityHome .scs-art-live-copy small,html.app-light #scsActivityHome .scs-art-live-copy small{color:#fff!important;}
+@media(max-width:370px){#scsActivityHome .scs-v237-card-grid{gap:8px}#scsActivityHome .scs-activity-choice.scs-art-card{padding:10px!important;border-radius:16px}#scsActivityHome .scs-art-live-copy strong{font-size:clamp(15px,calc(4.1vw * var(--app-font-scale,1)),23px)!important}#scsActivityHome .scs-art-live-copy small{font-size:clamp(9px,calc(2.5vw * var(--app-font-scale,1)),14px)!important}}
 </style>
 <div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="SCS Home">
  <div class="scs-activity-panel scs-shared-club-card">
@@ -3977,8 +4002,8 @@ body.app-light #scsActivityHome .scs-art-live-copy small,body.light-mode #scsAct
   </header>
   <div class="scs-shared-club-divider"></div>
   <div class="scs-v237-card-grid">
-   <button class="scs-activity-choice scs-art-card" aria-label="Practice" onclick="scsActivityChoose('practice')"><span class="scs-v237-card-image scs-v237-practice-image" aria-hidden="true"></span><span class="scs-art-live-copy"><strong data-scs-home-text="practice">Practice</strong><small data-scs-home-text="practiceSub">Quick games, sessions &amp; training</small></span><span class="scs-v237-arrow" aria-hidden="true">›</span></button>
-   <button class="scs-activity-choice scs-art-card scs-shared-tournament" aria-label="Tournament" onclick="scsActivityChoose('tournament')"><span class="scs-v237-card-image scs-v237-tournament-image" aria-hidden="true"></span><span class="scs-art-live-copy"><strong data-scs-home-text="tournament">Tournament</strong><small data-scs-home-text="tournamentSub">Create, manage &amp; follow tournaments</small></span><span class="scs-v237-arrow" aria-hidden="true">›</span></button>
+   <button type="button" class="scs-activity-choice scs-art-card" aria-label="Practice" onclick="scsActivityChoose('practice')"><span class="scs-art-live-copy"><strong data-scs-home-text="practice">Practice</strong><small data-scs-home-text="practiceSub">Quick games, sessions &amp; training</small></span></button>
+   <button type="button" class="scs-activity-choice scs-art-card scs-shared-tournament" aria-label="Tournament" onclick="scsActivityChoose('tournament')"><span class="scs-art-live-copy"><strong data-scs-home-text="tournament">Tournament</strong><small data-scs-home-text="tournamentSub">Create, manage &amp; follow tournaments</small></span></button>
   </div>
  </div>
 </div>
