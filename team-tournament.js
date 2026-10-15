@@ -33,21 +33,64 @@ const encounterFor=m=>state.encounters.find(e=>e.matches.includes(m));
 const clubName=id=>state.clubs[id]?.name||'Club '+(id+1);
 const matchName=m=>{let e=encounterFor(m);return clubName(e.a)+' vs '+clubName(e.b)+' · Doubles '+(m.index+1)};
 function standingsData(){
- const rows=state.clubs.map((c,i)=>({i,name:c.name,w:0,l:0,points:0,mw:0,ml:0,played:0}));
+ const rows=state.clubs.map((c,i)=>({i,name:c.name,w:0,l:0,points:0,mw:0,ml:0,played:0,setsWon:0,setsLost:0,rallyFor:0,rallyAgainst:0,rank:0}));
  for(const e of state.encounters){
   const done=e.matches.filter(m=>m.status==='approved'&&(m.winner==='L'||m.winner==='R'));
-  for(const m of done){const a=rows[e.a],b=rows[e.b];if(!a||!b)continue;if(m.winner==='L'){a.mw++;b.ml++;a.points+=2}else{b.mw++;a.ml++;b.points+=2}}
-  if(e.matches.length>0&&done.length===e.matches.length){const aw=done.filter(m=>m.winner==='L').length,bw=e.matches.length-aw;rows[e.a].played++;rows[e.b].played++;if(aw>bw){rows[e.a].w++;rows[e.b].l++}else{rows[e.b].w++;rows[e.a].l++}}
+  for(const m of done){
+   const a=rows[e.a],b=rows[e.b];if(!a||!b)continue;
+   if(m.winner==='L'){a.mw++;b.ml++;a.points+=2}else{b.mw++;a.ml++;b.points+=2}
+   for(const set of (m.score?.completedSets||[])){
+    const scores=set.score||[];const left=Number(scores[0]),right=Number(scores[1]);
+    if(!Number.isFinite(left)||!Number.isFinite(right))continue;
+    a.rallyFor+=left;a.rallyAgainst+=right;b.rallyFor+=right;b.rallyAgainst+=left;
+    if(left>right){a.setsWon++;b.setsLost++}else if(right>left){b.setsWon++;a.setsLost++}
+   }
+  }
+  if(e.matches.length&&done.length===e.matches.length){
+   const aw=done.filter(m=>m.winner==='L').length,bw=done.length-aw;
+   rows[e.a].played++;rows[e.b].played++;
+   if(aw>bw){rows[e.a].w++;rows[e.b].l++}else if(bw>aw){rows[e.b].w++;rows[e.a].l++}
+  }
  }
- rows.sort((a,b)=>b.w-a.w||b.points-a.points||(b.mw-b.ml)-(a.mw-a.ml)||a.i-b.i);
+ const key=r=>[r.w,r.setsWon,r.rallyFor];
+ const baseCompare=(a,b)=>b.w-a.w||b.setsWon-a.setsWon||b.rallyFor-a.rallyFor;
+ rows.sort((a,b)=>baseCompare(a,b)||a.i-b.i);
+ // Head-to-head breaks a complete two-club tie only. Three-way cycles remain tied.
+ const h2h=(a,b)=>{
+  const encounters=state.encounters.filter(e=>(e.a===a.i&&e.b===b.i)||(e.a===b.i&&e.b===a.i));
+  if(!encounters.length||encounters.some(e=>!e.matches.length||e.matches.some(m=>m.status!=='approved')))return 0;
+  let aw=0,bw=0;
+  for(const e of encounters){const left=e.matches.filter(m=>m.winner==='L').length,right=e.matches.filter(m=>m.winner==='R').length;
+   const winner=left>right?e.a:right>left?e.b:null;
+   if(winner===a.i)aw++;else if(winner===b.i)bw++;
+  }
+  return aw>bw?-1:bw>aw?1:0;
+ };
+ for(let i=0;i<rows.length;){let j=i+1;while(j<rows.length&&baseCompare(rows[i],rows[j])===0)j++;
+  if(j-i===2&&h2h(rows[i],rows[i+1])>0)[rows[i],rows[i+1]]=[rows[i+1],rows[i]];
+  if(j-i===2&&h2h(rows[i],rows[i+1])!==0){rows[i].rank=i+1;rows[i+1].rank=i+2}
+  else for(let k=i;k<j;k++)rows[k].rank=i+1;
+  i=j;
+ }
  return rows;
 }
 const resultOf=(e,id)=>{const done=e.matches.filter(m=>m.status==='approved'&&(m.winner==='L'||m.winner==='R'));const own=done.filter(m=>(m.winner==='L'?e.a:e.b)===id).length;return {done:done.length,own,other:done.length-own,complete:e.matches.length>0&&done.length===e.matches.length}};
 const matchOutcome=(m,id,e)=>m.status!=='approved'?'Pending':(m.winner==='L'?e.a:e.b)===id?'Won':'Lost';
 const matchScore=m=>{const sets=m.score?.completedSets||[];return sets.length?sets.map(x=>(x.score||[]).join('–')).join(' | '):'—'};
 let expandedStandings=new Set();
-function standings(){const rows=standingsData();return '<section class="scs-team-ranking"><h3>Club standings</h3><p class="scs-team-ranking-help">Ranked by club encounter wins · 2 points per approved doubles win</p>'+rows.map((r,pos)=>{const expanded=expandedStandings.has(r.i),encounters=state.encounters.filter(e=>e.a===r.i||e.b===r.i);return '<article class="scs-team-standing" style="--club-accent:'+esc(clubAccent(r.i))+'"><button type="button" class="scs-team-standing-head" data-standing="'+r.i+'" aria-expanded="'+expanded+'"><span class="scs-team-rank">'+(pos+1)+'</span><span class="scs-team-standing-info"><strong>'+esc(r.name)+'</strong><small>Encounters: Played '+r.played+' · Won '+r.w+' · Lost '+r.l+'</small><small>Doubles: Played '+(r.mw+r.ml)+' · Won '+r.mw+' · Lost '+r.ml+'</small></span><span class="scs-team-standing-points"><b>'+r.points+'</b><small>Points</small></span><span aria-hidden="true">'+(expanded?'⌃':'⌄')+'</span></button>'+(expanded?'<div class="scs-team-standing-history">'+(encounters.length?encounters.map(e=>{const opp=e.a===r.i?e.b:e.a,rs=resultOf(e,r.i);return '<div class="scs-team-opponent" style="--opponent-accent:'+esc(clubAccent(opp))+'"><div class="scs-team-opponent-head"><strong>vs '+esc(clubName(opp))+'</strong><span>'+(rs.complete?(rs.own>rs.other?'Won ':'Lost '):'In progress ')+rs.own+'–'+rs.other+'</span></div>'+e.matches.map(m=>'<div class="scs-team-result-line"><span>Doubles '+(m.index+1)+'</span><span>'+esc((m.pairs[e.a===r.i?0:1]||[]).join(' / ')||'Not selected')+'</span><span class="scs-team-result-status">'+matchOutcome(m,r.i,e)+' · '+esc(matchScore(m))+'</span></div>').join('')+'</div>'}).join(''):'<p>No encounters yet</p>')+'</div>':'')+'</article>'}).join('')+'</section>'}
-function matrix(){const rows=standingsData(),rank=new Map(rows.map((r,i)=>[r.i,i+1]));return '<section class="scs-team-matrix"><h3>Round-robin results matrix</h3><p>Swipe horizontally to see all clubs. Tap an encounter to view its doubles results.</p><div class="scs-team-matrix-scroll"><table class="scs-team-matrix-table"><thead><tr><th class="scs-team-matrix-sticky">Club</th>'+state.clubs.map((c,i)=>'<th style="--matrix-accent:'+esc(clubAccent(i))+'">'+esc(c.name)+'</th>').join('')+'<th>W–L</th><th>Rank</th></tr></thead><tbody>'+state.clubs.map((c,i)=>{const row=rows.find(x=>x.i===i);return '<tr><th class="scs-team-matrix-sticky" style="--matrix-accent:'+esc(clubAccent(i))+'">'+esc(c.name)+'</th>'+state.clubs.map((other,j)=>{if(i===j)return '<td class="scs-team-matrix-self">╲</td>';const e=state.encounters.find(x=>(x.a===i&&x.b===j)||(x.a===j&&x.b===i));if(!e)return '<td>—</td>';const rs=resultOf(e,i),label=rs.complete?(rs.own>rs.other?'Won ':'Lost '):rs.done?rs.done+'/'+e.matches.length+' played':'Pending';return '<td><button class="scs-team-matrix-cell" data-matrix-encounter="'+esc(e.id)+'" aria-label="'+esc(clubName(i)+' versus '+clubName(j))+'"><small>'+esc(e.id)+'</small><strong>'+label+'</strong><span>'+rs.own+'–'+rs.other+'</span></button></td>'}).join('')+'<td>'+row.w+'–'+row.l+'</td><td>'+rank.get(i)+'</td></tr>'}).join('')+'</tbody></table></div><div class="scs-team-matrix-detail" data-matrix-detail><p>Select an encounter to view its doubles results.</p></div></section>'}
+function standings(){const rows=standingsData();return '<section class="scs-team-ranking"><h3>Club standings</h3><p class="scs-team-ranking-help">Rank: encounter wins → sets won → rally points → head-to-head · 2 points per approved doubles win</p>'+rows.map((r,pos)=>{const expanded=expandedStandings.has(r.i),encounters=state.encounters.filter(e=>e.a===r.i||e.b===r.i);return '<article class="scs-team-standing" style="--club-accent:'+esc(clubAccent(r.i))+'"><button type="button" class="scs-team-standing-head" data-standing="'+r.i+'" aria-expanded="'+expanded+'"><span class="scs-team-rank">'+(pos+1)+'</span><span class="scs-team-standing-info"><strong>'+esc(r.name)+'</strong><small>Encounters: Played '+r.played+' · Won '+r.w+' · Lost '+r.l+'</small><small>Doubles: Played '+(r.mw+r.ml)+' · Won '+r.mw+' · Lost '+r.ml+'</small></span><span class="scs-team-standing-points"><b>'+r.points+'</b><small>Points</small></span><span aria-hidden="true">'+(expanded?'⌃':'⌄')+'</span></button>'+(expanded?'<div class="scs-team-standing-history">'+(encounters.length?encounters.map(e=>{const opp=e.a===r.i?e.b:e.a,rs=resultOf(e,r.i);return '<div class="scs-team-opponent" style="--opponent-accent:'+esc(clubAccent(opp))+'"><div class="scs-team-opponent-head"><strong>vs '+esc(clubName(opp))+'</strong><span>'+(rs.complete?(rs.own>rs.other?'Won ':'Lost '):'In progress ')+rs.own+'–'+rs.other+'</span></div>'+e.matches.map(m=>'<div class="scs-team-result-line"><span>Doubles '+(m.index+1)+'</span><span>'+esc((m.pairs[e.a===r.i?0:1]||[]).join(' / ')||'Not selected')+'</span><span class="scs-team-result-status">'+matchOutcome(m,r.i,e)+' · '+esc(matchScore(m))+'</span></div>').join('')+'</div>'}).join(''):'<p>No encounters yet</p>')+'</div>':'')+'</article>'}).join('')+'</section>'}
+function matrix(){
+ const rows=standingsData(),rank=new Map(rows.map(r=>[r.i,r.rank]));
+ return '<section class="scs-team-matrix"><h3>Round-robin results matrix</h3><p>Rank: encounter wins → sets won → rally points → head-to-head. Swipe horizontally; tap an encounter for doubles results.</p><div class="scs-team-matrix-scroll"><table class="scs-team-matrix-table"><thead><tr><th class="scs-team-matrix-sticky">Club</th>'+state.clubs.map((c,i)=>'<th style="--matrix-accent:'+esc(clubAccent(i))+'">'+esc(c.name)+'</th>').join('')+'<th>Encounter W–L</th><th>Doubles W–L</th><th>Match points</th><th>Sets W–L</th><th>Rally points F–A</th><th>Point diff.</th><th>Rank</th></tr></thead><tbody>'+state.clubs.map((c,i)=>{
+  const row=rows.find(x=>x.i===i);
+  return '<tr><th class="scs-team-matrix-sticky" style="--matrix-accent:'+esc(clubAccent(i))+'">'+esc(c.name)+'</th>'+state.clubs.map((other,j)=>{
+   if(i===j)return '<td class="scs-team-matrix-self">╲</td>';
+   const e=state.encounters.find(x=>(x.a===i&&x.b===j)||(x.a===j&&x.b===i));if(!e)return '<td>—</td>';
+   const rs=resultOf(e,i),label=rs.complete?(rs.own>rs.other?'Won ':rs.own<rs.other?'Lost ':'Tied '):rs.done?rs.done+'/'+e.matches.length+' played':'Pending';
+   return '<td><button class="scs-team-matrix-cell" data-matrix-encounter="'+esc(e.id)+'" aria-label="'+esc(clubName(i)+' versus '+clubName(j))+'"><small>'+esc(e.id)+'</small><strong>'+label+'</strong><span>'+rs.own+'–'+rs.other+'</span></button></td>';
+  }).join('')+'<td>'+row.w+'–'+row.l+'</td><td>'+row.mw+'–'+row.ml+'</td><td>'+row.points+'</td><td>'+row.setsWon+'–'+row.setsLost+'</td><td>'+row.rallyFor+'–'+row.rallyAgainst+'</td><td>'+(row.rallyFor-row.rallyAgainst)+'</td><td>'+rank.get(i)+'</td></tr>';
+ }).join('')+'</tbody></table></div><div class="scs-team-matrix-detail" data-matrix-detail><p>Select an encounter to view its doubles results.</p></div></section>';
+}
 function matrixDetails(id){const e=state.encounters.find(x=>x.id===id);if(!e)return '';const rs=resultOf(e,e.a);return '<h3>'+clubLabel(e.a)+' vs '+clubLabel(e.b)+' · '+rs.own+'–'+rs.other+'</h3>'+e.matches.map(m=>'<div class="scs-team-matrix-detail-row"><strong>Doubles '+(m.index+1)+'</strong><span>'+esc((m.pairs[0]||[]).join(' / ')||'Not selected')+' vs '+esc((m.pairs[1]||[]).join(' / ')||'Not selected')+'</span><span>'+esc(m.status==='approved'?(m.winner==='L'?clubName(e.a):clubName(e.b))+' won · '+matchScore(m):m.status.replace(/_/g,' '))+'</span></div>').join('')}
 let expandedClubs=new Set();
 // Preserve the independent scroll position of every Team Tournament tab.

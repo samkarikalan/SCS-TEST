@@ -623,3 +623,35 @@ body:has(#scsTeamTournament) #scsScoringOverlay:not([hidden]){z-index:1000030!im
  background:#243449!important;
  border-color:#4c6789!important;
 }
+/* V250: Keep the existing club banner and winner layout; place the score
+   beside the two players, not in an additional row. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:auto auto!important;
+  align-items:center!important;
+  column-gap:10px!important;
+  row-gap:0!important;
+  min-height:0!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-team-card-club{
+  grid-column:1 / -1!important;
+  grid-row:1!important;
+  width:100%!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-players{
+  grid-column:1!important;
+  grid-row:2!important;
+  width:auto!important;
+  min-width:0!important;
+  padding:7px 0 7px 10px!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-team-score{
+  grid-column:2!important;
+  grid-row:2!important;
+  justify-self:end!important;
+  align-self:center!important;
+  margin:0!important;
+  padding:0 10px 0 0!important;
+  line-height:1.1!important;
+}
