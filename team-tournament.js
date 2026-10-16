@@ -263,8 +263,9 @@ function showMatrixEncounter(id){
  const oldSelected=selectedEncounterId;selectedEncounterId=id;
  const existing=fixtures();selectedEncounterId=oldSelected;
  const overlay=document.createElement('div');overlay.className='scs-team-matrix-overlay';
- overlay.innerHTML='<div class="scs-team-matrix-backdrop" data-matrix-dismiss></div><section class="scs-team-matrix-bottom-sheet" role="dialog" aria-modal="true" aria-label="Encounter details"><div class="scs-team-matrix-sheet-head"><strong>'+esc(clubName(e.a))+' vs '+esc(clubName(e.b))+'</strong><button type="button" data-matrix-dismiss aria-label="Close encounter details">✕</button></div><div class="scs-team-matrix-sheet-content">'+existing+'</div></section>';
- r.appendChild(overlay);
+ overlay.innerHTML='<div class="scs-team-matrix-backdrop" data-matrix-dismiss></div><section class="scs-team-matrix-bottom-sheet" role="dialog" aria-modal="true" aria-label="Encounter details"><div class="scs-team-matrix-sheet-head"><span class="scs-team-matrix-sheet-label">Encounter details</span><button type="button" data-matrix-dismiss aria-label="Close encounter details">✕</button></div><div class="scs-team-matrix-sheet-content">'+existing+'</div></section>';
+ // Mount inside the existing Tournament sheet so its proven match-card styles and actions are inherited.
+ r.querySelector('.scs-team-sheet').appendChild(overlay);
  const close=()=>{overlay.remove();document.removeEventListener('keydown',onKey)};
  const onKey=ev=>{if(ev.key==='Escape')close()};document.addEventListener('keydown',onKey);
  overlay.querySelectorAll('[data-matrix-dismiss]').forEach(b=>b.addEventListener('click',close));

@@ -750,3 +750,8 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-team-matrix-sheet-content{overflow-y:auto;overscroll-behavior:contain;padding:12px 14px 30px}
 .scs-team-matrix-sheet-content .scs-team-encounter-tabs{display:none}
 .scs-team-matrix-sheet-content .scs-team-fixtures{margin:0}
+
+/* Matrix sheet uses the exact same encounter renderer and card styling as Tournament. */
+.scs-team-matrix-sheet-head{min-height:52px}
+.scs-team-matrix-sheet-content .scs-team-encounter-detail{padding:0}
+.scs-team-matrix-sheet-content .scs-team-match-shell{width:100%}
