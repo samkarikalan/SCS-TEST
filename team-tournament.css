@@ -741,3 +741,12 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-team-overlay .scs-team-encounter-not-started .scs-team-encounter-card-status{background:#293b54;color:#b9c9e3}
 .scs-team-overlay .scs-team-encounter-clubs{padding:15px 16px 12px}
 .scs-team-overlay .scs-team-encounter-card-footer{padding:0 16px 15px}
+/* Matrix encounter bottom sheet reuses the existing tournament encounter cards */
+.scs-team-matrix-overlay{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:flex-end;justify-content:center}
+.scs-team-matrix-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.64)}
+.scs-team-matrix-bottom-sheet{position:relative;width:100%;max-width:850px;max-height:88dvh;display:flex;flex-direction:column;background:#17263d;color:#f4f6ff;border:1px solid #536784;border-radius:22px 22px 0 0;box-shadow:0 -12px 38px #0008;overflow:hidden}
+.scs-team-matrix-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid #536784;flex-shrink:0}
+.scs-team-matrix-sheet-head button{background:#30435e;color:white;border:1px solid #667b98;border-radius:12px;font-size:24px;min-width:42px;min-height:42px}
+.scs-team-matrix-sheet-content{overflow-y:auto;overscroll-behavior:contain;padding:12px 14px 30px}
+.scs-team-matrix-sheet-content .scs-team-encounter-tabs{display:none}
+.scs-team-matrix-sheet-content .scs-team-fixtures{margin:0}
