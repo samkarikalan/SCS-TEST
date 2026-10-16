@@ -655,3 +655,19 @@ body:has(#scsTeamTournament) #scsScoringOverlay:not([hidden]){z-index:1000030!im
   padding:0 10px 0 0!important;
   line-height:1.1!important;
 }
+
+/* V252: Reference design: retain club title bars; club pill next to EACH player,
+   not on a new row. The existing score remains right-aligned. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-serving-player{
+ display:flex!important;align-items:center!important;justify-content:flex-start!important;
+ gap:8px!important;flex-wrap:wrap!important;min-width:0!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill{
+ display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+ border-radius:999px;padding:3px 10px;max-width:100%;
+ background:color-mix(in srgb,var(--pill-accent) 60%,#17263d 40%);
+ color:#fff;font-size:.72rem;font-weight:650;line-height:1.4;white-space:nowrap;
+}
+body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill{
+ background:color-mix(in srgb,var(--pill-accent) 35%,#fff 65%);color:#15233a;
+}

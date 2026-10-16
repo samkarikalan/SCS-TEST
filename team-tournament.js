@@ -282,7 +282,14 @@ function decorateTeamCard(card,m){
   heading.append(main,sub);
  }
  const teams=card.querySelectorAll('.scs-tm-completed-team');
- teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.prepend(label)}team.classList.toggle('scs-team-losing-players',m.status==='approved'&&['L','R'].includes(m.winner)&&(i===(m.winner==='L'?1:0)))});
+ teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.prepend(label)}team.classList.toggle('scs-team-losing-players',m.status==='approved'&&['L','R'].includes(m.winner)&&(i===(m.winner==='L'?1:0)));
+  // V252: one compact club pill beside each player's name, within the existing row.
+  team.querySelectorAll('.scs-tm-completed-players .scs-tm-serving-player').forEach(row=>{
+   if(row.querySelector('.scs-team-inline-club-pill'))return;
+   const pill=document.createElement('span');pill.className='scs-team-inline-club-pill';pill.textContent=clubName(id)+' Club';
+   pill.style.setProperty('--pill-accent',clubAccent(id));
+   const player=row.querySelector('.scs-tm-shared-player');if(player)player.after(pill);else row.append(pill);
+  })});
  const win=card.querySelector('.scs-tm-completed-winner');
  if(win&&m.winner){const id=winnerClub(m);win.classList.add('scs-team-neutral-winner');const b=win.querySelector('b');if(b)b.innerHTML=clubLabel(id)+' <span class="scs-team-winning-pair">'+esc(m.pairs[m.winner==='L'?0:1].join(' / '))+'</span>'}
 }
