@@ -671,3 +671,6 @@ body:has(#scsTeamTournament) #scsScoringOverlay:not([hidden]){z-index:1000030!im
 body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill{
  background:color-mix(in srgb,var(--pill-accent) 35%,#fff 65%);color:#15233a;
 }
+
+/* V253: club pills inside player rows replace duplicate full-width club headers. */
+.scs-team-sheet .scs-team-match-shell .scs-team-card-club{display:none!important;}

@@ -282,7 +282,7 @@ function decorateTeamCard(card,m){
   heading.append(main,sub);
  }
  const teams=card.querySelectorAll('.scs-tm-completed-team');
- teams.forEach((team,i)=>{const id=i===0?e.a:e.b;if(!team.querySelector('.scs-team-card-club')){const label=document.createElement('div');label.className='scs-team-card-club';label.innerHTML=clubLabel(id);team.prepend(label)}team.classList.toggle('scs-team-losing-players',m.status==='approved'&&['L','R'].includes(m.winner)&&(i===(m.winner==='L'?1:0)));
+ teams.forEach((team,i)=>{const id=i===0?e.a:e.b;team.querySelectorAll('.scs-team-card-club').forEach(label=>label.remove());team.classList.toggle('scs-team-losing-players',m.status==='approved'&&['L','R'].includes(m.winner)&&(i===(m.winner==='L'?1:0)));
   // V252: one compact club pill beside each player's name, within the existing row.
   team.querySelectorAll('.scs-tm-completed-players .scs-tm-serving-player').forEach(row=>{
    if(row.querySelector('.scs-team-inline-club-pill'))return;
