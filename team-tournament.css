@@ -725,3 +725,19 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-team-sheet .scs-team-match-shell .scs-tm-completed-content{
   padding:0!important;
 }
+
+/* V257: one-row encounter tabs and at-a-glance encounter status. */
+.scs-team-overlay .scs-team-encounter-tabs{display:flex;flex-wrap:nowrap;gap:22px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;border-bottom:1px solid #47617f;margin-bottom:12px;max-width:100%}
+.scs-team-overlay .scs-team-encounter-tabs::-webkit-scrollbar{display:none}
+.scs-team-overlay .scs-team-encounter-tabs button{flex:0 0 auto;white-space:nowrap;max-width:none;min-width:0;background:transparent;border:0;border-bottom:3px solid transparent;border-radius:0;color:#b5c5df;padding:11px 3px;font:inherit;font-weight:650;cursor:pointer}
+.scs-team-overlay .scs-team-encounter-tabs button.active{color:#a988ff;border-bottom-color:#9064f8}
+.scs-team-overlay .scs-team-encounter-card{overflow:hidden;padding:0;gap:0;border-width:1px}
+.scs-team-overlay .scs-team-encounter-card-status{display:flex;align-items:center;gap:9px;padding:11px 16px;font-weight:750;letter-spacing:.065em;font-size:.8em}
+.scs-team-overlay .scs-team-encounter-card-status span{font-size:1.3em;line-height:1}
+.scs-team-overlay .scs-team-encounter-completed{border-color:#368d78}
+.scs-team-overlay .scs-team-encounter-completed .scs-team-encounter-card-status{background:#153d3b;color:#70e6bd}
+.scs-team-overlay .scs-team-encounter-live{border-color:#b28a46}
+.scs-team-overlay .scs-team-encounter-live .scs-team-encounter-card-status{background:#473b26;color:#ffce77}
+.scs-team-overlay .scs-team-encounter-not-started .scs-team-encounter-card-status{background:#293b54;color:#b9c9e3}
+.scs-team-overlay .scs-team-encounter-clubs{padding:15px 16px 12px}
+.scs-team-overlay .scs-team-encounter-card-footer{padding:0 16px 15px}
