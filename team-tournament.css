@@ -703,3 +703,25 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
   min-width:22px;min-height:22px;padding:0 5px;border-radius:999px;
   background:#273c59;color:inherit;font-size:.8em;
 }
+
+/* V255: compact Team Tournament results only. No VS row; winner is a flat
+   integrated footer, not a separate inset card. Shared tournament cards stay unchanged. */
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs{
+  display:none!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-winner{
+  margin:0!important;
+  border:0!important;
+  border-top:1px solid #3d5777!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  padding:8px 12px!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-winner.scs-team-neutral-winner{
+  background:transparent!important;
+  border-color:#3d5777!important;
+}
+.scs-team-sheet .scs-team-match-shell .scs-tm-completed-content{
+  padding:0!important;
+}
