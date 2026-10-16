@@ -674,3 +674,32 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 
 /* V253: club pills inside player rows replace duplicate full-width club headers. */
 .scs-team-sheet .scs-team-match-shell .scs-team-card-club{display:none!important;}
+
+/* V254: Team Match Center navigation — one-row, swipeable tabs, not buttons. */
+.scs-team-overlay .scs-tm-live-tabs{
+  display:flex!important;flex-wrap:nowrap!important;grid-template-columns:none!important;
+  gap:14px!important;align-items:stretch!important;justify-content:flex-start!important;
+  width:100%!important;max-width:100%!important;min-width:0!important;
+  overflow-x:auto!important;overflow-y:hidden!important;
+  -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  scrollbar-width:none;border:0!important;border-bottom:1px solid #3b4c67!important;
+  border-radius:0!important;background:transparent!important;padding:0 2px!important;
+}
+.scs-team-overlay .scs-tm-live-tabs::-webkit-scrollbar{display:none}
+.scs-team-overlay .scs-tm-live-tabs button{
+  flex:0 0 auto!important;width:auto!important;min-width:max-content!important;
+  white-space:nowrap!important;word-break:normal!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:6px!important;margin:0!important;padding:12px 5px 10px!important;
+  border:0!important;border-bottom:3px solid transparent!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;color:#b7c5dc!important;
+  font-weight:700!important;line-height:1.2!important;
+}
+.scs-team-overlay .scs-tm-live-tabs button.active{
+  color:#9876ff!important;border-bottom-color:#9876ff!important;
+}
+.scs-team-overlay .scs-tm-live-tabs button b{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:22px;min-height:22px;padding:0 5px;border-radius:999px;
+  background:#273c59;color:inherit;font-size:.8em;
+}
