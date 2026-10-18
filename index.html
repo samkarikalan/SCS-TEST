@@ -116,7 +116,7 @@ html,body{overscroll-behavior:none;}
 
   <script src="subscription.js?v=V149" defer></script>
 
-  <script src="HomeScreen.js?v=V149" defer></script>
+  <script src="HomeScreen.js?v=V269" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
@@ -462,6 +462,16 @@ window.scsTournamentReturnManager=function(){
   if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();
 };
 function scsCloseTournamentManager(){var e=document.getElementById('scsTournamentManager');if(e)e.hidden=true}
+function scsTournamentManagerPlayers(){
+  window.__scsTournamentManagerPlayersReturn = true;
+  // Open the proven Players Manager; its normal Done/back action restores this page.
+  if(typeof scsPushChildReturnState==='function')scsPushChildReturnState('playersPage');
+  scsCloseTournamentManager();
+  if(typeof homeHideScreen==='function')homeHideScreen();
+  if(typeof showPage==='function')showPage('playersPage',null);
+  else{var page=document.getElementById('playersPage');if(page)page.style.display='block';}
+  if(typeof _updateDynamicBackBtns==='function')_updateDynamicBackBtns('playersPage');
+}
 function scsTournamentManagerStart(){scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();scsOpenTournamentTypePicker()}
 async function scsTournamentManagerContinue(){
   scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();
@@ -3587,7 +3597,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V236', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V269', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4091,6 +4101,7 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
   <section class="scs-tmgr-card" role="main" aria-labelledby="scsTmManagerTitle">
     <header class="scs-tmgr-head"><div class="scs-tmgr-head-copy"><div class="scs-tmgr-kicker">SCS · TOURNAMENT</div><h2 id="scsTmManagerTitle">Tournament Manager</h2><p>Create, manage and follow every competition.</p></div><span class="scs-tmgr-hero-mark" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="M20 9h24v15c0 10-5 18-12 18S20 34 20 24V9Z" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/><path d="M20 15H9v6c0 9 5 13 14 14M44 15h11v6c0 9-5 13-14 14M32 42v9m-11 5h22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="m32 16 2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.8-5.2 2.8 1-5.7-4.1-4 5.7-.8L32 16Z" fill="currentColor"/></svg></span></header>
     <button class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button><div class="scs-tmgr-actions">
+      <button class="scs-tmgr-action" onclick="scsTournamentManagerPlayers()"><span class="scs-tmgr-icon">♙</span><span class="scs-tmgr-copy"><strong>Players Manager</strong><small>Register, view and manage players</small></span><span class="scs-tmgr-go">›</span></button>
       <button class="scs-tmgr-action start" onclick="scsTournamentManagerStart()"><span class="scs-tmgr-icon">＋</span><span class="scs-tmgr-copy"><strong>Start a New Tournament</strong><small>Knockout, Group or Team Tournament</small></span><span class="scs-tmgr-go">›</span></button>
       <button class="scs-tmgr-action" onclick="scsTournamentManagerContinue()"><span class="scs-tmgr-icon">▶</span><span class="scs-tmgr-copy"><strong>Continue a Tournament</strong><small id="scsTmContinueStatus">Open your tournament in progress</small></span><span class="scs-tmgr-go">›</span></button>
       <button class="scs-tmgr-action" onclick="scsTournamentManagerLive()"><span class="scs-tmgr-icon">◉</span><span class="scs-tmgr-copy"><strong>View a Live Tournament</strong><small id="scsTmLiveStatus">Open a live tournament</small></span><span class="scs-tmgr-go">›</span></button>

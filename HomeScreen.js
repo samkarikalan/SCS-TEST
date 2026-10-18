@@ -1862,6 +1862,15 @@ if (fixedPairsVisibleNow) {
   var fixedState = scsPopChildReturnState('fixedPairsPage');
   if (fixedState && scsRestoreChildReturnState(fixedState)) return;
 }
+if (playersVisibleNow && window.__scsTournamentManagerPlayersReturn) {
+  if (!(await _scsResolvePlayerFixedRoundChange('playersPage'))) return;
+  window.__scsDeferPlayerFixedRoundChange = false;
+  window.__scsTournamentManagerPlayersReturn = false;
+  if (typeof scsPopChildReturnState === 'function') scsPopChildReturnState('playersPage');
+  playersPage.style.display = 'none';
+  if (typeof scsOpenTournamentManager === 'function') scsOpenTournamentManager();
+  return;
+}
 if (playersVisibleNow && window.__scsTeamPlayersReturn) {
   if (typeof scsPopChildReturnState === 'function') scsPopChildReturnState('playersPage');
   playersPage.style.display='none';
