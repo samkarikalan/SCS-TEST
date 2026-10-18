@@ -1230,6 +1230,7 @@ homeHideScreen();
 _navSource = 'home';
 var tabEl = tabId ? document.getElementById(tabId) : null;
 showPage(pageId, tabEl);
+if(pageId==='vaultClubMgmtPage'&&typeof scsRefreshSubClubs==='function')scsRefreshSubClubs();
 _updateDynamicBackBtns(pageId);
 }
 

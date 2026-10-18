@@ -1944,3 +1944,37 @@ if (document.readyState === 'loading') {
 } else {
   scsUpdateInstallOption();
 }
+
+// SCS V268: Sub-club management inside the existing Club Manager.
+async function scsRefreshSubClubs() {
+  const box=document.getElementById('scsSubClubList');
+  if(!box)return;
+  const current=getMyClub();
+  const parentId=localStorage.getItem('scs_subclub_parent_id') || current.id;
+  const parentName=localStorage.getItem('scs_subclub_parent_name') || current.name;
+  if(!parentId){box.textContent='Select a main club first.';return;}
+  try {
+    const rows=await dbGetSubClubs(parentId);
+    box.replaceChildren();
+    const heading=document.createElement('p');heading.textContent='Main club: '+parentName;box.appendChild(heading);
+    if(current.id!==parentId){const back=document.createElement('button');back.type='button';back.className='btn-save';back.textContent='← Main club';back.onclick=()=>scsSelectSubClub(parentId,parentName,parentId,parentName);box.appendChild(back);}
+    if(!rows.length){const empty=document.createElement('p');empty.textContent='No sub-clubs yet.';box.appendChild(empty);}
+    rows.forEach(c=>{const b=document.createElement('button');b.type='button';b.className='btn-save';b.style.cssText='display:block;width:100%;margin:6px 0;text-align:left';b.textContent=c.name+(current.id===c.id?' ✓':'')+'  ›';b.onclick=()=>scsSelectSubClub(c.id,c.name,parentId,parentName);box.appendChild(b);});
+  } catch(e){box.textContent='Could not load sub-clubs: '+e.message;}
+}
+function scsSelectSubClub(id,name,parentId,parentName){
+  localStorage.setItem('scs_subclub_parent_id',parentId);
+  localStorage.setItem('scs_subclub_parent_name',parentName);
+  setMyClub(id,name);
+  if(typeof CACHE_PLAYERS!=='undefined')localStorage.removeItem(CACHE_PLAYERS);
+  scsRefreshSubClubs();
+}
+async function scsCreateSubClub(){
+  const out=document.getElementById('scsSubClubFeedback');
+  const current=getMyClub();
+  const parentId=localStorage.getItem('scs_subclub_parent_id') || current.id;
+  const name=document.getElementById('scsSubClubName').value.trim();
+  if(out)out.textContent='Creating…';
+  try{const child=await dbAddSubClub(parentId,name);if(out)out.textContent='Created '+child.name;document.getElementById('scsSubClubName').value='';await scsRefreshSubClubs();}
+  catch(e){if(out)out.textContent=e.message||String(e);}
+}

@@ -108,7 +108,7 @@ html,body{overscroll-behavior:none;}
   <script src="offline-db.js?v=V149" defer></script>
   <script src="snapshot.js?v=V149" defer></script>
 
-  <script src="supabase.js?v=V170" defer></script>
+  <script src="supabase.js?v=V268" defer></script>
 
   <script src="auth.js?v=V149" defer></script>
 
@@ -137,7 +137,7 @@ html,body{overscroll-behavior:none;}
 
   <script src="importPlayers.js?v=V149" defer></script>
 
-  <script src="settings.js?v=V236" defer></script>
+  <script src="settings.js?v=V268" defer></script>
 
   <script src="summary.js?v=V149" defer></script>
 
@@ -2898,6 +2898,19 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
       <div id="clubCreateFeedback" style="font-size:0.78rem;margin-top:6px"></div>
     </div>
   </div>
+
+  <!-- Sub-clubs use the existing club and player managers. -->
+  <section class="settings-card" id="scsSubClubPanel" style="padding:14px;margin-bottom:14px">
+    <div class="manage-section-title">Sub-clubs</div>
+    <p style="font-size:.78rem;color:var(--muted)">Register players directly to a selected sub-club using the existing Players Manager.</p>
+    <div id="scsSubClubList" aria-live="polite">Loading sub-clubs…</div>
+    <div class="club-row" style="margin-top:8px">
+      <input id="scsSubClubName" class="club-input" placeholder="New sub-club name" aria-label="New sub-club name">
+      <button type="button" class="btn-save" onclick="scsCreateSubClub()">+ Create</button>
+    </div>
+    <button type="button" class="btn-save" style="margin-top:8px" onclick="homeGo('playersPage',null)">Open existing Players Manager</button>
+    <div id="scsSubClubFeedback" role="status" style="font-size:.78rem;margin-top:8px"></div>
+  </section>
 
   <!-- DELETE PANEL -->
 
