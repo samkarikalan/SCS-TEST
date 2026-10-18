@@ -1290,7 +1290,9 @@ async function scsTournamentRegisterCreateSub(){
  try{
   if(msg)msg.textContent='Creating…';
   const parent=await scsResolveOrganizerClub();
-  const child=await dbAddSubClub(parent.id,name);
+  const password=window.prompt('Enter the TEST/main club administrator password to create a sub-club:');
+  if(password===null){if(msg)msg.textContent='Creation cancelled.';return}
+  const child=await dbAddSubClub(parent.id,name,password);
   window.__scsTournamentPreferredSubclub=child.id;
   await scsTournamentRegisterLoadClubs();
  }catch(e){if(msg)msg.textContent=e.message||String(e)}

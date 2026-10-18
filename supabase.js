@@ -815,27 +815,24 @@ async function dbGetSubClubs(parentId) {
   if (!parentId) return [];
   return sbGet('clubs', 'parent_club_id=eq.' + encodeURIComponent(parentId) + '&select=id,name,parent_club_id&order=name.asc');
 }
-async function dbAddSubClub(parentId, name) {
-  const user = typeof authGetUser === 'function' ? authGetUser() : null;
+async function dbAddSubClub(parentId, name, adminPassword) {
   const clean = String(name || '').trim();
-  if (!user || !user.id) throw new Error('Please log in first.');
   if (!parentId || !clean) throw new Error('Select a main club and enter a sub-club name.');
-  if (typeof isAdminMode !== 'function' || !isAdminMode()) throw new Error('Club administrator access required.');
-  const parents = await sbGet('clubs','id=eq.' + encodeURIComponent(parentId) + '&select=id,name,parent_club_id,created_by');
+  if (!adminPassword) throw new Error('Main club administrator password required.');
+  const parents = await sbGet('clubs','id=eq.' + encodeURIComponent(parentId) + '&select=id,name,parent_club_id,admin_password,select_password,created_by');
   const parent = parents && parents[0];
   if (!parent || parent.parent_club_id) throw new Error('Sub-clubs can only be created under a main club.');
-  if (String(parent.created_by || '') !== String(user.id)) throw new Error('Only the main club creator can create sub-clubs.');
+  // Reuse the existing club administration password verification, rather than
+  // relying on Practice-only kbrr_club_mode or the original creator's user ID.
+  if (String(parent.admin_password) !== String(adminPassword)) throw new Error('Incorrect main club administrator password.');
   const existing = await dbGetSubClubs(parentId);
   if (existing.some(c => c.name.trim().toLowerCase() === clean.toLowerCase())) throw new Error('Sub-club already exists.');
   const token = 'membership-only-' + (globalThis.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36));
-  const rows = await sbPost('clubs',{name:clean,parent_club_id:parentId,created_by:user.id,select_password:token,admin_password:token});
+  const payload = {name:clean,parent_club_id:parentId,select_password:token,admin_password:token};
+  if (parent.created_by) payload.created_by=parent.created_by;
+  const rows = await sbPost('clubs',payload);
   const child = rows && rows[0];
   if (!child || !child.id) throw new Error('Sub-club creation failed.');
-  try {
-    const ownerMembership = await sbGet('memberships','club_id=eq.' + encodeURIComponent(parentId) + '&user_account_id=eq.' + encodeURIComponent(user.id) + '&select=player_id,nickname,club_rating');
-    const owner = ownerMembership && ownerMembership[0];
-    if (owner && owner.player_id) await sbPost('memberships',{club_id:child.id,player_id:owner.player_id,user_account_id:user.id,nickname:owner.nickname,club_rating:owner.club_rating || 1});
-  } catch(e) { await sbDelete('clubs','id=eq.' + encodeURIComponent(child.id)).catch(()=>{}); throw e; }
   return child;
 }
 
