@@ -799,6 +799,17 @@ async function dbAddClub(clubName, selectPassword, adminPassword, registrationEm
   return club;
 }
 
+async function scsResolveOrganizerClub(){
+ const current=getMyClub();
+ if(!current?.id)throw new Error('Select a main club first.');
+ const rows=await sbGet('clubs','id=eq.'+encodeURIComponent(current.id)+'&select=id,name,parent_club_id');
+ const active=rows?.[0];
+ if(!active)throw new Error('Club not found.');
+ if(!active.parent_club_id)return {id:active.id,name:active.name};
+ const parents=await sbGet('clubs','id=eq.'+encodeURIComponent(active.parent_club_id)+'&select=id,name,parent_club_id');
+ if(!parents?.[0]||parents[0].parent_club_id)throw new Error('Main club not found.');
+ return {id:parents[0].id,name:parents[0].name};
+}
 // Sub-clubs reuse the existing clubs and memberships tables.
 async function dbGetSubClubs(parentId) {
   if (!parentId) return [];

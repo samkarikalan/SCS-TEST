@@ -153,11 +153,8 @@ function playersManagerReturned(){
  return true;
 }
 async function registeredClubChoices(){
- const current=typeof getMyClub==='function'?getMyClub():{};
- const parentId=localStorage.getItem('scs_subclub_parent_id')||current.id;
- if(!parentId)return [];
- const children=typeof dbGetSubClubs==='function'?await dbGetSubClubs(parentId):[];
- return children;
+ const parent=await scsResolveOrganizerClub();
+ return dbGetSubClubs(parent.id);
 }
 async function registeredClubPlayers(id){
  if(!id||typeof sbGet!=='function')return [];
@@ -182,7 +179,7 @@ function clubEditor(i){
   const row=n=>'<label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label>';
   return members.map(row).join('')+(showAvailable?'<div class="scs-team-available-title">Available players · '+available.length+'</div>'+(available.length?available.map(row).join(''):'<p class="scs-team-no-available">All registered players are already assigned to clubs.</p>'):'');
  };
- modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-editor-head"><h3>Club players</h3><p>Register a club and choose its players</p></div><label>Club name<input data-club-name value="'+esc(c.name)+'"></label><div class="scs-team-registered-club"><label>Sub-club<select data-registered-club><option value="">Select a sub-club</option></select></label><small data-club-loading>Loading registered clubs…</small></div><div class="scs-tm-pool-heading"><h3>Select players ('+selected.size+')</h3><button type="button" class="scs-team-manager" data-open-manager>＋ Add players</button></div><p>This club has its own roster. Add players from the existing player list.</p><div class="scs-tm-pool" data-player-list>'+playerChoices()+'</div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-editor-head"><h3>Club players</h3><p>Register a club and choose its players</p></div><label>Club name<input data-club-name readonly value="'+esc(c.name)+'"></label><div class="scs-team-registered-club"><label>Sub-club<select data-registered-club><option value="">Select a sub-club</option></select></label><small data-club-loading>Loading registered clubs…</small></div><div class="scs-tm-pool-heading"><h3>Select players ('+selected.size+')</h3><button type="button" class="scs-team-manager" data-open-manager>＋ Add players</button></div><p>This club has its own roster. Add players from the existing player list.</p><div class="scs-tm-pool" data-player-list>'+playerChoices()+'</div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
  root().appendChild(modal);
  const redraw=()=>{modal.querySelector('[data-player-list]').innerHTML=playerChoices();modal.querySelector('.scs-tm-pool-heading h3').textContent='Select players ('+selected.size+')';bindChoices();hydratePlayerCards()};
  const bindChoices=()=>modal.querySelectorAll('[data-player-choice]').forEach(btn=>btn.onchange=()=>{const n=btn.dataset.playerChoice;if(btn.checked)selected.add(n);else selected.delete(n);redraw()});
@@ -229,7 +226,7 @@ function clubEditor(i){
   redraw();
  };
  modal.querySelector('[data-save]').onclick=()=>{
-  const name=modal.querySelector('[data-club-name]').value.trim(),players=[...selected];
+  const name=registeredClubs.find(x=>x.id===registeredClubId)?.name||'',players=[...selected];
   if(!registeredClubId||!name||players.length<6||players.some(p=>reservedByOtherClub(p,i))||state.clubs.some((x,j)=>j!==i&&(x.name.toLowerCase()===name.toLowerCase()||(registeredClubId&&x.registeredClubId===registeredClubId)))){modal.querySelector('[data-error]').textContent='Select a sub-club with at least six players and a unique name.';return}
   if(i===state.clubs.length)state.clubs.push({name,players,registeredClubId:registeredClubId||null,colorIndex:state.serial++});else state.clubs[i]={...state.clubs[i],name,players,registeredClubId:registeredClubId||null};
   editingClub=null;clubDraft=null;save();modal.remove();render();

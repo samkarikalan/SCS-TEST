@@ -1251,38 +1251,49 @@ setTimeout(function() {
 }
 
 function scsTournamentRegistrationTarget(){
-  return window.__scsTournamentRegistrationClub || (typeof getMyClub==='function'?getMyClub():{id:null,name:null});
+ return window.__scsTournamentRegistrationClub||{id:null,name:null};
 }
-function scsTournamentRegEsc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function scsTournamentRegEsc(v){
+ return String(v||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
 async function scsTournamentRegisterLoadClubs(){
-  if(!window.__scsTournamentRegistration)return;
-  const root=document.getElementById('scsTournamentRegisterClubs');if(!root)return;
-  const active=getMyClub();
-  const parentId=localStorage.getItem('scs_subclub_parent_id')||active.id;
-  const parentName=localStorage.getItem('scs_subclub_parent_name')||active.name;
-  if(!parentId){root.textContent='Select a main club first.';return;}
-  root.innerHTML='<strong>Main club: '+scsTournamentRegEsc(parentName||'')+'</strong><label>Register to <select id="scsTournamentRegClubChoice"><option value="'+scsTournamentRegEsc(parentId)+'">Main club (no sub-club)</option></select></label><div class="scs-tr-create"><input id="scsTournamentRegNewSub" placeholder="New sub-club name" aria-label="New sub-club name"><button type="button" onclick="scsTournamentRegisterCreateSub()">+ Add Sub-club</button></div><small id="scsTournamentRegMessage"></small>';
+ if(!window.__scsTournamentRegistration)return;
+ const root=document.getElementById('scsTournamentRegisterClubs');
+ if(!root)return;
+ root.textContent='Loading sub-clubs…';
+ window.__scsTournamentRegistrationClub=null;
+ try{
+  const parent=await scsResolveOrganizerClub();
+  const rows=await dbGetSubClubs(parent.id);
+  if(!root.isConnected||!window.__scsTournamentRegistration)return;
+  root.innerHTML='<strong>Main club: '+scsTournamentRegEsc(parent.name)+'</strong><label>Sub-club<select id="scsTournamentRegClubChoice"><option value="">Select a sub-club</option></select></label><div class="scs-tr-create"><input id="scsTournamentRegNewSub" placeholder="New sub-club name"><button type="button" onclick="scsTournamentRegisterCreateSub()">+ Add Sub-club</button></div><small id="scsTournamentRegMessage"></small>';
   const select=root.querySelector('select');
-  try{
-    const rows=await dbGetSubClubs(parentId);
-    rows.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;select.appendChild(o)});
-    const chosen=window.__scsTournamentRegistrationClub;
-    select.value=chosen&&[parentId,...rows.map(x=>x.id)].includes(chosen.id)?chosen.id:parentId;
-    const sync=()=>{const o=select.options[select.selectedIndex];window.__scsTournamentRegistrationClub={id:select.value,name:o.textContent};};
-    select.onchange=sync;sync();
-  }catch(e){root.querySelector('#scsTournamentRegMessage').textContent='Unable to load sub-clubs: '+(e.message||e)}
+  rows.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;select.appendChild(o)});
+  const preferred=window.__scsTournamentPreferredSubclub;
+  if(preferred&&rows.some(c=>c.id===preferred))select.value=preferred;
+  const sync=()=>{
+   const c=rows.find(x=>x.id===select.value);
+   window.__scsTournamentRegistrationClub=c?{id:c.id,name:c.name}:null;
+   window.__scsTournamentPreferredSubclub=c?.id||null;
+   const label=document.getElementById('scsTournamentRegisterTargetLabel');
+   if(label)label.textContent=c?.name||'Select a sub-club above';
+   root.querySelector('#scsTournamentRegMessage').textContent=c?'Registering to '+c.name:rows.length?'Select a sub-club before registering.':'No sub-clubs yet. Create one above.';
+  };
+  select.onchange=sync;sync();
+ }catch(e){root.textContent='Could not load sub-clubs: '+(e.message||e)}
 }
 async function scsTournamentRegisterCreateSub(){
-  const field=document.getElementById('scsTournamentRegNewSub'),msg=document.getElementById('scsTournamentRegMessage');
-  const name=field?.value.trim();if(!name){if(msg)msg.textContent='Enter a sub-club name.';return;}
-  const parentId=localStorage.getItem('scs_subclub_parent_id')||getMyClub().id;
-  try{
-    if(msg)msg.textContent='Creating…';
-    const child=await dbAddSubClub(parentId,name);
-    window.__scsTournamentRegistrationClub={id:child.id,name:child.name};
-    await scsTournamentRegisterLoadClubs();
-    const result=document.getElementById('scsTournamentRegMessage');if(result)result.textContent='Sub-club created.';
-  }catch(e){if(msg)msg.textContent=e.message||String(e)}
+ const field=document.getElementById('scsTournamentRegNewSub');
+ const msg=document.getElementById('scsTournamentRegMessage');
+ const name=field?.value.trim();
+ if(!name){if(msg)msg.textContent='Enter a sub-club name.';return}
+ try{
+  if(msg)msg.textContent='Creating…';
+  const parent=await scsResolveOrganizerClub();
+  const child=await dbAddSubClub(parent.id,name);
+  window.__scsTournamentPreferredSubclub=child.id;
+  await scsTournamentRegisterLoadClubs();
+ }catch(e){if(msg)msg.textContent=e.message||String(e)}
 }
 function vaultRenderRegister() {
 const container = document.getElementById('vaultRegisterContainer');
@@ -1291,7 +1302,7 @@ const club = window.__scsTournamentRegistration ? scsTournamentRegistrationTarge
 const vregJp = {registeringFor:'登録先：',individual:'個別登録',bulk:'一括登録',nickname:'ニックネーム',playerNickname:'選手のニックネーム',gender:'性別',male:'男性',female:'女性',rating:'レーティング',defaultValue:'初期値 1.0',defaultPassword:'デフォルトパスワード',claimHint:'選手がアカウント取得時に使用',passwordExample:'例：club123',registerPlayer:'選手を登録',addSession:'今日のセッションに追加',pasteNames:'名前を貼り付け（1行に1人）',defaultGender:'初期の性別：',passwordAll:'全選手のデフォルトパスワード',addList:'リストに追加',registerAll:'すべて登録'};
 const vregText = function(key, fallback) { return (localStorage.getItem('appLanguage') || 'en') === 'jp' ? (vregJp[key] || fallback) : fallback; };
 
-if (!club.name) {
+if (!club.name && !window.__scsTournamentRegistration) {
 container.innerHTML = '<div class="register-club-label">' + t('noClubSelectedJoin') + '</div>';
 return;
 }
@@ -1299,7 +1310,7 @@ return;
 container.innerHTML = `
 <div class="register-form">
 ${window.__scsTournamentRegistration ? '<div id="scsTournamentRegisterClubs" class="scs-tr-clubs">Loading sub-clubs…</div>' : ''}
-<div class="register-club-label">🏸 ${vregText('registeringFor','Registering for:')} <strong>${club.name}</strong></div>
+<div class="register-club-label">🏸 ${vregText('registeringFor','Registering for:')} <strong>${window.__scsTournamentRegistration ? '<span id="scsTournamentRegisterTargetLabel">Select a sub-club above</span>' : club.name}</strong></div>
 
   <!-- Tabs -->
   <div class="vault-inner-tabs">
@@ -1388,7 +1399,7 @@ const setFb = (msg, ok) => { if (fb) { fb.textContent = msg; fb.className = 'reg
 if (!defPw) { setFb(t('enterDefaultPwAll'), false); return; }
 
 const club    = window.__scsTournamentRegistration ? scsTournamentRegistrationTarget() : ((typeof getMyClub === 'function') ? getMyClub() : { id: null });
-if (!club.id) { setFb(t('noClubSelectedJoin'), false); return; }
+if (!club.id) { setFb('Select a sub-club first.', false); return; }
 
 const pending = _regStagingList.filter(p => p.status === 'pending' || p.status === 'error');
 if (!pending.length) return;
@@ -1480,7 +1491,7 @@ const defPw    = document.getElementById('vregDefaultPassword')?.value.trim();
 const fb       = document.getElementById('vregFeedback');
 const setFb    = (msg, ok) => { if (fb) { fb.textContent = msg; fb.style.color = ok ? 'var(-green,#2dce89)' : 'var(-red,#e63757)'; } };
 
-if (!club.id)   { setFb(t('noClubSelectedJoin'), false); return; }
+if (!club.id)   { setFb('Select a sub-club first.', false); return; }
 try { nickname = scsRequireValidPlayerName(nickname); }
 catch (e) { setFb(e.message || t('invalidPlayerName'), false); return; }
 if (nicknameInput) nicknameInput.value = nickname;
