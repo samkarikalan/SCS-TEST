@@ -1250,10 +1250,44 @@ setTimeout(function() {
 } catch (e) { setFb('❌ ' + e.message, false); }
 }
 
+function scsTournamentRegistrationTarget(){
+  return window.__scsTournamentRegistrationClub || (typeof getMyClub==='function'?getMyClub():{id:null,name:null});
+}
+function scsTournamentRegEsc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function scsTournamentRegisterLoadClubs(){
+  if(!window.__scsTournamentRegistration)return;
+  const root=document.getElementById('scsTournamentRegisterClubs');if(!root)return;
+  const active=getMyClub();
+  const parentId=localStorage.getItem('scs_subclub_parent_id')||active.id;
+  const parentName=localStorage.getItem('scs_subclub_parent_name')||active.name;
+  if(!parentId){root.textContent='Select a main club first.';return;}
+  root.innerHTML='<strong>Main club: '+scsTournamentRegEsc(parentName||'')+'</strong><label>Register to <select id="scsTournamentRegClubChoice"><option value="'+scsTournamentRegEsc(parentId)+'">Main club (no sub-club)</option></select></label><div class="scs-tr-create"><input id="scsTournamentRegNewSub" placeholder="New sub-club name" aria-label="New sub-club name"><button type="button" onclick="scsTournamentRegisterCreateSub()">+ Add Sub-club</button></div><small id="scsTournamentRegMessage"></small>';
+  const select=root.querySelector('select');
+  try{
+    const rows=await dbGetSubClubs(parentId);
+    rows.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;select.appendChild(o)});
+    const chosen=window.__scsTournamentRegistrationClub;
+    select.value=chosen&&[parentId,...rows.map(x=>x.id)].includes(chosen.id)?chosen.id:parentId;
+    const sync=()=>{const o=select.options[select.selectedIndex];window.__scsTournamentRegistrationClub={id:select.value,name:o.textContent};};
+    select.onchange=sync;sync();
+  }catch(e){root.querySelector('#scsTournamentRegMessage').textContent='Unable to load sub-clubs: '+(e.message||e)}
+}
+async function scsTournamentRegisterCreateSub(){
+  const field=document.getElementById('scsTournamentRegNewSub'),msg=document.getElementById('scsTournamentRegMessage');
+  const name=field?.value.trim();if(!name){if(msg)msg.textContent='Enter a sub-club name.';return;}
+  const parentId=localStorage.getItem('scs_subclub_parent_id')||getMyClub().id;
+  try{
+    if(msg)msg.textContent='Creating…';
+    const child=await dbAddSubClub(parentId,name);
+    window.__scsTournamentRegistrationClub={id:child.id,name:child.name};
+    await scsTournamentRegisterLoadClubs();
+    const result=document.getElementById('scsTournamentRegMessage');if(result)result.textContent='Sub-club created.';
+  }catch(e){if(msg)msg.textContent=e.message||String(e)}
+}
 function vaultRenderRegister() {
 const container = document.getElementById('vaultRegisterContainer');
 if (!container) return;
-const club = (typeof getMyClub === 'function') ? getMyClub() : { name: null };
+const club = window.__scsTournamentRegistration ? scsTournamentRegistrationTarget() : ((typeof getMyClub === 'function') ? getMyClub() : { name: null });
 const vregJp = {registeringFor:'登録先：',individual:'個別登録',bulk:'一括登録',nickname:'ニックネーム',playerNickname:'選手のニックネーム',gender:'性別',male:'男性',female:'女性',rating:'レーティング',defaultValue:'初期値 1.0',defaultPassword:'デフォルトパスワード',claimHint:'選手がアカウント取得時に使用',passwordExample:'例：club123',registerPlayer:'選手を登録',addSession:'今日のセッションに追加',pasteNames:'名前を貼り付け（1行に1人）',defaultGender:'初期の性別：',passwordAll:'全選手のデフォルトパスワード',addList:'リストに追加',registerAll:'すべて登録'};
 const vregText = function(key, fallback) { return (localStorage.getItem('appLanguage') || 'en') === 'jp' ? (vregJp[key] || fallback) : fallback; };
 
@@ -1264,6 +1298,7 @@ return;
 
 container.innerHTML = `
 <div class="register-form">
+${window.__scsTournamentRegistration ? '<div id="scsTournamentRegisterClubs" class="scs-tr-clubs">Loading sub-clubs…</div>' : ''}
 <div class="register-club-label">🏸 ${vregText('registeringFor','Registering for:')} <strong>${club.name}</strong></div>
 
   <!-- Tabs -->
@@ -1327,6 +1362,7 @@ container.innerHTML = `
   </div>
 </div>`;
 
+if(window.__scsTournamentRegistration)scsTournamentRegisterLoadClubs();
 window._regDefaultGender = 'Male';
 if (typeof _regStagingList !== 'undefined') _regStagingList = [];
 }
@@ -1351,7 +1387,7 @@ const setFb = (msg, ok) => { if (fb) { fb.textContent = msg; fb.className = 'reg
 
 if (!defPw) { setFb(t('enterDefaultPwAll'), false); return; }
 
-const club    = (typeof getMyClub === 'function') ? getMyClub() : { id: null };
+const club    = window.__scsTournamentRegistration ? scsTournamentRegistrationTarget() : ((typeof getMyClub === 'function') ? getMyClub() : { id: null });
 if (!club.id) { setFb(t('noClubSelectedJoin'), false); return; }
 
 const pending = _regStagingList.filter(p => p.status === 'pending' || p.status === 'error');
@@ -1433,7 +1469,7 @@ if (successCount > 0) {
 }
 
 async function vaultDoRegisterPlayer() {
-const club     = (typeof getMyClub === 'function') ? getMyClub() : { id: null };
+const club     = window.__scsTournamentRegistration ? scsTournamentRegistrationTarget() : ((typeof getMyClub === 'function') ? getMyClub() : { id: null });
 const nicknameInput = document.getElementById('vregNickname');
 let nickname = nicknameInput ? nicknameInput.value : '';
 const gender   = document.getElementById('vregGender')?.value || 'Male';

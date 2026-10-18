@@ -463,15 +463,16 @@ window.scsTournamentReturnManager=function(){
 };
 function scsCloseTournamentManager(){var e=document.getElementById('scsTournamentManager');if(e)e.hidden=true}
 function scsTournamentManagerPlayers(){
-  window.__scsTournamentManagerPlayersReturn = true;
-  // Open the proven Players Manager; its normal Done/back action restores this page.
-  if(typeof scsPushChildReturnState==='function')scsPushChildReturnState('playersPage');
+  window.__scsTournamentRegistration=true;
+  window.__scsTournamentRegistrationClub=null;
+  window._regNavSource='tournamentManager';
   scsCloseTournamentManager();
   if(typeof homeHideScreen==='function')homeHideScreen();
-  if(typeof showPage==='function')showPage('playersPage',null);
-  else{var page=document.getElementById('playersPage');if(page)page.style.display='block';}
-  if(typeof _updateDynamicBackBtns==='function')_updateDynamicBackBtns('playersPage');
+  if(typeof showPage==='function')showPage('vaultRegisterPage',null);
+  document.body.classList.add('scs-tournament-register-open');
+  if(typeof vaultRenderRegister==='function')vaultRenderRegister();
 }
+
 function scsTournamentManagerStart(){scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();scsOpenTournamentTypePicker()}
 async function scsTournamentManagerContinue(){
   scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();

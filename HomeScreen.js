@@ -3124,6 +3124,16 @@ function _vncbOnJoined() {
 
 /* ── Register page: smart close (return to source page) ── */
 function vaultRegisterClose() {
+  if(window.__scsTournamentRegistration){
+    window.__scsTournamentRegistration=false;
+    window.__scsTournamentRegistrationClub=null;
+    window._regNavSource=null;
+    document.body.classList.remove('scs-tournament-register-open');
+    var page=document.getElementById('vaultRegisterPage');
+    if(page)page.style.display='none';
+    if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();
+    return;
+  }
   var src = window._regNavSource || null;
   window._regNavSource = null;
   if (src === 'organiserHome') {

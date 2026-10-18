@@ -36536,3 +36536,13 @@ body.app-light .scs-court-card{background:#fff!important;box-shadow:0 5px 16px r
 
 /* V33: direct tournament entry on Court Center setup */
 .scs-court-start .scs-court-tournament-entry{display:block;width:100%;margin-top:12px;background:#292d43;color:#c2b8ff;border:1px solid #7465dc;border-radius:16px;padding:16px;font-weight:700;}
+
+/* Tournament registration: existing form, no Practice navigation. */
+body.scs-tournament-register-open #scsPrimaryBottomNav{display:none!important}
+body.scs-tournament-register-open #vaultRegisterPage{padding-bottom:24px!important}
+.scs-tr-clubs{border:1px solid rgba(135,153,190,.35);border-radius:14px;padding:12px;margin:0 0 16px;background:rgba(42,57,85,.28);display:grid;gap:12px}
+.scs-tr-clubs strong{font-size:.95rem}.scs-tr-clubs label{display:grid;gap:6px;font-size:.88rem}
+.scs-tr-clubs select,.scs-tr-clubs input{background:#20283a;color:inherit;border:1px solid #586783;border-radius:9px;padding:12px;min-width:0;width:100%}
+.scs-tr-create{display:flex;gap:8px;align-items:stretch}.scs-tr-create input{flex:1}
+.scs-tr-create button{border:1px solid #7468ee;background:#292650;color:#eeeaff;border-radius:9px;padding:8px 12px;white-space:nowrap}
+.scs-tr-clubs small{color:#c4b7ff}
