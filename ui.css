@@ -36546,3 +36546,5 @@ body.scs-tournament-register-open #vaultRegisterPage{padding-bottom:24px!importa
 .scs-tr-create{display:flex;gap:8px;align-items:stretch}.scs-tr-create input{flex:1}
 .scs-tr-create button{border:1px solid #7468ee;background:#292650;color:#eeeaff;border-radius:9px;padding:8px 12px;white-space:nowrap}
 .scs-tr-clubs small{color:#c4b7ff}
+
+.scs-team-registered-club{display:grid;gap:8px;margin:12px 0}.scs-team-registered-club label{display:grid;gap:6px}.scs-team-registered-club select{width:100%;padding:12px;border-radius:10px;background:#172942;color:#fff;border:1px solid #6c86af}.scs-team-registered-club small{color:#b7c6dc}

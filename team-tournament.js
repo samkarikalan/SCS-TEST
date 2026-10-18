@@ -152,6 +152,19 @@ function playersManagerReturned(){
  if(root()){root().hidden=false;render();if(editingClub!==null)clubEditor(editingClub)}
  return true;
 }
+async function registeredClubChoices(){
+ const current=typeof getMyClub==='function'?getMyClub():{};
+ const parentId=localStorage.getItem('scs_subclub_parent_id')||current.id;
+ if(!parentId)return [];
+ const parentName=localStorage.getItem('scs_subclub_parent_name')||current.name||'Main club';
+ const children=typeof dbGetSubClubs==='function'?await dbGetSubClubs(parentId):[];
+ return [{id:parentId,name:parentName},...children];
+}
+async function registeredClubPlayers(id){
+ if(!id||typeof sbGet!=='function')return [];
+ const rows=await sbGet('memberships','club_id=eq.'+encodeURIComponent(id)+'&select=nickname,player_id');
+ return [...new Map((rows||[]).map(r=>String(r.nickname||'').trim()).filter(Boolean).map(n=>[playerKey(n),n])).values()].sort((a,b)=>a.localeCompare(b));
+}
 function clubEditor(i){
  if(state.encounters.length){alert('Club rosters are locked after fixtures have been generated.');return}
  const c=clubDraft&&editingClub===i?clubDraft:(state.clubs[i]||{name:'',players:[]});
@@ -161,22 +174,49 @@ function clubEditor(i){
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal';
  // Display the current club roster first. The shared registry is only a source for adding players.
  // Keep this dialog club-scoped; never modify the global player selection state.
- let showAvailable=false;
+ let showAvailable=false,registeredNames=null,registeredClubId=null;
+ let registeredClubs=[];
  const playerChoices=()=>{
-  const names=getNames();
+  const names=registeredNames!==null?registeredNames:getNames();
   const members=names.filter(n=>selected.has(n));
   const available=names.filter(n=>!selected.has(n));
   const row=n=>'<label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label>';
   return members.map(row).join('')+(showAvailable?'<div class="scs-team-available-title">Available players · '+available.length+'</div>'+(available.length?available.map(row).join(''):'<p class="scs-team-no-available">All registered players are already assigned to clubs.</p>'):'');
  };
- modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-editor-head"><h3>Club players</h3><p>Register a club and choose its players</p></div><label>Club name<input data-club-name value="'+esc(c.name)+'"></label><div class="scs-tm-pool-heading"><h3>Select players ('+selected.size+')</h3><button type="button" class="scs-team-manager" data-open-manager>＋ Add players</button></div><p>This club has its own roster. Add players from the existing player list.</p><div class="scs-tm-pool" data-player-list>'+playerChoices()+'</div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-editor-head"><h3>Club players</h3><p>Register a club and choose its players</p></div><label>Club name<input data-club-name value="'+esc(c.name)+'"></label><div class="scs-team-registered-club"><label>Registered club / sub-club<select data-registered-club><option value="">Manual club (existing method)</option></select></label><small data-club-loading>Loading registered clubs…</small></div><div class="scs-tm-pool-heading"><h3>Select players ('+selected.size+')</h3><button type="button" class="scs-team-manager" data-open-manager>＋ Add players</button></div><p>This club has its own roster. Add players from the existing player list.</p><div class="scs-tm-pool" data-player-list>'+playerChoices()+'</div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
  root().appendChild(modal);
  const redraw=()=>{modal.querySelector('[data-player-list]').innerHTML=playerChoices();modal.querySelector('.scs-tm-pool-heading h3').textContent='Select players ('+selected.size+')';bindChoices();hydratePlayerCards()};
  const bindChoices=()=>modal.querySelectorAll('[data-player-choice]').forEach(btn=>btn.onchange=()=>{const n=btn.dataset.playerChoice;if(btn.checked)selected.add(n);else selected.delete(n);redraw()});
  bindChoices();hydratePlayerCards();
+ const clubSelect=modal.querySelector('[data-registered-club]');
+ const loading=modal.querySelector('[data-club-loading]');
+ clubSelect.onchange=async()=>{
+  const id=clubSelect.value;
+  if(!id){registeredClubId=null;registeredNames=null;selected.clear();(c.players||[]).forEach(n=>selected.add(n));showAvailable=false;redraw();return}
+  loading.textContent='Loading club players…';
+  try{
+   const names=await registeredClubPlayers(id);
+   if(clubSelect.value!==id)return;
+   registeredClubId=id;registeredNames=names;selected.clear();
+   if(c.registeredClubId===id)(c.players||[]).forEach(n=>{if(names.some(x=>playerKey(x)===playerKey(n)))selected.add(n)});
+   showAvailable=true;
+   const item=registeredClubs.find(x=>x.id===id);
+   modal.querySelector('[data-club-name]').value=item?.name||'';
+   loading.textContent=names.length+' registered players · select at least '+(state.matchesPerEncounter*2);
+   redraw();
+  }catch(e){loading.textContent='Could not load players: '+(e.message||e)}
+ };
+ (async()=>{
+  try{
+   registeredClubs=await registeredClubChoices();
+   registeredClubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;clubSelect.appendChild(o)});
+   if(c.registeredClubId&&registeredClubs.some(x=>x.id===c.registeredClubId)){clubSelect.value=c.registeredClubId;await clubSelect.onchange()}
+   else loading.textContent=registeredClubs.length?'Select a registered club to filter its players.':'No registered clubs found. Manual entry remains available.';
+  }catch(e){loading.textContent='Could not load registered clubs: '+(e.message||e)}
+ })();
  modal.querySelector('[data-cancel]').onclick=()=>{editingClub=null;clubDraft=null;modal.remove()};
  modal.querySelector('[data-open-manager]').onclick=()=>{
-  const available=getNames().filter(n=>!selected.has(n));
+  const available=(registeredNames!==null?registeredNames:getNames()).filter(n=>!selected.has(n));
   // Never navigate to the global Players Manager: it shows the global selection.
   // The club-specific picker always stays within this modal.
   if(!showAvailable&&!available.length){
@@ -190,8 +230,8 @@ function clubEditor(i){
  };
  modal.querySelector('[data-save]').onclick=()=>{
   const name=modal.querySelector('[data-club-name]').value.trim(),players=[...selected];
-  if(!name||players.length<6||players.some(p=>reservedByOtherClub(p,i))||state.clubs.some((x,j)=>j!==i&&x.name.toLowerCase()===name.toLowerCase())){modal.querySelector('[data-error]').textContent='Enter a unique club name and select at least six players.';return}
-  if(i===state.clubs.length)state.clubs.push({name,players,colorIndex:state.serial++});else state.clubs[i]={...state.clubs[i],name,players};
+  if(!name||players.length<6||players.some(p=>reservedByOtherClub(p,i))||state.clubs.some((x,j)=>j!==i&&(x.name.toLowerCase()===name.toLowerCase()||(registeredClubId&&x.registeredClubId===registeredClubId)))){modal.querySelector('[data-error]').textContent='Enter a unique club name and select at least six players.';return}
+  if(i===state.clubs.length)state.clubs.push({name,players,registeredClubId:registeredClubId||null,colorIndex:state.serial++});else state.clubs[i]={...state.clubs[i],name,players,registeredClubId:registeredClubId||null};
   editingClub=null;clubDraft=null;save();modal.remove();render();
  };
 }
