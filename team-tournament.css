@@ -776,3 +776,24 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-team-main-actions{display:flex;gap:10px;margin-top:24px}
 .scs-team-main-actions button{flex:1;min-height:48px;border-radius:12px;border:1px solid #617697;background:#283b57;color:#f3f7ff;font:inherit;font-weight:700}
 .scs-team-main-actions button.scs-gt-primary{background:#356bc4;border-color:#558eea;color:#fff}
+
+/* V279: Club Players dialog — only content scrolls, actions stay in their own footer.
+   Overrides older sticky-footer rules that covered the final player rows on iOS. */
+.scs-team-overlay .scs-tm-entry-modal .scs-team-club-editor{
+ display:flex!important;flex-direction:column!important;min-height:0!important;
+ overflow:hidden!important;max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;
+ padding:18px 14px 12px!important;
+}
+.scs-team-overlay .scs-team-club-editor .scs-team-club-scroll{
+ flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;padding:0 4px 16px;
+}
+.scs-team-overlay .scs-team-club-editor .scs-tm-pool{
+ max-height:none!important;overflow:visible!important;
+}
+.scs-team-overlay .scs-team-club-editor .scs-tm-import-actions{
+ position:static!important;flex:0 0 auto;z-index:auto!important;
+ margin:0!important;padding:12px 2px calc(4px + env(safe-area-inset-bottom))!important;
+ border-top:1px solid #607a9d;background:#223650;
+}
+.scs-team-overlay .scs-team-club-editor [data-error]{flex:0 0 auto;margin:0}
