@@ -18,7 +18,7 @@ async function load(name){
 function ring(name,gender,level){
  const e=createRatingRing(name,gender||'Male',valid(level)?6-Number(level):null);
  e.classList.add('scs-tournament-level-ring');
- if(valid(level)){const b=document.createElement('span');b.className='scs-tournament-level-number';b.textContent=String(level);e.appendChild(b)}
+
  e.title=valid(level)?'Level '+level+' (1 strongest, 5 weakest)':'Level unavailable';
  return e;
 }
@@ -32,6 +32,8 @@ function hydrate(root){
   if(!slot.isConnected)return;
   slot.replaceChildren(ring(name,info?.gender,info?.level));
   slot.dataset.levelPending='0';
+  const label=slot.closest('.scs-tm-shared-player')?.querySelector('.scs-tournament-gender-level');
+  if(label){const prefix=/female|woman|lady|women|f$/i.test(String(info?.gender||''))?'L':'M';label.textContent=valid(info?.level)?prefix+info.level:'—';label.classList.toggle('scs-level-female',prefix==='L');}
  });
 }
 window.SCSTournamentPlayerLevel={hydrate,load,ring,clear:()=>cache.clear()};

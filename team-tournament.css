@@ -808,3 +808,10 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 /* SCS register players: compact independent whole-number Level selector */
 .scs-reg-level-inline{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;color:#d5e2f4;white-space:nowrap}
 .scs-reg-level-inline select{border:1px solid #657d9f;border-radius:7px;background:#1a2943;color:#fff;padding:6px;font:inherit;min-width:44px}
+
+/* V284 compact tournament roster: one gender+level badge only */
+.scs-team-level-row .scs-team-level-edit{display:none!important}
+.scs-team-level-row{padding:5px 0}
+.scs-team-level-badge{font-size:.82rem;padding:4px 9px;border-radius:999px;background:#a8d9ff;color:#112c4d;margin-left:10px}
+.scs-team-level-badge.scs-level-female{background:#f4b6ed;color:#4a1944}
+.scs-tournament-level-number{display:none!important}

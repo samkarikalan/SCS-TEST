@@ -240,7 +240,7 @@ function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTourn
 let editingClub=null,clubDraft=null;
 const teamPlayerLevels=new Map();
 function teamLevel(name){const v=teamPlayerLevels.get(playerKey(name));return Number.isInteger(v)&&v>=1&&v<=5?v:null;}
-function teamLevelLabel(name){const v=teamLevel(name);return '<span class="scs-team-level-badge" title="Player Level (1 strongest, 5 weakest)">Lv '+(v??'—')+'</span>';}
+function teamLevelLabel(name){const v=teamLevel(name);return '<span class="scs-team-level-badge scs-tournament-gender-level" data-tm-level-name="'+esc(name)+'" title="Player level">'+(v===null?'—':'M'+v)+'</span>'; }
 function openPlayersManager(){
  window.__scsTeamPlayersReturn=true;
  if(root())root().hidden=true;
@@ -289,12 +289,12 @@ function clubEditor(i){
   const names=registeredNames;
   const members=names.filter(n=>selected.has(n));
   const available=names.filter(n=>!selected.has(n));
-  const row=n=>'<div class="scs-team-level-row"><label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label><label class="scs-team-level-edit">Level <select data-level-player="'+esc(n)+'" aria-label="Level for '+esc(n)+'">'+[1,2,3,4,5].map(v=>'<option value="'+v+'" '+(teamLevel(n)===v?'selected':'')+'>'+v+'</option>').join('')+'</select></label></div>';
+  const row=n=>'<div class="scs-team-level-row"><label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label></div>';
   return members.map(row).join('')+(showAvailable?'<div class="scs-team-available-title">Available players · '+available.length+'</div>'+(available.length?available.map(row).join(''):'<p class="scs-team-no-available">All registered players are already assigned to clubs.</p>'):'');
  };
  modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Club players</h3><p>Register a club and choose its players</p></div><label>Club name<input data-club-name readonly value="'+esc(c.name)+'"></label><div class="scs-team-registered-club"><label>Sub-club<select data-registered-club><option value="">Select a sub-club</option></select></label><small data-club-loading>Loading registered clubs…</small></div><div class="scs-tm-pool-heading"><h3>Select players ('+selected.size+')</h3><button type="button" class="scs-team-manager" data-open-manager>＋ Add players</button></div><p>This club has its own roster. Add players from the existing player list.</p><div class="scs-tm-pool" data-player-list>'+playerChoices()+'</div></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
  root().appendChild(modal);
- const redraw=()=>{modal.querySelector('[data-player-list]').innerHTML=playerChoices();modal.querySelector('.scs-tm-pool-heading h3').textContent='Select players ('+selected.size+')';bindChoices();bindLevels();hydratePlayerCards()};
+ const redraw=()=>{modal.querySelector('[data-player-list]').innerHTML=playerChoices();modal.querySelector('.scs-tm-pool-heading h3').textContent='Select players ('+selected.size+')';bindChoices();hydratePlayerCards()};
  const bindLevels=()=>modal.querySelectorAll('[data-level-player]').forEach(sel=>{
   const name=sel.dataset.levelPlayer;
   const v=teamLevel(name);if(v!==null)sel.value=String(v);
@@ -309,7 +309,7 @@ function clubEditor(i){
   };
  });
  const bindChoices=()=>modal.querySelectorAll('[data-player-choice]').forEach(btn=>btn.onchange=()=>{const n=btn.dataset.playerChoice;if(btn.checked)selected.add(n);else selected.delete(n);redraw()});
- bindChoices();bindLevels();hydratePlayerCards();
+ bindChoices();hydratePlayerCards();
  const clubSelect=modal.querySelector('[data-registered-club]');
  const loading=modal.querySelector('[data-club-loading]');
  clubSelect.onchange=async()=>{
