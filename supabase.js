@@ -292,7 +292,7 @@ async function dbListClubTournaments(statuses = ['draft', 'live', 'completed']) 
   if (!club || !club.id) return [];
   const safe = statuses.filter(s => ['draft', 'live', 'completed', 'archived'].includes(s));
   return sbGet('tournaments',
-    `club_id=eq.${encodeURIComponent(club.id)}&status=in.(${safe.join(',')})&order=updated_at.desc&select=id,format,title,status,state_version,created_by,started_at,completed_at,updated_at`
+    `club_id=eq.${encodeURIComponent(club.id)}&status=in.(${safe.join(',')})&order=updated_at.desc&select=id,format,title,status,state_version,created_by,started_at,completed_at,updated_at,state`
   ).catch(() => []);
 }
 

@@ -5,7 +5,7 @@ const KEY='scs_team_tournament_v1';
 let state={title:'',clubs:[],encounters:[],courtCount:1,serial:0,matchesPerEncounter:3},tab='fixtures',matchTab='waiting',assigning=null,viewOnly=false,selectedEncounterId=null;
 const root=()=>document.getElementById('scsTeamTournament');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const save=()=>{if(!viewOnly){localStorage.setItem(KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('team',state)}};
+const save=()=>{if(!viewOnly){if(state._scsTeamMainId&&state._scsClientTournamentId)localStorage.setItem('scs_team_event_'+state._scsClientTournamentId,JSON.stringify(state));localStorage.setItem(KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('team',state);if(state._scsTeamMainId)saveEventIndex()}};
 let teamSaveBusy=false;
 async function saveTeamTournamentNow(){
  if(viewOnly)return;
@@ -19,15 +19,77 @@ async function saveTeamTournamentNow(){
  try{
   localStorage.setItem(KEY,JSON.stringify(state));
   if(typeof window.dbSaveTournamentState!=='function')throw Error('Server save is unavailable. Saved on this device only.');
-  const id=await window.dbSaveTournamentState('team',JSON.parse(JSON.stringify(state)));
+  const id=await window.dbSaveTournamentState('team',state);if(id){state._scsCloudTournamentId=id;if(state._scsTeamMainId)saveEventIndex();}
   if(!id)throw Error('Server save unavailable. Check your club login and connection. Saved on this device only.');
   if(indicator)indicator.textContent='✓ Saved to server';
  }catch(err){if(indicator)indicator.textContent='⚠ '+(err?.message||'Server save failed; local copy retained.');}
  finally{teamSaveBusy=false;if(btn)btn.disabled=false;}
 }
 function load(){try{state=JSON.parse(localStorage.getItem(KEY))||state}catch(e){}state.clubs||=[];state.encounters||=[];state.courtCount||=1;state.serial||=0;state.matchesPerEncounter=[3,5,7,9].includes(Number(state.matchesPerEncounter))?Number(state.matchesPerEncounter):3}
-function open(mode){viewOnly=mode==='view';load();if(mode==='new'&&typeof window.scsResetTournamentCloudIdentity==='function')window.scsResetTournamentCloudIdentity('team');if(mode==='new'&&state.encounters.length){if(!confirm('Create a new Team Tournament? The current tournament will be replaced.'))return;state={title:'',clubs:[],encounters:[],courtCount:1,serial:0,matchesPerEncounter:3};save()}if(!root()){let d=document.createElement('div');d.id='scsTeamTournament';d.className='scs-gt-overlay scs-team-overlay';document.body.appendChild(d)}tab=state.encounters.length?'fixtures':'setup';selectedEncounterId=null;for(const key of Object.keys(teamScrollPositions))delete teamScrollPositions[key];render();if(!state.encounters.length&&mode!=='new'&&typeof window.dbLoadLatestTournament==='function'){window.dbLoadLatestTournament('team').then(row=>{if(!row||!row.state||!root()||state.encounters.length)return;state=row.state;localStorage.setItem(KEY,JSON.stringify(state));tab=state.encounters.length?'fixtures':'setup';render()}).catch(e=>console.warn('Team cloud restore:',e))}}
-function close(){root()?.remove();if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
+const MAIN_KEY='scs_team_main_tournament_v1';
+let main=null, mainMode=false;
+function newId(){return typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():'scs-'+Date.now()+'-'+Math.random().toString(36).slice(2)}
+function persistMain(){
+ if(!main||viewOnly)return;
+ localStorage.setItem(MAIN_KEY,JSON.stringify(main));
+ if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('team',main);
+}
+function saveEventIndex(){
+ if(!main||!state._scsTeamMainId)return;
+ let entry=main.events.find(e=>e.id===state._scsClientTournamentId);
+ if(!entry){entry={id:state._scsClientTournamentId};main.events.push(entry)}
+ entry.title=state.title||'New Event';
+ entry.clubs=state.clubs.map(c=>c.name);
+ entry.completed=state.encounters.reduce((n,e)=>n+(e.matches||[]).filter(m=>m.status==='approved').length,0);
+ entry.matches=state.encounters.reduce((n,e)=>n+(e.matches||[]).length,0);
+ entry.cloudId=state._scsCloudTournamentId||entry.cloudId||'';
+ entry.updatedAt=new Date().toISOString();
+ persistMain();
+}
+function openMain(){
+ mainMode=true;tab='home';selectedEncounterId=null;
+ if(!root()){let d=document.createElement('div');d.id='scsTeamTournament';d.className='scs-gt-overlay scs-team-overlay';document.body.appendChild(d)}
+ render();
+}
+function createMain(){
+ const name=prompt('Main Tournament name (e.g. Spring Tournament 2027)');
+ if(!name||!name.trim())return;
+ main={title:name.trim(),_scsMainTournament:true,_scsClientTournamentId:newId(),events:[],createdAt:new Date().toISOString()};
+ persistMain();if(typeof window.dbSaveTournamentState==='function')window.dbSaveTournamentState('team',main).then(id=>{if(id){main._scsCloudTournamentId=id;persistMain()}}).catch(e=>console.warn('Main tournament save:',e));openMain();
+}
+function addEvent(){
+ if(viewOnly)return;
+ const name=prompt('Event name (e.g. Men’s Doubles or Team Championship A)');
+ if(!name||!name.trim())return;
+ state={title:name.trim(),clubs:[],encounters:[],courtCount:1,serial:0,matchesPerEncounter:3,
+ _scsClientTournamentId:newId(),_scsTeamMainId:main._scsClientTournamentId};
+ localStorage.setItem(KEY,JSON.stringify(state));
+ mainMode=false;tab='setup';save();if(typeof window.dbSaveTournamentState==='function')window.dbSaveTournamentState('team',state).then(id=>{if(id){state._scsCloudTournamentId=id;saveEventIndex()}}).catch(e=>console.warn('New event save:',e));render();
+}
+async function openEvent(id){
+ const event=main?.events.find(e=>e.id===id);if(!event)return;
+ let saved=null;
+ if(event.cloudId&&typeof window.dbLoadTournamentById==='function'){
+  try{const row=await window.dbLoadTournamentById(event.cloudId);saved=row?.state||null;if(saved)saved._scsCloudTournamentId=row.id}catch(e){console.warn('Event load',e)}
+ }
+ if(!saved){try{saved=JSON.parse(localStorage.getItem('scs_team_event_'+id)||'null')}catch(_){}}
+ if(!saved){alert('This event is not available on this device yet. Connect to the server and try again.');return}
+ state=saved;state._scsTeamMainId=main._scsClientTournamentId;
+ localStorage.setItem(KEY,JSON.stringify(state));
+ mainMode=false;tab=state.encounters?.length?'fixtures':'setup';render();
+}
+function open(mode){
+ viewOnly=mode==='view';load();
+ if(mode==='new'){createMain();return}
+ try{const stored=JSON.parse(localStorage.getItem(MAIN_KEY)||'null');if(stored?._scsMainTournament)main=stored}catch(_){}
+ if(state._scsMainTournament){main=state;localStorage.setItem(MAIN_KEY,JSON.stringify(main))}else if(state._scsTeamMainId&&main&&state._scsTeamMainId!==main._scsClientTournamentId){main=null}
+ if(main){openMain();return}
+ // Legacy standalone Team Tournaments remain accessible.
+ mainMode=false;
+ if(!root()){let d=document.createElement('div');d.id='scsTeamTournament';d.className='scs-gt-overlay scs-team-overlay';document.body.appendChild(d)}
+ tab=state.encounters.length?'fixtures':'setup';render();
+}
+function close(){if(!mainMode&&state._scsTeamMainId&&main){saveEventIndex();mainMode=true;tab='home';render();return}root()?.remove();if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
 const allMatches=()=>state.encounters.flatMap(e=>e.matches);
 const encounterFor=m=>state.encounters.find(e=>e.matches.includes(m));
 const clubName=id=>state.clubs[id]?.name||'Club '+(id+1);
@@ -396,6 +458,11 @@ function tournamentReportTabs(active){
  const selected=state.encounters.find(e=>e.id===selectedEncounterId);
  return '<nav class="scs-team-encounter-tabs" aria-label="Tournament sections"><button type="button" data-team-section="fixtures">All</button>'+(selected?'<button type="button" data-team-section="selected">'+esc(clubName(selected.a))+' vs '+esc(clubName(selected.b))+'</button>':'')+'<button type="button" data-team-section="ranking" class="'+(active==='ranking'?'active':'')+'">Ranking</button><button type="button" data-team-section="matrix" class="'+(active==='matrix'?'active':'')+'">Matrix</button></nav>';
 }
+function mainHome(){
+ return '<section class="scs-gt-card scs-team-home"><h2>'+esc(main.title)+'</h2><p>Events</p>'+
+ (viewOnly?'':'<button type="button" class="scs-gt-primary" data-add-event>＋ Add Event</button>')+
+ (main.events.length?main.events.map(e=>'<button type="button" class="scs-tmgr-tournament-card team" data-open-event="'+esc(e.id)+'"><span><strong>'+esc(e.title)+'</strong><small>'+esc((e.clubs||[]).join(', ')||'Clubs not selected')+'</small><em>'+Number(e.completed||0)+' / '+Number(e.matches||0)+' matches completed</em></span><b>Open ›</b></button>').join(''):'<p>No events yet. Tap + Add Event to create one.</p>')+'</section>';
+}
 function teamHome(){return '<section class="scs-gt-card scs-team-home"><h2>Team Tournament</h2><p>'+esc(state.title||'Create a team tournament')+'</p><p>'+state.clubs.length+' clubs · '+state.encounters.length+' encounters · '+state.matchesPerEncounter+' doubles per encounter</p><button type="button" class="scs-gt-primary" data-team-go="'+(state.encounters.length?'fixtures':'setup')+'">'+(state.encounters.length?'View encounters':'Set up clubs')+'</button></section>'}
 function clubsView(){
  if(!state.encounters.length)return setup();
@@ -403,8 +470,17 @@ function clubsView(){
  // The previous post-creation markup used a different, unstyled horizontal layout.
  return '<section class="scs-gt-card scs-team-setup scs-team-clubs-view"><h2>Clubs</h2><p>Club rosters are shown here. Pair selection remains manual before each encounter.</p><div class="scs-team-club-list">'+state.clubs.map((c,i)=>'<div class="scs-team-club scs-team-club-color-'+clubColor(c,i)+'" style="--club-accent:'+esc(clubAccent(i))+'"><div class="scs-team-club-head"><button type="button" class="scs-team-expand" data-expand="'+i+'" aria-expanded="'+expandedClubs.has(i)+'" aria-label="Toggle '+esc(c.name)+' players">'+(expandedClubs.has(i)?'⌃':'⌄')+'</button><div class="scs-team-club-name"><strong>'+esc(c.name)+'</strong><small>'+c.players.length+' players</small></div></div>'+(expandedClubs.has(i)?'<div class="scs-team-roster">'+c.players.map((name,j)=>'<div class="scs-team-roster-player"><span class="scs-team-player-number">'+(j+1)+'</span>'+playerRow(name)+'</div>').join('')+'</div>':'')+'</div>').join('')+'</div></section>';
 }
-function teamBottomNav(){const active=tab==='home'?'home':tab==='setup'||tab==='clubs'?'clubs':tab==='match'?'match':'tournament';const items=[['home','Home','⌂',true],['clubs','Clubs','♙',true],['tournament','Tournament','⑂',true],['match','Match Center','▣',state.encounters.length>0]];return '<nav class="scs-tm-organized-tabs scs-tm-bottom-nav scs-gt-bottom-nav scs-team-bottom-nav" aria-label="Team tournament sections">'+items.map(([key,label,icon,enabled])=>'<button type="button" data-team-nav="'+key+'" class="'+(active===key?'active':'')+'" '+(enabled?'':'disabled')+(active===key?' aria-current="page"':'')+'><span class="scs-tm-nav-icon" aria-hidden="true">'+icon+'</span><span class="scs-tm-nav-label">'+label+'</span></button>').join('')+'</nav>'}
-function render(){let r=root();if(!r)return;const previousSheet=r.querySelector('.scs-team-sheet');if(previousSheet)teamScrollPositions[tab]=previousSheet.scrollTop;r.innerHTML='<div class="scs-gt-sheet scs-team-sheet" role="dialog"><header><strong>'+esc(state.title||'Team Tournament')+'</strong><div class="scs-team-save-actions"><button type="button" data-team-save '+(viewOnly?'disabled':'')+'>Save Tournament</button><button data-close aria-label="Close">✕</button></div></header><div class="scs-team-save-status" data-team-save-status role="status" aria-live="polite"></div>'+(tab==='home'?teamHome():tab==='setup'||tab==='clubs'?clubsView():tab==='match'?matchCenter():tab==='ranking'?tournamentReportTabs('ranking')+standings():tab==='matrix'?tournamentReportTabs('matrix')+matrix():fixtures())+'</div>'+teamBottomNav();const sheet=r.querySelector('.scs-team-sheet');if(sheet)sheet.scrollTop=teamScrollPositions[tab]||0;r.querySelector('[data-close]').onclick=close;r.querySelector('[data-team-save]')?.addEventListener('click',saveTeamTournamentNow);r.querySelectorAll('[data-team-section]').forEach(x=>x.onclick=()=>{
+function teamBottomNav(){if(mainMode)return '';const active=tab==='home'?'home':tab==='setup'||tab==='clubs'?'clubs':tab==='match'?'match':'tournament';const items=[['home','Home','⌂',true],['clubs','Clubs','♙',true],['tournament','Tournament','⑂',true],['match','Match Center','▣',state.encounters.length>0]];return '<nav class="scs-tm-organized-tabs scs-tm-bottom-nav scs-gt-bottom-nav scs-team-bottom-nav" aria-label="Team tournament sections">'+items.map(([key,label,icon,enabled])=>'<button type="button" data-team-nav="'+key+'" class="'+(active===key?'active':'')+'" '+(enabled?'':'disabled')+(active===key?' aria-current="page"':'')+'><span class="scs-tm-nav-icon" aria-hidden="true">'+icon+'</span><span class="scs-tm-nav-label">'+label+'</span></button>').join('')+'</nav>'}
+function render(){let r=root();if(!r)return;
+ if(mainMode){
+ r.innerHTML='<div class="scs-gt-sheet scs-team-sheet" role="dialog"><header><strong>'+esc(main.title)+'</strong><button type="button" data-close aria-label="Close">✕</button></header>'+mainHome()+'</div>'+teamBottomNav();
+ r.querySelector('[data-close]').onclick=close;
+ r.querySelector('[data-add-event]')?.addEventListener('click',addEvent);
+ r.querySelectorAll('[data-open-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.openEvent));
+ r.querySelectorAll('[data-team-nav]').forEach(b=>b.onclick=()=>{if(b.dataset.teamNav==='home')render()});
+ return;
+ }
+const previousSheet=r.querySelector('.scs-team-sheet');if(previousSheet)teamScrollPositions[tab]=previousSheet.scrollTop;r.innerHTML='<div class="scs-gt-sheet scs-team-sheet" role="dialog"><header><strong>'+esc(state.title||'Team Tournament')+'</strong><div class="scs-team-save-actions"><button type="button" data-team-save '+(viewOnly?'disabled':'')+'>Save Tournament</button><button data-close aria-label="Close">✕</button></div></header><div class="scs-team-save-status" data-team-save-status role="status" aria-live="polite"></div>'+(tab==='home'?teamHome():tab==='setup'||tab==='clubs'?clubsView():tab==='match'?matchCenter():tab==='ranking'?tournamentReportTabs('ranking')+standings():tab==='matrix'?tournamentReportTabs('matrix')+matrix():fixtures())+'</div>'+teamBottomNav();const sheet=r.querySelector('.scs-team-sheet');if(sheet)sheet.scrollTop=teamScrollPositions[tab]||0;r.querySelector('[data-close]').onclick=close;r.querySelector('[data-team-save]')?.addEventListener('click',saveTeamTournamentNow);r.querySelectorAll('[data-team-section]').forEach(x=>x.onclick=()=>{
  const section=x.dataset.teamSection;
  if(section==='selected'&&!selectedEncounterId)return;
  if(section==='fixtures'){selectedEncounterId=null;switchTeamTab('fixtures');}
