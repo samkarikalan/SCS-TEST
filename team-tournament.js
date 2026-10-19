@@ -51,11 +51,32 @@ function openMain(){
  if(!root()){let d=document.createElement('div');d.id='scsTeamTournament';d.className='scs-gt-overlay scs-team-overlay';document.body.appendChild(d)}
  render();
 }
+let creatingMain=false;
 function createMain(){
- const name=prompt('Main Tournament name (e.g. Spring Tournament 2027)');
- if(!name||!name.trim())return;
- main={title:name.trim(),_scsMainTournament:true,_scsClientTournamentId:newId(),events:[],createdAt:new Date().toISOString()};
- persistMain();if(typeof window.dbSaveTournamentState==='function')window.dbSaveTournamentState('team',main).then(id=>{if(id){main._scsCloudTournamentId=id;persistMain()}}).catch(e=>console.warn('Main tournament save:',e));openMain();
+ viewOnly=false;creatingMain=true;mainMode=true;main=null;
+ if(!root()){let d=document.createElement('div');d.id='scsTeamTournament';d.className='scs-gt-overlay scs-team-overlay';document.body.appendChild(d)}
+ render();
+}
+function submitMain(){
+ const field=root()?.querySelector('[data-main-name]');
+ const name=field?.value.trim();
+ if(!name){field?.focus();root()?.querySelector('[data-main-error]')?.removeAttribute('hidden');return}
+ main={title:name,_scsMainTournament:true,_scsClientTournamentId:newId(),events:[],createdAt:new Date().toISOString()};
+ creatingMain=false;
+ persistMain();
+ if(typeof window.dbSaveTournamentState==='function')window.dbSaveTournamentState('team',main).then(id=>{if(id){main._scsCloudTournamentId=id;persistMain()}}).catch(e=>console.warn('Main tournament save:',e));
+ openMain();
+}
+function mainNameForm(){
+ return '<section class="scs-gt-card scs-team-main-create">'+
+ '<div class="scs-team-main-icon">🏆</div>'+
+ '<h2>New Team Tournament</h2>'+
+ '<p>Enter a tournament name. You can add Men’s Doubles, Women’s Doubles and other events on the next page.</p>'+
+ '<label for="scs-main-name">Tournament Name</label>'+
+ '<input id="scs-main-name" data-main-name type="text" maxlength="100" autocomplete="off" placeholder="e.g. Spring Tournament 2027" />'+
+ '<small data-main-error hidden>Please enter a tournament name.</small>'+
+ '<div class="scs-team-main-actions"><button type="button" data-main-cancel>Cancel</button><button type="button" class="scs-gt-primary" data-main-create>Create Tournament →</button></div>'+
+ '</section>';
 }
 function addEvent(){
  if(viewOnly)return;
@@ -89,7 +110,7 @@ function open(mode){
  if(!root()){let d=document.createElement('div');d.id='scsTeamTournament';d.className='scs-gt-overlay scs-team-overlay';document.body.appendChild(d)}
  tab=state.encounters.length?'fixtures':'setup';render();
 }
-function close(){if(!mainMode&&state._scsTeamMainId&&main){saveEventIndex();mainMode=true;tab='home';render();return}root()?.remove();if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
+function close(){if(creatingMain){creatingMain=false;mainMode=false;root()?.remove();if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent();return}if(!mainMode&&state._scsTeamMainId&&main){saveEventIndex();mainMode=true;tab='home';render();return}root()?.remove();if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
 const allMatches=()=>state.encounters.flatMap(e=>e.matches);
 const encounterFor=m=>state.encounters.find(e=>e.matches.includes(m));
 const clubName=id=>state.clubs[id]?.name||'Club '+(id+1);
@@ -472,6 +493,15 @@ function clubsView(){
 }
 function teamBottomNav(){if(mainMode)return '';const active=tab==='home'?'home':tab==='setup'||tab==='clubs'?'clubs':tab==='match'?'match':'tournament';const items=[['home','Home','⌂',true],['clubs','Clubs','♙',true],['tournament','Tournament','⑂',true],['match','Match Center','▣',state.encounters.length>0]];return '<nav class="scs-tm-organized-tabs scs-tm-bottom-nav scs-gt-bottom-nav scs-team-bottom-nav" aria-label="Team tournament sections">'+items.map(([key,label,icon,enabled])=>'<button type="button" data-team-nav="'+key+'" class="'+(active===key?'active':'')+'" '+(enabled?'':'disabled')+(active===key?' aria-current="page"':'')+'><span class="scs-tm-nav-icon" aria-hidden="true">'+icon+'</span><span class="scs-tm-nav-label">'+label+'</span></button>').join('')+'</nav>'}
 function render(){let r=root();if(!r)return;
+ if(creatingMain){
+ r.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-create-sheet" role="dialog" aria-label="Create Team Tournament"><header><strong>Team Tournament</strong><button type="button" data-main-cancel aria-label="Close">✕</button></header>'+mainNameForm()+'</div>';
+ r.querySelectorAll('[data-main-cancel]').forEach(b=>b.onclick=close);
+ r.querySelector('[data-main-create]').onclick=submitMain;
+ r.querySelector('[data-main-name]').addEventListener('keydown',e=>{if(e.key==='Enter')submitMain()});
+ r.querySelector('[data-main-name]').focus();
+ return;
+ }
+
  if(mainMode){
  r.innerHTML='<div class="scs-gt-sheet scs-team-sheet" role="dialog"><header><strong>'+esc(main.title)+'</strong><button type="button" data-close aria-label="Close">✕</button></header>'+mainHome()+'</div>'+teamBottomNav();
  r.querySelector('[data-close]').onclick=close;

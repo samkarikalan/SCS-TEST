@@ -761,3 +761,18 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-team-matrix-sheet-content .scs-team-encounter-detail{padding:16px 14px}
 .scs-team-matrix-sheet-head .scs-team-matrix-sheet-label:empty{display:none}
 .scs-team-matrix-sheet-head{justify-content:flex-end}
+
+/* SCS card-based main tournament creation (replaces native browser prompt). */
+.scs-team-create-sheet .scs-team-main-create{padding:22px 18px 18px;margin-bottom:0}
+.scs-team-main-create .scs-team-main-icon{font-size:2.25rem;margin-bottom:8px}
+.scs-team-main-create h2{font-size:1.28rem;margin:0 0 10px;color:#f2f7ff}
+.scs-team-main-create p{color:#c1d1e6;font-size:.94rem;line-height:1.5;margin:0 0 24px}
+.scs-team-main-create label{display:block;font-weight:700;color:#e8f0ff;margin-bottom:9px}
+.scs-team-main-create input{display:block;box-sizing:border-box;width:100%;min-height:50px;border-radius:12px;border:1px solid #607a9e;background:#14233b;color:#fff;padding:12px 14px;font:inherit;font-size:1rem}
+.scs-team-main-create input:focus{outline:2px solid #70a9ff;outline-offset:2px}
+.scs-team-main-create input::placeholder{color:#9eb1ce}
+.scs-team-main-create [data-main-error]{display:block;color:#ffb8b8;margin-top:7px}
+.scs-team-main-create [data-main-error][hidden]{display:none}
+.scs-team-main-actions{display:flex;gap:10px;margin-top:24px}
+.scs-team-main-actions button{flex:1;min-height:48px;border-radius:12px;border:1px solid #617697;background:#283b57;color:#f3f7ff;font:inherit;font-weight:700}
+.scs-team-main-actions button.scs-gt-primary{background:#356bc4;border-color:#558eea;color:#fff}
