@@ -797,3 +797,10 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
  border-top:1px solid #607a9d;background:#223650;
 }
 .scs-team-overlay .scs-team-club-editor [data-error]{flex:0 0 auto;margin:0}
+
+/* Tournament player level: 1 strongest, 5 weakest. */
+.scs-team-level-badge{display:inline-flex;align-items:center;white-space:nowrap;font-size:.72rem;font-weight:750;border-radius:8px;padding:3px 6px;background:#253d61;color:#dceaff;margin-left:6px}
+.scs-team-level-row{display:flex;align-items:center;gap:8px;min-width:0}
+.scs-team-level-row>.scs-gt-player{flex:1;min-width:0}
+.scs-team-level-edit{display:flex;align-items:center;gap:4px;font-size:.75rem;white-space:nowrap;color:#c9d7ec}
+.scs-team-level-edit select{width:48px;min-height:36px;border:1px solid #637b9c;border-radius:8px;background:#182b47;color:#fff;padding:4px;font-size:1rem}

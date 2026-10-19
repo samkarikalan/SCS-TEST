@@ -235,7 +235,7 @@ function registry(){
  try{if(window.SCSCourtCenter&&typeof window.SCSCourtCenter.playerNames==='function')add(window.SCSCourtCenter.playerNames())}catch(e){}
  return [...new Map(names.map(n=>[playerKey(n),n])).values()].sort((a,b)=>a.localeCompare(b));
 }
-function playerRow(name){return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span></span>'}
+function playerRow(name){return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+teamLevelLabel(name)+'</span>'}
 function hydratePlayerCards(){
  if(typeof createRatingRing!=='function')return;
  root()?.querySelectorAll('.scs-tm-ring-slot[data-tm-player]').forEach(slot=>{
@@ -248,6 +248,9 @@ function hydratePlayerCards(){
  });
 }
 let editingClub=null,clubDraft=null;
+const teamPlayerLevels=new Map();
+function teamLevel(name){const v=teamPlayerLevels.get(playerKey(name));return Number.isInteger(v)&&v>=1&&v<=5?v:null;}
+function teamLevelLabel(name){const v=teamLevel(name);return '<span class="scs-team-level-badge" title="Player Level (1 strongest, 5 weakest)">Lv '+(v??'—')+'</span>';}
 function openPlayersManager(){
  window.__scsTeamPlayersReturn=true;
  if(root())root().hidden=true;
@@ -270,6 +273,14 @@ async function registeredClubChoices(){
 async function registeredClubPlayers(id){
  if(!id||typeof sbGet!=='function')return [];
  const rows=await sbGet('memberships','club_id=eq.'+encodeURIComponent(id)+'&select=nickname,player_id');
+ const ids=[...new Set((rows||[]).map(r=>r.player_id).filter(Boolean))];
+ if(ids.length){
+  try{
+   const playerRows=await sbGet('players','id=in.('+ids.join(',')+')&select=id,level');
+   const byId=new Map((playerRows||[]).map(r=>[r.id,r.level]));
+   (rows||[]).forEach(r=>{const v=Number(byId.get(r.player_id));if(Number.isInteger(v)&&v>=1&&v<=5)teamPlayerLevels.set(playerKey(r.nickname),v)});
+  }catch(err){console.warn('Player levels unavailable:',err)}
+ }
  return [...new Map((rows||[]).map(r=>String(r.nickname||'').trim()).filter(Boolean).map(n=>[playerKey(n),n])).values()].sort((a,b)=>a.localeCompare(b));
 }
 function clubEditor(i){
@@ -282,19 +293,33 @@ function clubEditor(i){
  // Display the current club roster first. The shared registry is only a source for adding players.
  // Keep this dialog club-scoped; never modify the global player selection state.
  let showAvailable=false,registeredNames=[],registeredClubId=null;
+ let registeredPlayerIds=new Map();
  let registeredClubs=[];
  const playerChoices=()=>{
   const names=registeredNames;
   const members=names.filter(n=>selected.has(n));
   const available=names.filter(n=>!selected.has(n));
-  const row=n=>'<label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label>';
+  const row=n=>'<div class="scs-team-level-row"><label class="scs-gt-player"><input type="checkbox" data-player-choice="'+esc(n)+'" '+(selected.has(n)?'checked':'')+'><span>'+playerRow(n)+'</span></label><label class="scs-team-level-edit">Level <select data-level-player="'+esc(n)+'" aria-label="Level for '+esc(n)+'">'+[1,2,3,4,5].map(v=>'<option value="'+v+'" '+(teamLevel(n)===v?'selected':'')+'>'+v+'</option>').join('')+'</select></label></div>';
   return members.map(row).join('')+(showAvailable?'<div class="scs-team-available-title">Available players · '+available.length+'</div>'+(available.length?available.map(row).join(''):'<p class="scs-team-no-available">All registered players are already assigned to clubs.</p>'):'');
  };
  modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Club players</h3><p>Register a club and choose its players</p></div><label>Club name<input data-club-name readonly value="'+esc(c.name)+'"></label><div class="scs-team-registered-club"><label>Sub-club<select data-registered-club><option value="">Select a sub-club</option></select></label><small data-club-loading>Loading registered clubs…</small></div><div class="scs-tm-pool-heading"><h3>Select players ('+selected.size+')</h3><button type="button" class="scs-team-manager" data-open-manager>＋ Add players</button></div><p>This club has its own roster. Add players from the existing player list.</p><div class="scs-tm-pool" data-player-list>'+playerChoices()+'</div></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
  root().appendChild(modal);
- const redraw=()=>{modal.querySelector('[data-player-list]').innerHTML=playerChoices();modal.querySelector('.scs-tm-pool-heading h3').textContent='Select players ('+selected.size+')';bindChoices();hydratePlayerCards()};
+ const redraw=()=>{modal.querySelector('[data-player-list]').innerHTML=playerChoices();modal.querySelector('.scs-tm-pool-heading h3').textContent='Select players ('+selected.size+')';bindChoices();bindLevels();hydratePlayerCards()};
+ const bindLevels=()=>modal.querySelectorAll('[data-level-player]').forEach(sel=>{
+  const name=sel.dataset.levelPlayer;
+  const v=teamLevel(name);if(v!==null)sel.value=String(v);
+  else sel.insertAdjacentHTML('afterbegin','<option value="" selected>—</option>');
+  sel.onchange=async()=>{
+   const level=Number(sel.value),id=registeredPlayerIds.get(playerKey(name));
+   if(!id||!Number.isInteger(level)||level<1||level>5)return;
+   sel.disabled=true;
+   try{await sbPatch('players','id=eq.'+encodeURIComponent(id),{level});teamPlayerLevels.set(playerKey(name),level);redraw()}
+   catch(e){modal.querySelector('[data-error]').textContent='Could not save level for '+name+': '+(e.message||e)}
+   finally{sel.disabled=false}
+  };
+ });
  const bindChoices=()=>modal.querySelectorAll('[data-player-choice]').forEach(btn=>btn.onchange=()=>{const n=btn.dataset.playerChoice;if(btn.checked)selected.add(n);else selected.delete(n);redraw()});
- bindChoices();hydratePlayerCards();
+ bindChoices();bindLevels();hydratePlayerCards();
  const clubSelect=modal.querySelector('[data-registered-club]');
  const loading=modal.querySelector('[data-club-loading]');
  clubSelect.onchange=async()=>{
@@ -303,6 +328,8 @@ function clubEditor(i){
   loading.textContent='Loading club players…';
   try{
    const names=await registeredClubPlayers(id);
+   const members=await sbGet('memberships','club_id=eq.'+encodeURIComponent(id)+'&select=nickname,player_id');
+   registeredPlayerIds=new Map((members||[]).filter(r=>r.player_id).map(r=>[playerKey(r.nickname),r.player_id]));
    if(clubSelect.value!==id)return;
    registeredClubId=id;registeredNames=names;selected.clear();
    if(c.registeredClubId===id)(c.players||[]).forEach(n=>{if(names.some(x=>playerKey(x)===playerKey(n)))selected.add(n)});
