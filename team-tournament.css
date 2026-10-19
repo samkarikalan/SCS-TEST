@@ -845,3 +845,9 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-team-event-details small{white-space:normal}
 .scs-team-event-section h2{font-weight:700}
 .scs-team-event-row:focus-visible{outline:2px solid #9bcaff;outline-offset:-2px}
+
+/* V287: Clearly distinguish the selected event on Tournament Home. */
+.scs-team-event-row.is-active{background:#294365;border:1px solid #6bbaf5;border-radius:12px;padding:12px 9px;margin:5px 0;box-shadow:inset 0 0 0 1px rgba(107,186,245,.18)}
+.scs-team-event-row.is-active:first-child{border-top:1px solid #6bbaf5}
+.scs-team-event-active-label{display:block;margin-top:2px;color:#85e6b4;font-size:.77rem;font-weight:750;line-height:1.25}
+.scs-team-event-row.is-active .scs-team-event-arrow{color:#85e6b4}
