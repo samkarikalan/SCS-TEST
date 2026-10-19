@@ -525,9 +525,20 @@ function tournamentReportTabs(active){
  return '<nav class="scs-team-encounter-tabs" aria-label="Tournament sections"><button type="button" data-team-section="fixtures">All</button>'+(selected?'<button type="button" data-team-section="selected">'+esc(clubName(selected.a))+' vs '+esc(clubName(selected.b))+'</button>':'')+'<button type="button" data-team-section="ranking" class="'+(active==='ranking'?'active':'')+'">Ranking</button><button type="button" data-team-section="matrix" class="'+(active==='matrix'?'active':'')+'">Matrix</button></nav>';
 }
 function mainHome(){
- return '<section class="scs-gt-card scs-team-home"><h2>'+esc(main.title)+'</h2><p>Events</p>'+
- (viewOnly?'':'<button type="button" class="scs-gt-primary" data-add-event>＋ Add Event</button>')+
- (main.events.length?main.events.map(e=>'<button type="button" class="scs-tmgr-tournament-card team" data-open-event="'+esc(e.id)+'"><span><strong>'+esc(e.title)+'</strong><small>'+esc((e.clubs||[]).join(', ')||'Clubs not selected')+'</small><em>'+Number(e.completed||0)+' / '+Number(e.matches||0)+' matches completed</em></span><b>Open ›</b></button>').join(''):'<p>No events yet. Tap + Add Event to create one.</p>')+'</section>';
+ const events=Array.isArray(main.events)?main.events:[];
+ const countClubs=new Set(events.flatMap(e=>Array.isArray(e.clubs)?e.clubs:[]).filter(Boolean)).size;
+ const eventGender=e=>/^L(?:-|\d|$)/i.test(String(e.title||'').trim())?'ladies':/^M(?:-|\d|$)/i.test(String(e.title||'').trim())?'men':'other';
+ const section=(kind,title)=>{
+  const items=events.filter(e=>eventGender(e)===kind);
+  if(!items.length)return '';
+  return '<section class="scs-team-event-section"><h2>'+esc(title)+' <span>('+items.length+')</span></h2><div class="scs-team-event-list">'+items.map(e=>{
+   const clubs=Array.isArray(e.clubs)?e.clubs:[];
+   return '<button type="button" class="scs-team-event-row '+kind+'" data-open-event="'+esc(e.id)+'"><span class="scs-team-event-code">'+esc(e.title||'Event')+'</span><span class="scs-team-event-details"><strong>'+esc(clubs.join(', ')||'Clubs not selected')+'</strong><small>'+clubs.length+' teams · '+Number(e.completed||0)+' / '+Number(e.matches||0)+' matches completed</small></span><span class="scs-team-event-arrow" aria-hidden="true">›</span></button>';
+  }).join('')+'</div></section>';
+ };
+ return '<div class="scs-team-event-home"><p class="scs-team-event-summary">'+events.length+' events · '+countClubs+' teams</p>'+
+  (events.length?section('men','Men’s Events')+section('ladies','Ladies’ Events')+section('other','Other Events'):'<p class="scs-team-event-empty">No events yet. Add an event to get started.</p>')+
+  (viewOnly?'':'<button type="button" class="scs-gt-primary scs-team-add-event-bottom" data-add-event>＋ Add Event</button>')+'</div>';
 }
 function teamHome(){return '<section class="scs-gt-card scs-team-home"><h2>Team Tournament</h2><p>'+esc(state.title||'Create a team tournament')+'</p><p>'+state.clubs.length+' clubs · '+state.encounters.length+' encounters · '+state.matchesPerEncounter+' doubles per encounter</p><button type="button" class="scs-gt-primary" data-team-go="'+(state.encounters.length?'fixtures':'setup')+'">'+(state.encounters.length?'View encounters':'Set up clubs')+'</button></section>'}
 function clubsView(){
@@ -557,7 +568,7 @@ function render(){let r=root();if(!r)return;
  }
 
  if(mainMode){
- r.innerHTML='<div class="scs-gt-sheet scs-team-sheet" role="dialog"><header><strong>'+esc(main.title)+'</strong><button type="button" data-close aria-label="Close">✕</button></header>'+mainHome()+'</div>'+teamBottomNav();
+ r.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-main-sheet" role="dialog"><header><strong>'+esc(main.title)+'</strong><button type="button" data-close aria-label="Close">✕</button></header>'+mainHome()+'</div>'+teamBottomNav();
  r.querySelector('[data-close]').onclick=close;
  r.querySelector('[data-add-event]')?.addEventListener('click',addEvent);
  r.querySelectorAll('[data-open-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.openEvent));
