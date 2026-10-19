@@ -236,17 +236,7 @@ function registry(){
  return [...new Map(names.map(n=>[playerKey(n),n])).values()].sort((a,b)=>a.localeCompare(b));
 }
 function playerRow(name){return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+teamLevelLabel(name)+'</span>'}
-function hydratePlayerCards(){
- if(typeof createRatingRing!=='function')return;
- root()?.querySelectorAll('.scs-tm-ring-slot[data-tm-player]').forEach(slot=>{
-  if(slot.firstChild)return;const name=slot.dataset.tmPlayer;const list=[];
-  try{if(typeof schedulerState!=='undefined'&&schedulerState&&Array.isArray(schedulerState.allPlayers))list.push(...schedulerState.allPlayers)}catch(e){}
-  for(const key of ['schedulerPlayers','newImportHistory','newImportFavorites']){try{let a=JSON.parse(localStorage.getItem(key)||'[]');if(Array.isArray(a))list.push(...a.map(p=>({...p,name:p.name||p.displayName})))}catch(e){}}
-  const player=list.find(p=>p&&typeof p==='object'&&String(p.name||'').toLowerCase()===name.toLowerCase());
-  const rating=Number(player&&(player.activeRating||player.clubRating||player.rating));
-  try{slot.appendChild(createRatingRing(name,player&&(player.gender||player.sex)||'Male',Number.isFinite(rating)&&rating>=1?rating:null))}catch(e){}
- });
-}
+function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(root());}
 let editingClub=null,clubDraft=null;
 const teamPlayerLevels=new Map();
 function teamLevel(name){const v=teamPlayerLevels.get(playerKey(name));return Number.isInteger(v)&&v>=1&&v<=5?v:null;}

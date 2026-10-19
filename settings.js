@@ -989,6 +989,19 @@ document.getElementById('vmEditUserAccountId').value = p.userAccountId || '';
 document.getElementById('vmEditName').value        = p.displayName;
 vmSetEditGender(p.gender || 'Male');
 document.getElementById('vmEditRating').value      = p.rating.toFixed(1);
+const tournamentEdit=!!(window.__scsTeamPlayersReturn||window.__scsGroupPlayersReturn||window.__scsTournamentPlayersReturn||window.__scsTournamentRegistration);
+document.getElementById('vmEditModal')?.classList.toggle('scs-tournament-level-mode',tournamentEdit);
+if(tournamentEdit&&p.playerId&&typeof sbGet==='function'){
+ const levelField=document.getElementById('vmEditLevel');
+ if(levelField){levelField.value='5';levelField.disabled=true;
+  sbGet('players','id=eq.'+encodeURIComponent(p.playerId)+'&select=level').then(rows=>{
+   if(document.getElementById('vmEditPlayerId')?.value!==p.id)return;
+   const v=Number(rows?.[0]?.level);
+   levelField.value=Number.isInteger(v)&&v>=1&&v<=5?String(v):'5';
+  }).catch(e=>console.warn('Level load',e)).finally(()=>{levelField.disabled=false});
+ }
+}
+
 document.getElementById('vmEditWins').value        = p.wins;
 document.getElementById('vmEditLosses').value      = p.losses;
 document.getElementById('vmEditUserId').value      = p.userId || '';
@@ -1028,6 +1041,10 @@ let name           = nameInput.value;
 const gender       = document.getElementById('vmEditGender').value;
 const ratingInput  = document.getElementById('vmEditRating');
 const rating       = parseFloat(ratingInput.value);
+const tournamentEdit=document.getElementById('vmEditModal')?.classList.contains('scs-tournament-level-mode');
+const levelInput=document.getElementById('vmEditLevel');
+const level=Number(levelInput?.value);
+
 const wins         = parseInt(document.getElementById('vmEditWins').value)   || 0;
 const losses       = parseInt(document.getElementById('vmEditLosses').value) || 0;
 const newUserId    = document.getElementById('vmEditUserId').value.trim().toLowerCase();
@@ -1044,6 +1061,7 @@ if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
   if (ratingInput) { ratingInput.focus(); ratingInput.select?.(); }
   return;
 }
+if(tournamentEdit&&(!Number.isInteger(level)||level<1||level>5)){setFb('Level must be 1 to 5.',false);return}
 if (ratingInput) ratingInput.value = (Math.round(rating * 10) / 10).toFixed(1);
 
 setFb(t('saving'), true);
@@ -1061,7 +1079,8 @@ if (club?.id) {
 
 // 2. Update player (gender)
 if (_vm?.playerId) {
-  await sbPatch('players', `id=eq.${_vm.playerId}`, { name, gender });
+  await sbPatch('players', `id=eq.${_vm.playerId}`, tournamentEdit?{name,gender,level}:{name,gender});
+  if(tournamentEdit&&window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.clear();
 }
 
 // 3. Update local state
@@ -1300,6 +1319,8 @@ async function scsTournamentRegisterCreateSub(){
 function vaultRenderRegister() {
 const container = document.getElementById('vaultRegisterContainer');
 if (!container) return;
+const registerPage=document.getElementById("vaultRegisterPage");
+if(registerPage)registerPage.classList.toggle("scs-tournament-level-mode",!!window.__scsTournamentRegistration);
 const club = window.__scsTournamentRegistration ? scsTournamentRegistrationTarget() : ((typeof getMyClub === 'function') ? getMyClub() : { name: null });
 const vregJp = {registeringFor:'登録先：',individual:'個別登録',bulk:'一括登録',nickname:'ニックネーム',playerNickname:'選手のニックネーム',gender:'性別',male:'男性',female:'女性',rating:'レーティング',level:'選手レベル',levelHint:'1が最強、5が最弱',defaultValue:'初期値 1.0',defaultPassword:'デフォルトパスワード',claimHint:'選手がアカウント取得時に使用',passwordExample:'例：club123',registerPlayer:'選手を登録',addSession:'今日のセッションに追加',pasteNames:'名前を貼り付け（1行に1人）',defaultGender:'初期の性別：',passwordAll:'全選手のデフォルトパスワード',addList:'リストに追加',registerAll:'すべて登録'};
 const vregText = function(key, fallback) { return (localStorage.getItem('appLanguage') || 'en') === 'jp' ? (vregJp[key] || fallback) : fallback; };
@@ -1333,7 +1354,7 @@ ${window.__scsTournamentRegistration ? '<div id="scsTournamentRegisterClubs" cla
         <option value="Female">${vregText('female','Female')}</option>
       </select>
     </div>
-    <div class="register-field">
+    <div class="register-field scs-tournament-rating-field">
       <label class="register-label">${vregText('rating','Rating')} <span class="register-hint">${vregText('defaultValue','default 1.0')}</span></label>
       <input type="number" id="vregRating" class="register-input register-rating-input" value="1.0" min="1.0" max="5.0" step="0.1">
     </div>
@@ -1501,7 +1522,7 @@ let nickname = nicknameInput ? nicknameInput.value : '';
 const gender   = document.getElementById('vregGender')?.value || 'Male';
 const ratingInput = document.getElementById('vregRating');
 const ratingRaw = ratingInput?.value ?? '';
-const rating   = Number(ratingRaw);
+const rating   = window.__scsTournamentRegistration ? 1 : Number(ratingRaw);
 const levelInput = document.getElementById('vregLevel');
 const level = Number(levelInput?.value);
 const defPw    = document.getElementById('vregDefaultPassword')?.value.trim();

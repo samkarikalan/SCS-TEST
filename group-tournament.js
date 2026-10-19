@@ -98,28 +98,7 @@ function groups(){
 }
 
 function playerRow(name){return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+escapeHTML(name)+'"></span><span class="scs-tm-shared-name">'+escapeHTML(name)+'</span></span>'}
-function hydratePlayerCards(){
- if(typeof createRatingRing!=='function')return;
- el().querySelectorAll('.scs-tm-ring-slot[data-tm-player]').forEach(slot=>{
-  if(slot.firstChild)return;
-  const name=slot.dataset.tmPlayer;
-  const list=[];try{if(typeof schedulerState!=='undefined'&&schedulerState&&Array.isArray(schedulerState.allPlayers))list.push(...schedulerState.allPlayers)}catch(e){}
-  try{let a=JSON.parse(localStorage.getItem('schedulerPlayers')||'[]');if(Array.isArray(a))list.push(...a)}catch(e){}
-  const player=list.find(p=>p&&typeof p==='object'&&String(p.name||'').toLowerCase()===name.toLowerCase());
-  const rating=Number(player&&(player.activeRating||player.clubRating||player.rating));
-  try{slot.appendChild(createRatingRing(name,player&&(player.gender||player.sex)||'Male',Number.isFinite(rating)&&rating>=1?rating:null))}catch(e){}
- });
-}
-function players(){
-  return '<section class="scs-tm-pool"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT PLAYERS</small><h3>Players ('+pool.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-toggle-pool>'+(poolExpanded?'Hide ▲':'Show ▼')+'</button><button type="button" data-open-manager>+ Players Manager</button></div></div>'+(poolExpanded?(pool.length?'<div class="scs-tm-pool-chips">'+pool.map(playerRow).join('')+'</div>':'<p>Select players using the existing Players Manager.</p>'):'')+'</section>';
-}
-function teamsCard(){
- return '<section class="scs-tm-pool scs-gt-team-pool"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT TEAMS</small><h3>Teams ('+teamDrafts.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-add-team aria-label="Add team" title="Add team">+</button></div></div>'+(teamDrafts.length?'<div class="scs-gt-team-card-list">'+teamDrafts.map((players,index)=>{
-  const selected=players.filter(Boolean);
-  return '<div class="scs-gt-knockout-team-card"><span class="scs-gt-team-card-number">'+(index+1)+'</span><button type="button" class="scs-gt-team-card-players" data-slot="draft:'+index+'" aria-label="Edit team '+(index+1)+'">'+(selected.length?selected.map(playerRow).join(''):'<span class="scs-gt-unassigned">Select two players</span>')+'</button><button type="button" class="scs-gt-team-card-edit" data-slot="draft:'+index+'" aria-label="Edit team '+(index+1)+'">✎</button><button type="button" class="scs-gt-team-card-remove" data-remove-team="'+index+'" aria-label="Remove team '+(index+1)+'">−</button></div>';
- }).join('')+'</div>':'<p>Create teams, then select two players for each team.</p>')+'</section>';
-}
-let poolExpanded=false;
+function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(el());}
 function openPlayersManager(){
  window.__scsGroupPlayersReturn=true;
  el().hidden=true;

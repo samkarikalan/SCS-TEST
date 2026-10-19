@@ -491,20 +491,7 @@ function tournamentPool(){
 function tournamentPlayerRow(name){
  return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span></span>';
 }
-function hydrateTournamentPlayerCards(){
- if(!root||typeof createRatingRing!=='function')return;
- root.querySelectorAll('.scs-tm-ring-slot[data-tm-player]').forEach(function(slot){
-  if(slot.firstChild)return;
-  var name=slot.getAttribute('data-tm-player');
-  var all=[];
-  if(typeof schedulerState!=='undefined'&&schedulerState&&Array.isArray(schedulerState.allPlayers))all=all.concat(schedulerState.allPlayers);
-  try{var stored=JSON.parse(localStorage.getItem('schedulerPlayers')||'[]');if(Array.isArray(stored))all=all.concat(stored)}catch(e){}
-  var player=all.find(function(p){return p&&typeof p==='object'&&String(p.name||'').toLocaleLowerCase()===String(name||'').toLocaleLowerCase()});
-  var gender=player&&(player.gender||player.sex)||'Male';
-  var rating=player&&Number(player.activeRating||player.clubRating||player.rating);
-  try{slot.appendChild(createRatingRing(name,gender,Number.isFinite(rating)&&rating>=1?rating:null))}catch(e){}
- });
-}
+function hydrateTournamentPlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(root);}
 var poolExpanded=false;
 function togglePool(){poolExpanded=!poolExpanded;render();}
 function tournamentPoolCard(){
