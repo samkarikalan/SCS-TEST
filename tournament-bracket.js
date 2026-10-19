@@ -515,7 +515,7 @@ function tournamentPoolCard(){
  if(!draw)return '';
  var pool=tournamentPool();
  return '<section class="scs-tm-pool scs-tm-player-pool"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT PLAYERS</small><h3>Players ('+pool.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" onclick="SCSTournament.togglePool()" aria-expanded="'+(poolExpanded?'true':'false')+'">'+(poolExpanded?'Hide ▲':'Show ▼')+'</button><button type="button" onclick="SCSTournament.openPlayersManager()">+ Players Manager</button></div></div>'+
- (poolExpanded?(pool.length?'<div class="scs-tm-pool-chips">'+pool.map(tournamentPlayerRow).join('')+'</div>':'<p>Select players using the existing Players Manager.</p>'):'')+'</section>';
+ (poolExpanded?(pool.length?'<div class="scs-tm-pool-chips">'+pool.map(tournamentPlayerRow).join('')+'</div>':'<p>Select a registered club and its players using the Team Tournament selector.</p>'):'')+'</section>';
 }
 function tournamentTeamsCard(){
  if(!draw)return '';
@@ -524,13 +524,19 @@ function tournamentTeamsCard(){
 }
 function openPlayersManager(){
  if(!draw||!root)return;
- window.__scsTournamentPlayersReturn=true;
- root.hidden=true;
- if(typeof scsPushChildReturnState==='function')scsPushChildReturnState('playersPage');
- if(typeof homeHideScreen==='function')homeHideScreen();
- if(typeof showPage==='function')showPage('playersPage',null);
- else {var page=document.getElementById('playersPage');if(page)page.style.display='block'}
- if(typeof _updateDynamicBackBtns==='function')_updateDynamicBackBtns('playersPage');
+ if(!window.SCSTeamTournament||typeof SCSTeamTournament.pickRegisteredRoster!=='function'){
+  alert('Team Tournament club selector is unavailable.');return;
+ }
+ SCSTeamTournament.pickRegisteredRoster(function(roster){
+  if(!draw)return;
+  var clubs=Array.isArray(draw.selectedClubs)?draw.selectedClubs:[];
+  var existing=clubs.findIndex(function(c){return c.clubId===roster.clubId});
+  if(existing>=0)clubs[existing]=roster;else clubs.push(roster);
+  draw.selectedClubs=clubs;
+  draw.playerPool=Array.from(new Set(clubs.reduce(function(a,c){return a.concat(c.players||[])},[])));
+  localTournamentSave(draw).catch(function(e){console.error(e)});
+  if(assistStep===1)assistPlayersTeams();else render();
+ });
 }
 function playersManagerReturned(){
  if(!window.__scsTournamentPlayersReturn)return false;

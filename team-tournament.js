@@ -625,5 +625,17 @@ function updateCompletedScore(id,score,winner){
 }
 function conductMatches(){return allMatches().filter(m=>m.court&&['playing','score_ready'].includes(m.status)).map(m=>({id:m.id,court:m.court,status:m.status,pair1:m.pairs[0],pair2:m.pairs[1],score:m.score,winner:m.winner,label:matchName(m)}));}
 function finishConductMatch(id){const m=allMatches().find(x=>x.id===id);if(!m||m.status!=='score_ready'||!m.score?.finished||!['L','R'].includes(m.winner))return false;m.status='approved';m.court=null;save();render();return true;}
-window.SCSTeamTournament={open,close,scoreUpdate,updateCompletedScore,conductMatches,finishConductMatch,playersManagerReturned,returnFromScore(){if(root())root().hidden=false},getState(){load();return state}};
+// Shared registered-club roster picker for knockout and team tournaments.
+async function pickRegisteredRoster(onDone){
+ const modal=document.createElement('section');modal.className='scs-tm-entry-modal';
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Club players</h3><p>Select a registered sub-club and its players</p></div><label>Sub-club<select data-club><option value="">Select a sub-club</option></select></label><p data-status>Loading clubs…</p><div data-roster></div></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-done>Done</button></div></div>';
+ document.body.appendChild(modal);
+ const sel=modal.querySelector('[data-club]'),status=modal.querySelector('[data-status]'),list=modal.querySelector('[data-roster]');let clubs=[],names=[];
+ const close=()=>modal.remove();modal.querySelector('[data-cancel]').onclick=close;
+ try{clubs=await registeredClubChoices();clubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});status.textContent=clubs.length?'Choose a sub-club.':'No registered sub-clubs available.'}
+ catch(e){status.textContent='Unable to load clubs: '+(e.message||e)}
+ sel.onchange=async()=>{names=[];list.innerHTML='';if(!sel.value)return;status.textContent='Loading players…';try{const id=sel.value;const loaded=await registeredClubPlayers(id);if(sel.value!==id)return;names=loaded;status.textContent=names.length+' registered players';list.innerHTML=names.map(n=>'<label class="scs-gt-player scs-team-level-row" style="display:flex;align-items:center;gap:10px;padding:8px"><input type="checkbox" data-name="'+esc(n)+'"><span>'+playerRow(n)+'</span></label>').join('');hydratePlayerCards()}catch(e){status.textContent='Unable to load players: '+(e.message||e)}};
+ modal.querySelector('[data-done]').onclick=()=>{const club=clubs.find(c=>c.id===sel.value);if(!club){status.textContent='Select a sub-club first.';return}const selected=[...list.querySelectorAll('input[data-name]:checked')].map(x=>x.dataset.name);if(!selected.length){status.textContent='Select at least one player.';return}close();onDone({clubId:club.id,clubName:club.name,players:selected})};
+}
+window.SCSTeamTournament={pickRegisteredRoster,open,close,scoreUpdate,updateCompletedScore,conductMatches,finishConductMatch,playersManagerReturned,returnFromScore(){if(root())root().hidden=false},getState(){load();return state}};
 })();
