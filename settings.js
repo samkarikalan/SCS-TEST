@@ -1301,7 +1301,7 @@ function vaultRenderRegister() {
 const container = document.getElementById('vaultRegisterContainer');
 if (!container) return;
 const club = window.__scsTournamentRegistration ? scsTournamentRegistrationTarget() : ((typeof getMyClub === 'function') ? getMyClub() : { name: null });
-const vregJp = {registeringFor:'登録先：',individual:'個別登録',bulk:'一括登録',nickname:'ニックネーム',playerNickname:'選手のニックネーム',gender:'性別',male:'男性',female:'女性',rating:'レーティング',defaultValue:'初期値 1.0',defaultPassword:'デフォルトパスワード',claimHint:'選手がアカウント取得時に使用',passwordExample:'例：club123',registerPlayer:'選手を登録',addSession:'今日のセッションに追加',pasteNames:'名前を貼り付け（1行に1人）',defaultGender:'初期の性別：',passwordAll:'全選手のデフォルトパスワード',addList:'リストに追加',registerAll:'すべて登録'};
+const vregJp = {registeringFor:'登録先：',individual:'個別登録',bulk:'一括登録',nickname:'ニックネーム',playerNickname:'選手のニックネーム',gender:'性別',male:'男性',female:'女性',rating:'レーティング',level:'選手レベル',levelHint:'1が最強、5が最弱',defaultValue:'初期値 1.0',defaultPassword:'デフォルトパスワード',claimHint:'選手がアカウント取得時に使用',passwordExample:'例：club123',registerPlayer:'選手を登録',addSession:'今日のセッションに追加',pasteNames:'名前を貼り付け（1行に1人）',defaultGender:'初期の性別：',passwordAll:'全選手のデフォルトパスワード',addList:'リストに追加',registerAll:'すべて登録'};
 const vregText = function(key, fallback) { return (localStorage.getItem('appLanguage') || 'en') === 'jp' ? (vregJp[key] || fallback) : fallback; };
 
 if (!club.name && !window.__scsTournamentRegistration) {
@@ -1336,6 +1336,14 @@ ${window.__scsTournamentRegistration ? '<div id="scsTournamentRegisterClubs" cla
     <div class="register-field">
       <label class="register-label">${vregText('rating','Rating')} <span class="register-hint">${vregText('defaultValue','default 1.0')}</span></label>
       <input type="number" id="vregRating" class="register-input register-rating-input" value="1.0" min="1.0" max="5.0" step="0.1">
+    </div>
+    <div class="register-field">
+      <label class="register-label" for="vregLevel">${vregText('level','Player Level')} <span class="register-hint">${vregText('levelHint','1 strongest · 5 weakest')}</span></label>
+      <select id="vregLevel" class="register-input" aria-label="Player Level">
+        <option value="1">1 — ${vregText('levelHint','Strongest').split(' · ')[0]}</option>
+        <option value="2">2</option><option value="3">3</option><option value="4">4</option>
+        <option value="5" selected>5 — ${vregText('level','Player Level')}</option>
+      </select>
     </div>
     <div class="register-field">
       <label class="register-label">${vregText('defaultPassword','Default Password')} <span class="register-hint">${vregText('claimHint','player uses this to claim account')}</span></label>
@@ -1415,6 +1423,10 @@ for (let i = 0; i < _regStagingList.length; i++) {
 const p = _regStagingList[i];
 if (p.status === 'success') continue;
 const playerRating = Number(p.rating);
+const playerLevel = Number(p.level ?? Math.max(1, Math.min(5, Math.round(6 - playerRating))));
+if (!Number.isInteger(playerLevel) || playerLevel < 1 || playerLevel > 5) {
+  _regStagingList[i].status = 'error'; failCount++; continue;
+}
 if (!Number.isFinite(playerRating) || playerRating < 1 || playerRating > 5) {
   _regStagingList[i].status = 'error';
   failCount++;
@@ -1434,6 +1446,7 @@ if (existing && existing.length) { _regStagingList[i].status = 'duplicate'; fail
     name:             cleanName,
     gender:           p.gender,
     global_rating:    playerRating,
+    level:            playerLevel,
     global_points:    0,
     default_password: defPw
   });
@@ -1489,6 +1502,8 @@ const gender   = document.getElementById('vregGender')?.value || 'Male';
 const ratingInput = document.getElementById('vregRating');
 const ratingRaw = ratingInput?.value ?? '';
 const rating   = Number(ratingRaw);
+const levelInput = document.getElementById('vregLevel');
+const level = Number(levelInput?.value);
 const defPw    = document.getElementById('vregDefaultPassword')?.value.trim();
 const fb       = document.getElementById('vregFeedback');
 const setFb    = (msg, ok) => { if (fb) { fb.textContent = msg; fb.style.color = ok ? 'var(-green,#2dce89)' : 'var(-red,#e63757)'; } };
@@ -1502,6 +1517,7 @@ if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
   if (ratingInput) ratingInput.focus();
   return;
 }
+if (!Number.isInteger(level) || level < 1 || level > 5) { setFb('Player Level must be a whole number from 1 to 5.', false); levelInput?.focus(); return; }
 if (!defPw)     { setFb(t('enterDefaultPw'), false); return; }
 
 setFb(t('registeringDot'), true);
@@ -1516,6 +1532,7 @@ const created = await sbPost('players', {
   name:             nickname,
   gender:           gender,
   global_rating:    rating,
+  level:            level,
   global_points:    0,
   default_password: defPw
 });
@@ -1542,6 +1559,7 @@ if (addBtn) {
 document.getElementById('vregNickname').value = '';
 document.getElementById('vregDefaultPassword').value = '1234';
 document.getElementById('vregRating').value = '1.0';
+document.getElementById('vregLevel').value = '5';
 // Invalidate player cache
 localStorage.removeItem('kbrr_cache_players');
 localStorage.removeItem('kbrr_cache_ts');

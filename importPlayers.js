@@ -1284,6 +1284,7 @@ function regAddToStaging() {
         name:   checked.name,
         gender: p.gender,
         rating: 1.0,
+        level: 5,
         status: "pending" // pending | success | duplicate | error
       });
     }
@@ -1318,7 +1319,7 @@ function regRenderStaging() {
   // Column header row
   const header = `<div class="reg-staging-header">
     <span class="reg-staging-header-name">Name</span>
-    <span class="reg-staging-header-rating">Rating</span>
+    <span class="reg-staging-header-rating">Rating / Level</span>
   </div>`;
 
   const rows = _regStagingList.map((p, i) => {
@@ -1354,6 +1355,9 @@ function regRenderStaging() {
                  title="${t('startingRating')}"
                  onchange="regUpdateRating(${i}, this.value)"
                  ${done ? "disabled" : ""}>
+          <label class="scs-reg-level-inline">Level <select aria-label="Level for player ${i+1}" onchange="regUpdateLevel(${i}, this.value)" ${done ? "disabled" : ""}>
+            ${[1,2,3,4,5].map(v=>`<option value="${v}" ${Number(p.level ?? 5)===v?'selected':''}>${v}</option>`).join('')}
+          </select></label>
           ${statusBadge}
           ${!done
             ? `<button class="circle-btn delete" onclick="regDeleteStaging(${i})" title="Remove">×</button>`
@@ -1382,6 +1386,12 @@ function regUpdateRating(i, val) {
   if (!_regStagingList[i]) return;
   const r = parseFloat(val);
   _regStagingList[i].rating = isNaN(r) ? 1 : Math.min(5, Math.max(1, r));
+}
+
+function regUpdateLevel(i, val) {
+  if (!_regStagingList[i]) return;
+  const level = Number(val);
+  if (Number.isInteger(level) && level >= 1 && level <= 5) _regStagingList[i].level = level;
 }
 
 function regDeleteStaging(i) {

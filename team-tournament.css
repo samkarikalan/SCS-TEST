@@ -804,3 +804,7 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-team-level-row>.scs-gt-player{flex:1;min-width:0}
 .scs-team-level-edit{display:flex;align-items:center;gap:4px;font-size:.75rem;white-space:nowrap;color:#c9d7ec}
 .scs-team-level-edit select{width:48px;min-height:36px;border:1px solid #637b9c;border-radius:8px;background:#182b47;color:#fff;padding:4px;font-size:1rem}
+
+/* SCS register players: compact independent whole-number Level selector */
+.scs-reg-level-inline{display:inline-flex;align-items:center;gap:5px;font-size:.8rem;color:#d5e2f4;white-space:nowrap}
+.scs-reg-level-inline select{border:1px solid #657d9f;border-radius:7px;background:#1a2943;color:#fff;padding:6px;font:inherit;min-width:44px}
