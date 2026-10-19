@@ -703,8 +703,6 @@ function organizeTournamentTabs(){
    // Tournament Home always returns to the Tournament Manager. SCS Home remains
    // available from the manager itself, keeping the two navigation levels clear.
    if(window.SCSTournament&&typeof window.SCSTournament.close==='function')window.SCSTournament.close();
-   if(typeof window.scsTournamentReturnManager==='function')window.scsTournamentReturnManager();
-   else if(typeof window.scsOpenTournamentManager==='function')window.scsOpenTournamentManager();
    return;
   }switchTournamentTab(item[0])};bar.appendChild(btn)});
  root.insertBefore(bar,root.firstChild);

@@ -282,7 +282,7 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
  const cancelCourt=el().querySelector('[data-cancel-court]');if(cancelCourt)cancelCourt.onclick=()=>{assigningMatch=null;render()};
  el().querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>{tab=x.dataset.tab;render()});
  el().querySelectorAll('[data-group-nav]').forEach(x=>x.onclick=()=>{
-  const target=x.dataset.groupNav;if(target==='home'){el()?.remove();if(typeof window.scsTournamentReturnManager==='function')window.scsTournamentReturnManager();else if(typeof window.scsOpenTournamentManager==='function')window.scsOpenTournamentManager();return}
+  const target=x.dataset.groupNav;if(target==='home'){close();return}
   if(assisting){if(target==='teams')assistStep=1;else if(target==='tournament'&&assistComplete(1))assistStep=Math.max(2,Math.min(5,assistStep||2));else return;save();render();return}
   tab=target==='teams'?'players':target==='tournament'?(tab==='knockouts'?'knockouts':'groups'):target;save();render();
  });
