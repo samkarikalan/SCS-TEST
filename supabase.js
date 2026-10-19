@@ -147,11 +147,39 @@ async function sbUpsert(table, data, onConflict) {
 // ─────────────────────────────────────────────────────────────
 const SCS_TOURNAMENT_STATE_VERSION = 1;
 const _scsTournamentSaveTimers = new Map();
-
+const _scsTournamentSaveChains = new Map();
+const _scsTournamentPending = new Map();
+const _scsTournamentServerIds = new Map();
+const _scsTournamentGeneration = new Map();
+const _scsTournamentLocalKeys = {
+  knockout:'scs_knockout_tournament_v94',
+  group:'scs_group_tournament_ui_v1',
+  team:'scs_team_tournament_v1'
+};
 function _scsTournamentCloudIdKey(clubId, format) {
   return `scs_tournament_cloud_id_${clubId}_${format}`;
 }
-
+function _scsTournamentClientId(state) {
+  if (!state._scsClientTournamentId) {
+    state._scsClientTournamentId = (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID() : 'scs-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+  }
+  return state._scsClientTournamentId;
+}
+function _scsTournamentSaveKey(clubId,format,state) {
+  return clubId + ':' + format + ':' + _scsTournamentClientId(state);
+}
+function _scsTournamentLocalIdentity(format,state,id) {
+  const key=_scsTournamentLocalKeys[format];
+  if (!key || !id) return;
+  try {
+    const current=JSON.parse(localStorage.getItem(key)||'null');
+    if (current && current._scsClientTournamentId===state._scsClientTournamentId) {
+      current._scsCloudTournamentId=id;
+      localStorage.setItem(key,JSON.stringify(current));
+    }
+  } catch (_) {}
+}
 function _scsTournamentStatus(format, state) {
   if (state && (state.completed === true || state.status === 'completed')) return 'completed';
   if (format === 'group') return state && state.started ? 'live' : 'draft';
@@ -159,64 +187,92 @@ function _scsTournamentStatus(format, state) {
   return state && state.live === true ? 'live' : 'draft';
 }
 
-async function dbSaveTournamentState(format, state) {
-  if (!['knockout', 'group', 'team'].includes(format) || !state || typeof state !== 'object') return null;
-  const club = getMyClub();
-  if (!club || !club.id) return null;
-  const user = typeof authGetUser === 'function' ? authGetUser() : null;
-  const idKey = _scsTournamentCloudIdKey(club.id, format);
-  let id = localStorage.getItem(idKey) || '';
-  const now = new Date().toISOString();
-  const status = _scsTournamentStatus(format, state);
-  const payload = {
-    club_id: club.id,
-    format,
-    title: String(state.title || (format === 'group' ? 'Group Tournament' : format === 'team' ? 'Team Tournament' : 'Tournament')).slice(0, 120),
-    status,
-    state_version: SCS_TOURNAMENT_STATE_VERSION,
-    state,
-    created_by: user && user.id ? user.id : null,
-    updated_at: now
+async function _scsSaveTournamentOnce(format, state) {
+  const club=getMyClub();
+  if (!club?.id) return null;
+  const user=typeof authGetUser==='function'?authGetUser():null;
+  const key=_scsTournamentSaveKey(club.id,format,state);
+  const idKey=_scsTournamentCloudIdKey(club.id,format);
+  let id=state._scsCloudTournamentId||_scsTournamentServerIds.get(key)||'';
+  // A legacy format-wide ID is deliberately NOT used for new saves.
+  const now=new Date().toISOString();
+  const status=_scsTournamentStatus(format,state);
+  const payload={
+    club_id:club.id,format,
+    title:String(state.title||(format==='group'?'Group Tournament':format==='team'?'Team Tournament':'Tournament')).slice(0,120),
+    status,state_version:SCS_TOURNAMENT_STATE_VERSION,
+    state,created_by:user?.id||null,updated_at:now
   };
-  if (status === 'live') payload.started_at = state.startedAt || state.started_at || now;
-  if (status === 'completed') payload.completed_at = state.completedAt || state.completed_at || now;
-  if (id) {
-    await sbPatch('tournaments', `id=eq.${encodeURIComponent(id)}&club_id=eq.${encodeURIComponent(club.id)}`, payload);
+  if(status==='live')payload.started_at=state.startedAt||state.started_at||now;
+  if(status==='completed')payload.completed_at=state.completedAt||state.completed_at||now;
+  if(id) {
+    // If a saved ID was removed remotely, do not silently create another tournament.
+    await sbPatch('tournaments',`id=eq.${encodeURIComponent(id)}&club_id=eq.${encodeURIComponent(club.id)}`,payload);
   } else {
-    const rows = await sbPost('tournaments', payload);
-    id = rows && rows[0] ? String(rows[0].id || '') : '';
+    const rows=await sbPost('tournaments',payload);
+    id=rows?.[0]?.id||'';
+    if(!id)throw new Error('Tournament creation returned no ID.');
   }
-  if (id) localStorage.setItem(idKey, id);
-  return id || null;
+  state._scsCloudTournamentId=id;
+  _scsTournamentServerIds.set(key,id);
+  _scsTournamentLocalIdentity(format,state,id);
+  localStorage.setItem(idKey,id); // compatibility for legacy consumers
+  return id;
 }
-
-function scsQueueTournamentCloudSave(format, state) {
-  if (!state || typeof state !== 'object') return;
+function dbSaveTournamentState(format,state) {
+  if(!['knockout','group','team'].includes(format)||!state||typeof state!=='object')return Promise.resolve(null);
+  const club=getMyClub();
+  if(!club?.id)return Promise.resolve(null);
+  const key=_scsTournamentSaveKey(club.id,format,state);
+  // Serialize even direct saves (e.g. Team Tournament "Save Now").
+  const previous=_scsTournamentSaveChains.get(key)||Promise.resolve();
+  const job=previous.catch(()=>{}).then(async()=>{
+    const existing=_scsTournamentPending.get(key);
+    const snapshot=existing||state;
+    _scsTournamentPending.delete(key);
+    const id=await _scsSaveTournamentOnce(format,snapshot);
+    if(id)state._scsCloudTournamentId=id;
+    return id;
+  });
+  _scsTournamentSaveChains.set(key,job);
+  job.finally(()=>{if(_scsTournamentSaveChains.get(key)===job)_scsTournamentSaveChains.delete(key)}).catch(()=>{});
+  return job;
+}
+function scsQueueTournamentCloudSave(format,state) {
+  if(!state||typeof state!=='object')return;
+  const club=getMyClub();
+  if(!club?.id)return;
+  const key=_scsTournamentSaveKey(club.id,format,state);
   let snapshot;
-  try { snapshot = JSON.parse(JSON.stringify(state)); } catch (_) { return; }
-  const previous = _scsTournamentSaveTimers.get(format);
-  if (previous) clearTimeout(previous);
-  _scsTournamentSaveTimers.set(format, setTimeout(() => {
-    _scsTournamentSaveTimers.delete(format);
-    dbSaveTournamentState(format, snapshot).catch(error => console.warn('Tournament cloud save:', error.message));
-  }, 700));
+  try{snapshot=JSON.parse(JSON.stringify(state))}catch(_){return}
+  _scsTournamentPending.set(key,snapshot);
+  const previous=_scsTournamentSaveTimers.get(key);
+  if(previous)clearTimeout(previous);
+  _scsTournamentSaveTimers.set(key,setTimeout(()=>{
+    _scsTournamentSaveTimers.delete(key);
+    const latest=_scsTournamentPending.get(key);
+    if(!latest)return;
+    _scsTournamentPending.delete(key);
+    dbSaveTournamentState(format,latest).catch(e=>{
+      console.warn('Tournament cloud save:',e.message);
+      // Retain the latest snapshot locally for retry on the next change.
+    });
+  },700));
 }
-
 function scsResetTournamentCloudIdentity(format) {
-  const club = getMyClub();
-  if (!club || !club.id || !['knockout', 'group', 'team'].includes(format)) return;
-  const previous = _scsTournamentSaveTimers.get(format);
-  if (previous) clearTimeout(previous);
-  _scsTournamentSaveTimers.delete(format);
-  localStorage.removeItem(_scsTournamentCloudIdKey(club.id, format));
+  const club=getMyClub();
+  if(!club?.id||!['knockout','group','team'].includes(format))return;
+  // Do not cancel in-flight saves for a different tournament.
+  localStorage.removeItem(_scsTournamentCloudIdKey(club.id,format));
 }
-
 function scsGetTournamentCloudIdentity(format) {
-  const club = getMyClub();
-  if (!club || !club.id || !['knockout', 'group', 'team'].includes(format)) return '';
-  return localStorage.getItem(_scsTournamentCloudIdKey(club.id, format)) || '';
+  const club=getMyClub();
+  if(!club?.id)return '';
+  try{
+    const state=JSON.parse(localStorage.getItem(_scsTournamentLocalKeys[format])||'null');
+    return state?._scsCloudTournamentId||'';
+  }catch(_){return ''}
 }
-
 async function dbLoadLatestTournament(format) {
   const club = getMyClub();
   if (!club || !club.id || !['knockout', 'group', 'team'].includes(format)) return null;
@@ -225,6 +281,8 @@ async function dbLoadLatestTournament(format) {
   ).catch(() => []);
   const row = rows && rows[0];
   if (!row || Number(row.state_version || 1) > SCS_TOURNAMENT_STATE_VERSION || !row.state) return null;
+  row.state._scsCloudTournamentId=row.id;
+  _scsTournamentClientId(row.state);
   localStorage.setItem(_scsTournamentCloudIdKey(club.id, format), row.id);
   return row;
 }
@@ -258,6 +316,7 @@ async function dbAdoptTournamentById(id) {
   if (previous) clearTimeout(previous);
   _scsTournamentSaveTimers.delete(row.format);
   row.state._scsCloudTournamentId = row.id;
+  _scsTournamentClientId(row.state);
   localStorage.setItem(_scsTournamentCloudIdKey(club.id, row.format), row.id);
   localStorage.setItem(row.format === 'team' ? 'scs_team_tournament_v1' : row.format === 'group' ? 'scs_group_tournament_ui_v1' : 'scs_knockout_tournament_v94', JSON.stringify(row.state));
   return row;
@@ -294,6 +353,8 @@ async function scsTournamentHydrateCloud() {
     if (local) return false;
     const row = await dbLoadLatestTournament(format);
     if (!row || !row.state) return false;
+    row.state._scsCloudTournamentId=row.id;
+    _scsTournamentClientId(row.state);
     localStorage.setItem(key, JSON.stringify(row.state));
     return true;
   });
@@ -301,6 +362,7 @@ async function scsTournamentHydrateCloud() {
   return restored.some(Boolean);
 }
 
+window.scsEnsureTournamentClientId = _scsTournamentClientId;
 window.dbSaveTournamentState = dbSaveTournamentState;
 window.dbLoadLatestTournament = dbLoadLatestTournament;
 window.dbListClubTournaments = dbListClubTournaments;
