@@ -727,7 +727,7 @@ function spectatorMatchList(){
  }).join('')+'</section>';
 }
 function organizeTournamentTabs(){
- if(!root||!draw||!draw.matches||!draw.matches.length)return;
+ if(!root||!draw||!draw.matches||!draw.matches.length||byeSelection)return;
  var summary=root.querySelector('.scs-tm-tournament-dashboard,.scs-tm-pattern-dashboard');
  var teamPanels=Array.from(root.querySelectorAll('.scs-tm-player-pool,.scs-tm-team-roster'));
  var workspace=root.querySelector('.scs-tm-workspace');
