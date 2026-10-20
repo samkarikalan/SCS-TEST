@@ -258,7 +258,7 @@ function registry(){
  try{if(window.SCSCourtCenter&&typeof window.SCSCourtCenter.playerNames==='function')add(window.SCSCourtCenter.playerNames())}catch(e){}
  return [...new Map(names.map(n=>[playerKey(n),n])).values()].sort((a,b)=>a.localeCompare(b));
 }
-function playerRow(name){return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+teamLevelLabel(name)+'</span>'}
+function playerRow(name){return window.ScsApi.cards.player(name,teamLevelLabel(name));}
 function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(root());}
 let editingClub=null,clubDraft=null;
 const teamPlayerLevels=new Map();
@@ -549,21 +549,7 @@ function tournamentReportTabs(active){
 }
 function mainHome(){
  restoreActiveEvent();
- const events=Array.isArray(main.events)?main.events:[];
- const countClubs=new Set(events.flatMap(e=>Array.isArray(e.clubs)?e.clubs:[]).filter(Boolean)).size;
- const eventGender=e=>/^L(?:-|\d|$)/i.test(String(e.title||'').trim())?'ladies':/^M(?:-|\d|$)/i.test(String(e.title||'').trim())?'men':'other';
- const section=(kind,title)=>{
-  const items=events.filter(e=>eventGender(e)===kind);
-  if(!items.length)return '';
-  return '<section class="scs-team-event-section"><h2>'+esc(title)+' <span>('+items.length+')</span></h2><div class="scs-team-event-list">'+items.map(e=>{
-   const clubs=Array.isArray(e.clubs)?e.clubs:[];
-   const active=e.id===activeEventId;
-   return '<button type="button" class="scs-team-event-row '+kind+(active?' is-active':'')+'" data-open-event="'+esc(e.id)+'"'+(active?' aria-label="Active Event: '+esc(e.title||'Event')+'"':'')+'><span class="scs-team-event-code">'+esc(e.title||'Event')+'</span><span class="scs-team-event-details"><strong>'+esc(clubs.join(', ')||'Clubs not selected')+'</strong><small>'+clubs.length+' teams · '+Number(e.completed||0)+' / '+Number(e.matches||0)+' matches completed</small>'+(active?'<span class="scs-team-event-active-label">✓ Active Event</span>':'')+'</span><span class="scs-team-event-arrow" aria-hidden="true">›</span></button>';
-  }).join('')+'</div></section>';
- };
- return '<div class="scs-team-event-home"><p class="scs-team-event-summary">'+events.length+' events · '+countClubs+' teams</p>'+
-  (events.length?section('men','Men’s Events')+section('ladies','Ladies’ Events')+section('other','Other Events'):'<p class="scs-team-event-empty">No events yet. Add an event to get started.</p>')+
-  (viewOnly?'':'<button type="button" class="scs-gt-primary scs-team-add-event-bottom" data-add-event>＋ Add Event</button>')+'</div>';
+ return window.ScsApi.events.home({events:Array.isArray(main.events)?main.events:[],activeEventId,viewOnly});
 }
 // V286: The redundant Team Tournament overview page has been removed.
 // Event navigation now goes directly to its existing setup/fixtures functions.
@@ -573,7 +559,11 @@ function clubsView(){
  // The previous post-creation markup used a different, unstyled horizontal layout.
  return '<section class="scs-gt-card scs-team-setup scs-team-clubs-view"><h2>Clubs</h2><p>Club rosters are shown here. Pair selection remains manual before each encounter.</p><div class="scs-team-club-list">'+state.clubs.map((c,i)=>'<div class="scs-team-club scs-team-club-color-'+clubColor(c,i)+'" style="--club-accent:'+esc(clubAccent(i))+'"><div class="scs-team-club-head"><button type="button" class="scs-team-expand" data-expand="'+i+'" aria-expanded="'+expandedClubs.has(i)+'" aria-label="Toggle '+esc(c.name)+' players">'+(expandedClubs.has(i)?'⌃':'⌄')+'</button><div class="scs-team-club-name"><strong>'+esc(c.name)+'</strong><small>'+c.players.length+' players</small></div></div>'+(expandedClubs.has(i)?'<div class="scs-team-roster">'+c.players.map((name,j)=>'<div class="scs-team-roster-player"><span class="scs-team-player-number">'+(j+1)+'</span>'+playerRow(name)+'</div>').join('')+'</div>':'')+'</div>').join('')+'</div></section>';
 }
-function teamBottomNav(){if(main&&main.events?.length&&!main.events.some(e=>e.id===activeEventId))restoreActiveEvent();const active=mainMode?'home':tab==='home'?'home':tab==='setup'||tab==='clubs'?'clubs':tab==='match'?'match':'tournament';const items=[['home','Home','⌂',true],['clubs','Clubs','♙',true],['tournament','Tournament','⑂',true],['match','Match Center','▣',true]];return '<nav class="scs-tm-organized-tabs scs-tm-bottom-nav scs-gt-bottom-nav scs-team-bottom-nav" aria-label="Team tournament sections">'+items.map(([key,label,icon,enabled])=>'<button type="button" data-team-nav="'+key+'" class="'+(active===key?'active':'')+'" '+(enabled?'':'disabled')+(active===key?' aria-current="page"':'')+'><span class="scs-tm-nav-icon" aria-hidden="true">'+icon+'</span><span class="scs-tm-nav-label">'+label+'</span></button>').join('')+'</nav>'}
+function teamBottomNav(){
+ if(main&&main.events?.length&&!main.events.some(e=>e.id===activeEventId))restoreActiveEvent();
+ const active=mainMode?'home':tab==='home'?'home':tab==='setup'||tab==='clubs'?'clubs':tab==='match'?'match':'tournament';
+ return window.ScsApi.navigation.bottom({active,attribute:'data-team-nav',ariaLabel:'Team tournament sections'});
+}
 function render(){let r=root();if(!r)return;
  if(creatingEvent){
  r.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-create-sheet" role="dialog" aria-label="Add Team Tournament Event"><header><strong>'+esc(main.title)+'</strong><button type="button" data-event-cancel aria-label="Close">✕</button></header>'+eventNameForm()+'</div>';
@@ -637,5 +627,22 @@ async function pickRegisteredRoster(onDone){
  sel.onchange=async()=>{names=[];list.innerHTML='';if(!sel.value)return;status.textContent='Loading players…';try{const id=sel.value;const loaded=await registeredClubPlayers(id);if(sel.value!==id)return;names=loaded;status.textContent=names.length+' registered players';list.innerHTML=names.map(n=>'<label class="scs-gt-player scs-team-level-row" style="display:flex;align-items:center;gap:10px;padding:8px"><input type="checkbox" data-name="'+esc(n)+'"><span>'+playerRow(n)+'</span></label>').join('');hydratePlayerCards()}catch(e){status.textContent='Unable to load players: '+(e.message||e)}};
  modal.querySelector('[data-done]').onclick=()=>{const club=clubs.find(c=>c.id===sel.value);if(!club){status.textContent='Select a sub-club first.';return}const selected=[...list.querySelectorAll('input[data-name]:checked')].map(x=>x.dataset.name);if(!selected.length){status.textContent='Select at least one player.';return}close();onDone({clubId:club.id,clubName:club.name,players:selected})};
 }
-window.SCSTeamTournament={pickRegisteredRoster,open,close,scoreUpdate,updateCompletedScore,conductMatches,finishConductMatch,playersManagerReturned,returnFromScore(){if(root())root().hidden=false},getState(){load();return state}};
+// Canonical shared API. The old global is a compatibility alias, not a second implementation.
+const teamApi={
+  pickRegisteredRoster, open, close, scoreUpdate, updateCompletedScore,
+  conductMatches, finishConductMatch, playersManagerReturned,
+  returnFromScore(){if(root())root().hidden=false}, getState(){load();return state},
+  pages:{home:mainHome, clubs:clubsView, tournament:fixtures, matchCenter:matchCenter},
+  cards:{player:playerRow, match:matchCard},
+  ui:{render, switchTab:switchTeamTab, hydratePlayerCards},
+  events:{open:openEvent, add:addEvent, create:submitEvent, restoreActive:restoreActiveEvent},
+  roster:{registeredClubChoices, registeredClubPlayers, openPlayersManager},
+  storage:{save, load}
+};
+window.ScsApi=window.ScsApi||{};
+window.ScsApi.team=teamApi;
+window.ScsApi.matchCenter.team=matchCenter;
+window.ScsApi.players=window.ScsApi.players||{};
+window.ScsApi.players.pickRegisteredRoster=pickRegisteredRoster;
+window.SCSTeamTournament=teamApi;
 })();
