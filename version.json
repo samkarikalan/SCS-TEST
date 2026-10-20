@@ -1,0 +1,10 @@
+{
+  "version": "V315",
+  "build": "2026-10-20",
+  "updated": [
+    "scs-api.js",
+    "team-tournament.js",
+    "index.html",
+    "sw.js"
+  ]
+}

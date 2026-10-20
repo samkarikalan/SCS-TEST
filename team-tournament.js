@@ -274,7 +274,7 @@ function clubEditor(i){
  if(state.encounters.length){alert('Club rosters are locked after fixtures have been generated.');return}
  const existing=state.clubs[i];
  const initial=Array.isArray(existing?.selectedPlayerDetails)?existing.selectedPlayerDetails:[];
- window.ScsApi.players.select({selected:initial,onDone:function(players){
+ return window.ScsApi.players.select({selected:initial,onDone:function(players){
   const clubs=[...new Set(players.map(p=>p.subClub))];
   if(clubs.length!==1||players.length<6){alert('Select at least six players from one sub-club for this team.');return}
   const name=clubs[0],registeredClubId=null;
