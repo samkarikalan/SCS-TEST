@@ -872,3 +872,6 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-api-home-host .scs-team-event-empty{color:#b9cce4;text-align:center;padding:22px 8px;}
 .scs-api-home-host .scs-team-event-row{display:flex;align-items:center;width:100%;min-height:65px;padding:12px 0;border:0;border-bottom:1px solid #38506d;border-radius:0;background:transparent;color:#f3f7ff;text-align:left;}
 @media(max-width:420px){.scs-api-home-host>.scs-team-main-sheet{padding:15px 13px 18px;}}
+
+/* V306: common player selector */
+.scs-api-player-selector .scs-api-select-row{display:flex;align-items:center;gap:12px;width:100%;padding:10px 8px;box-sizing:border-box}.scs-api-player-selector .scs-api-select-content{flex:1;min-width:0}.scs-api-player-selector .scs-api-roster-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px}.scs-api-player-selector [data-players]{max-height:48vh;overflow:auto}.scs-api-player-selector .scs-api-subclub-pill{white-space:nowrap}

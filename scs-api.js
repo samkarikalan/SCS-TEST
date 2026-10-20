@@ -89,5 +89,46 @@ async function pickRegisteredRoster(onDone, providers={}){
  modal.querySelector('[data-done]').onclick=()=>{const club=clubs.find(c=>c.id===sel.value);if(!club){status.textContent='Select a sub-club first.';return}const selected=[...list.querySelectorAll('input[data-name]:checked')].map(x=>x.dataset.name);if(!selected.length){status.textContent='Select at least one player.';return}close();onDone({clubId:club.id,clubName:club.name,players:selected})};
 }
 api.players.pickRegisteredRoster=pickRegisteredRoster;
+
+// One tournament-wide player selector. Competition modules own pair/group rules.
+api.players.select=async function({selected=[],onDone,onCancel}={}){
+ const selectedMap=new Map((selected||[]).filter(p=>p&&p.player).map(p=>[String(p.subClub||'')+'|'+String(p.player).toLowerCase(),p]));
+ const modal=document.createElement('section');modal.className='scs-tm-entry-modal scs-api-player-selector';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Tournament Players Manager</h3><p>Select players from any registered sub-club</p></div><label>Sub-club<select data-subclub><option value="">Select a sub-club</option></select></label><p data-status role="status">Loading sub-clubs…</p><div data-players></div><h4 data-count>Selected players ('+selectedMap.size+')</h4></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-done>Done</button></div></div>';
+ document.body.appendChild(modal);
+ const sel=modal.querySelector('[data-subclub]'),status=modal.querySelector('[data-status]'),list=modal.querySelector('[data-players]'),count=modal.querySelector('[data-count]');
+ const finish=(value)=>{modal.remove();if(value===null){if(onCancel)onCancel();return null}if(onDone)onDone(value.map(p=>({player:p.player,subClub:p.subClub,gender:p.gender,level:p.level})));return value};
+ modal.querySelector('[data-cancel]').onclick=()=>finish(null);
+ const redrawCount=()=>count.textContent='Selected players ('+selectedMap.size+')';
+ let clubs=[];
+ try{const parent=await scsResolveOrganizerClub();clubs=await dbGetSubClubs(parent.id);clubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});status.textContent=clubs.length?'Choose a sub-club to select players.':'No registered sub-clubs found.'}
+ catch(e){status.textContent='Could not load sub-clubs: '+(e.message||e)}
+ sel.onchange=async()=>{
+  const id=sel.value;list.innerHTML='';if(!id)return;status.textContent='Loading players…';
+  try{
+   const memberships=await sbGet('memberships','club_id=eq.'+encodeURIComponent(id)+'&select=nickname,player_id');
+   const ids=[...new Set((memberships||[]).map(m=>m.player_id).filter(Boolean))];let info=new Map();
+   if(ids.length){const rows=await sbGet('players','id=in.('+ids.map(encodeURIComponent).join(',')+')&select=id,gender,level');info=new Map((rows||[]).map(p=>[String(p.id),p]))}
+   if(sel.value!==id)return;
+   const club=clubs.find(c=>String(c.id)===String(id));const subClub=club?.name||'';
+   const players=(memberships||[]).filter(m=>m.nickname).map(m=>{
+    const details=info.get(String(m.player_id))||{};
+    const g=String(details.gender||'').toLowerCase();const gender=/^(f|female|woman|women|lady|ladies|l)$/.test(g)?'Female':/^(m|male|man|men)$/.test(g)?'Male':(details.gender||null);
+    const n=Number(details.level);return {player:String(m.nickname).trim(),subClub,gender,level:Number.isInteger(n)&&n>=1&&n<=5?n:null};
+   });
+   list.innerHTML='';players.forEach(p=>{
+    const key=p.subClub+'|'+p.player.toLowerCase();const row=document.createElement('label');row.className='scs-gt-player scs-team-level-row scs-api-select-row';
+    const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=selectedMap.has(key);checkbox.onchange=()=>{if(checkbox.checked)selectedMap.set(key,p);else selectedMap.delete(key);redrawCount()};
+    const content=document.createElement('span');content.className='scs-api-select-content';
+    content.innerHTML=api.cards.rosterPlayer({name:p.player,subClub:p.subClub,levelMarkup:'<span class="scs-team-level-badge">'+esc((p.gender==='Female'?'L':p.gender==='Male'?'M':'')+(p.level??'—'))+'</span>'});
+    row.append(checkbox,content);list.appendChild(row);
+   });
+   status.textContent=players.length+' registered players';if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(modal);
+  }catch(e){status.textContent='Could not load players: '+(e.message||e)}
+ };
+ modal.querySelector('[data-done]').onclick=()=>finish([...selectedMap.values()]);
+ return modal;
+};
+
 api.matchCenter=api.matchCenter||{};
 })();

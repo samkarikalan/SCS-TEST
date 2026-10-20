@@ -537,20 +537,16 @@ function tournamentTeamsCard(){
  return '<section class="scs-tm-pool scs-tm-team-roster"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT TEAMS</small><h3>Teams ('+entries.length+')</h3></div></div><div class="scs-tm-team-card-grid">'+entries.map(function(e,i){var players=splitTeam(e.name||'').players;return '<article class="scs-tm-roster-card"><span class="scs-tm-roster-number">'+(i+1)+'</span><div>'+(players.length?players.map(tournamentPlayerRow).join(''):'<span class="scs-tm-roster-empty">Team not assigned</span>')+'</div>'+(byes.indexOf(e.id)>=0?'<small>BYE</small>':'')+'</article>'}).join('')+'</div></section>'
 }
 function openPlayersManager(){
- if(!draw||!root)return;
- if(!window.ScsApi?.team||typeof ScsApi.team.pickRegisteredRoster!=='function'){
-  alert('Team Tournament club selector is unavailable.');return;
- }
- ScsApi.team.pickRegisteredRoster(function(roster){
-  if(!draw)return;
-  var clubs=Array.isArray(draw.selectedClubs)?draw.selectedClubs:[];
-  var existing=clubs.findIndex(function(c){return c.clubId===roster.clubId});
-  if(existing>=0)clubs[existing]=roster;else clubs.push(roster);
-  draw.selectedClubs=clubs;
-  draw.playerPool=Array.from(new Set(clubs.reduce(function(a,c){return a.concat(c.players||[])},[])));
-  localTournamentSave(draw).catch(function(e){console.error(e)});
+ if(!draw||!root||readonly)return;
+ const previous=Array.isArray(draw.selectedPlayerDetails)?draw.selectedPlayerDetails:[];
+ window.ScsApi.players.select({selected:previous,onDone:function(players){
+  draw.selectedPlayerDetails=players;
+  const byClub=new Map();players.forEach(p=>{if(!byClub.has(p.subClub))byClub.set(p.subClub,[]);byClub.get(p.subClub).push(p.player)});
+  draw.selectedClubs=[...byClub].map(([clubName,names])=>({clubName,players:names}));
+  draw.playerPool=[...new Set(players.map(p=>p.player))];
+  localTournamentSave(draw).catch(console.error);
   if(assistStep===1)assistPlayersTeams();else render();
- });
+ }});
 }
 function playersManagerReturned(){
  if(!window.__scsTournamentPlayersReturn)return false;
