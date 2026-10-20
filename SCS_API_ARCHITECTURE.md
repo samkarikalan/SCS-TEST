@@ -1,17 +1,7 @@
-# SCS V296 shared UI extraction
+# SCS V298 shared roster picker
 
-## Single implementations in scs-api.js
-- ScsApi.cards.player(name, levelMarkup) — shared player card markup
-- ScsApi.buttons.render(config) — shared button builder
-- ScsApi.navigation.bottom(config) — shared four-tab navigation
-- ScsApi.events.home(config) — shared multi-event Home renderer
+`ScsApi.players.pickRegisteredRoster(onDone, providers)` owns the one registered-club roster selection popup: sub-club dropdown, player list, checkboxes, Cancel/Done, loading and selection.
 
-## Team-only code in team-tournament.js
-- Encounters, ranking, fixtures, team state, score handling, storage, club selection
-- Calls shared player, navigation and Home functions; retains SCSTeamTournament compatibility alias
-- Existing Team Match Center renderer and registered-roster picker remain Team-owned until they can be separated safely.
+Team Tournament supplies its existing registered-club loaders, player renderer and card hydration as `providers`; its `pickRegisteredRoster` method is a compatibility adapter, not another popup. Knockout calls that adapter through `ScsApi.team` and therefore uses the same popup implementation.
 
-## Known limitations
-- Team-specific CSS remains in team-tournament.css; shared selectors have not been split into separate CSS.
-- Knockout and Group are not yet migrated to the shared components.
-- No browser/iPhone runtime test performed.
+The separate Team Tournament club *editor* is not yet extracted; it has different responsibilities (editing encounter club roster). No other modules have been migrated in this version.

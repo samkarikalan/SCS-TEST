@@ -33,5 +33,19 @@ api.events.home=function({events=[],activeEventId=null,viewOnly=false}={}){
   (viewOnly?'':api.buttons.render({label:'＋ Add Event',action:'add-event',className:'scs-gt-primary scs-team-add-event-bottom'}))+'</div>';
 };
 api.players=api.players||{};
+async function pickRegisteredRoster(onDone, providers={}){
+ const {registeredClubChoices,registeredClubPlayers,playerRow,hydratePlayerCards}=providers;
+ if([registeredClubChoices,registeredClubPlayers,playerRow,hydratePlayerCards].some(f=>typeof f!=='function'))throw Error('Shared roster picker requires registered-club providers');
+ const modal=document.createElement('section');modal.className='scs-tm-entry-modal';
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Club players</h3><p>Select a registered sub-club and its players</p></div><label>Sub-club<select data-club><option value="">Select a sub-club</option></select></label><p data-status>Loading clubs…</p><div data-roster></div></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-done>Done</button></div></div>';
+ document.body.appendChild(modal);
+ const sel=modal.querySelector('[data-club]'),status=modal.querySelector('[data-status]'),list=modal.querySelector('[data-roster]');let clubs=[],names=[];
+ const close=()=>modal.remove();modal.querySelector('[data-cancel]').onclick=close;
+ try{clubs=await registeredClubChoices();clubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});status.textContent=clubs.length?'Choose a sub-club.':'No registered sub-clubs available.'}
+ catch(e){status.textContent='Unable to load clubs: '+(e.message||e)}
+ sel.onchange=async()=>{names=[];list.innerHTML='';if(!sel.value)return;status.textContent='Loading players…';try{const id=sel.value;const loaded=await registeredClubPlayers(id);if(sel.value!==id)return;names=loaded;status.textContent=names.length+' registered players';list.innerHTML=names.map(n=>'<label class="scs-gt-player scs-team-level-row" style="display:flex;align-items:center;gap:10px;padding:8px"><input type="checkbox" data-name="'+esc(n)+'"><span>'+playerRow(n)+'</span></label>').join('');hydratePlayerCards()}catch(e){status.textContent='Unable to load players: '+(e.message||e)}};
+ modal.querySelector('[data-done]').onclick=()=>{const club=clubs.find(c=>c.id===sel.value);if(!club){status.textContent='Select a sub-club first.';return}const selected=[...list.querySelectorAll('input[data-name]:checked')].map(x=>x.dataset.name);if(!selected.length){status.textContent='Select at least one player.';return}close();onDone({clubId:club.id,clubName:club.name,players:selected})};
+}
+api.players.pickRegisteredRoster=pickRegisteredRoster;
 api.matchCenter=api.matchCenter||{};
 })();

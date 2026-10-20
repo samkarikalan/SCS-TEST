@@ -526,10 +526,10 @@ function tournamentTeamsCard(){
 }
 function openPlayersManager(){
  if(!draw||!root)return;
- if(!window.SCSTeamTournament||typeof SCSTeamTournament.pickRegisteredRoster!=='function'){
+ if(!window.ScsApi?.team||typeof ScsApi.team.pickRegisteredRoster!=='function'){
   alert('Team Tournament club selector is unavailable.');return;
  }
- SCSTeamTournament.pickRegisteredRoster(function(roster){
+ ScsApi.team.pickRegisteredRoster(function(roster){
   if(!draw)return;
   var clubs=Array.isArray(draw.selectedClubs)?draw.selectedClubs:[];
   var existing=clubs.findIndex(function(c){return c.clubId===roster.clubId});
