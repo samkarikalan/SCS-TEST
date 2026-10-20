@@ -506,7 +506,9 @@ function tournamentPool(){
 }
 // Reuse Round Manager's existing createRatingRing; no player/round changes.
 function tournamentPlayerRow(name){
- return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span><span class="scs-tournament-gender-level">—</span></span>';
+ var level='<span class="scs-tournament-gender-level">—</span>';
+ if(window.ScsApi&&ScsApi.cards&&typeof ScsApi.cards.player==='function')return ScsApi.cards.player(name,level);
+ return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+level+'</span>';
 }
 function hydrateTournamentPlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(root);}
 var poolExpanded=false;
@@ -719,11 +721,20 @@ function organizeTournamentTabs(){
  var details=root.querySelector('.scs-tm-details');
  var old=root.querySelector('.scs-tm-organized-tabs');if(old)old.remove();
  var live=draw.live===true||readonly;
- var tabs=[['main','Home','⌂'],['players','Clubs','♙'],['flowchart','Tournament','⑂'],['match','Match Center','▣']];
- var bar=document.createElement('nav');bar.className='scs-tm-organized-tabs scs-tm-bottom-nav';bar.setAttribute('aria-label','Tournament sections');
- tabs.forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.setAttribute('data-tm-tab',item[0]);
-  {var ico=document.createElement('span');ico.className='scs-tm-nav-icon';ico.setAttribute('aria-hidden','true');ico.textContent=item[2];var label=document.createElement('span');label.className='scs-tm-nav-label';label.textContent=item[1];btn.appendChild(ico);btn.appendChild(label)}
-  btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
+ var tabs=[['main','home'],['players','clubs'],['flowchart','tournament'],['match','match']];
+ var bar;
+ if(window.ScsApi&&ScsApi.navigation&&typeof ScsApi.navigation.bottom==='function'){
+  var host=document.createElement('div');
+  host.innerHTML=ScsApi.navigation.bottom({active:tabs.find(function(t){return t[0]===tournamentActiveTab})?.[1]||'home',attribute:'data-tm-nav',ariaLabel:'Knockout tournament sections'});
+  bar=host.firstElementChild;
+  bar.querySelectorAll('[data-tm-nav]').forEach(function(btn){
+   btn.onclick=function(){var key=btn.getAttribute('data-tm-nav');var found=tabs.find(function(t){return t[1]===key});if(found)switchTournamentTab(found[0]);};
+  });
+ }else{
+  bar=document.createElement('nav');bar.className='scs-tm-organized-tabs scs-tm-bottom-nav';bar.setAttribute('aria-label','Tournament sections');
+  [['main','Home'],['players','Clubs'],['flowchart','Tournament'],['match','Match Center']].forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.textContent=item[1];btn.setAttribute('data-tm-tab',item[0]);btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
+ }
+ bar.querySelectorAll('[data-tm-nav]').forEach(function(btn){var key=btn.getAttribute('data-tm-nav');var found=tabs.find(function(t){return t[1]===key});if(found)btn.setAttribute('data-tm-tab',found[0]);});
  root.insertBefore(bar,root.firstChild);
  function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);root.appendChild(wrap);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
  panel('main',[summary]);panel('players',teamPanels);panel('flowchart',[workspace,hint,details]);panel('match',match?[match]:[function(){var empty=document.createElement('section');empty.className='scs-tm-pool';empty.innerHTML='<h3>Match Center</h3><p>Start the knockout tournament to assign courts and conduct matches.</p>';return empty}()]);
