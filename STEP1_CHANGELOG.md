@@ -1,0 +1,1 @@
+Step 1: Common tournament Home. Team unchanged. Knockout Home now renders via ScsApi.events.home and ScsApi.navigation.bottom. Group uses the same shared Home and stores independent events in scs_group_multi_event_v1, preserving the original legacy group state. Players, fixtures and scoring are not refactored. Browser runtime tests outstanding.

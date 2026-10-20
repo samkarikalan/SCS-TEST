@@ -1,14 +1,27 @@
 (function(){
 'use strict';
 const KEY='scs_group_tournament_ui_v1';
+const GROUP_MAIN_KEY='scs_group_multi_event_v1';let groupMain=null,groupEventId=null,groupHome=false;
+const groupEventKey=id=>'scs_group_event_'+id;
+function groupId(){return 'gr-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)}
+function groupMainSave(){if(groupMain&&!viewOnly)localStorage.setItem(GROUP_MAIN_KEY,JSON.stringify(groupMain))}
+function groupEnsureMain(){try{groupMain=JSON.parse(localStorage.getItem(GROUP_MAIN_KEY)||'null')}catch(_){groupMain=null}
+ if(!groupMain){groupMain={title:'Group Tournament',events:[],activeEventId:null};try{const legacy=JSON.parse(localStorage.getItem(KEY)||'null');if(legacy&&(legacy.created||legacy.started||legacy.title)){const id=groupId();groupMain.events.push({id,title:legacy.title||'Group Event'});groupMain.activeEventId=id;localStorage.setItem(groupEventKey(id),JSON.stringify(legacy))}}catch(_){}}
+ if(!Array.isArray(groupMain.events))groupMain.events=[];groupEventId=groupMain.events.some(e=>e.id===groupMain.activeEventId)?groupMain.activeEventId:(groupMain.events[0]?.id||null);groupMain.activeEventId=groupEventId;groupMainSave()}
+function groupHomeRender(){groupHome=true;const root=el();if(!root)return;const events=groupMain.events.map(e=>{let v={};try{v=JSON.parse(localStorage.getItem(groupEventKey(e.id))||'{}')}catch(_){}return {...e,teams:Object.keys(v.assignments||{}).length,clubs:Object.values(v.assignments||{}).filter(a=>Array.isArray(a)&&a.some(Boolean)).map((_,i)=>'Team '+(i+1)),matches:(v.matches||[]).length,completed:(v.matches||[]).filter(m=>m.status==='approved').length}});
+ root.innerHTML='<div class="scs-gt-sheet"><header><strong>'+escapeHTML(groupMain.title||'Group Tournament')+'</strong><button data-group-close>✕</button></header>'+window.ScsApi.events.home({events,activeEventId:groupEventId,viewOnly})+'</div>'+window.ScsApi.navigation.bottom({active:'home',attribute:'data-group-nav',ariaLabel:'Group tournament sections'});
+ root.querySelector('[data-group-close]').onclick=close;root.querySelectorAll('[data-open-event]').forEach(b=>b.onclick=()=>groupOpenEvent(b.dataset.openEvent));const add=root.querySelector('[data-add-event]');if(add)add.onclick=groupAddEvent;root.querySelectorAll('[data-group-nav]').forEach(b=>b.onclick=()=>{const target=b.dataset.groupNav;if(target==='home')groupHomeRender();else if(groupEventId)groupOpenEvent(groupEventId,target);else alert('Add an event first.')})}
+function groupOpenEvent(id,section){if(!groupMain.events.some(e=>e.id===id))return;groupEventId=id;groupMain.activeEventId=id;groupMainSave();groupHome=false;applyState(JSON.parse(localStorage.getItem(groupEventKey(id))||'null')||{title:groupMain.events.find(e=>e.id===id).title});assistStep=0;tab=section==='clubs'?'players':section==='match'?'match':'groups';render()}
+function groupAddEvent(){const name=prompt('Event name (e.g. M-A, L-B)');if(name===null)return;const title=name.trim();if(!title)return;if(groupMain.events.some(e=>e.title.toLowerCase()===title.toLowerCase())){alert('Event already exists.');return}const id=groupId();groupMain.events.push({id,title});groupMain.activeEventId=id;groupMainSave();localStorage.setItem(groupEventKey(id),JSON.stringify({title,created:false,assistMode:true,config:{groups:4,per:4,knockouts:1,top:2,bottom:1},pool:[],teamDrafts:[],assignments:{},matches:[],started:false}));groupOpenEvent(id,'tournament')}
+
  let cloudTournamentId='',clientTournamentId='',title='',config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null,viewOnly=false;
 const el=()=>document.getElementById('scsGroupTournament');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v){cloudTournamentId=v._scsCloudTournamentId||'';clientTournamentId=v._scsClientTournamentId||'';title=String(v.title||'Group Tournament');config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
- function save(){try{if(viewOnly)return;const state={_scsCloudTournamentId:cloudTournamentId,_scsClientTournamentId:clientTournamentId,title,config,created,assistMode,assistPatternReady,pool,teamDrafts,assignments,started,matches,courtCount,assignmentSerial};if(typeof window.scsEnsureTournamentClientId==='function')clientTournamentId=state._scsClientTournamentId=window.scsEnsureTournamentClientId(state);localStorage.setItem(KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('group',state)}catch(e){}}
+ function load(){try{let v=JSON.parse(localStorage.getItem(groupEventId?groupEventKey(groupEventId):KEY));if(v){cloudTournamentId=v._scsCloudTournamentId||'';clientTournamentId=v._scsClientTournamentId||'';title=String(v.title||'Group Tournament');config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
+ function save(){try{if(viewOnly)return;const state={_scsCloudTournamentId:cloudTournamentId,_scsClientTournamentId:clientTournamentId,title,config,created,assistMode,assistPatternReady,pool,teamDrafts,assignments,started,matches,courtCount,assignmentSerial};if(typeof window.scsEnsureTournamentClientId==='function')clientTournamentId=state._scsClientTournamentId=window.scsEnsureTournamentClientId(state);localStorage.setItem(groupEventId?groupEventKey(groupEventId):KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('group',state)}catch(e){}}
 function applyState(v){if(!v)return;cloudTournamentId=v._scsCloudTournamentId||'';clientTournamentId=v._scsClientTournamentId||'';title=String(v.title||'Group Tournament');config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}
 function open(mode,viewState){
- viewOnly=mode==='view';if(viewOnly)applyState(viewState);else load();assistStep=0;
+ viewOnly=mode==='view';if(!viewOnly){groupEnsureMain();if(mode!=='new'){if(!el()){let d=document.createElement('div');d.id='scsGroupTournament';d.className='scs-gt-overlay';document.body.appendChild(d)}groupHomeRender();return;}if(!el()){let d=document.createElement('div');d.id='scsGroupTournament';d.className='scs-gt-overlay';document.body.appendChild(d)}groupAddEvent();return;}if(viewOnly)applyState(viewState);else load();assistStep=0;
  // Creation must enter Assist, never the legacy organizer page.
  // Continue retains an existing started tournament's organizer interface.
  if(mode==='new'){
@@ -250,11 +263,12 @@ function tournamentBottomNav(assisting){
  const active=assisting?(assistStep===1?'teams':assistStep>=2?'tournament':''):(tab==='players'?'teams':tab==='match'?'match':'tournament');
  const tournamentReady=!assisting||assistComplete(1);
  const liveReady=!assisting&&started;
- const items=[['home','Home','⌂',true],['teams','Teams','♙',true],['tournament','Tournament','⑂',tournamentReady],['match','Match Center','▣',liveReady]];
+ const items=[['home','Home','⌂',true],['teams','Clubs','♙',true],['tournament','Tournament','⑂',tournamentReady],['match','Match Center','▣',liveReady]];
  return '<nav class="scs-tm-organized-tabs scs-tm-bottom-nav scs-gt-bottom-nav" aria-label="Group tournament sections">'+items.map(([key,label,icon,enabled])=>'<button type="button" data-group-nav="'+key+'" class="'+(active===key?'active':'')+'" '+(enabled?'':'disabled')+(active===key?' aria-current="page"':'')+'><span class="scs-tm-nav-icon" aria-hidden="true">'+icon+'</span><span class="scs-tm-nav-label">'+label+'</span></button>').join('')+'</nav>';
 }
 function render(){
 if(!el())return;
+if(groupHome){groupHomeRender();return;}
 const assisting=assistMode&&!started;
 let body;
 if(assisting)body=assistStep===0?assistIndex():assistView();
@@ -282,7 +296,7 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
  const cancelCourt=el().querySelector('[data-cancel-court]');if(cancelCourt)cancelCourt.onclick=()=>{assigningMatch=null;render()};
  el().querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>{tab=x.dataset.tab;render()});
  el().querySelectorAll('[data-group-nav]').forEach(x=>x.onclick=()=>{
-  const target=x.dataset.groupNav;if(target==='home'){close();return}
+  const target=x.dataset.groupNav;if(target==='home'){if(groupMain){save();groupHomeRender()}else close();return}
   if(assisting){if(target==='teams')assistStep=1;else if(target==='tournament'&&assistComplete(1))assistStep=Math.max(2,Math.min(5,assistStep||2));else return;save();render();return}
   tab=target==='teams'?'players':target==='tournament'?(tab==='knockouts'?'knockouts':'groups'):target;save();render();
  });
