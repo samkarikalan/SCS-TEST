@@ -371,3 +371,8 @@
 .scs-ko-add-event{width:100%;background:#2869ba;color:white;border:0;border-radius:12px;font-size:15px;font-weight:700;padding:15px;margin:18px 0}
 
 .scs-ko-rename{background:transparent;border:0;color:#9dc9fa;font-size:12px;padding:3px 0 6px;text-align:left}
+
+/* V294: Restore clear in-step pattern preview before confirmation. */
+.scs-tm-pattern-preview-heading{display:flex;flex-direction:column;gap:4px;padding:10px 12px;margin:0 0 8px;background:#203552;border:1px solid #5478a7;border-radius:12px;color:#f4f8ff}
+.scs-tm-pattern-preview-heading strong{font-size:14px}.scs-tm-pattern-preview-heading span{font-size:12px;color:#bdd0e9}
+.scs-tm-pattern-dashboard + .scs-tm-workspace{margin-top:8px}
