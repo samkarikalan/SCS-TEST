@@ -1,10 +1,5 @@
 {
-  "version": "V315",
+  "version": "V316",
   "build": "2026-10-20",
-  "updated": [
-    "scs-api.js",
-    "team-tournament.js",
-    "index.html",
-    "sw.js"
-  ]
+  "updated": ["team-tournament.js", "index.html", "sw.js", "version.json"]
 }

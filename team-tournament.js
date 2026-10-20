@@ -276,7 +276,7 @@ function clubEditor(i){
  const initial=Array.isArray(existing?.selectedPlayerDetails)?existing.selectedPlayerDetails:[];
  return window.ScsApi.players.select({selected:initial,onDone:function(players){
   const clubs=[...new Set(players.map(p=>p.subClub))];
-  if(clubs.length!==1||players.length<6){alert('Select at least six players from one sub-club for this team.');return}
+  if(clubs.length!==1||!players.length){alert('Select players from one sub-club for this team.');return}
   const name=clubs[0],registeredClubId=null;
   if(state.clubs.some((c,j)=>j!==i&&c.name.toLowerCase()===name.toLowerCase())){alert('This sub-club is already registered.');return}
   const entry={...(existing||{}),name,players:players.map(p=>p.player),selectedPlayerDetails:players,registeredClubId,colorIndex:existing?.colorIndex??state.serial++};
