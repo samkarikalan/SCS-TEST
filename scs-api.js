@@ -9,6 +9,11 @@ api.events=api.events||{};
 api.cards.player=function(name,levelMarkup=''){
  return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+levelMarkup+'</span>';
 };
+// Shared player roster row: used by tournament modules with their own player selection rules.
+api.cards.rosterPlayer=function({name='',levelMarkup='',subClub='',accent='#5279aa'}={}){
+ const pill=subClub?'<span class="scs-team-inline-club-pill scs-api-subclub-pill" style="--pill-accent:'+esc(accent)+'">'+esc(subClub)+'</span>':'';
+ return '<div class="scs-api-roster-row">'+api.cards.player(name,levelMarkup)+pill+'</div>';
+};
 api.buttons.render=function({label='',action='',className='',disabled=false}={}){
  return '<button type="button"'+(action?' data-'+esc(action):'')+(className?' class="'+esc(className)+'"':'')+(disabled?' disabled':'')+'>'+esc(label)+'</button>';
 };

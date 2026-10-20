@@ -516,8 +516,11 @@ function tournamentPool(){
 // Reuse Round Manager's existing createRatingRing; no player/round changes.
 function tournamentPlayerRow(name){
  var level='<span class="scs-tournament-gender-level">—</span>';
- if(window.ScsApi&&ScsApi.cards&&typeof ScsApi.cards.player==='function')return ScsApi.cards.player(name,level);
- return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+level+'</span>';
+ var club=(draw&&Array.isArray(draw.selectedClubs)?draw.selectedClubs:[]).find(function(c){return Array.isArray(c.players)&&c.players.some(function(p){return String(p).toLocaleLowerCase()===String(name).toLocaleLowerCase()})});
+ var subClub=club?String(club.clubName||'').trim():'';
+ // Never invent a sub-club for manually imported or legacy players.
+ if(window.ScsApi&&ScsApi.cards&&typeof ScsApi.cards.rosterPlayer==='function')return ScsApi.cards.rosterPlayer({name:name,levelMarkup:level,subClub:subClub});
+ return '<div class="scs-api-roster-row"><span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+level+'</span></div>';
 }
 function hydrateTournamentPlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(root);}
 var poolExpanded=false;
@@ -783,7 +786,7 @@ function assistRemoveTeam(id){
 }
 function assistPlayersTeams(){
  if(!root)return;
- root.innerHTML='<section style="max-width:720px;margin:auto;padding:14px"><div style="background:#0f766e;color:white;border-radius:14px;padding:16px"><small>TOURNAMENT ASSIST · STEP 1 OF 5</small><h2>Players and Teams</h2></div>'+tournamentPoolCard()+assistTeamsCard()+'<div style="display:flex;justify-content:space-between;gap:12px;margin-top:18px"><button type="button" onclick="SCSTournament.assistBack()">‹ Assist Home</button><button type="button" onclick="SCSTournament.assistFinishPlayers()">Done ✓</button></div></section>';
+ root.innerHTML='<section style="max-width:720px;margin:auto;padding:14px"><div style="background:#0f766e;color:white;border-radius:14px;padding:16px"><small>'+esc((koMain&&koMain.title)||(draw&&draw.title)||'Tournament')+'</small><h2>Players and Teams</h2></div>'+tournamentPoolCard()+assistTeamsCard()+'<div style="display:flex;justify-content:space-between;gap:12px;margin-top:18px"><button type="button" onclick="SCSTournament.assistBack()">‹ Assist Home</button><button type="button" onclick="SCSTournament.assistFinishPlayers()">Done ✓</button></div></section>';
  hydrateTournamentPlayerCards();
 }
 function assistFinishPlayers(){
