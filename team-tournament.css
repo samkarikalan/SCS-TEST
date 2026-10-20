@@ -858,3 +858,17 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 #scsTeamTournament .scs-team-sheet{width:100%!important;max-width:100%!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;background:#192840!important;padding:calc(16px + env(safe-area-inset-top)) 16px 24px!important;}
 #scsTeamTournament .scs-team-bottom-nav{display:grid!important;position:fixed!important;bottom:0!important;left:0!important;right:0!important;z-index:1000002!important;pointer-events:auto!important;}
 #scsTeamTournament .scs-team-bottom-nav button{pointer-events:auto!important;}
+
+/* V303: same proven Team Tournament Home styles across all three hosts.
+   Home host is set by ScsApi.events.mountHome, not copied into each module. */
+.scs-api-home-host{box-sizing:border-box;}
+.scs-api-home-host>.scs-team-main-sheet{box-sizing:border-box;width:min(100%,720px);max-width:720px;margin:8px auto 28px;background:#192840;border:1px solid #4c6386;border-radius:18px;padding:18px 16px 20px;box-shadow:none;color:#f3f7ff;font:inherit;}
+.scs-api-home-host>.scs-team-main-sheet>header{display:flex;justify-content:space-between;align-items:center;border-bottom:0;padding:0;margin:0;gap:12px;}
+.scs-api-home-host>.scs-team-main-sheet>header strong{font-size:1.55rem;line-height:1.2;overflow-wrap:anywhere;}
+.scs-api-home-host>.scs-team-main-sheet>header button[data-close]{display:grid;place-items:center;min-width:42px;min-height:42px;padding:8px;border-radius:11px;background:#283e60;color:#fff;border:1px solid #6885ad;}
+.scs-api-home-host .scs-team-add-event-bottom,
+.scs-api-home-host .scs-team-event-home>button[data-add-event]{display:block!important;box-sizing:border-box!important;width:100%!important;min-height:50px!important;margin:22px 0 0!important;padding:12px 18px!important;border-radius:12px!important;border:1px solid #558eea!important;background:#3067bd!important;color:#fff!important;font:inherit!important;font-size:1rem!important;font-weight:750!important;text-align:center!important;cursor:pointer;}
+.scs-api-home-host .scs-team-event-summary{color:#aabfdc;font-size:.89rem;margin:3px 0 17px;padding-bottom:15px;border-bottom:1px solid #3c5272;}
+.scs-api-home-host .scs-team-event-empty{color:#b9cce4;text-align:center;padding:22px 8px;}
+.scs-api-home-host .scs-team-event-row{display:flex;align-items:center;width:100%;min-height:65px;padding:12px 0;border:0;border-bottom:1px solid #38506d;border-radius:0;background:transparent;color:#f3f7ff;text-align:left;}
+@media(max-width:420px){.scs-api-home-host>.scs-team-main-sheet{padding:15px 13px 18px;}}

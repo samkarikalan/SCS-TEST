@@ -566,7 +566,7 @@ function render(){let r=root();if(!r)return;
  }
 
  if(mainMode){
- r.innerHTML=window.ScsApi.events.homePage({title:main.title,events:main.events||[],activeEventId,viewOnly,navAttribute:'data-team-nav',ariaLabel:'Team tournament sections'});
+ window.ScsApi.events.mountHome(r,{title:main.title,events:main.events||[],activeEventId,viewOnly,navAttribute:'data-team-nav',ariaLabel:'Team tournament sections'});
  r.querySelector('[data-close]').onclick=close;
  r.querySelector('[data-add-event]')?.addEventListener('click',addEvent);
  r.querySelectorAll('[data-open-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.openEvent));

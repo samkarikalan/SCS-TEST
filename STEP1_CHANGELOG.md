@@ -1,9 +1,10 @@
-# V302 — Shared Step 1 Home and Add Event
+# V303 — Step 1 shared Home presentation correction
 
-- All three tournament types call ScsApi.events.homePage() for the Home shell, event list, active event indicator and bottom navigation.
-- Team uses ScsApi.events.eventForm() for its Add Event form.
-- Knockout and Group use ScsApi.events.requestEvent() for the same Add Event form and preserve their tournament-specific event initialization.
-- New Tournament form remains ScsApi.events.createForm()/requestCreate().
-- No changes to Players Manager, bracket generation, group matches or team fixtures.
+- Added `ScsApi.events.mountHome(root, options)` and `leaveHome(root)`.
+- Team, Knockout and Group Home paths call the same mounting function and HTML renderer.
+- Applied the proven Team Tournament Home styling to the shared Home host regardless of the host overlay class. In V302 the full-width Add Event CSS was scoped to `.scs-team-overlay` and therefore did not apply to Knockout/Group overlays.
+- Restored full-width Add Event button, consistent card/header/empty-state spacing, and button styling for all three formats.
+- Kept event generation, Players Manager and tournament-specific state untouched.
+- Changed asset cache query versions to V303.
 
-Verification: Node syntax checks, static source call-site checks and ZIP integrity. Browser/iPhone runtime flows are not verified.
+Checks: node --check for all four modified JS files; ZIP integrity. Browser/device interaction is not verified.

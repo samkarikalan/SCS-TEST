@@ -33,6 +33,15 @@ api.events.requestCreate=function({onCreate,onCancel}={}){
 api.events.homePage=function({title='',events=[],activeEventId=null,viewOnly=false,navAttribute='data-team-nav',ariaLabel='Tournament sections'}={}){
  return '<div class="scs-gt-sheet scs-team-sheet scs-team-main-sheet"><header><strong>'+esc(title)+'</strong><button type="button" data-close aria-label="Close">✕</button></header>'+api.events.home({events,activeEventId,viewOnly})+'</div>'+api.navigation.bottom({active:'home',attribute:navAttribute,ariaLabel});
 };
+// One Home mounting path for Team, Knockout and Group. Keep the original
+// host's tournament-specific logic separate from the shared Home presentation.
+api.events.mountHome=function(root,options={}){
+ if(!root)throw Error('Tournament Home host is required');
+ root.classList.add('scs-api-home-host');
+ root.innerHTML=api.events.homePage(options);
+ return root;
+};
+api.events.leaveHome=function(root){root?.classList.remove('scs-api-home-host')};
 api.events.eventForm=function({parentTitle=''}={}){
  return '<section class="scs-gt-card scs-team-main-create"><div class="scs-team-main-icon">🏸</div><h2>Add Event</h2><p>Create an event under <strong>'+esc(parentTitle)+'</strong>. Each event has its own matches and results.</p><label for="scs-event-name">Event Name</label><input id="scs-event-name" data-event-name type="text" maxlength="100" autocomplete="off" placeholder="e.g. Men’s Doubles" /><small data-event-error hidden>Please enter an event name.</small><div class="scs-team-main-actions"><button type="button" data-event-cancel>Cancel</button><button type="button" class="scs-gt-primary" data-event-create>Create Event →</button></div></section>';
 };
