@@ -96,20 +96,25 @@ api.players.select=async function({selected=[],onDone,onCancel}={}){
  const selectedMap=new Map((selected||[]).filter(p=>p&&p.player).map(p=>[String(p.subClubId||p.subClub||'')+'|'+String(p.playerId||p.player).toLowerCase(),p]));
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal scs-api-player-selector';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
  modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Tournament Players Manager</h3><p>Select players only from the selected main club’s sub-clubs</p></div><label>Sub-club<select data-subclub><option value="">Select a sub-club</option></select></label><p data-status role="status">Loading sub-clubs…</p><div data-players></div><h4 data-count>Selected players ('+selectedMap.size+')</h4></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-done>Done</button></div></div>';
- document.body.appendChild(modal);
+ // Mount inside the invoking tournament overlay so its existing modal CSS and
+ // stacking context apply. In particular, Team Tournament has a high-z-index
+ // overlay and a body-mounted selector would be hidden underneath it on iOS.
+ const host=document.activeElement?.closest?.('.scs-team-overlay, .scs-gt-overlay, .scs-tm-overlay') || document.body;
+ host.appendChild(modal);
  const sel=modal.querySelector('[data-subclub]'),status=modal.querySelector('[data-status]'),list=modal.querySelector('[data-players]'),count=modal.querySelector('[data-count]');
  const finish=(value)=>{modal.remove();if(value===null){if(onCancel)onCancel();return null}if(onDone)onDone(value.map(p=>({playerId:p.playerId||null,player:p.player,subClubId:p.subClubId||null,subClub:p.subClub,gender:p.gender,level:p.level})));return value};
  modal.querySelector('[data-cancel]').onclick=()=>finish(null);
  const redrawCount=()=>count.textContent='Selected players ('+selectedMap.size+')';
  let clubs=[];
- try{const parent=await scsResolveOrganizerClub();clubs=await dbGetSubClubs(parent.id);clubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});status.textContent=clubs.length?'Choose a sub-club to select players.':'No registered sub-clubs found.'}
+ const timed=(work)=>Promise.race([Promise.resolve().then(work),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Request timed out. Check connection and try again.')),15000))]);
+ try{const parent=await timed(()=>scsResolveOrganizerClub());clubs=await timed(()=>dbGetSubClubs(parent.id));clubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});status.textContent=clubs.length?'Choose a sub-club to select players.':'No registered sub-clubs found.'}
  catch(e){status.textContent='Could not load sub-clubs: '+(e.message||e)}
  sel.onchange=async()=>{
   const id=sel.value;list.innerHTML='';if(!id)return;status.textContent='Loading players…';
   try{
-   const memberships=await sbGet('memberships','club_id=eq.'+encodeURIComponent(id)+'&select=nickname,player_id');
+   const memberships=await timed(()=>sbGet('memberships','club_id=eq.'+encodeURIComponent(id)+'&select=nickname,player_id'));
    const ids=[...new Set((memberships||[]).map(m=>m.player_id).filter(Boolean))];let info=new Map();
-   if(ids.length){const rows=await sbGet('players','id=in.('+ids.map(encodeURIComponent).join(',')+')&select=id,gender,level');info=new Map((rows||[]).map(p=>[String(p.id),p]))}
+   if(ids.length){const rows=await timed(()=>sbGet('players','id=in.('+ids.map(encodeURIComponent).join(',')+')&select=id,gender,level'));info=new Map((rows||[]).map(p=>[String(p.id),p]))}
    if(sel.value!==id)return;
    const club=clubs.find(c=>String(c.id)===String(id));const subClub=club?.name||'';
    const players=(memberships||[]).filter(m=>m.nickname).map(m=>{
