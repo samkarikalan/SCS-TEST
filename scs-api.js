@@ -30,6 +30,20 @@ api.events.requestCreate=function({onCreate,onCancel}={}){
  backdrop.querySelector('[data-main-name]').addEventListener('keydown',e=>{if(e.key==='Enter')submit()});
  setTimeout(()=>backdrop.querySelector('[data-main-name]')?.focus(),0);
 };
+api.events.homePage=function({title='',events=[],activeEventId=null,viewOnly=false,navAttribute='data-team-nav',ariaLabel='Tournament sections'}={}){
+ return '<div class="scs-gt-sheet scs-team-sheet scs-team-main-sheet"><header><strong>'+esc(title)+'</strong><button type="button" data-close aria-label="Close">✕</button></header>'+api.events.home({events,activeEventId,viewOnly})+'</div>'+api.navigation.bottom({active:'home',attribute:navAttribute,ariaLabel});
+};
+api.events.eventForm=function({parentTitle=''}={}){
+ return '<section class="scs-gt-card scs-team-main-create"><div class="scs-team-main-icon">🏸</div><h2>Add Event</h2><p>Create an event under <strong>'+esc(parentTitle)+'</strong>. Each event has its own matches and results.</p><label for="scs-event-name">Event Name</label><input id="scs-event-name" data-event-name type="text" maxlength="100" autocomplete="off" placeholder="e.g. Men’s Doubles" /><small data-event-error hidden>Please enter an event name.</small><div class="scs-team-main-actions"><button type="button" data-event-cancel>Cancel</button><button type="button" class="scs-gt-primary" data-event-create>Create Event →</button></div></section>';
+};
+api.events.requestEvent=function({parentTitle='',onCreate,onCancel}={}){
+ const backdrop=document.createElement('div');backdrop.className='scs-gt-overlay scs-team-overlay';backdrop.style.zIndex='2147483000';
+ backdrop.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-create-sheet" role="dialog" aria-label="Add Event"><header><strong>'+esc(parentTitle)+'</strong><button type="button" data-event-cancel aria-label="Close">✕</button></header>'+api.events.eventForm({parentTitle})+'</div>';
+ document.body.appendChild(backdrop);const input=backdrop.querySelector('[data-event-name]');
+ const cancel=()=>{backdrop.remove();onCancel?.()};backdrop.querySelectorAll('[data-event-cancel]').forEach(b=>b.onclick=cancel);
+ const submit=()=>{const name=input.value.trim();if(!name){backdrop.querySelector('[data-event-error]').hidden=false;input.focus();return}backdrop.remove();onCreate?.(name)};
+ backdrop.querySelector('[data-event-create]').onclick=submit;input.onkeydown=e=>{if(e.key==='Enter')submit()};setTimeout(()=>input.focus(),0);
+};
 api.events.home=function({events=[],activeEventId=null,viewOnly=false}={}){
  const countClubs=new Set(events.flatMap(e=>Array.isArray(e.clubs)?e.clubs:[]).filter(Boolean)).size;
  const eventGender=e=>/^L(?:-|\d|$)/i.test(String(e.title||'').trim())?'ladies':/^M(?:-|\d|$)/i.test(String(e.title||'').trim())?'men':'other';

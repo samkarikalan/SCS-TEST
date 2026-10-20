@@ -91,17 +91,8 @@ function submitMain(){
 function mainNameForm(){return window.ScsApi.events.createForm()}
 
 let creatingEvent=false;
-function eventNameForm(){
- return '<section class="scs-gt-card scs-team-main-create">'+
- '<div class="scs-team-main-icon">🏸</div>'+
- '<h2>Add Event</h2>'+
- '<p>Create an event under <strong>'+esc(main.title)+'</strong>. Each event has its own clubs, encounters, scores and rankings.</p>'+
- '<label for="scs-event-name">Event Name</label>'+
- '<input id="scs-event-name" data-event-name type="text" maxlength="100" autocomplete="off" placeholder="e.g. Men’s Doubles" />'+
- '<small data-event-error hidden>Please enter an event name.</small>'+
- '<div class="scs-team-main-actions"><button type="button" data-event-cancel>Cancel</button><button type="button" class="scs-gt-primary" data-event-create>Create Event →</button></div>'+
- '</section>';
-}
+function eventNameForm(){return window.ScsApi.events.eventForm({parentTitle:main.title})}
+
 function addEvent(){
  if(viewOnly||!main)return;
  creatingEvent=true;mainMode=true;render();
@@ -575,7 +566,7 @@ function render(){let r=root();if(!r)return;
  }
 
  if(mainMode){
- r.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-main-sheet"><header><strong>'+esc(main.title)+'</strong><button type="button" data-close aria-label="Close">✕</button></header>'+mainHome()+'</div>'+teamBottomNav();
+ r.innerHTML=window.ScsApi.events.homePage({title:main.title,events:main.events||[],activeEventId,viewOnly,navAttribute:'data-team-nav',ariaLabel:'Team tournament sections'});
  r.querySelector('[data-close]').onclick=close;
  r.querySelector('[data-add-event]')?.addEventListener('click',addEvent);
  r.querySelectorAll('[data-open-event]').forEach(b=>b.onclick=()=>openEvent(b.dataset.openEvent));
