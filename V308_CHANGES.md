@@ -1,0 +1,1 @@
+V308: Shared tournament selector restricted to organizer main club sub-clubs; returns playerId/subClubId with player/subClub/gender/level. Knockout cards read saved selectedPlayerDetails. Removed unsafe global name-only level lookup. No Supabase mutations. Legacy cards without selected details show unavailable rather than an unrelated club level. Browser testing not performed.
