@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V165" defer></script>
-  <script src="tournament-bracket.js?v=V300" defer></script>
+  <script src="tournament-bracket.js?v=V301" defer></script>
   <script src="court-center.js?v=V155" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -603,11 +603,11 @@ function scsStartKnockoutTournament(){
   try{localStorage.setItem('scs_last_tournament_type','knockout')}catch(_){}
   if(typeof window.scsResetTournamentCloudIdentity==='function')window.scsResetTournamentCloudIdentity('knockout');
   scsTournamentRememberParent('scsTournamentTypePicker');var picker=document.getElementById('scsTournamentTypePicker');if(picker)picker.hidden=true;
-  if(window.SCSTournament&&typeof window.SCSTournament.open==='function'){window.SCSTournament.open(window.SCSTournament.init(),false);return}
+  if(window.SCSTournament&&typeof window.SCSTournament.open==='function'){window.SCSTournament.open('new');return}
   alert('Tournament is still loading. Please try again.');
 }
 </script>
-<link rel="stylesheet" href="./group-tournament.css?v=V195"><script src="./shared-match-center.js?v=V158" defer></script><script src="./group-tournament.js?v=V300" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V291"><script src="./scs-api.js?v=V300" defer></script><script src="./team-tournament.js?v=V300" defer></script>
+<link rel="stylesheet" href="./group-tournament.css?v=V195"><script src="./shared-match-center.js?v=V158" defer></script><script src="./group-tournament.js?v=V301" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V291"><script src="./scs-api.js?v=V301" defer></script><script src="./team-tournament.js?v=V301" defer></script>
 
 <style id="scs-tournament-manager-v1">
 .scs-tmgr-overlay{position:fixed;inset:0;z-index:10038;background:rgba(3,8,18,.78);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;padding:16px}
