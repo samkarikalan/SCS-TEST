@@ -1,5 +1,5 @@
 {
-  "version": "V317",
+  "version": "V318",
   "build": "2026-10-20",
-  "updated": ["team-tournament.js", "index.html", "sw.js", "version.json"]
+  "updated": ["tournament-bracket.js", "index.html", "sw.js", "version.json"]
 }
