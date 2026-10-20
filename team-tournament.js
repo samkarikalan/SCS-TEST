@@ -241,11 +241,11 @@ function registry(){
  return [...new Map(names.map(n=>[playerKey(n),n])).values()].sort((a,b)=>a.localeCompare(b));
 }
 function playerRow(name){return window.ScsApi.cards.player(name,teamLevelLabel(name));}
-function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(root());}
+function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel){window.SCSTournamentPlayerLevel.setRoster(root(),state.clubs.flatMap(c=>c.selectedPlayerDetails||[]));window.SCSTournamentPlayerLevel.hydrate(root());}}
 let editingClub=null,clubDraft=null;
 const teamPlayerLevels=new Map();
-function teamLevel(name){const v=teamPlayerLevels.get(playerKey(name));return Number.isInteger(v)&&v>=1&&v<=5?v:null;}
-function teamLevelLabel(name){const v=teamLevel(name);return '<span class="scs-team-level-badge scs-tournament-gender-level" data-tm-level-name="'+esc(name)+'" title="Player level">'+(v===null?'—':'M'+v)+'</span>'; }
+function teamLevel(name){const record=state.clubs.flatMap(c=>c.selectedPlayerDetails||[]).find(p=>playerKey(p.player)===playerKey(name));const v=record?.level??teamPlayerLevels.get(playerKey(name));return v!==null&&v!==undefined&&Number.isInteger(Number(v))&&Number(v)>=1&&Number(v)<=5?Number(v):null;}
+function teamLevelLabel(name){const v=teamLevel(name);return '<span class="scs-team-level-badge scs-tournament-gender-level" data-tm-level-name="'+esc(name)+'" title="Player level">'+(v===null?'—':(state.clubs.flatMap(c=>c.selectedPlayerDetails||[]).find(p=>playerKey(p.player)===playerKey(name))?.gender||'').match(/female|woman|lady|women|^f$/i)?'L'+v:'M'+v)+'</span>'; }
 
 function playersManagerReturned(){
  if(!window.__scsTeamPlayersReturn)return false;
