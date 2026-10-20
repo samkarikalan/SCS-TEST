@@ -126,10 +126,12 @@ api.players.select=async function({selected=[],onDone,onCancel}={}){
     const key=String(p.subClubId||p.subClub)+'|'+String(p.playerId||p.player).toLowerCase();const row=document.createElement('label');row.className='scs-gt-player scs-team-level-row scs-api-select-row';
     const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=selectedMap.has(key)||selectedMap.has(p.subClub+'|'+p.player.toLowerCase());checkbox.onchange=()=>{if(checkbox.checked){selectedMap.delete(p.subClub+'|'+p.player.toLowerCase());selectedMap.set(key,p);}else {selectedMap.delete(key);selectedMap.delete(p.subClub+'|'+p.player.toLowerCase())}redrawCount()};
     const content=document.createElement('span');content.className='scs-api-select-content';
-    content.innerHTML=api.cards.rosterPlayer({name:p.player,subClub:p.subClub,level:p.level,gender:p.gender,levelMarkup:'<span class="scs-team-level-badge">'+esc((p.gender==='Female'?'L':p.gender==='Male'?'M':'')+(p.level??'—'))+'</span>'});
+    content.innerHTML=api.cards.rosterPlayer({name:p.player,subClub:p.subClub,level:p.level,gender:p.gender,levelMarkup:'<span class="scs-tournament-gender-level">'+esc((p.gender==='Female'?'L':p.gender==='Male'?'M':'')+(p.level??'—'))+'</span>'});
+    const slot=content.querySelector('.scs-tm-ring-slot');if(slot){slot.dataset.tmPlayerId=p.playerId||'';slot.dataset.tmSubclubId=p.subClubId||'';slot.dataset.tmGender=p.gender||'';slot.dataset.tmLevel=p.level??'';}
     row.append(checkbox,content);list.appendChild(row);
    });
    status.textContent=players.length+' registered players';
+   if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(list);
   }catch(e){status.textContent='Could not load players: '+(e.message||e)}
  };
  modal.querySelector('[data-done]').onclick=()=>finish([...selectedMap.values()]);

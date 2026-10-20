@@ -875,3 +875,16 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 
 /* V306: common player selector */
 .scs-api-player-selector .scs-api-select-row{display:flex;align-items:center;gap:12px;width:100%;padding:10px 8px;box-sizing:border-box}.scs-api-player-selector .scs-api-select-content{flex:1;min-width:0}.scs-api-player-selector .scs-api-roster-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px}.scs-api-player-selector [data-players]{max-height:48vh;overflow:auto}.scs-api-player-selector .scs-api-subclub-pill{white-space:nowrap}
+
+/* V321: compact tournament player picker, reuse knockout player ring and card. */
+.scs-api-player-selector [data-players]{max-height:55vh;overflow-y:auto;display:flex;flex-direction:column;gap:7px}
+.scs-api-player-selector .scs-api-select-row{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;min-height:54px;border:1px solid #496990;border-radius:12px;background:#344c70;box-sizing:border-box;margin:0}
+.scs-api-player-selector .scs-api-select-row>input[type=checkbox]{flex:0 0 20px;width:20px;height:20px;margin:0;accent-color:#6b9df1}
+.scs-api-player-selector .scs-api-select-content{display:block;flex:1;min-width:0}
+.scs-api-player-selector .scs-api-roster-row{display:flex;align-items:center;gap:8px;width:100%;min-width:0}
+.scs-api-player-selector .scs-tm-shared-player{display:flex;align-items:center;gap:8px;flex:1;min-width:0}
+.scs-api-player-selector .scs-tm-shared-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.scs-api-player-selector .scs-tm-ring-slot{flex:0 0 30px;width:30px;height:30px}
+.scs-api-player-selector .scs-tournament-gender-level{white-space:nowrap;margin-left:auto}
+.scs-api-player-selector .scs-api-subclub-pill{flex:none;white-space:nowrap}
+.scs-api-player-selector .scs-team-editor-head p{margin:4px 0 8px}
