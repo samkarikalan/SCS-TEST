@@ -4,8 +4,16 @@
 const cache=new Map(),pending=new Map(),key=n=>String(n||'').trim().toLocaleLowerCase();
 const valid=v=>v!==null&&v!==undefined&&Number.isInteger(Number(v))&&Number(v)>=1&&Number(v)<=5;
 async function load(name){
- // Legacy cards have no selected player identity; never query across unrelated clubs.
- return null;
+ const k=key(name);if(cache.has(k))return cache.get(k);
+ if(pending.has(k))return pending.get(k);
+ if(typeof sbGet!=='function')return null;
+ const job=(async()=>{try{
+ const rows=await sbGet('players','name=eq.'+encodeURIComponent(name)+'&select=id,name,gender,level&limit=2');
+ const p=rows&&rows.length===1?rows[0]:null;
+ const data=p&&valid(p.level)?{level:Number(p.level),gender:p.gender}:null;
+ cache.set(k,data);return data;
+ }catch(e){console.warn('Level lookup',e);return null}finally{pending.delete(k)}})();
+ pending.set(k,job);return job;
 }
 function ring(name,gender,level){
  const e=createRatingRing(name,gender||'Male',valid(level)?6-Number(level):null);

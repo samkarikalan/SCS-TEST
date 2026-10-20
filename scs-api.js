@@ -10,10 +10,9 @@ api.cards.player=function(name,levelMarkup=''){
  return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+levelMarkup+'</span>';
 };
 // Shared player roster row: used by tournament modules with their own player selection rules.
-api.cards.rosterPlayer=function({name='',levelMarkup='',subClub='',accent='#5279aa',level=undefined,gender=null}={}){
+api.cards.rosterPlayer=function({name='',levelMarkup='',subClub='',accent='#5279aa'}={}){
  const pill=subClub?'<span class="scs-team-inline-club-pill scs-api-subclub-pill" style="--pill-accent:'+esc(accent)+'">'+esc(subClub)+'</span>':'';
- const player=level!==undefined?'<span class="scs-tm-shared-player"><span class="scs-tm-shared-name">'+esc(name)+'</span>'+levelMarkup+'</span>':api.cards.player(name,levelMarkup);
- return '<div class="scs-api-roster-row">'+player+pill+'</div>';
+ return '<div class="scs-api-roster-row">'+api.cards.player(name,levelMarkup)+pill+'</div>';
 };
 api.buttons.render=function({label='',action='',className='',disabled=false}={}){
  return '<button type="button"'+(action?' data-'+esc(action):'')+(className?' class="'+esc(className)+'"':'')+(disabled?' disabled':'')+'>'+esc(label)+'</button>';
@@ -93,12 +92,12 @@ api.players.pickRegisteredRoster=pickRegisteredRoster;
 
 // One tournament-wide player selector. Competition modules own pair/group rules.
 api.players.select=async function({selected=[],onDone,onCancel}={}){
- const selectedMap=new Map((selected||[]).filter(p=>p&&p.player).map(p=>[String(p.subClubId||p.subClub||'')+'|'+String(p.playerId||p.player).toLowerCase(),p]));
+ const selectedMap=new Map((selected||[]).filter(p=>p&&p.player).map(p=>[String(p.subClub||'')+'|'+String(p.player).toLowerCase(),p]));
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal scs-api-player-selector';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
- modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Tournament Players Manager</h3><p>Select players only from the selected main club’s sub-clubs</p></div><label>Sub-club<select data-subclub><option value="">Select a sub-club</option></select></label><p data-status role="status">Loading sub-clubs…</p><div data-players></div><h4 data-count>Selected players ('+selectedMap.size+')</h4></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-done>Done</button></div></div>';
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Tournament Players Manager</h3><p>Select players from any registered sub-club</p></div><label>Sub-club<select data-subclub><option value="">Select a sub-club</option></select></label><p data-status role="status">Loading sub-clubs…</p><div data-players></div><h4 data-count>Selected players ('+selectedMap.size+')</h4></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-done>Done</button></div></div>';
  document.body.appendChild(modal);
  const sel=modal.querySelector('[data-subclub]'),status=modal.querySelector('[data-status]'),list=modal.querySelector('[data-players]'),count=modal.querySelector('[data-count]');
- const finish=(value)=>{modal.remove();if(value===null){if(onCancel)onCancel();return null}if(onDone)onDone(value.map(p=>({playerId:p.playerId||null,player:p.player,subClubId:p.subClubId||null,subClub:p.subClub,gender:p.gender,level:p.level})));return value};
+ const finish=(value)=>{modal.remove();if(value===null){if(onCancel)onCancel();return null}if(onDone)onDone(value.map(p=>({player:p.player,subClub:p.subClub,gender:p.gender,level:p.level})));return value};
  modal.querySelector('[data-cancel]').onclick=()=>finish(null);
  const redrawCount=()=>count.textContent='Selected players ('+selectedMap.size+')';
  let clubs=[];
@@ -115,16 +114,16 @@ api.players.select=async function({selected=[],onDone,onCancel}={}){
    const players=(memberships||[]).filter(m=>m.nickname).map(m=>{
     const details=info.get(String(m.player_id))||{};
     const g=String(details.gender||'').toLowerCase();const gender=/^(f|female|woman|women|lady|ladies|l)$/.test(g)?'Female':/^(m|male|man|men)$/.test(g)?'Male':(details.gender||null);
-    const n=Number(details.level);return {playerId:m.player_id||null,player:String(m.nickname).trim(),subClubId:id,subClub,gender,level:Number.isInteger(n)&&n>=1&&n<=5?n:null};
+    const n=Number(details.level);return {player:String(m.nickname).trim(),subClub,gender,level:Number.isInteger(n)&&n>=1&&n<=5?n:null};
    });
    list.innerHTML='';players.forEach(p=>{
-    const key=String(p.subClubId||p.subClub)+'|'+String(p.playerId||p.player).toLowerCase();const row=document.createElement('label');row.className='scs-gt-player scs-team-level-row scs-api-select-row';
-    const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=selectedMap.has(key)||selectedMap.has(p.subClub+'|'+p.player.toLowerCase());checkbox.onchange=()=>{if(checkbox.checked){selectedMap.delete(p.subClub+'|'+p.player.toLowerCase());selectedMap.set(key,p);}else {selectedMap.delete(key);selectedMap.delete(p.subClub+'|'+p.player.toLowerCase())}redrawCount()};
+    const key=p.subClub+'|'+p.player.toLowerCase();const row=document.createElement('label');row.className='scs-gt-player scs-team-level-row scs-api-select-row';
+    const checkbox=document.createElement('input');checkbox.type='checkbox';checkbox.checked=selectedMap.has(key);checkbox.onchange=()=>{if(checkbox.checked)selectedMap.set(key,p);else selectedMap.delete(key);redrawCount()};
     const content=document.createElement('span');content.className='scs-api-select-content';
-    content.innerHTML=api.cards.rosterPlayer({name:p.player,subClub:p.subClub,level:p.level,gender:p.gender,levelMarkup:'<span class="scs-team-level-badge">'+esc((p.gender==='Female'?'L':p.gender==='Male'?'M':'')+(p.level??'—'))+'</span>'});
+    content.innerHTML=api.cards.rosterPlayer({name:p.player,subClub:p.subClub,levelMarkup:'<span class="scs-team-level-badge">'+esc((p.gender==='Female'?'L':p.gender==='Male'?'M':'')+(p.level??'—'))+'</span>'});
     row.append(checkbox,content);list.appendChild(row);
    });
-   status.textContent=players.length+' registered players';
+   status.textContent=players.length+' registered players';if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(modal);
   }catch(e){status.textContent='Could not load players: '+(e.message||e)}
  };
  modal.querySelector('[data-done]').onclick=()=>finish([...selectedMap.values()]);

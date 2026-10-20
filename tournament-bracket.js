@@ -515,19 +515,12 @@ function tournamentPool(){
 }
 // Reuse Round Manager's existing createRatingRing; no player/round changes.
 function tournamentPlayerRow(name){
- // Resolve only the selected tournament roster. Never query the global players table by name.
- var details=draw&&Array.isArray(draw.selectedPlayerDetails)?draw.selectedPlayerDetails:[];
- var matches=details.filter(function(p){return String(p.player||'').trim().toLocaleLowerCase()===String(name||'').trim().toLocaleLowerCase()});
- var entry=matches.length===1?matches[0]:null;
+ var level='<span class="scs-tournament-gender-level">—</span>';
  var club=(draw&&Array.isArray(draw.selectedClubs)?draw.selectedClubs:[]).find(function(c){return Array.isArray(c.players)&&c.players.some(function(p){return String(p).toLocaleLowerCase()===String(name).toLocaleLowerCase()})});
- var subClub=entry?String(entry.subClub||'').trim():(club?String(club.clubName||'').trim():'');
- var n=entry?Number(entry.level):NaN;
- var valid=Number.isInteger(n)&&n>=1&&n<=5;
- var prefix=entry&&entry.gender==='Female'?'L':entry&&entry.gender==='Male'?'M':'';
- var level='<span class="scs-tournament-gender-level">'+(valid?prefix+n:'—')+'</span>';
- // Explicit level data prevents any unrelated-club name lookup from overriding the result.
- if(window.ScsApi&&ScsApi.cards&&typeof ScsApi.cards.rosterPlayer==='function')return ScsApi.cards.rosterPlayer({name:name,levelMarkup:level,subClub:subClub,level:valid?n:null,gender:entry&&entry.gender});
- return '<div class="scs-api-roster-row"><span class="scs-tm-shared-player"><span class="scs-tm-shared-name">'+esc(name)+'</span>'+level+'</span></div>';
+ var subClub=club?String(club.clubName||'').trim():'';
+ // Never invent a sub-club for manually imported or legacy players.
+ if(window.ScsApi&&ScsApi.cards&&typeof ScsApi.cards.rosterPlayer==='function')return ScsApi.cards.rosterPlayer({name:name,levelMarkup:level,subClub:subClub});
+ return '<div class="scs-api-roster-row"><span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+level+'</span></div>';
 }
 function hydrateTournamentPlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(root);}
 var poolExpanded=false;
