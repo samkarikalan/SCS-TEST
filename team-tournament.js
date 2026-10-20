@@ -88,17 +88,8 @@ function submitMain(){
  if(typeof window.dbSaveTournamentState==='function')window.dbSaveTournamentState('team',main).then(id=>{if(id){main._scsCloudTournamentId=id;persistMain()}}).catch(e=>console.warn('Main tournament save:',e));
  openMain();
 }
-function mainNameForm(){
- return '<section class="scs-gt-card scs-team-main-create">'+
- '<div class="scs-team-main-icon">🏆</div>'+
- '<h2>New Team Tournament</h2>'+
- '<p>Enter a tournament name. You can add Men’s Doubles, Women’s Doubles and other events on the next page.</p>'+
- '<label for="scs-main-name">Tournament Name</label>'+
- '<input id="scs-main-name" data-main-name type="text" maxlength="100" autocomplete="off" placeholder="e.g. Spring Tournament 2027" />'+
- '<small data-main-error hidden>Please enter a tournament name.</small>'+
- '<div class="scs-team-main-actions"><button type="button" data-main-cancel>Cancel</button><button type="button" class="scs-gt-primary" data-main-create>Create Tournament →</button></div>'+
- '</section>';
-}
+function mainNameForm(){return window.ScsApi.events.createForm()}
+
 let creatingEvent=false;
 function eventNameForm(){
  return '<section class="scs-gt-card scs-team-main-create">'+

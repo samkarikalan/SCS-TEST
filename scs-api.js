@@ -16,6 +16,20 @@ api.navigation.bottom=function({active='home',attribute='data-team-nav',ariaLabe
  const items=[['home','Home','⌂'],['clubs','Clubs','♙'],['tournament','Tournament','⑂'],['match','Match Center','▣']];
  return '<nav class="scs-tm-organized-tabs scs-tm-bottom-nav scs-gt-bottom-nav scs-team-bottom-nav" aria-label="'+esc(ariaLabel)+'">'+items.map(([key,label,icon])=>'<button type="button" '+esc(attribute)+'="'+key+'" class="'+(active===key?'active':'')+'"'+(active===key?' aria-current="page"':'')+'><span class="scs-tm-nav-icon" aria-hidden="true">'+icon+'</span><span class="scs-tm-nav-label">'+label+'</span></button>').join('')+'</nav>';
 };
+api.events.createForm=function(){
+ return '<section class="scs-gt-card scs-team-main-create"><div class="scs-team-main-icon">🏆</div><h2>New Tournament</h2><p>Enter a tournament name. You can add Men’s Doubles, Women’s Doubles and other events on the next page.</p><label for="scs-main-name">Tournament Name</label><input id="scs-main-name" data-main-name type="text" maxlength="100" autocomplete="off" placeholder="e.g. Spring Tournament 2027" /><small data-main-error hidden>Please enter a tournament name.</small><div class="scs-team-main-actions"><button type="button" data-main-cancel>Cancel</button><button type="button" class="scs-gt-primary" data-main-create>Create Tournament →</button></div></section>';
+};
+api.events.requestCreate=function({onCreate,onCancel}={}){
+ const backdrop=document.createElement('div');backdrop.className='scs-gt-overlay scs-team-overlay';backdrop.id='scs-api-create-overlay';backdrop.style.zIndex='2147483000';
+ backdrop.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-create-sheet" role="dialog" aria-label="Create Tournament"><header><strong>Tournament</strong><button type="button" data-main-cancel aria-label="Close">✕</button></header>'+api.events.createForm()+'</div>';
+ document.body.appendChild(backdrop);
+ const cancel=()=>{backdrop.remove();if(onCancel)onCancel()};
+ backdrop.querySelectorAll('[data-main-cancel]').forEach(b=>b.addEventListener('click',cancel));
+ const submit=()=>{const input=backdrop.querySelector('[data-main-name]');const name=input.value.trim();if(!name){backdrop.querySelector('[data-main-error]').hidden=false;input.focus();return}backdrop.remove();if(onCreate)onCreate(name)};
+ backdrop.querySelector('[data-main-create]').addEventListener('click',submit);
+ backdrop.querySelector('[data-main-name]').addEventListener('keydown',e=>{if(e.key==='Enter')submit()});
+ setTimeout(()=>backdrop.querySelector('[data-main-name]')?.focus(),0);
+};
 api.events.home=function({events=[],activeEventId=null,viewOnly=false}={}){
  const countClubs=new Set(events.flatMap(e=>Array.isArray(e.clubs)?e.clubs:[]).filter(Boolean)).size;
  const eventGender=e=>/^L(?:-|\d|$)/i.test(String(e.title||'').trim())?'ladies':/^M(?:-|\d|$)/i.test(String(e.title||'').trim())?'men':'other';
