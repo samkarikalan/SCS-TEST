@@ -486,3 +486,21 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-team-club-pill{background:var(--scs-team-club-color,#5279aa)!important;border:0!important;overflow:hidden;text-overflow:ellipsis}
 .scs-shared-pick-row{min-height:66px;width:100%;padding:8px 10px}
 .scs-shared-pick-check{flex-shrink:0}
+
+/* V347: single full-width row per player; team actions in compact overflow menu. */
+.scs-tm-compact-team{position:relative;background:#142d4b;border:2px solid #3184df;border-left:7px solid #2899f0;border-radius:14px;padding:9px 12px;min-width:0}
+.scs-tm-compact-team-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px;color:#b9d6f8;font-size:.8rem;font-weight:700}
+.scs-tm-compact-players{display:flex;flex-direction:column;min-width:0}
+.scs-tm-compact-player{display:flex;align-items:center;min-width:0;padding:7px 0}
+.scs-tm-compact-player+.scs-tm-compact-player{border-top:1px solid #335476}
+.scs-tm-compact-player .scs-api-roster-row{width:100%;min-width:0}
+.scs-tm-compact-player .scs-tm-shared-player{display:flex;align-items:center;min-width:0;width:100%;gap:9px}
+.scs-tm-compact-player .scs-team-player-details{flex:1;min-width:0}
+.scs-tm-compact-actions{position:relative;flex:0 0 auto}
+.scs-tm-compact-actions summary{list-style:none;cursor:pointer;display:grid;place-items:center;width:36px;height:34px;border-radius:9px;background:#365fb0;color:white;font-size:24px;line-height:1}
+.scs-tm-compact-actions summary::-webkit-details-marker{display:none}
+.scs-tm-compact-action-menu{position:absolute;z-index:50;right:0;top:36px;display:flex;flex-direction:column;gap:3px;width:158px;background:#243854;border:1px solid #7394c5;border-radius:10px;padding:5px;box-shadow:0 6px 20px #0008}
+.scs-tm-compact-action-menu button{width:100%;min-height:42px;text-align:left;border:0;border-radius:7px;background:transparent;color:#fff;font:inherit;font-size:.88rem;padding:8px}
+.scs-tm-compact-action-menu button:last-child{color:#ffb3b3}
+.scs-tm-compact-action-menu button:active{background:#38557c}
+@media(max-width:480px){.scs-tm-compact-team{padding:7px 9px}.scs-tm-compact-player{padding:5px 0}}
