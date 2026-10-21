@@ -468,5 +468,4 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-shared-pair-panel header{display:flex;justify-content:space-between;align-items:center}
 .scs-shared-pair-panel header button{font-size:28px;background:none;color:#fff;border:0}
 
-/* V344: empty player pool is explicit, not a blank modal */
-.scs-shared-pick-empty{margin:12px 0;padding:14px;border:1px dashed var(--border-color,#7386a5);border-radius:10px;color:inherit;line-height:1.5}
+.scs-shared-pick-empty{padding:14px 12px;margin:8px 0;border:1px solid var(--border,#60728c);border-radius:10px;line-height:1.5;color:inherit}

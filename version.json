@@ -1,11 +1,12 @@
 {
-  "version": "V344",
+  "version": "V345",
   "build": "2026-10-21",
+  "baseline": "user-uploaded V342",
   "updated": [
+    "index.html",
     "tournament-team-picker.js",
     "tournament-bracket.js",
     "tournament-bracket.css",
-    "index.html",
     "sw.js",
     "version.json"
   ]

@@ -570,7 +570,14 @@ function restoreTournamentPlayerPool(d){
 function tournamentPool(){
  if(!draw)return [];
  if(draw.live===true||draw.livePage===true)restoreTournamentPlayerPool(draw);
- return Array.isArray(draw.playerPool)?draw.playerPool:[];
+ // Tournament player manager can contain players who have not yet been placed
+ // in a bracket entry. Do not limit the picker to previously assigned teams.
+ var names=[],seen=new Set();
+ function add(value){var n=typeof value==='string'?value:value&&(value.player||value.name);n=String(n||'').trim();var key=n.toLocaleLowerCase();if(n&&!seen.has(key)){seen.add(key);names.push(n)}}
+ (Array.isArray(draw.playerPool)?draw.playerPool:[]).forEach(add);
+ (Array.isArray(draw.selectedPlayerDetails)?draw.selectedPlayerDetails:[]).forEach(add);
+ (Array.isArray(draw.selectedClubs)?draw.selectedClubs:[]).forEach(function(c){(Array.isArray(c.players)?c.players:[]).forEach(add)});
+ return names;
 }
 // Reuse Round Manager's existing createRatingRing; no player/round changes.
 function tournamentPlayerRow(name){
@@ -676,12 +683,13 @@ function editEntry(id){
  selected=null;render();
  var detailsBox=document.createElement('section');detailsBox.className='scs-tm-entry-modal';detailsBox.setAttribute('role','dialog');detailsBox.setAttribute('aria-modal','true');detailsBox.setAttribute('aria-label','Assign tournament players');root.appendChild(detailsBox);
  var current=/^Entry \d+$/.test(e.name||'')?[]:splitTeam(e.name||'').players;
- var used=tournamentAssignedNames(id);var names=(tournamentPool().length?tournamentPool():availablePlayerNames()).filter(function(n){return !used.has(n.trim().toLocaleLowerCase())});
+ var used=tournamentAssignedNames(id);var names=(tournamentPool().length?tournamentPool():availablePlayerNames()).filter(function(n){return !used.has(String(n).trim().toLocaleLowerCase())});
  var opts=names.map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>'}).join('');
  var chosen=current.slice(0,2);
- var available=Array.from(new Set(names.concat(chosen).filter(function(n){return n&&!used.has(n.trim().toLocaleLowerCase())})));
+ var available=names.filter(function(n){return !used.has(n.trim().toLocaleLowerCase())});
  detailsBox.innerHTML='<div class="scs-tm-entry-editor scs-tm-mobile-picker"><button type="button" class="scs-tm-entry-close" aria-label="Close player assignment" onclick="SCSTournament.closeEntryPopup()">×</button><h3>Entry '+id+' · Select Players</h3><p>Tap two players to form a team.</p><div data-shared-picker></div><details class="scs-tm-manual-entry"><summary>Player not listed? Enter names manually</summary><label>Player 1<input id="scsTmP1" autocomplete="off" value="'+esc(chosen[0]||'')+'"></label><label>Player 2<input id="scsTmP2" autocomplete="off" value="'+esc(chosen[1]||'')+'"></label></details><div class="scs-tm-import-actions">'+(assistStep===1&&!assistSaved?'<button type="button" onclick="SCSTournament.addNextTeam('+id+')">+ Add Team</button>':'')+'<button type="button" class="scs-tm-primary" onclick="SCSTournament.doneEntry('+id+')">Done</button></div><p class="scs-tm-entry-status" role="status"></p></div>';
  if(window.SCSTeamPicker)SCSTeamPicker.render(detailsBox.querySelector('[data-shared-picker]'),{names:available,selected:chosen,max:2,row:tournamentPlayerRow,onChange:function(a){detailsBox.querySelector('#scsTmP1').value=a[0]||'';detailsBox.querySelector('#scsTmP2').value=a[1]||''}});
+ else detailsBox.querySelector('[data-shared-picker]').textContent='Player selector is unavailable. Please reload the application.';
  hydrateTournamentPlayerCards();detailsBox.addEventListener('click',function(ev){if(ev.target===detailsBox)closeEntryPopup()});
 }
 async function addNextTeam(id){
