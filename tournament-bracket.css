@@ -469,3 +469,20 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-shared-pair-panel header button{font-size:28px;background:none;color:#fff;border:0}
 
 .scs-shared-pick-empty{padding:14px 12px;margin:8px 0;border:1px solid var(--border,#60728c);border-radius:10px;line-height:1.5;color:inherit}
+
+/* V346: shared mobile team-formation rows; existing player rings retained. */
+.scs-shared-pick-row .scs-api-roster-row,.scs-tm-mobile-picker .scs-api-roster-row,.scs-tm-teams-flat .scs-api-roster-row{display:flex;align-items:center;flex:1;min-width:0}
+.scs-shared-pick-row .scs-tm-shared-player,.scs-tm-mobile-picker .scs-tm-shared-player,.scs-tm-teams-flat .scs-tm-shared-player{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
+.scs-team-player-details{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1;align-items:flex-start}
+.scs-team-player-details .scs-tm-shared-name{display:block;font-weight:650;line-height:1.25;overflow-wrap:anywhere}
+.scs-team-player-meta{display:flex;flex-wrap:wrap;align-items:center;gap:5px;min-height:20px}
+.scs-team-level-pill,.scs-team-club-pill{display:inline-flex!important;align-items:center;border-radius:999px;padding:2px 9px!important;font-size:.73rem!important;line-height:1.5!important;font-weight:750!important;color:white!important;max-width:100%;white-space:nowrap}
+.scs-team-level-pill{background:#5c748e!important}
+.scs-team-level-pill[data-level="1"]{background:#8054b8!important}
+.scs-team-level-pill[data-level="2"]{background:#237cb5!important}
+.scs-team-level-pill[data-level="3"]{background:#24876d!important}
+.scs-team-level-pill[data-level="4"]{background:#b27a26!important}
+.scs-team-level-pill[data-level="5"]{background:#ad4e66!important}
+.scs-team-club-pill{background:var(--scs-team-club-color,#5279aa)!important;border:0!important;overflow:hidden;text-overflow:ellipsis}
+.scs-shared-pick-row{min-height:66px;width:100%;padding:8px 10px}
+.scs-shared-pick-check{flex-shrink:0}
