@@ -527,3 +527,7 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 #scsKoPersistentHeader #scsKoSaveFeedback:empty{display:none}
 #scsTournamentOverlay .scs-ko-assist-duplicate{display:none!important}
 @media(max-width:380px){#scsKoPersistentHeader.scs-ko-persistent-header{padding:10px 12px 8px;gap:8px}#scsKoPersistentHeader #scsKoStepTitle{font-size:1.18rem}}
+
+/* V351: Setup Pattern begins immediately below the shared assistant header. */
+.scs-tm-assist-pattern:empty{display:none!important}
+.scs-tm-overlay:has(.scs-tm-assist-pattern) .scs-tm-editor{margin-top:10px}
