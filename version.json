@@ -1,10 +1,9 @@
 {
-  "version": "V349",
+  "version": "V350",
   "build": "2026-10-22",
-  "baseline": "SCS-TEST-main (10).zip",
+  "baseline": "SCS V349",
   "updated": [
     "tournament-bracket.js",
-    "tournament-bracket.css",
     "index.html",
     "sw.js",
     "version.json"
