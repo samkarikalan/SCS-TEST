@@ -1,10 +1,10 @@
 {
-  "version": "V337",
+  "version": "V340",
   "build": "2026-10-21",
   "updated": [
-    "tournament-bracket.js",
-    "tournament-bracket.css",
     "index.html",
+    "team-tournament.js",
+    "group-tournament.js",
     "sw.js",
     "version.json"
   ]

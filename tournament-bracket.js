@@ -7,15 +7,22 @@ var LOCAL_TOURNAMENT_KEY='scs_knockout_tournament_v94';
 var KO_MAIN_KEY='scs_knockout_multi_event_v1',koMain=null,koActiveId=null,koHome=false;
 function koId(){return 'ko-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9)}
 function koReadMain(){try{return JSON.parse(localStorage.getItem(KO_MAIN_KEY)||'null')}catch(_){return null}}
-function koSaveMain(){if(koMain&&!readonly)localStorage.setItem(KO_MAIN_KEY,JSON.stringify(koMain))}
+function koSaveMain(){
+ if(!koMain||readonly)return;
+ koMain._scsMainTournament=true;
+ koMain._scsClientTournamentId=koMain._scsClientTournamentId||koMain.id;
+ localStorage.setItem(KO_MAIN_KEY,JSON.stringify(koMain));
+ if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',koMain);
+}
 function koEventKey(id){return 'scs_knockout_event_'+id}
 function koDraftKey(){return ASSIST_DRAFT_KEY+(koActiveId?'-'+koActiveId:'')}
 function koEventLoad(id){try{return JSON.parse(localStorage.getItem(koEventKey(id))||'null')}catch(_){return null}}
 function koSyncEvent(d){if(!koMain||!koActiveId||readonly)return;var item=koMain.events.find(function(e){return e.id===koActiveId});if(!item)return;item.title=d.title||item.title;item.matches=(d.matches||[]).length;item.completed=Object.keys(d.results||{}).length;item.teams=(d.entries||[]).length;item.updatedAt=Date.now();koMain.activeEventId=koActiveId;koSaveMain();localStorage.setItem(koEventKey(koActiveId),JSON.stringify(d))}
 function localTournamentLoad(){try{if(koMain&&koActiveId){var event=koEventLoad(koActiveId);if(event)return event}var x=JSON.parse(localStorage.getItem(LOCAL_TOURNAMENT_KEY)||'null');return x&&x.matches&&x.matches.length?x:null}catch(_){return null}}
-function localTournamentSave(d){try{if(readonly)return Promise.resolve(d);koSyncEvent(d);if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
+function localTournamentSave(d){try{if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
 async function koSaveCloudNow(d){
  if(typeof window.dbSaveTournamentState!=='function')return;
+ if(koMain&&koActiveId){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}
  var id=await window.dbSaveTournamentState('knockout',d);
  if(id&&koMain&&koActiveId)koSyncEvent(d);
  return id;
@@ -969,7 +976,7 @@ async function assistSaveDraft(){
  try{
   if(koMain&&koActiveId){
    draw._scsClientTournamentId=draw._scsClientTournamentId||koActiveId;
-   draw._scsKoMainId=draw._scsKoMainId||koMain.id||null;
+   draw._scsKoMainId=koMain.id||null;draw._scsKoMainTitle=koMain.title;draw._scsKoEventId=koActiveId;
   }
   if(typeof window.scsEnsureTournamentClientId==='function')window.scsEnsureTournamentClientId(draw);
   draw.assistDraft=true;

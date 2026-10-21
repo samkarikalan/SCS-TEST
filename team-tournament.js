@@ -103,7 +103,8 @@ function submitEvent(){
  const name=field?.value.trim();
  if(!name){field?.focus();root()?.querySelector('[data-event-error]')?.removeAttribute('hidden');return}
  state={title:name,clubs:[],encounters:[],courtCount:1,serial:0,matchesPerEncounter:3,
- _scsClientTournamentId:newId(),_scsTeamMainId:main._scsClientTournamentId};
+ _scsClientTournamentId:newId(),_scsTeamMainId:main._scsClientTournamentId,
+ _scsParentTournamentId:main._scsClientTournamentId,_scsParentTournamentTitle:main.title};
  creatingEvent=false;mainMode=false;tab='setup';
  rememberActiveEvent(state._scsClientTournamentId);
  save();
@@ -127,7 +128,7 @@ async function openEvent(id){
  }
  if(!saved){try{saved=JSON.parse(localStorage.getItem('scs_team_event_'+id)||'null')}catch(_){}}
  if(!saved){alert('This event is not available on this device yet. Connect to the server and try again.');return}
- state=saved;state._scsTeamMainId=main._scsClientTournamentId;
+ state=saved;state._scsTeamMainId=main._scsClientTournamentId;state._scsParentTournamentId=main._scsClientTournamentId;state._scsParentTournamentTitle=main.title;
  rememberActiveEvent(id);
  localStorage.setItem(KEY,JSON.stringify(state));
  mainMode=false;tab=state.encounters?.length?'fixtures':'setup';render();
