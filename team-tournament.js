@@ -297,6 +297,7 @@ function editEncounter(id){
  const clubBlock=(id,side,m)=>'<section class="scs-team-pair-club" style="--team-accent:'+esc(clubAccent(id))+'"><h5>'+esc(clubName(id))+'</h5>'+select(side,m,0)+select(side,m,1)+'</section>';
  modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor scs-team-pair-editor"><h3>'+esc(clubName(e.a))+' vs '+esc(clubName(e.b))+'</h3><p class="scs-team-pair-help">Choose two different players from each club for every doubles match.</p><div class="scs-team-pair-scroll">'+e.matches.map(m=>'<article class="scs-team-pair-match"><h4>Doubles '+(m.index+1)+(m.status!=='pending'?' · '+esc(m.status):'')+'</h4>'+clubBlock(e.a,'L',m)+clubBlock(e.b,'R',m)+'</article>').join('')+'</div><div class="scs-tm-import-actions"><button data-cancel>Cancel</button><button class="scs-tm-primary" data-save>Done</button></div><p data-error role="status"></p></div>';
  root().appendChild(modal);
+ if(window.SCSTeamPicker)SCSTeamPicker.bindTeamSelectors(modal,{row:playerRow});
  const selects=[...modal.querySelectorAll('select[data-pair]')];
  const refreshChoices=()=>{
   for(const sel of selects){

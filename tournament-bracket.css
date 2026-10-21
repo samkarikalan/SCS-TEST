@@ -439,3 +439,31 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 
 /* V337: league deletion stays within its individual event card. */
 .scs-ko-delete-event{display:block;margin:8px 12px 10px auto;font-size:.82rem;padding:7px 11px}
+
+/* V341: mobile-first full-width team selection, existing player details preserved */
+.scs-tm-teams-flat{width:100%;max-width:none;box-sizing:border-box;padding:0!important}
+.scs-tm-teams-flat>div:not(.scs-tm-pool-heading){padding:8px!important}
+.scs-tm-flat-team-row{padding:8px 10px;margin:0 0 7px;border-bottom:1px solid #42618b;background:#142d4b;border-radius:8px}
+.scs-tm-entry-modal{padding:6px}
+.scs-tm-entry-modal .scs-tm-mobile-picker{width:100%;max-width:none;max-height:96dvh;padding:18px 12px;border-radius:12px}
+.scs-tm-mobile-player-list{display:flex;flex-direction:column;gap:6px;max-height:52dvh;overflow-y:auto;margin:12px 0}
+.scs-tm-mobile-player{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:60px;text-align:left;border:1px solid #476384;border-radius:10px;background:#12253e;color:#fff;padding:7px 10px;cursor:pointer;font:inherit}
+.scs-tm-mobile-player[aria-pressed=true]{background:#193d6a;border:2px solid #329cff;padding:6px 9px}
+.scs-tm-mobile-player .scs-tm-shared-player,.scs-tm-mobile-player .scs-api-roster-row{flex:1;min-width:0}
+.scs-tm-player-check{font-size:23px;color:#81baff;margin-left:8px}
+.scs-tm-selection-count{font-weight:700;color:#86caff}
+.scs-tm-manual-entry{border-top:1px solid #476384;padding-top:9px;margin-top:10px}
+.scs-tm-manual-entry summary{cursor:pointer;color:#b8d9ff}
+@media(max-width:480px){.scs-tm-overlay{padding-left:6px;padding-right:6px}.scs-tm-teams-flat .scs-tm-pool-heading{padding:8px}.scs-tm-mobile-picker h3{font-size:20px}}
+/* Common mobile team picker across tournament formats */
+.scs-shared-pick-list{display:flex;flex-direction:column;gap:6px;max-height:52dvh;overflow:auto;margin:10px 0}
+.scs-shared-pick-row{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:58px;text-align:left;padding:8px 10px;background:#142840;color:#fff;border:1px solid #476384;border-radius:10px;font:inherit}
+.scs-shared-pick-row[aria-pressed=true]{border:2px solid #329cff;background:#193d6a}
+.scs-shared-pick-row .scs-tm-shared-player,.scs-shared-pick-row .scs-api-roster-row{flex:1;min-width:0}
+.scs-shared-pick-count{font-weight:600;color:#7dc7ff}
+.scs-shared-pick-check{font-size:22px;color:#72bfff}
+.scs-shared-pair-trigger{width:100%;min-height:42px;background:#142840;color:#fff;border:1px solid #6885a6;border-radius:8px;text-align:left;padding:8px}
+.scs-shared-pair-overlay{position:fixed;inset:0;z-index:10050;background:#000b;display:flex;align-items:center;justify-content:center;padding:12px}
+.scs-shared-pair-panel{width:min(100%,560px);max-height:90dvh;overflow:auto;background:#213047;border:1px solid #7b9abd;border-radius:16px;padding:14px}
+.scs-shared-pair-panel header{display:flex;justify-content:space-between;align-items:center}
+.scs-shared-pair-panel header button{font-size:28px;background:none;color:#fff;border:0}
