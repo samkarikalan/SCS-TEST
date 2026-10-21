@@ -1,11 +1,8 @@
 {
-  "version": "V354",
+  "version": "V355",
   "build": "2026-10-22",
-  "baseline": "SCS-TEST-main (10)(1).zip (V348)",
-  "included_changes": "V349-V353 assistant header, step completion, pattern navigation; V348 approved player/team styles preserved",
   "updated": [
     "tournament-bracket.js",
-    "tournament-bracket.css",
     "index.html",
     "sw.js",
     "version.json"

@@ -16,11 +16,39 @@ function koSaveMain(){
 }
 function koEventKey(id){return 'scs_knockout_event_'+id}
 function koDraftKey(){return ASSIST_DRAFT_KEY+(koActiveId?'-'+koActiveId:'')}
-function koEventLoad(id){try{return JSON.parse(localStorage.getItem(koEventKey(id))||'null')}catch(_){return null}}
-function koSyncEvent(d){if(!koMain||!koActiveId||readonly)return;var item=koMain.events.find(function(e){return e.id===koActiveId});if(!item)return;item.title=d.title||item.title;item.matches=(d.matches||[]).length;item.completed=Object.keys(d.results||{}).length;item.teams=(d.entries||[]).length;item.updatedAt=Date.now();koMain.activeEventId=koActiveId;koSaveMain();localStorage.setItem(koEventKey(koActiveId),JSON.stringify(d))}
-function localTournamentLoad(){try{if(koMain&&koActiveId){var event=koEventLoad(koActiveId);if(event)return event}var x=JSON.parse(localStorage.getItem(LOCAL_TOURNAMENT_KEY)||'null');return x&&x.matches&&x.matches.length?x:null}catch(_){return null}}
-function localTournamentSave(d){try{if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
+// Preserve each team member's registered identity in the saved event state.
+// Entry labels alone are insufficient to restore level, gender and sub-club.
+function preserveTeamPlayerDetails(d){
+ if(!d||!Array.isArray(d.entries))return d;
+ var roster=Array.isArray(d.selectedPlayerDetails)?d.selectedPlayerDetails:[];
+ var byName=new Map();
+ function add(p){if(!p||typeof p!=='object')return;var name=String(p.player||p.name||'').trim();if(!name)return;var key=name.toLocaleLowerCase();if(!byName.has(key))byName.set(key,[]);var group=byName.get(key);if(!group.some(function(x){return String(x.playerId||'')===String(p.playerId||'')&&String(x.subClubId||x.subClub||'')===String(p.subClubId||p.subClub||'')}))group.push(p)}
+ roster.forEach(add);
+ d.entries.forEach(function(entry){(Array.isArray(entry.playerDetails)?entry.playerDetails:[]).forEach(add)});
+ var recovered=[];
+ d.entries.forEach(function(entry){
+  var names=String(entry.name||'').split(/\s+\/\s+/).map(function(n){return n.trim()}).filter(Boolean);
+  var previous=Array.isArray(entry.playerDetails)?entry.playerDetails:[];
+  entry.playerDetails=names.map(function(name){
+   var key=name.toLocaleLowerCase(),candidates=byName.get(key)||[];
+   var match=previous.find(function(p){return String(p.player||p.name||'').trim().toLocaleLowerCase()===key});
+   if(!match&&candidates.length===1)match=candidates[0];
+   return match?Object.assign({},match,{player:name}):{player:name};
+  });
+  entry.playerDetails.forEach(function(p){if(p.playerId||p.level!=null||p.subClubId||p.subClub)recovered.push(p)});
+ });
+ // Restore metadata from saved entry snapshots without discarding other selected players.
+ var existing=new Set(roster.map(function(p){return String(p.player||'').trim().toLocaleLowerCase()+'|'+String(p.subClubId||p.subClub||'')}));
+ recovered.forEach(function(p){var k=String(p.player||'').trim().toLocaleLowerCase()+'|'+String(p.subClubId||p.subClub||'');if(!existing.has(k)){roster.push(p);existing.add(k)}});
+ d.selectedPlayerDetails=roster;
+ return d;
+}
+function koEventLoad(id){try{return preserveTeamPlayerDetails(JSON.parse(localStorage.getItem(koEventKey(id))||'null'))}catch(_){return null}}
+function koSyncEvent(d){preserveTeamPlayerDetails(d);if(!koMain||!koActiveId||readonly)return;var item=koMain.events.find(function(e){return e.id===koActiveId});if(!item)return;item.title=d.title||item.title;item.matches=(d.matches||[]).length;item.completed=Object.keys(d.results||{}).length;item.teams=(d.entries||[]).length;item.updatedAt=Date.now();koMain.activeEventId=koActiveId;koSaveMain();localStorage.setItem(koEventKey(koActiveId),JSON.stringify(d))}
+function localTournamentLoad(){try{if(koMain&&koActiveId){var event=koEventLoad(koActiveId);if(event)return event}var x=JSON.parse(localStorage.getItem(LOCAL_TOURNAMENT_KEY)||'null');return x&&x.matches&&x.matches.length?preserveTeamPlayerDetails(x):null}catch(_){return null}}
+function localTournamentSave(d){try{preserveTeamPlayerDetails(d);if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
 async function koSaveCloudNow(d){
+ preserveTeamPlayerDetails(d);
  if(typeof window.dbSaveTournamentState!=='function')return;
  if(koMain&&koActiveId){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}
  var id=await window.dbSaveTournamentState('knockout',d);
@@ -28,6 +56,7 @@ async function koSaveCloudNow(d){
  return id;
 }
 function koAdoptCloudEvent(state){
+ preserveTeamPlayerDetails(state);
  if(!state||!state.matches)return false;
  koMainStart();
  var id=state._scsClientTournamentId||state._scsCloudTournamentId||koId();
@@ -581,6 +610,7 @@ function tournamentPool(){
 }
 // Reuse Round Manager's existing createRatingRing; no player/round changes.
 function tournamentPlayerRow(name){
+ preserveTeamPlayerDetails(draw);
  var level='<span class="scs-tournament-gender-level">—</span>';
  var club=(draw&&Array.isArray(draw.selectedClubs)?draw.selectedClubs:[]).find(function(c){return Array.isArray(c.players)&&c.players.some(function(p){return String(p).toLocaleLowerCase()===String(name).toLocaleLowerCase()})});
  var subClub=club?String(club.clubName||'').trim():'';
@@ -614,6 +644,7 @@ function openPlayersManager(){
  const previous=Array.isArray(draw.selectedPlayerDetails)?draw.selectedPlayerDetails:[];
  window.ScsApi.players.select({selected:previous,onDone:function(players){
   draw.selectedPlayerDetails=players;
+  preserveTeamPlayerDetails(draw);
   const byClub=new Map();players.forEach(p=>{if(!byClub.has(p.subClub))byClub.set(p.subClub,[]);byClub.get(p.subClub).push(p.player)});
   draw.selectedClubs=[...byClub].map(([clubName,names])=>({clubName,players:names}));
   draw.playerPool=[...new Set(players.map(p=>p.player))];
@@ -872,11 +903,12 @@ function koGenerateFixtures(){
 }
 
 function saveAssistDraft(){
+ preserveTeamPlayerDetails(draw);
  if(readonly||assistSaved||!draw)return;
  try{localStorage.setItem(koDraftKey(),JSON.stringify({draw:draw,step:assistStep,assignmentsConfirmed:assistAssignmentsConfirmed,updated:Date.now()}));if(koMain&&koActiveId)koSyncEvent(draw)}catch(e){}
 }
 function restoreAssistDraft(){
- try{var raw=localStorage.getItem(koDraftKey());if(!raw)return null;var data=JSON.parse(raw);if(data&&data.draw&&Array.isArray(data.draw.entries)){assistAssignmentsConfirmed=!!(data.assignmentsConfirmed||data.draw.assistAssignmentsConfirmed);return data.draw}return null}catch(e){return null}
+ try{var raw=localStorage.getItem(koDraftKey());if(!raw)return null;var data=JSON.parse(raw);if(data&&data.draw&&Array.isArray(data.draw.entries)){assistAssignmentsConfirmed=!!(data.assignmentsConfirmed||data.draw.assistAssignmentsConfirmed);return preserveTeamPlayerDetails(data.draw)}return null}catch(e){return null}
 }
 function assistTeamsCard(){
  var entries=draw&&Array.isArray(draw.entries)?draw.entries:[];
