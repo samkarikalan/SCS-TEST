@@ -385,3 +385,15 @@
 .scs-tm-player-pool .scs-api-roster-row .scs-tournament-gender-level{flex:0 0 auto}
 .scs-tm-player-pool .scs-api-subclub-pill{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;border-radius:999px;padding:3px 10px;max-width:45%;background:color-mix(in srgb,var(--pill-accent) 60%,#17263d 40%);color:#fff;font-size:.72rem;font-weight:650;line-height:1.4;white-space:normal;text-align:center}
 body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(in srgb,var(--pill-accent) 35%,#fff 65%);color:#15233a}
+
+/* V330: Generated knockout matches reuse shared SCS match cards. */
+.scs-ko-generated-fixtures{margin:14px 0;padding:12px;border:1px solid #4c6485;border-radius:16px;background:#1b2b44;color:#f3f6ff}
+.scs-ko-generated-fixtures>h3{margin:4px 0 16px;font-size:1.2rem}
+.scs-ko-fixture-round{margin:12px 0 20px}
+.scs-ko-fixture-round>h4{margin:0 0 8px;font-size:1rem;color:#b9cdea}
+.scs-ko-fixture-card{margin:10px 0;border:1px solid #4c6485;border-radius:14px;overflow:hidden}
+.scs-ko-fixture-card .scs-tm-completed-row{margin:0;border:0;border-radius:0}
+.scs-ko-fixture-pending{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1px solid #94a8c8;color:#b8cbe8}
+.scs-ko-fixture-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center;padding:10px;background:#223550}
+.scs-ko-fixture-actions button{background:#3467b3;color:white;border:1px solid #739be0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:650}
+.scs-ko-fixture-actions span{color:#c6d7ec}
