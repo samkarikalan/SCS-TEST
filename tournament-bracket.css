@@ -467,3 +467,20 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-shared-pair-panel{width:min(100%,560px);max-height:90dvh;overflow:auto;background:#213047;border:1px solid #7b9abd;border-radius:16px;padding:14px}
 .scs-shared-pair-panel header{display:flex;justify-content:space-between;align-items:center}
 .scs-shared-pair-panel header button{font-size:28px;background:none;color:#fff;border:0}
+
+/* V343: compact shared player rows, separated metadata pills */
+.scs-shared-pick-row .scs-api-roster-row,.scs-tm-mobile-picker .scs-api-roster-row{display:flex;align-items:center;flex:1;min-width:0}
+.scs-shared-pick-row .scs-tm-shared-player,.scs-tm-mobile-picker .scs-tm-shared-player{display:flex;align-items:center;flex:1;min-width:0;gap:9px}
+.scs-player-details{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;flex:1}
+.scs-player-details .scs-tm-shared-name{display:block;line-height:1.25;overflow-wrap:anywhere;font-weight:650}
+.scs-player-meta{display:flex;align-items:center;flex-wrap:wrap;gap:5px;min-height:20px}
+.scs-player-level-pill,.scs-player-club-pill{display:inline-flex!important;align-items:center;justify-content:center;border-radius:999px;padding:2px 9px;font-size:.73rem!important;font-weight:750!important;line-height:1.45!important;white-space:nowrap;max-width:100%}
+.scs-player-level-pill{background:#64748b!important;color:#fff!important}
+.scs-player-level-pill[data-level="1"]{background:#7655ca!important}
+.scs-player-level-pill[data-level="2"]{background:#167bb8!important}
+.scs-player-level-pill[data-level="3"]{background:#16876f!important}
+.scs-player-level-pill[data-level="4"]{background:#b07722!important}
+.scs-player-level-pill[data-level="5"]{background:#a74b68!important}
+.scs-player-club-pill{background:var(--scs-club-color,#5279aa)!important;color:#fff!important;border:0!important;overflow:hidden;text-overflow:ellipsis}
+.scs-shared-pick-row{min-height:68px;padding:7px 10px}.scs-shared-pick-check{flex:0 0 24px;text-align:center}
+.scs-tm-mobile-picker .scs-shared-pick-list{max-height:57dvh}

@@ -1,1 +1,12 @@
-{"version":"V342","build":"2026-10-21","updated":["index.html","tournament-team-picker.js","tournament-bracket.js","group-tournament.js","team-tournament.js","tournament-bracket.css","sw.js","version.json"]}
+{
+  "version": "V343",
+  "build": "2026-10-21",
+  "updated": [
+    "index.html",
+    "tournament-team-picker.js",
+    "tournament-bracket.js",
+    "tournament-bracket.css",
+    "sw.js",
+    "version.json"
+  ]
+}

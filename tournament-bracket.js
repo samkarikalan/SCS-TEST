@@ -588,7 +588,7 @@ function tournamentPlayerRow(name){
  }
  return '<div class="scs-api-roster-row"><span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+level+'</span></div>';
 }
-function hydrateTournamentPlayerCards(){if(window.SCSTournamentPlayerLevel)(window.SCSTournamentPlayerLevel.setRoster(root,draw&&draw.selectedPlayerDetails),window.SCSTournamentPlayerLevel.hydrate(root));}
+function hydrateTournamentPlayerCards(){if(window.SCSTournamentPlayerLevel)(window.SCSTournamentPlayerLevel.setRoster(root,draw&&draw.selectedPlayerDetails),window.SCSTournamentPlayerLevel.hydrate(root));if(window.SCSTeamPicker)SCSTeamPicker.decorate(root);}
 var poolExpanded=false;
 function togglePool(){poolExpanded=!poolExpanded;render();}
 function tournamentPoolCard(){
