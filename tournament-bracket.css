@@ -504,3 +504,14 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-tm-compact-action-menu button:last-child{color:#ffb3b3}
 .scs-tm-compact-action-menu button:active{background:#38557c}
 @media(max-width:480px){.scs-tm-compact-team{padding:7px 9px}.scs-tm-compact-player{padding:5px 0}}
+
+/* V348: one horizontal line per player in shared tournament team cards. */
+.scs-tm-compact-player .scs-api-roster-row{display:flex;align-items:center;width:100%;min-width:0}
+.scs-tm-compact-player .scs-tm-shared-player{display:flex!important;flex-direction:row!important;align-items:center;gap:8px;min-width:0;width:100%;max-width:100%}
+.scs-tm-compact-player .scs-tm-ring-slot{flex:0 0 auto}
+.scs-tm-compact-player .scs-team-player-details{display:flex!important;flex-direction:row!important;align-items:center!important;gap:8px;flex:1 1 auto;min-width:0;width:100%}
+.scs-tm-compact-player .scs-team-player-details>.scs-tm-shared-name{display:block;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal;font-weight:650}
+.scs-tm-compact-player .scs-team-player-meta{display:flex;flex:0 0 auto;align-items:center;flex-wrap:nowrap;gap:5px;min-width:0;max-width:54%}
+.scs-tm-compact-player .scs-team-level-pill{flex:0 0 auto;white-space:nowrap}
+.scs-tm-compact-player .scs-team-club-pill{flex:0 1 auto;min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:420px){.scs-tm-compact-player .scs-team-player-details{gap:5px}.scs-tm-compact-player .scs-team-player-meta{gap:4px;max-width:58%}.scs-tm-compact-player .scs-team-level-pill,.scs-tm-compact-player .scs-team-club-pill{padding:2px 6px!important;font-size:.68rem!important}}

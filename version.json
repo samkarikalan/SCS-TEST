@@ -1,12 +1,10 @@
 {
-  "version": "V347",
+  "version": "V348",
   "build": "2026-10-21",
-  "baseline": "user-uploaded V342 with V345 picker fix",
+  "baseline": "SCS-TEST-main (9).zip",
   "updated": [
-    "index.html",
-    "tournament-team-picker.js",
-    "tournament-bracket.js",
     "tournament-bracket.css",
+    "index.html",
     "sw.js",
     "version.json"
   ]
