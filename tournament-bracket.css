@@ -431,3 +431,8 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
  font-size:12px;color:#a7f3d0;
 }
 @media(max-width:380px){#scsKoPersistentHeader.scs-ko-persistent-header{gap:6px;padding-left:8px;padding-right:8px}#scsKoPersistentHeader .scs-ko-save-button{font-size:14px;padding:10px}}
+
+/* V336: tournament and league deletion actions in the shared knockout home */
+.scs-ko-delete-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.scs-ko-delete-button{border:1px solid #c86b6b;border-radius:10px;background:transparent;color:#e78a8a;padding:9px 12px;font:inherit;font-weight:650;cursor:pointer}
+.scs-ko-delete-main{border-color:#b34747;color:#ff8e8e}

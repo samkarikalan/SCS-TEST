@@ -40,12 +40,40 @@ function koHomeRender(){
  root.querySelectorAll('[data-open-event]').forEach(function(b){b.onclick=function(){koOpenEvent(b.dataset.openEvent,'flowchart')}});
  var add=root.querySelector('[data-add-event]');if(add)add.onclick=koAddEvent;
  var rename=root.querySelector('[data-ko-rename]');if(rename)rename.onclick=koRename;
+ if(!readonly){var controls=document.createElement('div');controls.className='scs-ko-delete-controls';controls.innerHTML='<button type="button" class="scs-ko-delete-button" data-ko-delete-league>Delete League</button><button type="button" class="scs-ko-delete-button scs-ko-delete-main" data-ko-delete-main>Delete Tournament</button>';var homeHeader=root.querySelector('header')||root.firstElementChild;if(homeHeader)homeHeader.appendChild(controls);controls.querySelector('[data-ko-delete-league]').onclick=koDeleteLeague;controls.querySelector('[data-ko-delete-main]').onclick=koDeleteMain;}
  root.querySelectorAll('[data-ko-nav]').forEach(function(b){b.onclick=function(){var t=b.dataset.koNav;if(t==='home')koHomeRender();else if(koActiveId)koOpenEvent(koActiveId,t==='clubs'?'players':t==='match'?'match':'flowchart');else alert('Add an event first.')}});
 }
 function koEventRows(events,gender){if(!events.length)return '<p class="scs-ko-empty">No events</p>';return events.map(function(e){var active=e.id===koActiveId;return '<button type="button" class="scs-ko-event-row'+(active?' active':'')+'" onclick="SCSTournament.selectKnockoutEvent(\''+esc(e.id)+'\')"><span class="scs-ko-event-code '+gender+'">'+esc(e.title)+'</span><span class="scs-ko-event-detail"><strong>'+esc(e.title)+'</strong><small>'+(e.teams||0)+' teams · '+(e.completed||0)+'/'+(e.matches||0)+' matches completed</small>'+(active?'<em>✓ Active Event</em>':'')+'</span><span>›</span></button>'}).join('')}
 function koOpenEvent(id,tab){if(!koMain||!koMain.events.some(function(e){return e.id===id}))return;koActiveId=id;koMain.activeEventId=id;koSaveMain();koHome=false;window.ScsApi.events.leaveHome(root);var saved=koEventLoad(id);tournamentActiveTab=tab||'flowchart';assistStep=0;assistSaved=!!(saved&&saved.assistFinalized);draw=saved||restoreAssistDraft()||init();assistAssignmentsConfirmed=!!(draw.assistAssignmentsConfirmed||assistAssignmentsConfirmed);draw.assistAssignmentsConfirmed=assistAssignmentsConfirmed;if(!draw.title)draw.title=koMain.events.find(function(e){return e.id===id}).title;creationScreenPinned=!saved||!saved.matches||!saved.matches.length;bracketViewInitialized=false;bracketScrollState=null;readonly=false;saveFn=localTournamentSave;clearFn=localTournamentClear;selected=null;ensure();render();observeAssistHeader()}
 function koRename(){if(!koMain)return;var name=prompt('Tournament name',koMain.title||'Knockout Tournament');if(name===null)return;name=name.trim();if(!name)return;koMain.title=name;koSaveMain();koHomeRender()}
 function koAddEvent(){if(!koMain)koMainStart();window.ScsApi.events.requestEvent({parentTitle:koMain.title,onCreate:function(name){if(koMain.events.some(function(e){return e.title.toLowerCase()===name.toLowerCase()})){alert('This event already exists.');return}var id=koId();koMain.events.push({id:id,title:name,teams:0,matches:0,completed:0});koSaveMain();koOpenEvent(id,'players')}})}
+async function koDeleteCloudRecord(state){
+ var id=state&&state._scsCloudTournamentId;
+ if(!id)return;
+ if(typeof window.dbDeleteTournamentById!=='function')throw new Error('Server delete function unavailable. No local data was deleted.');
+ var ok=await window.dbDeleteTournamentById(id);
+ if(!ok)throw new Error('Server did not confirm deletion.');
+}
+async function koDeleteLeague(){
+ if(readonly||!koMain||!koActiveId)return;
+ var item=koMain.events.find(function(e){return e.id===koActiveId});if(!item)return;
+ if(!confirm('Delete league "'+item.title+'" and its matches? Other leagues will remain. This cannot be undone.'))return;
+ var state=koEventLoad(item.id);
+ try{await koDeleteCloudRecord(state)}catch(e){alert(e.message||'Server deletion failed.');return}
+ localStorage.removeItem(koEventKey(item.id));localStorage.removeItem(ASSIST_DRAFT_KEY+'-'+item.id);
+ koMain.events=koMain.events.filter(function(e){return e.id!==item.id});
+ koActiveId=(koMain.events[0]&&koMain.events[0].id)||null;koMain.activeEventId=koActiveId;koSaveMain();koHomeRender();
+}
+async function koDeleteMain(){
+ if(readonly||!koMain)return;
+ if(!confirm('Delete the entire tournament "'+koMain.title+'" and ALL its leagues? This cannot be undone.'))return;
+ var items=koMain.events.slice();
+ try{for(var i=0;i<items.length;i++)await koDeleteCloudRecord(koEventLoad(items[i].id));
+ await koDeleteCloudRecord(koMain)}catch(e){alert('Deletion stopped: '+(e.message||'Server error')+'. Refresh before retrying.');return}
+ items.forEach(function(item){localStorage.removeItem(koEventKey(item.id));localStorage.removeItem(ASSIST_DRAFT_KEY+'-'+item.id)});
+ localStorage.removeItem(KO_MAIN_KEY);koMain=null;koActiveId=null;
+ if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent();else close();
+}
 function koShowHome(){if(!root){root=document.getElementById('scsTournamentOverlay')}if(!koMain)koMainStart();root.hidden=false;koHomeRender()}
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
