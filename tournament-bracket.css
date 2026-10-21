@@ -531,3 +531,18 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 /* V351: Setup Pattern begins immediately below the shared assistant header. */
 .scs-tm-assist-pattern:empty{display:none!important}
 .scs-tm-overlay:has(.scs-tm-assist-pattern) .scs-tm-editor{margin-top:10px}
+
+/* V356: Knockout and Group Match Center presentation only.
+   Mirrors the existing Team Tournament Match Center chrome without altering
+   shared-match-center.js, Team Tournament code, or match operations. */
+.scs-tm-unified-match-center{width:100%;min-width:0}
+.scs-tm-unified-match-center .scs-tm-live-center{width:100%;max-width:none;box-sizing:border-box;margin:8px 0 12px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important}
+.scs-tm-unified-match-center .scs-tm-live-courts{grid-template-columns:minmax(0,1fr)!important;gap:10px;width:100%}
+.scs-tm-unified-match-center .scs-tm-court-card:not(.is-free){border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;margin:0!important;width:100%;max-width:none}
+.scs-tm-unified-match-center .scs-tm-court-card:not(.is-free)>.scs-tm-court-head{margin:0 0 5px;padding:5px 2px;background:transparent}
+.scs-tm-unified-match-center .scs-tm-court-card:not(.is-free)>button{display:block;width:100%;margin:8px 0 12px!important}
+.scs-tm-unified-match-center .scs-tm-completed-row{width:100%;max-width:none;box-sizing:border-box;background:#101d30!important;border:1px solid #456b9b!important;border-radius:15px;box-shadow:none!important;overflow:hidden}
+.scs-tm-unified-match-center .scs-tm-completed-title{background:#1a2940!important;border-left:0!important}
+.scs-tm-unified-match-center .scs-tm-completed-content,.scs-tm-unified-match-center .scs-tm-completed-vs{background:#101d30!important}
+body.light-mode .scs-tm-unified-match-center .scs-tm-completed-row,body.light-mode .scs-tm-unified-match-center .scs-tm-completed-content,body.light-mode .scs-tm-unified-match-center .scs-tm-completed-vs{background:#f0f3f8!important}
+body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:#e0e7f1!important}
