@@ -411,3 +411,23 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-ko-fixture-actions{gap:7px;padding:9px}
 .scs-ko-fixture-actions button{padding:9px 11px;font-size:.88rem;min-height:40px}
 @media(max-width:480px){.scs-ko-generated-fixtures{padding:8px}.scs-ko-fixture-actions button{flex:1 1 auto}.scs-tm-team-roster .scs-tm-roster-card{padding:8px}}
+
+/* V335: persistent server-save control across every Knockout Assist step. */
+#scsKoPersistentHeader.scs-ko-persistent-header {
+ position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:flex-end;
+ gap:10px;padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top));
+ background:#1b2c43;border-bottom:1px solid #48617e;box-sizing:border-box;
+ width:100%;min-width:0;flex-wrap:wrap;
+}
+#scsKoPersistentHeader .scs-ko-save-button {
+ display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+ background:#13a57b;color:#fff;border:1px solid #8ce3c5;border-radius:12px;
+ padding:10px 16px;font-size:16px;font-weight:700;white-space:nowrap;
+ cursor:pointer;max-width:calc(100% - 72px);
+}
+#scsKoPersistentHeader .scs-ko-save-button:disabled {opacity:.65;cursor:wait;}
+#scsKoPersistentHeader #scsKoSaveFeedback {
+ position:static!important;flex-basis:100%;text-align:right;background:transparent!important;
+ font-size:12px;color:#a7f3d0;
+}
+@media(max-width:380px){#scsKoPersistentHeader.scs-ko-persistent-header{gap:6px;padding-left:8px;padding-right:8px}#scsKoPersistentHeader .scs-ko-save-button{font-size:14px;padding:10px}}
