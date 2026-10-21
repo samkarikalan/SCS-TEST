@@ -1,11 +1,5 @@
 {
-  "version": "V330",
+  "version": "V331",
   "build": "2026-10-21",
-  "updated": [
-    "tournament-bracket.js",
-    "tournament-bracket.css",
-    "index.html",
-    "sw.js",
-    "version.json"
-  ]
+  "updated": ["tournament-bracket.css", "index.html", "sw.js", "version.json"]
 }

@@ -397,3 +397,17 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-ko-fixture-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center;padding:10px;background:#223550}
 .scs-ko-fixture-actions button{background:#3467b3;color:white;border:1px solid #739be0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:650}
 .scs-ko-fixture-actions span{color:#c6d7ec}
+
+/* V331: Compact knockout team roster and generated match layout. */
+.scs-tm-team-card-grid{grid-template-columns:1fr;gap:8px;margin-top:10px}
+.scs-tm-team-roster .scs-tm-roster-card{grid-template-columns:30px minmax(0,1fr) auto;gap:8px;padding:9px 10px;border-radius:12px}
+.scs-tm-team-roster .scs-tm-roster-number{width:28px;height:28px;font-size:.85rem}
+.scs-tm-team-roster .scs-tm-roster-card .scs-api-roster-row{padding:2px 0;min-width:0}
+.scs-tm-team-roster .scs-tm-roster-card .scs-tm-shared-player{display:flex;gap:7px;margin:2px 0;min-width:0}
+.scs-tm-team-roster .scs-tm-roster-card .scs-tm-shared-name{min-width:0;overflow-wrap:anywhere}
+.scs-tm-team-roster .scs-tm-roster-card .scs-api-subclub-pill{font-size:.7rem;padding:2px 7px;max-width:42%}
+.scs-ko-generated-fixtures{padding:10px}
+.scs-ko-fixture-card{margin:8px 0;border-radius:12px}
+.scs-ko-fixture-actions{gap:7px;padding:9px}
+.scs-ko-fixture-actions button{padding:9px 11px;font-size:.88rem;min-height:40px}
+@media(max-width:480px){.scs-ko-generated-fixtures{padding:8px}.scs-ko-fixture-actions button{flex:1 1 auto}.scs-tm-team-roster .scs-tm-roster-card{padding:8px}}
