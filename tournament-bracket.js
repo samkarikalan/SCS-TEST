@@ -923,11 +923,20 @@ function assistReady(step){
 var assistHeaderObserver=null;
 function ensureAssistHeader(){
  if(!root||root.hidden||readonly||assistSaved||!root.isConnected)return;
- if(root.querySelector('#scsKoPersistentHeader'))return;
- var header=document.createElement('div');header.id='scsKoPersistentHeader';
- header.className='scs-ko-persistent-header';
- header.innerHTML='<button type="button" onclick="SCSTournament.assistSaveDraft()" class="scs-ko-save-button" style="background:#13a57b;color:white;border:1px solid #8ce3c5;border-radius:12px;padding:12px 16px;font-weight:700;font-size:16px">Save Tournament</button><button type="button" aria-label="Close Knockout Assist" onclick="SCSTournament.close()" style="background:#2b4362;color:white;border:1px solid #6585b1;border-radius:12px;padding:12px 16px;font-size:18px">×</button><span id="scsKoSaveFeedback" role="status" style="position:absolute;right:12px;top:100%;font-size:12px;color:#a7f3d0;background:#1b2c43"></span>';
- root.insertBefore(header,root.firstChild);
+ var header=root.querySelector('#scsKoPersistentHeader');
+ if(!header){
+  header=document.createElement('header');header.id='scsKoPersistentHeader';header.className='scs-ko-persistent-header';
+  header.innerHTML='<div class="scs-ko-header-title-row"><h2 id="scsKoStepTitle">Knockout Assist</h2><button type="button" class="scs-ko-header-close" aria-label="Close tournament assistant" onclick="SCSTournament.close()">×</button></div><button type="button" onclick="SCSTournament.assistSaveDraft()" class="scs-ko-save-button">▣ &nbsp; Save Tournament</button><span id="scsKoSaveFeedback" role="status" aria-live="polite"></span><div class="scs-ko-header-divider" aria-hidden="true"></div>';
+  root.insertBefore(header,root.firstChild);
+ }
+ var titles=['Knockout Assist','Players and Teams','Setup Pattern','Assign Teams to Pattern','Generate Fixtures','Start Tournament'];
+ var heading=header.querySelector('#scsKoStepTitle');if(heading)heading.textContent=titles[Math.max(0,Math.min(5,assistStep||0))];
+ // Step-specific banners were previously duplicated beneath the persistent header.
+ // Hide only those banners, never the actual step contents or their controls.
+ root.querySelectorAll('.scs-ko-assist-duplicate').forEach(function(e){e.classList.remove('scs-ko-assist-duplicate')});
+ if(!assistStep){var section=root.querySelector('.scs-tm-assist');if(section){var oldTitle=section.firstElementChild;if(oldTitle&&oldTitle.querySelector('h2'))oldTitle.classList.add('scs-ko-assist-duplicate');var oldSubtitle=section.querySelector(':scope > p');if(oldSubtitle)oldSubtitle.classList.add('scs-ko-assist-duplicate')}}
+ if(assistStep===1||assistStep===2||assistStep===4){var section=root.querySelector(':scope > section');if(section){var banner=section.firstElementChild;if(banner&&banner.querySelector('h2')&&/^(Players and Teams|Setup Pattern|Generate Fixtures)$/.test(banner.querySelector('h2').textContent.trim()))banner.classList.add('scs-ko-assist-duplicate')}}
+ if(assistStep===3){var summary=root.querySelector('.scs-tm-pattern-summary');if(summary){var heading=summary.querySelector('h2');if(heading)heading.classList.add('scs-ko-assist-duplicate')}}
 }
 function observeAssistHeader(){
  if(assistHeaderObserver){assistHeaderObserver.disconnect();assistHeaderObserver=null}

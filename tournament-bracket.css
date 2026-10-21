@@ -515,3 +515,15 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-tm-compact-player .scs-team-level-pill{flex:0 0 auto;white-space:nowrap}
 .scs-tm-compact-player .scs-team-club-pill{flex:0 1 auto;min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:420px){.scs-tm-compact-player .scs-team-player-details{gap:5px}.scs-tm-compact-player .scs-team-player-meta{gap:4px;max-width:58%}.scs-tm-compact-player .scs-team-level-pill,.scs-tm-compact-player .scs-team-club-pill{padding:2px 6px!important;font-size:.68rem!important}}
+
+/* V349: one shared, professional assist header for every setup step. */
+#scsKoPersistentHeader.scs-ko-persistent-header{position:sticky;top:0;z-index:100;display:flex;flex-direction:column;align-items:stretch;gap:10px;padding:12px 16px 9px;background:#101b2d;border:0;flex-wrap:nowrap}
+#scsKoPersistentHeader .scs-ko-header-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+#scsKoPersistentHeader #scsKoStepTitle{font-size:clamp(1.2rem,5vw,1.65rem);line-height:1.2;margin:0;min-width:0;color:#f4f7ff;font-weight:750;overflow-wrap:anywhere}
+#scsKoPersistentHeader .scs-ko-header-close{flex:0 0 44px;width:44px;height:44px;padding:0;border:1px solid #6383ad;border-radius:12px;background:#263e60;color:white;font-size:27px;cursor:pointer}
+#scsKoPersistentHeader .scs-ko-save-button{display:flex;width:100%;max-width:none;min-height:49px;border:1px solid #84e0c0;border-radius:12px;background:#09a77e;color:white;font-size:1rem;font-weight:750;cursor:pointer}
+#scsKoPersistentHeader .scs-ko-header-divider{height:1px;width:100%;background:#46617e;margin-top:3px}
+#scsKoPersistentHeader #scsKoSaveFeedback{display:block;flex-basis:auto;text-align:center;position:static!important;padding:0;margin:0;font-size:.78rem}
+#scsKoPersistentHeader #scsKoSaveFeedback:empty{display:none}
+#scsTournamentOverlay .scs-ko-assist-duplicate{display:none!important}
+@media(max-width:380px){#scsKoPersistentHeader.scs-ko-persistent-header{padding:10px 12px 8px;gap:8px}#scsKoPersistentHeader #scsKoStepTitle{font-size:1.18rem}}
