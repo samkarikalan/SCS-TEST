@@ -40,7 +40,15 @@ function koHomeRender(){
  root.querySelectorAll('[data-open-event]').forEach(function(b){b.onclick=function(){koOpenEvent(b.dataset.openEvent,'flowchart')}});
  var add=root.querySelector('[data-add-event]');if(add)add.onclick=koAddEvent;
  var rename=root.querySelector('[data-ko-rename]');if(rename)rename.onclick=koRename;
- if(!readonly){var controls=document.createElement('div');controls.className='scs-ko-delete-controls';controls.innerHTML='<button type="button" class="scs-ko-delete-button" data-ko-delete-league>Delete League</button><button type="button" class="scs-ko-delete-button scs-ko-delete-main" data-ko-delete-main>Delete Tournament</button>';var homeHeader=root.querySelector('header')||root.firstElementChild;if(homeHeader)homeHeader.appendChild(controls);controls.querySelector('[data-ko-delete-league]').onclick=koDeleteLeague;controls.querySelector('[data-ko-delete-main]').onclick=koDeleteMain;}
+ if(!readonly){
+  root.querySelectorAll('[data-open-event]').forEach(function(b){
+   var id=b.dataset.openEvent, item=koMain.events.find(function(e){return e.id===id});
+   var card=b.closest('.scs-event-card,.scs-api-event-card,article')||b.parentElement;
+   if(!card||!item||card.querySelector('[data-ko-delete-event]'))return;
+   var del=document.createElement('button');del.type='button';del.className='scs-ko-delete-button scs-ko-delete-event';del.textContent='Delete League';del.dataset.koDeleteEvent=id;
+   del.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koDeleteLeague(id)};card.appendChild(del);
+  });
+ }
  root.querySelectorAll('[data-ko-nav]').forEach(function(b){b.onclick=function(){var t=b.dataset.koNav;if(t==='home')koHomeRender();else if(koActiveId)koOpenEvent(koActiveId,t==='clubs'?'players':t==='match'?'match':'flowchart');else alert('Add an event first.')}});
 }
 function koEventRows(events,gender){if(!events.length)return '<p class="scs-ko-empty">No events</p>';return events.map(function(e){var active=e.id===koActiveId;return '<button type="button" class="scs-ko-event-row'+(active?' active':'')+'" onclick="SCSTournament.selectKnockoutEvent(\''+esc(e.id)+'\')"><span class="scs-ko-event-code '+gender+'">'+esc(e.title)+'</span><span class="scs-ko-event-detail"><strong>'+esc(e.title)+'</strong><small>'+(e.teams||0)+' teams · '+(e.completed||0)+'/'+(e.matches||0)+' matches completed</small>'+(active?'<em>✓ Active Event</em>':'')+'</span><span>›</span></button>'}).join('')}
@@ -54,9 +62,9 @@ async function koDeleteCloudRecord(state){
  var ok=await window.dbDeleteTournamentById(id);
  if(!ok)throw new Error('Server did not confirm deletion.');
 }
-async function koDeleteLeague(){
- if(readonly||!koMain||!koActiveId)return;
- var item=koMain.events.find(function(e){return e.id===koActiveId});if(!item)return;
+async function koDeleteLeague(eventId){
+ if(readonly||!koMain)return;
+ var item=koMain.events.find(function(e){return e.id===(eventId||koActiveId)});if(!item)return;
  if(!confirm('Delete league "'+item.title+'" and its matches? Other leagues will remain. This cannot be undone.'))return;
  var state=koEventLoad(item.id);
  try{await koDeleteCloudRecord(state)}catch(e){alert(e.message||'Server deletion failed.');return}

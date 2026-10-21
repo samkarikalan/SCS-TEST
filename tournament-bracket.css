@@ -436,3 +436,6 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-ko-delete-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .scs-ko-delete-button{border:1px solid #c86b6b;border-radius:10px;background:transparent;color:#e78a8a;padding:9px 12px;font:inherit;font-weight:650;cursor:pointer}
 .scs-ko-delete-main{border-color:#b34747;color:#ff8e8e}
+
+/* V337: league deletion stays within its individual event card. */
+.scs-ko-delete-event{display:block;margin:8px 12px 10px auto;font-size:.82rem;padding:7px 11px}
