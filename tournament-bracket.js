@@ -588,7 +588,7 @@ function tournamentPlayerRow(name){
  }
  return '<div class="scs-api-roster-row"><span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+level+'</span></div>';
 }
-function hydrateTournamentPlayerCards(){if(window.SCSTournamentPlayerLevel)(window.SCSTournamentPlayerLevel.setRoster(root,draw&&draw.selectedPlayerDetails),window.SCSTournamentPlayerLevel.hydrate(root));if(window.SCSTeamPicker)SCSTeamPicker.decorate(root);}
+function hydrateTournamentPlayerCards(){if(window.SCSTournamentPlayerLevel)(window.SCSTournamentPlayerLevel.setRoster(root,draw&&draw.selectedPlayerDetails),window.SCSTournamentPlayerLevel.hydrate(root));}
 var poolExpanded=false;
 function togglePool(){poolExpanded=!poolExpanded;render();}
 function tournamentPoolCard(){
@@ -679,7 +679,7 @@ function editEntry(id){
  var used=tournamentAssignedNames(id);var names=(tournamentPool().length?tournamentPool():availablePlayerNames()).filter(function(n){return !used.has(n.trim().toLocaleLowerCase())});
  var opts=names.map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>'}).join('');
  var chosen=current.slice(0,2);
- var available=names.filter(function(n){return !used.has(n.trim().toLocaleLowerCase())});
+ var available=Array.from(new Set(names.concat(chosen).filter(function(n){return n&&!used.has(n.trim().toLocaleLowerCase())})));
  detailsBox.innerHTML='<div class="scs-tm-entry-editor scs-tm-mobile-picker"><button type="button" class="scs-tm-entry-close" aria-label="Close player assignment" onclick="SCSTournament.closeEntryPopup()">×</button><h3>Entry '+id+' · Select Players</h3><p>Tap two players to form a team.</p><div data-shared-picker></div><details class="scs-tm-manual-entry"><summary>Player not listed? Enter names manually</summary><label>Player 1<input id="scsTmP1" autocomplete="off" value="'+esc(chosen[0]||'')+'"></label><label>Player 2<input id="scsTmP2" autocomplete="off" value="'+esc(chosen[1]||'')+'"></label></details><div class="scs-tm-import-actions">'+(assistStep===1&&!assistSaved?'<button type="button" onclick="SCSTournament.addNextTeam('+id+')">+ Add Team</button>':'')+'<button type="button" class="scs-tm-primary" onclick="SCSTournament.doneEntry('+id+')">Done</button></div><p class="scs-tm-entry-status" role="status"></p></div>';
  if(window.SCSTeamPicker)SCSTeamPicker.render(detailsBox.querySelector('[data-shared-picker]'),{names:available,selected:chosen,max:2,row:tournamentPlayerRow,onChange:function(a){detailsBox.querySelector('#scsTmP1').value=a[0]||'';detailsBox.querySelector('#scsTmP2').value=a[1]||''}});
  hydrateTournamentPlayerCards();detailsBox.addEventListener('click',function(ev){if(ev.target===detailsBox)closeEntryPopup()});
