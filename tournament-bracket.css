@@ -558,3 +558,9 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-ko-generated-fixtures .scs-team-match-shell .scs-tm-completed-team:first-child{border-left:0;background:color-mix(in srgb,var(--team-left) 25%,#12213a);padding:12px;border-radius:9px 9px 0 0}
 .scs-ko-generated-fixtures .scs-team-match-shell .scs-tm-completed-team:last-child{border-left:0;background:color-mix(in srgb,var(--team-right) 25%,#12213a);padding:12px;border-radius:0 0 9px 9px}
 .scs-ko-generated-fixtures .scs-team-match-shell[aria-label] {cursor:pointer}
+/* V369: knockout assignment swap feedback, scoped to bracket entries. */
+.scs-tm-template-entry.scs-swap-selected{z-index:20!important;background:#1769b6!important;border:3px solid #9cdbff!important;color:#fff!important;box-shadow:0 0 0 4px rgba(90,175,255,.26),0 12px 22px rgba(0,0,0,.48)!important;transform:scale(1.12);transition:transform .16s,background .16s;}
+.scs-tm-template-entry.scs-swap-recent{z-index:12!important;background:#17634c!important;border:3px solid #83e9b9!important;color:#fff!important;box-shadow:0 0 0 3px rgba(100,245,182,.22)!important;transition:background .2s;}
+.scs-tm-swap-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;margin:0 0 8px;background:#192b44;border:1px solid #3d628b;border-radius:10px;color:#d9eaff;font-size:12px;}
+.scs-tm-swap-toolbar button{padding:7px 11px;border-radius:8px;border:1px solid #7bb9f6;background:#294f80;color:white;white-space:nowrap;}
+.scs-tm-swap-toolbar button[hidden]{display:none!important;}
