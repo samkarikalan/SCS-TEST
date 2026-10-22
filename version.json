@@ -1,5 +1,1 @@
-{
-  "version": "V365",
-  "build": "2026-10-22",
-  "scope": "Manual tournament save ordering and saved match score snapshots"
-}
+{"version":"V366","build":"2026-10-22","scope":"Match Center court and completed match card scoreboard navigation"}
