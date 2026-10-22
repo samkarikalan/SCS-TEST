@@ -772,11 +772,26 @@ function knockoutFixtureCards(){
    var scored=scoreSummary(game);
    var card=shared.completed({number:matchDisplayNumber(m.id),title:'Match '+matchDisplayNumber(m.id),left:info.a,right:info.b,leftPlayers:left,rightPlayers:right,score:String(scored||'').replace(/\s*·\s*/g,' | '),winner:winner});
    if(!result){card=card.replace('<span class="scs-tm-completed-check">✓</span>','<span class="scs-ko-fixture-pending">○</span>')}
+   // Reuse the existing team edit popup by tapping the team's player area.
+   // Keep the shared match card markup and styles untouched.
+   if(!readonly&&!result){
+    ['a','b'].forEach(function(side,index){
+     var src=m[side];
+     if(!editableEntryFromSource(src))return;
+     var target='<div class="scs-tm-completed-team ';
+     var pos=card.indexOf(target);
+     if(index===1)pos=card.indexOf(target,pos+target.length);
+     if(pos<0)return;
+     var end=card.indexOf('"',pos+target.length);
+     if(end<0)return;
+     card=card.slice(0,end+1)+' role="button" tabindex="0" aria-label="Edit Team '+(index===0?'A':'B')+'" onclick="SCSTournament.editEntry('+src+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();SCSTournament.editEntry('+src+')}"'+card.slice(end+1);
+    });
+   }
    var actions='';
    if(!readonly&&!result){
-    ['a','b'].forEach(function(side){var src=m[side];if(editableEntryFromSource(src))actions+='<button type="button" onclick="SCSTournament.editEntry('+src+')">Edit Team '+(side==='a'?'A':'B')+'</button>'});
+
     if(game){actions+='<span>Assigned to '+(game.court?'Court '+esc(game.court):'waiting list')+'</span>'}
-    else if(!/^(Winner|Loser) of /.test(info.a)&&!/^(Winner|Loser) of /.test(info.b)&&!/^Entry \d+$/.test(info.a)&&!/^Entry \d+$/.test(info.b))actions+='<button type="button" onclick="SCSTournament.assign('+m.id+')">Assign match</button>';
+    else if(!/^(Winner|Loser) of /.test(info.a)&&!/^(Winner|Loser) of /.test(info.b)&&!/^Entry \d+$/.test(info.a)&&!/^Entry \d+$/.test(info.b))actions+=(Array.isArray(draw.matchCenterQueue)&&draw.matchCenterQueue.includes(Number(m.id))?'<span>Waiting in Match Center</span>':'<button type="button" onclick="SCSTournament.queueMatch('+m.id+')">Assign match</button>');
    }
    html+='<div class="scs-ko-fixture-card">'+card+(actions?'<div class="scs-ko-fixture-actions">'+actions+'</div>':'')+'</div>';
   });
@@ -803,7 +818,7 @@ function liveTournamentPanel(){
   function tg(id){return allGames.find(function(g){return Number(g.tournament_match)===Number(id)})}
   var matches=draw.matches.map(function(m){return {m:m,info:matchInfo(m.id),g:tg(m.id)}});
   var completed=matches.filter(function(x){return x.g&&x.g.court_center_status==='approved'});
-  var waiting=matches.filter(function(x){return (!x.g||x.g.court_center_status!=='approved')&&!draw.results[x.m.id]&&!/^(Winner|Loser) of /.test(x.info.a)&&!/^(Winner|Loser) of /.test(x.info.b)&&!/^Entry \d+$/.test(x.info.a)&&!/^Entry \d+$/.test(x.info.b)});
+  var waiting=matches.filter(function(x){return (x.g||(Array.isArray(draw.matchCenterQueue)&&draw.matchCenterQueue.includes(Number(x.m.id))))&&(!x.g||x.g.court_center_status!=='approved')&&!draw.results[x.m.id]&&!/^(Winner|Loser) of /.test(x.info.a)&&!/^(Winner|Loser) of /.test(x.info.b)&&!/^Entry \d+$/.test(x.info.a)&&!/^Entry \d+$/.test(x.info.b)});
   var recentPlayers=latestCompletedPlayerKeys(allGames),freshWaiting=waiting.filter(function(x){return !x.g&&!matchNeedsRest(x.m,recentPlayers)}),canRotate=freshWaiting.length>0;
   waiting.sort(function(a,b){var ar=!a.g&&matchNeedsRest(a.m,recentPlayers),br=!b.g&&matchNeedsRest(b.m,recentPlayers);return Number(ar)-Number(br)||matchDisplayNumber(a.m.id)-matchDisplayNumber(b.m.id)});
   var tab=draw.liveTab||'waiting',targetCourt=Number(draw.assigningCourt)||0;
@@ -1239,6 +1254,19 @@ function renderLiveSafe(){
 function liveTab(name){if(!draw)return;draw.liveTab=name;render();}
 function approveLive(id){var g=window.SCSCourtCenter&&SCSCourtCenter.tournamentGame&&SCSCourtCenter.tournamentGame(id);if(!g)return;if(g.score_status!=='scored'){alert('Complete the score first.');return;}if(window.SCSCourtCenter&&SCSCourtCenter.approve)SCSCourtCenter.approve(g.ccid).then(function(){draw.liveTab='completed';localTournamentSave(draw);render();});}
 function chooseCourt(n){draw.assigningCourt=Number(n)||0;draw.liveTab='waiting';render()}
+async function queueMatch(id){
+ if(readonly||!draw||!draw.live||!draw.knockoutFixturesGenerated)return;
+ var m=getMatch(id),info=matchInfo(id);
+ if(!m||!info||draw.results[id]||/^(Winner|Loser) of /.test(info.a)||/^(Winner|Loser) of /.test(info.b)||/^Entry \\d+$/.test(info.a)||/^Entry \\d+$/.test(info.b))return;
+ var old=Array.isArray(draw.matchCenterQueue)?draw.matchCenterQueue.slice():[];
+ draw.matchCenterQueue=Array.from(new Set(old.concat(Number(id))));
+ try{
+  await localTournamentSave(draw);
+  if(saveFn&&saveFn!==localTournamentSave)await saveFn(draw);
+  await localTournamentSave(draw);
+  render();
+ }catch(e){draw.matchCenterQueue=old;alert(e.message||'Could not send match to Match Center.')}
+}
 function assign(id){
  if(readonly||!draw)return;
  var info=matchInfo(id),cc=window.SCSCourtCenter;if(!info||!cc||!cc.assignTournamentMatch){alert('Tournament courts unavailable.');return;}
@@ -1288,7 +1316,7 @@ async function changeLiveCourts(delta){
 function startCourtMatch(id){if(!window.SCSCourtCenter||!SCSCourtCenter.startTournamentMatch){alert('Match Center is still loading.');return}SCSCourtCenter.startTournamentMatch(id).then(function(ok){if(!ok)throw new Error('Match assignment is unavailable. Reopen Match Center and try again.');render();if(window.SCSScoring&&SCSScoring.open)SCSScoring.open();else alert('Scoring is still loading.');}).catch(function(e){alert((e&&e.message)||'Could not start this match.');})}
 
 function approved(id,winner){var info=matchInfo(id);if(!info||winner!==info.a&&winner!==info.b)throw Error('Winner must match a team in the bracket');draw.results[id]={winner:winner,loser:winner===info.a?info.b:info.a};render()}
-window.SCSTournament={adoptCloudEvent:koAdoptCloudEvent,generateKnockoutFixtures:koGenerateFixtures,assistSaveDraft:assistSaveDraft,quickAssign:quickAssign,assistOpen:assistOpen,assistBack:assistBack,assistCloseStep:assistCloseStep,assistPatternPage:assistPatternPage,assistClearPattern:assistClearPattern,assistConfirmPage:assistConfirmPage,assistAddTeam:assistAddTeam,addNextTeam:addNextTeam,assistRemoveTeam:assistRemoveTeam,assistFinishPlayers:assistFinishPlayers,assistConfirmAssignments:assistConfirmAssignments,autoAssignTournament:autoAssignTournament,togglePool:togglePool,setBracketHeight:setBracketHeight,switchTournamentCenterTab:switchTournamentCenterTab,openPlayersManager:openPlayersManager,playersManagerReturned:playersManagerReturned,filterPlayerPool:filterPlayerPool,setPoolPlayer:setPoolPlayer,chooseCourt:chooseCourt,selectAssignmentCourt:selectAssignmentCourt,cancelCourtSelection:cancelCourtSelection,changeLiveCourts:changeLiveCourts,startCourtMatch:startCourtMatch,liveTab:liveTab,approveLive:approveLive,renderLive:renderLiveSafe,init:init,analyzeBracketImage:analyzeBracketImage,generate:generate,generateTwoSided:generateTwoSided,generateCustomTwoSided:generateCustomTwoSided,emptyBracket:emptyBracket,cleanOCR:cleanOCR,splitTeam:splitTeam,removeEntry:removeEntry,load:load,open:open,close:close,pickImage:pickImage,renderHome:renderHome,manualCreate:manualCreate,editPattern:editPattern,setupByes:setupByes,confirmByeSelection:confirmByeSelection,cancelByeSelection,nextByePattern:nextByePattern,setByePatternMode:setByePatternMode,createManualTemplate:createManualTemplate,createImageFlow:createImageFlow,backToImportedImage:backToImportedImage,buildImageFlow:buildImageFlow,select:select,entryTap:entryTap,editEntry:editEntry,closeEntryPopup:closeEntryPopup,doneEntry:doneEntry,editEntry:editEntry,saveEntry:saveEntry,fit:fit,zoomBy:zoomBy,edit:edit,editor:editor,review:review,cancelEditor:cancelEditor,scan:scan,example:example,recognize:recognize,applyScan:applyScan,saveScan:saveScan,cancelReview:cancelReview,assign:assign,approved:approved,matchInfo:matchInfo,clearTournament:clearTournament,saveTournament:saveTournament,startLive:startLive,enterSavedTournament:enterSavedTournament,startSavedTournament:startSavedTournament,setTournamentCourts:setTournamentCourts,openCourtCenter:openCourtCenter};
+window.SCSTournament={adoptCloudEvent:koAdoptCloudEvent,generateKnockoutFixtures:koGenerateFixtures,assistSaveDraft:assistSaveDraft,quickAssign:quickAssign,assistOpen:assistOpen,assistBack:assistBack,assistCloseStep:assistCloseStep,assistPatternPage:assistPatternPage,assistClearPattern:assistClearPattern,assistConfirmPage:assistConfirmPage,assistAddTeam:assistAddTeam,addNextTeam:addNextTeam,assistRemoveTeam:assistRemoveTeam,assistFinishPlayers:assistFinishPlayers,assistConfirmAssignments:assistConfirmAssignments,autoAssignTournament:autoAssignTournament,togglePool:togglePool,setBracketHeight:setBracketHeight,switchTournamentCenterTab:switchTournamentCenterTab,openPlayersManager:openPlayersManager,playersManagerReturned:playersManagerReturned,filterPlayerPool:filterPlayerPool,setPoolPlayer:setPoolPlayer,chooseCourt:chooseCourt,selectAssignmentCourt:selectAssignmentCourt,cancelCourtSelection:cancelCourtSelection,changeLiveCourts:changeLiveCourts,startCourtMatch:startCourtMatch,liveTab:liveTab,approveLive:approveLive,renderLive:renderLiveSafe,init:init,analyzeBracketImage:analyzeBracketImage,generate:generate,generateTwoSided:generateTwoSided,generateCustomTwoSided:generateCustomTwoSided,emptyBracket:emptyBracket,cleanOCR:cleanOCR,splitTeam:splitTeam,removeEntry:removeEntry,load:load,open:open,close:close,pickImage:pickImage,renderHome:renderHome,manualCreate:manualCreate,editPattern:editPattern,setupByes:setupByes,confirmByeSelection:confirmByeSelection,cancelByeSelection,nextByePattern:nextByePattern,setByePatternMode:setByePatternMode,createManualTemplate:createManualTemplate,createImageFlow:createImageFlow,backToImportedImage:backToImportedImage,buildImageFlow:buildImageFlow,select:select,entryTap:entryTap,editEntry:editEntry,closeEntryPopup:closeEntryPopup,doneEntry:doneEntry,editEntry:editEntry,saveEntry:saveEntry,fit:fit,zoomBy:zoomBy,edit:edit,editor:editor,review:review,cancelEditor:cancelEditor,scan:scan,example:example,recognize:recognize,applyScan:applyScan,saveScan:saveScan,cancelReview:cancelReview,assign:assign,queueMatch:queueMatch,approved:approved,matchInfo:matchInfo,clearTournament:clearTournament,saveTournament:saveTournament,startLive:startLive,enterSavedTournament:enterSavedTournament,startSavedTournament:startSavedTournament,setTournamentCourts:setTournamentCourts,openCourtCenter:openCourtCenter};
 window.SCSTournament.switchTournamentTab=switchTournamentTab;
 window.SCSTournament.selectKnockoutEvent=function(id){koOpenEvent(id,'flowchart')};
 window.SCSTournament.addKnockoutEvent=koAddEvent;
