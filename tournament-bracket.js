@@ -96,30 +96,47 @@ function koHomeRender(){
   root.querySelectorAll('[data-open-event]').forEach(function(b){
    var id=b.dataset.openEvent, item=koMain.events.find(function(e){return e.id===id});
    var card=b.closest('.scs-event-card,.scs-api-event-card,article')||b.parentElement;
-   if(!card||!item||card.querySelector('[data-ko-delete-event]'))return;
-   var del=document.createElement('button');del.type='button';del.className='scs-ko-delete-button scs-ko-delete-event';del.textContent='Delete League';del.dataset.koDeleteEvent=id;
-   del.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koDeleteLeague(id)};card.appendChild(del);
-   if(koAssistAvailable(id)){var assist=document.createElement('button');assist.type='button';assist.className='scs-ko-event-assist';assist.textContent='Assist';assist.setAttribute('aria-label','Edit '+(item.title||'event')+' with Knockout Assist');assist.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koOpenSavedAssist(id)};card.appendChild(assist);}
+   if(!card||!item)return;
+   // The Assist control is independent of Delete League and always appears.
+   if(!card.querySelector('[data-ko-event-assist]')){
+    var assist=document.createElement('button');assist.type='button';assist.className='scs-ko-event-assist';assist.dataset.koEventAssist=id;assist.textContent='Assist';
+    assist.setAttribute('aria-label','Open '+(item.title||'event')+' Knockout Assist');
+    assist.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koOpenSavedAssist(id)};
+    card.appendChild(assist);
+   }
+   if(!card.querySelector('[data-ko-delete-event]')){
+    var del=document.createElement('button');del.type='button';del.className='scs-ko-delete-button scs-ko-delete-event';del.textContent='Delete League';del.dataset.koDeleteEvent=id;
+    del.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koDeleteLeague(id)};card.appendChild(del);
+   }
   });
  }
  root.querySelectorAll('[data-ko-nav]').forEach(function(b){if(b.dataset.koNav==='clubs'){var label=b.querySelector('.scs-tm-nav-label');if(label)label.textContent='Teams';}b.onclick=function(){var t=b.dataset.koNav;if(t==='home')koHomeRender();else if(koActiveId)koOpenEvent(koActiveId,t==='clubs'?'players':t==='match'?'match':'flowchart');else alert('Add an event first.')}});
 }
-// Assist can be reopened only while the saved event has not begun playing.
-function koAssistAvailable(id){
- if(readonly||!koMain)return false;
- var state=koEventLoad(id),item=koMain.events.find(function(e){return e.id===id});
- if(!item||!state||!Array.isArray(state.entries)||!state.entries.length)return false;
- if(state.live===true||state.started===true||Object.keys(state.results||{}).length||Number(item.completed||0)>0)return false;
- if(Array.isArray(state.matchCenterQueue)&&state.matchCenterQueue.some(function(m){return !!(m.started_at||m.start_time||['scoring','scored','completed','complete','under_approval','approval'].includes(String(m.score_status||m.status||'').toLowerCase()))}))return false;
+// Visibility is unconditional; editability is based on whether play has begun.
+function koAssistAvailable(id){return !!(!readonly&&koMain&&koMain.events.some(function(e){return e.id===id}));}
+function koAssistHasStarted(state){
+ if(!state)return false;
+ if(state.live===true||state.started===true||Object.keys(state.results||{}).length)return true;
+ if(Array.isArray(state.matchCenterQueue)&&state.matchCenterQueue.some(function(m){return !!(m.started_at||m.start_time||['scoring','scored','completed','complete','under_approval','approval'].includes(String(m.score_status||m.status||'').toLowerCase()))}))return true;
  if(window.SCSCourtCenter&&typeof window.SCSCourtCenter.tournamentGame==='function'&&Array.isArray(state.matches)){
-  for(var m of state.matches){var game=window.SCSCourtCenter.tournamentGame(m.id);if(game&&(game.started_at||game.start_time||['scoring','scored','completed','complete'].includes(String(game.score_status||'').toLowerCase())))return false;}
+  for(var m of state.matches){var game=window.SCSCourtCenter.tournamentGame(m.id);if(game&&(game.started_at||game.start_time||['scoring','scored','completed','complete'].includes(String(game.score_status||'').toLowerCase())))return true;}
  }
- return true;
+ return false;
 }
 function koOpenSavedAssist(id){
  if(!koAssistAvailable(id))return;
+ var saved=koEventLoad(id);
+ var locked=koAssistHasStarted(saved);
  koOpenEvent(id,'flowchart');
- // Keep the saved draw, BYE layout and team assignments; only reopen the wizard UI.
+ if(locked){
+  // Preserve played matches and bracket progression: view the saved pattern only.
+  var note=document.createElement('div');note.className='scs-ko-assist-locked-note';note.setAttribute('role','status');
+  note.textContent='Assist · View only — matches have started. Pattern and BYE positions are locked.';
+  note.style.cssText='padding:12px 16px;margin:8px 12px;border:1px solid #7894ba;border-radius:12px;background:#203550;color:#e2efff';
+  root.insertBefore(note,root.firstChild);
+  return;
+ }
+ // Restore the saved event and reopen the wizard without rebuilding the bracket.
  assistSaved=false;assistStep=0;byeSelection=null;selected=null;swapEntryId=null;
  creationScreenPinned=false;assistIndex();ensureAssistHeader();
 }
