@@ -1,8 +1,10 @@
 {
-  "version": "V356",
+  "version": "V357",
   "build": "2026-10-22",
   "updated": [
+    "shared-match-center.js",
     "tournament-bracket.js",
+    "group-tournament.js",
     "index.html",
     "sw.js",
     "version.json"

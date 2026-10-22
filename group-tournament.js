@@ -21,7 +21,7 @@ function groupOpenEvent(id,section){if(!groupMain.events.some(e=>e.id===id))retu
 function groupAddEvent(){window.ScsApi.events.requestEvent({parentTitle:groupMain.title,onCreate:title=>{if(groupMain.events.some(e=>e.title.toLowerCase()===title.toLowerCase())){alert('Event already exists.');return}const id=groupId();groupMain.events.push({id,title});groupMain.activeEventId=id;groupMainSave();localStorage.setItem(groupEventKey(id),JSON.stringify({title,created:false,assistMode:true,config:{groups:4,per:4,knockouts:1,top:2,bottom:1},pool:[],teamDrafts:[],assignments:{},matches:[],started:false}));groupOpenEvent(id,'tournament')}})}
 
  let groupSelectedPlayerDetails=[];
- let cloudTournamentId='',clientTournamentId='',title='',config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null,viewOnly=false;
+ let cloudTournamentId='',clientTournamentId='',title='',config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',tournamentView='all',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null,viewOnly=false;
 const el=()=>document.getElementById('scsGroupTournament');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function load(){try{let v=JSON.parse(localStorage.getItem(groupEventId?groupEventKey(groupEventId):KEY));if(v){cloudTournamentId=v._scsCloudTournamentId||'';clientTournamentId=v._scsClientTournamentId||'';title=String(v.title||'Group Tournament');config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];groupSelectedPlayerDetails=Array.isArray(v.selectedPlayerDetails)?v.selectedPlayerDetails:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
@@ -214,7 +214,7 @@ function matchCenter(){
  });
  const pending=matches.filter(m=>m.status==='pending'||m.status==='assigned'||m.status==='playing'||m.status==='score_ready');
  const done=matches.filter(m=>m.status==='approved');
- return '<div class="scs-tm-unified-match-center">'+SCSSharedMatchCenter.panel({courtCount,courts,tab:matchTab,assigning:assigningMatch,ranking:standings(),
+ return '<div class="scs-tm-unified-match-center">'+SCSSharedMatchCenter.panel({courtCount,courts,tab:matchTab,hideRanking:true,assigning:assigningMatch,ranking:standings(),
   waiting:pending.sort((a,b)=>(priority.get(a.id)??99999)-(priority.get(b.id)??99999)).map(m=>({number:m.id,groupIndex:m.group,heading:'Group '+groupLabel(m.group),left:(assignments[m.a]||[]).join(' / '),right:(assignments[m.b]||[]).join(' / '),label:m.court?'Assigned · Court '+m.court:priority.has(m.id)?'Assign':'Waiting',assigned:!!m.court,action:m.status==='pending'&&priority.has(m.id)?'data-assign="'+escapeHTML(m.id)+'"':''})),
   completed:done.map(m=>({number:m.id,left:(assignments[m.a]||[]).join(' / '),right:(assignments[m.b]||[]).join(' / '),leftPlayers:assignments[m.a]||[],rightPlayers:assignments[m.b]||[],score:groupCompletedScore(m),winner:m.winner==='L'?'left':m.winner==='R'?'right':null})),
   attrs:{change:n=>'data-courts="'+n+'"',choose:n=>'data-choose-court="'+n+'"',cancel:'data-cancel-court',tab:id=>'data-match-tab="'+id+'"'}
@@ -258,6 +258,7 @@ function assistDone(step){
  save();assistStep=0;render();
 }
 function view(){
+if(tab==='main'&&tournamentView==='ranking')return standings();
 if(tab==='main')return (started?card('Group Tournament Started','<p>'+matches.length+' round-robin matches generated.</p>'):card('Start Group Tournament','<p>Assign all teams before starting.</p><button class="scs-gt-primary" data-start>Start Group Tournament</button>'))+card('Tournament Overview','<p>'+config.groups+' groups · '+config.per+' teams per group · '+config.knockouts+' knockout tournament'+(config.knockouts===1?'':'s')+'</p><p>Teams assigned: '+Object.keys(assignments).length+' / '+config.groups*config.per+'</p>')+groups()+card('Knockout qualification','<p>Top: '+config.top+' per group'+(config.knockouts===2?' · Bottom: '+config.bottom+' per group':'')+'</p><p class="scs-gt-empty">Bracket will appear after qualification is implemented in Stage 2.</p>');
 if(tab==='players')return players();
 if(tab==='groups')return groups();
@@ -277,7 +278,7 @@ if(groupHome){groupHomeRender();return;}
 const assisting=assistMode&&!started;
 let body;
 if(assisting)body=assistStep===0?assistIndex():assistView();
-else body='<header><strong>'+escapeHTML(title)+'</strong><button data-action="close" aria-label="Close">✕</button></header>'+((tab==='main'||tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view()+'<button class="scs-gt-secondary" data-action="new">New Group Tournament</button>';
+else body='<header><strong>'+escapeHTML(title)+'</strong><button data-action="close" aria-label="Close">✕</button></header>'+(tab==='main'?'<nav class="scs-tm-live-tabs"><button data-tournament-view="all" class="'+(tournamentView==='all'?'active':'')+'">All</button><button data-tournament-view="ranking" class="'+(tournamentView==='ranking'?'active':'')+'">Ranking</button></nav>':'')+((tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view()+'<button class="scs-gt-secondary" data-action="new">New Group Tournament</button>';
 el().innerHTML='<div class="scs-gt-sheet" role="dialog" aria-modal="true">'+body+'</div>'+tournamentBottomNav(assisting);
 const closeButton=el().querySelector('[data-action="close"]');if(closeButton)closeButton.onclick=close;
 el().querySelectorAll('[data-assist-step]').forEach(x=>x.onclick=()=>{assistStep=Number(x.dataset.assistStep);render()});
@@ -296,14 +297,15 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
  el().querySelectorAll('[data-approve]').forEach(x=>x.onclick=()=>approveMatch(x.dataset.approve));
  
  el().querySelectorAll('[data-courts]').forEach(x=>x.onclick=()=>{courtCount=Math.max(1,Math.min(32,courtCount+Number(x.dataset.courts),...matches.filter(m=>m.court).map(m=>m.court)));save();render()});
- el().querySelectorAll('[data-match-tab]').forEach(x=>x.onclick=()=>{matchTab=x.dataset.matchTab;render()});
+ el().querySelectorAll('[data-tournament-view]').forEach(x=>x.onclick=()=>{tournamentView=x.dataset.tournamentView;render()});
+el().querySelectorAll('[data-match-tab]').forEach(x=>x.onclick=()=>{matchTab=x.dataset.matchTab;render()});
  el().querySelectorAll('[data-choose-court]').forEach(x=>x.onclick=()=>{const n=Number(x.dataset.chooseCourt),m=matches.find(y=>y.id===assigningMatch);if(!m||m.court||teamBusy(m.a)||teamBusy(m.b))return;const occupant=matches.find(y=>y.court===n);if(occupant){if(occupant.status!=='assigned'){alert('This court has a started match.');return}if(!confirm('Replace '+occupant.id+' on Court '+n+'?'))return;occupant.court=null;occupant.status='pending';occupant.assignedOrder=0;}m.court=n;m.status='assigned';m.assignedOrder=++assignmentSerial;assigningMatch=null;save();render()});
  const cancelCourt=el().querySelector('[data-cancel-court]');if(cancelCourt)cancelCourt.onclick=()=>{assigningMatch=null;render()};
  el().querySelectorAll('[data-tab]').forEach(x=>x.onclick=()=>{tab=x.dataset.tab;render()});
  el().querySelectorAll('[data-group-nav]').forEach(x=>x.onclick=()=>{
   const target=x.dataset.groupNav;if(target==='home'){if(groupMain){save();groupHomeRender()}else close();return}
   if(assisting){if(target==='teams')assistStep=1;else if(target==='tournament'&&assistComplete(1))assistStep=Math.max(2,Math.min(5,assistStep||2));else return;save();render();return}
-  tab=target==='teams'?'players':target==='tournament'?(tab==='knockouts'?'knockouts':'groups'):target;save();render();
+  tab=target==='teams'?'players':target==='tournament'?'main':target;save();render();
  });
 let create=el().querySelector('[data-action="create"]');if(create)create.onclick=()=>{const input=el().querySelector('[data-title]');title=String(input?input.value:title).trim().slice(0,120);if(!title){alert('Enter a tournament name before creating the groups.');if(input)input.focus();return}if(config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Qualifiers cannot exceed teams per group.');return}created=true;tab='main';save();render()};
  let fresh=el().querySelector('[data-action="new"]');if(fresh)fresh.onclick=()=>{if(confirm('Start a new group tournament setup?')){title='';created=false;assistMode=true;assistStep=0;assistPatternReady=false;started=false;matches=[];assignmentSerial=0;teamDrafts=[];assignments={};matchTab='waiting';assigningMatch=null;save();render()}};
