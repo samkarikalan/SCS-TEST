@@ -755,7 +755,7 @@ function koScoreForMatch(id){
 function openMatchScore(id){
  var score=koScoreForMatch(id);
  if(!score||!window.SCSScoring||typeof SCSScoring.openCompleted!=='function'){
-  select(id);return;
+  selected=id;render();return;
  }
  if(!readonly){var g=window.SCSCourtCenter&&SCSCourtCenter.tournamentGame&&SCSCourtCenter.tournamentGame(id);if(koCaptureMatchScore(id,g))localTournamentSave(draw);}
  SCSScoring.openCompleted(score);
@@ -765,7 +765,7 @@ function currentServingPlayer(g){var sc=g&&g.score;if(!sc||sc.finished===true||!
 function details(){
  if(!selected)return '<p class="scs-tm-hint">Tap a numbered junction to see the two teams playing.</p>';
  var m=getMatch(selected),info=matchInfo(selected),r=draw.results[selected],g=window.SCSCourtCenter&&window.SCSCourtCenter.tournamentGame&&window.SCSCourtCenter.tournamentGame(selected);if(!m)return '';
- var score=scoreSummary(g);
+ var score=scoreSummary(g)||scoreSummary({score:koScoreForMatch(selected)});
  // Reuse the one shared tournament result card below the bracket as well.
  if((score||r)&&window.SCSSharedMatchCenter&&typeof SCSSharedMatchCenter.completed==='function'){
   var winner='';if(r&&r.winner){if(String(r.winner)===String(info.a))winner='left';else if(String(r.winner)===String(info.b))winner='right'}
@@ -780,6 +780,12 @@ function details(){
 // The bracket remains the authoritative source for match positions and BYEs.
 function knockoutFixtureCards(){
  if(!draw||!draw.matches||!draw.matches.length||!draw.knockoutFixturesGenerated)return '';
+ // Capture completed scoring details while the court session is still available.
+ if(!readonly&&window.SCSCourtCenter&&typeof SCSCourtCenter.tournamentGame==='function'){
+  var scoreChanged=false;
+  draw.matches.forEach(function(m){var g=SCSCourtCenter.tournamentGame(m.id);if(g&&g.score&&g.score.finished===true)scoreChanged=koCaptureMatchScore(m.id,g)||scoreChanged;});
+  if(scoreChanged)localTournamentSave(draw);
+ }
  var shared=window.SCSSharedMatchCenter;
  if(!shared||typeof shared.completed!=='function')return '';
  var groups=new Map();
@@ -820,7 +826,7 @@ function knockoutFixtureCards(){
     if(game){actions+='<span>Assigned to '+(game.court?'Court '+esc(game.court):'waiting list')+'</span>'}
     else if(!/^(Winner|Loser) of /.test(info.a)&&!/^(Winner|Loser) of /.test(info.b)&&!/^Entry \d+$/.test(info.a)&&!/^Entry \d+$/.test(info.b))actions+=(Array.isArray(draw.matchCenterQueue)&&draw.matchCenterQueue.includes(Number(m.id))?'<span>Waiting in Match Center</span>':'<button type="button" onclick="SCSTournament.queueMatch('+m.id+')">Assign match</button>');
    }
-   html+='<div class="scs-ko-fixture-card"'+(savedScore?' role="button" tabindex="0" aria-label="Open match scoreboard" onclick="if(!event.target.closest(\'[onclick],button,a,input,select\'))SCSTournament.openMatchScore('+m.id+')" onkeydown="if(event.target===this&&(event.key===\'Enter\'||event.key===\' \')){event.preventDefault();SCSTournament.openMatchScore('+m.id+')}"':'')+'>'+card+(actions?'<div class="scs-ko-fixture-actions">'+actions+'</div>':'')+'</div>';
+   html+='<div class="scs-ko-fixture-card scs-team-match-shell" data-match-id="'+m.id+'"'+(savedScore?' role="button" tabindex="0" aria-label="Open match scoreboard" onclick="if(!event.target.closest(\'[onclick],button,a,input,select\'))SCSTournament.openMatchScore('+m.id+')" onkeydown="if(event.target===this&&(event.key===\'Enter\'||event.key===\' \')){event.preventDefault();SCSTournament.openMatchScore('+m.id+')}"':'')+'>'+card+(actions?'<div class="scs-ko-fixture-actions">'+actions+'</div>':'')+'</div>';
   });
   html+='</section>';
  });
@@ -844,7 +850,7 @@ function liveTournamentPanel(){
   var allGames=state.games||[];
   function tg(id){return allGames.find(function(g){return Number(g.tournament_match)===Number(id)})}
   var matches=draw.matches.map(function(m){return {m:m,info:matchInfo(m.id),g:tg(m.id)}});
-  var completed=matches.filter(function(x){return x.g&&x.g.court_center_status==='approved'});
+  var completed=matches.filter(function(x){return (x.g&&x.g.court_center_status==='approved')||!!draw.results[x.m.id]});
   var waiting=matches.filter(function(x){return (x.g||(Array.isArray(draw.matchCenterQueue)&&draw.matchCenterQueue.includes(Number(x.m.id))))&&(!x.g||x.g.court_center_status!=='approved')&&!draw.results[x.m.id]&&!/^(Winner|Loser) of /.test(x.info.a)&&!/^(Winner|Loser) of /.test(x.info.b)&&!/^Entry \d+$/.test(x.info.a)&&!/^Entry \d+$/.test(x.info.b)});
   var recentPlayers=latestCompletedPlayerKeys(allGames),freshWaiting=waiting.filter(function(x){return !x.g&&!matchNeedsRest(x.m,recentPlayers)}),canRotate=freshWaiting.length>0;
   waiting.sort(function(a,b){var ar=!a.g&&matchNeedsRest(a.m,recentPlayers),br=!b.g&&matchNeedsRest(b.m,recentPlayers);return Number(ar)-Number(br)||matchDisplayNumber(a.m.id)-matchDisplayNumber(b.m.id)});

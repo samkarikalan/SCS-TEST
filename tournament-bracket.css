@@ -549,3 +549,12 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 
 /* Knockout bottom navigation: selection is indicated by icon/label color, never an overlapping underline. */
 .scs-tm-bottom-nav button.active::after{display:none!important;}
+
+/* V363: Knockout fixtures use the same shared match-card body and team scoring layout. */
+.scs-ko-generated-fixtures .scs-team-match-shell{width:100%;margin:9px 0;--team-left:#3782cf;--team-right:#b53c61}
+.scs-ko-generated-fixtures .scs-team-match-shell>.scs-tm-completed-row{width:100%;max-width:none;margin:0;box-sizing:border-box}
+.scs-ko-generated-fixtures .scs-team-match-shell .scs-tm-completed-team{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;min-width:0}
+.scs-ko-generated-fixtures .scs-team-match-shell .scs-tm-completed-team-score{grid-column:2;grid-row:1;text-align:right}
+.scs-ko-generated-fixtures .scs-team-match-shell .scs-tm-completed-team:first-child{border-left:0;background:color-mix(in srgb,var(--team-left) 25%,#12213a);padding:12px;border-radius:9px 9px 0 0}
+.scs-ko-generated-fixtures .scs-team-match-shell .scs-tm-completed-team:last-child{border-left:0;background:color-mix(in srgb,var(--team-right) 25%,#12213a);padding:12px;border-radius:0 0 9px 9px}
+.scs-ko-generated-fixtures .scs-team-match-shell[aria-label] {cursor:pointer}
