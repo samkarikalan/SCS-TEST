@@ -1,5 +1,5 @@
 {
-  "version": "V358",
+  "version": "V359",
   "build": "2026-10-22",
-  "scope": "Knockout match cards and Match Center queue only"
+  "scope": "Knockout bottom navigation"
 }

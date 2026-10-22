@@ -889,12 +889,21 @@ function organizeTournamentTabs(){
   var host=document.createElement('div');
   host.innerHTML=ScsApi.navigation.bottom({active:tabs.find(function(t){return t[0]===tournamentActiveTab})?.[1]||'home',attribute:'data-tm-nav',ariaLabel:'Knockout tournament sections'});
   bar=host.firstElementChild;
+  // Keep the shared Team Tournament navigation component and its icons.
+  // Only change the label of its Clubs slot in the Knockout instance.
+  var teamsNav=bar.querySelector('[data-tm-nav="clubs"]');
+  if(teamsNav){
+   var label=teamsNav.querySelector('.scs-nav-label,.scs-bottom-nav-label,span');
+   if(label)label.textContent='Teams';
+   else teamsNav.childNodes.forEach(function(node){if(node.nodeType===3&&node.textContent.trim()==='Clubs')node.textContent='Teams'});
+   teamsNav.setAttribute('aria-label','Teams and Players');
+  }
   bar.querySelectorAll('[data-tm-nav]').forEach(function(btn){
    btn.onclick=function(){var key=btn.getAttribute('data-tm-nav');var found=tabs.find(function(t){return t[1]===key});if(found)switchTournamentTab(found[0]);};
   });
  }else{
   bar=document.createElement('nav');bar.className='scs-tm-organized-tabs scs-tm-bottom-nav';bar.setAttribute('aria-label','Tournament sections');
-  [['main','Home'],['players','Clubs'],['flowchart','Tournament'],['match','Match Center']].forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.textContent=item[1];btn.setAttribute('data-tm-tab',item[0]);btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
+  [['main','Home'],['players','Teams'],['flowchart','Tournament'],['match','Match Center']].forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.textContent=item[1];btn.setAttribute('data-tm-tab',item[0]);btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
  }
  bar.querySelectorAll('[data-tm-nav]').forEach(function(btn){var key=btn.getAttribute('data-tm-nav');var found=tabs.find(function(t){return t[1]===key});if(found)btn.setAttribute('data-tm-tab',found[0]);});
  root.insertBefore(bar,root.firstChild);
