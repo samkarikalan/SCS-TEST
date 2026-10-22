@@ -893,7 +893,7 @@ function organizeTournamentTabs(){
   // Only change the label of its Clubs slot in the Knockout instance.
   var teamsNav=bar.querySelector('[data-tm-nav="clubs"]');
   if(teamsNav){
-   var label=teamsNav.querySelector('.scs-nav-label,.scs-bottom-nav-label,span');
+   var label=teamsNav.querySelector('.scs-tm-nav-label');
    if(label)label.textContent='Teams';
    else teamsNav.childNodes.forEach(function(node){if(node.nodeType===3&&node.textContent.trim()==='Clubs')node.textContent='Teams'});
    teamsNav.setAttribute('aria-label','Teams and Players');
@@ -908,7 +908,14 @@ function organizeTournamentTabs(){
  bar.querySelectorAll('[data-tm-nav]').forEach(function(btn){var key=btn.getAttribute('data-tm-nav');var found=tabs.find(function(t){return t[1]===key});if(found)btn.setAttribute('data-tm-tab',found[0]);});
  root.insertBefore(bar,root.firstChild);
  function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);root.appendChild(wrap);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
- panel('main',[summary]);panel('players',teamPanels);var fixtureList=document.createElement('div');fixtureList.innerHTML=knockoutFixtureCards();var tournamentPanel=panel('flowchart',[workspace,hint,details,fixtureList]);
+ panel('main',[summary]);
+ // Knockout Teams uses the very same cards and metadata hydration as Assist Step 1.
+ // Do not maintain a second, reduced roster layout.
+ var playersPanel=document.createElement('div');
+ playersPanel.innerHTML=tournamentPoolCard()+assistTeamsCard();
+ panel('players',Array.from(playersPanel.children));
+ teamPanels.forEach(function(el){if(el&&el.parentNode)el.remove()});
+ var fixtureList=document.createElement('div');fixtureList.innerHTML=knockoutFixtureCards();var tournamentPanel=panel('flowchart',[workspace,hint,details,fixtureList]);
  // Reuse the existing Match Center ranking content in Tournament; no stylesheet changes.
  var koRanking=document.createElement('div');koRanking.hidden=true;koRanking.innerHTML='<div class="scs-tm-live-empty">Ranking updates from approved results.</div>';
  var koTabs=document.createElement('nav');koTabs.className='scs-tm-live-tabs';koTabs.innerHTML='<button type="button" class="active">All</button><button type="button">Ranking</button>';
@@ -949,14 +956,14 @@ function assistTeamsCard(){
  }).join('')+'</div>':'<p style="padding:12px">Create teams, then select players using the existing assignment popup.</p>')+'</section>';
 }
 function assistAddTeam(){
- if(readonly||assistStep!==1)return;
+ if(readonly||(assistStep!==1&&tournamentActiveTab!=='players'))return;
  if(draw.entries.length>=64){alert('Maximum 64 teams.');return}
  var id=draw.entries.reduce(function(m,e){return Math.max(m,Number(e.id)||0)},0)+1;
  draw.entries.push({id:id,name:'Entry '+id});
  saveAssistDraft();render();editEntry(id);
 }
 function assistRemoveTeam(id){
- if(readonly||assistStep!==1)return;
+ if(readonly||(assistStep!==1&&tournamentActiveTab!=='players'))return;
  draw.entries=draw.entries.filter(function(e){return Number(e.id)!==Number(id)});
  saveAssistDraft();render();
 }
