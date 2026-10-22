@@ -568,3 +568,12 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 /* V370: event-level Assist action, without changing the event card layout. */
 .scs-ko-event-assist{display:inline-flex;align-items:center;justify-content:center;margin:8px 12px 8px auto;padding:7px 17px;border:1px solid #63d6af;border-radius:999px;background:#124c45;color:#a4f7d7;font:inherit;font-weight:700;cursor:pointer;position:relative;z-index:2}
 .scs-ko-event-assist:focus-visible{outline:2px solid #a4f7d7;outline-offset:2px}
+
+/* V372: per-event action pills, scoped to each event row. */
+.scs-ko-event-item{min-width:0;border-bottom:1px solid #38506d;padding-bottom:9px}
+.scs-ko-event-item>.scs-team-event-row{border-bottom:0!important;margin-bottom:0!important}
+.scs-ko-event-item .scs-team-event-row:first-child{border-top:0}
+.scs-ko-event-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0 6px 3px;flex-wrap:wrap}
+.scs-ko-event-actions .scs-ko-event-assist,.scs-ko-event-actions .scs-ko-delete-event{display:inline-flex;align-items:center;justify-content:center;margin:0;min-height:37px;padding:7px 16px;border-radius:999px;font-size:.82rem;line-height:1.2}
+.scs-ko-event-actions .scs-ko-delete-event{border:1px solid #d77b86;color:#ffa0a8;background:transparent}
+.scs-ko-event-actions .scs-ko-event-assist{border:1px solid #63d6af;color:#a4f7d7;background:#124c45}

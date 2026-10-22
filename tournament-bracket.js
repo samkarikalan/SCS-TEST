@@ -95,19 +95,20 @@ function koHomeRender(){
  if(!readonly){
   root.querySelectorAll('[data-open-event]').forEach(function(b){
    var id=b.dataset.openEvent, item=koMain.events.find(function(e){return e.id===id});
-   var card=b.closest('.scs-event-card,.scs-api-event-card,article')||b.parentElement;
-   if(!card||!item)return;
-   // The Assist control is independent of Delete League and always appears.
-   if(!card.querySelector('[data-ko-event-assist]')){
-    var assist=document.createElement('button');assist.type='button';assist.className='scs-ko-event-assist';assist.dataset.koEventAssist=id;assist.textContent='Assist';
-    assist.setAttribute('aria-label','Open '+(item.title||'event')+' Knockout Assist');
-    assist.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koOpenSavedAssist(id)};
-    card.appendChild(assist);
-   }
-   if(!card.querySelector('[data-ko-delete-event]')){
-    var del=document.createElement('button');del.type='button';del.className='scs-ko-delete-button scs-ko-delete-event';del.textContent='Delete League';del.dataset.koDeleteEvent=id;
-    del.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koDeleteLeague(id)};card.appendChild(del);
-   }
+   if(!item)return;
+   // Per-event actions: do not append to a shared section containing multiple events.
+   var card=document.createElement('div');card.className='scs-ko-event-item';
+   b.parentNode.insertBefore(card,b);card.appendChild(b);
+   var actions=document.createElement('div');actions.className='scs-ko-event-actions';
+   var assist=document.createElement('button');assist.type='button';assist.className='scs-ko-event-assist';
+   assist.dataset.koEventAssist=id;assist.textContent='Assist';
+   assist.setAttribute('aria-label','Open '+(item.title||'event')+' Knockout Assist');
+   assist.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koOpenSavedAssist(id)};
+   var del=document.createElement('button');del.type='button';del.className='scs-ko-delete-button scs-ko-delete-event';
+   del.textContent='Delete';del.dataset.koDeleteEvent=id;
+   del.setAttribute('aria-label','Delete '+(item.title||'event'));
+   del.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koDeleteLeague(id)};
+   actions.appendChild(assist);actions.appendChild(del);card.appendChild(actions);
   });
  }
  root.querySelectorAll('[data-ko-nav]').forEach(function(b){if(b.dataset.koNav==='clubs'){var label=b.querySelector('.scs-tm-nav-label');if(label)label.textContent='Teams';}b.onclick=function(){var t=b.dataset.koNav;if(t==='home')koHomeRender();else if(koActiveId)koOpenEvent(koActiveId,t==='clubs'?'players':t==='match'?'match':'flowchart');else alert('Add an event first.')}});
