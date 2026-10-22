@@ -546,3 +546,6 @@ body.light-mode .scs-tm-player-pool .scs-api-subclub-pill{background:color-mix(i
 .scs-tm-unified-match-center .scs-tm-completed-content,.scs-tm-unified-match-center .scs-tm-completed-vs{background:#101d30!important}
 body.light-mode .scs-tm-unified-match-center .scs-tm-completed-row,body.light-mode .scs-tm-unified-match-center .scs-tm-completed-content,body.light-mode .scs-tm-unified-match-center .scs-tm-completed-vs{background:#f0f3f8!important}
 body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:#e0e7f1!important}
+
+/* Knockout bottom navigation: selection is indicated by icon/label color, never an overlapping underline. */
+.scs-tm-bottom-nav button.active::after{display:none!important;}

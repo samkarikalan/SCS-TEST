@@ -1,5 +1,5 @@
 {
-  "version": "V360",
+  "version": "V361",
   "build": "2026-10-22",
-  "scope": "Knockout shared Teams cards and navigation label"
+  "scope": "Knockout home Teams navigation and active underline fix"
 }
