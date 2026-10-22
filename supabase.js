@@ -222,15 +222,16 @@ async function _scsSaveTournamentOnce(format, state) {
 function dbSaveTournamentState(format,state) {
   if(!['knockout','group','team'].includes(format)||!state||typeof state!=='object')return Promise.resolve(null);
   const club=getMyClub();
-  if(!club?.id)return Promise.resolve(null);
+  if(!club?.id)return Promise.reject(new Error('Select a club before saving the tournament.'));
   const key=_scsTournamentSaveKey(club.id,format,state);
-  // Serialize even direct saves (e.g. Team Tournament "Save Now").
+  // Explicit saves must use the supplied current state, never a potentially stale queued snapshot.
+  // Cancel the queued timer and discard its snapshot; serialized saves preserve write order.
+  const timer=_scsTournamentSaveTimers.get(key);
+  if(timer){clearTimeout(timer);_scsTournamentSaveTimers.delete(key);}
+  _scsTournamentPending.delete(key);
   const previous=_scsTournamentSaveChains.get(key)||Promise.resolve();
   const job=previous.catch(()=>{}).then(async()=>{
-    const existing=_scsTournamentPending.get(key);
-    const snapshot=existing||state;
-    _scsTournamentPending.delete(key);
-    const id=await _scsSaveTournamentOnce(format,snapshot);
+    const id=await _scsSaveTournamentOnce(format,state);
     if(id)state._scsCloudTournamentId=id;
     return id;
   });

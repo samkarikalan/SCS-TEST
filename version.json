@@ -1,5 +1,5 @@
 {
-  "version": "V363",
+  "version": "V365",
   "build": "2026-10-22",
-  "scope": "Knockout saved scoreboard snapshots and completed match detail opening"
+  "scope": "Manual tournament save ordering and saved match score snapshots"
 }

@@ -19,7 +19,7 @@ async function saveTeamTournamentNow(){
  try{
   localStorage.setItem(KEY,JSON.stringify(state));
   if(typeof window.dbSaveTournamentState!=='function')throw Error('Server save is unavailable. Saved on this device only.');
-  const id=await window.dbSaveTournamentState('team',state);if(id){state._scsCloudTournamentId=id;if(state._scsTeamMainId)saveEventIndex();}
+  const id=await window.dbSaveTournamentState('team',state);if(id){state._scsCloudTournamentId=id;localStorage.setItem(KEY,JSON.stringify(state));if(state._scsTeamMainId){localStorage.setItem('scs_team_event_'+state._scsClientTournamentId,JSON.stringify(state));saveEventIndex();}}
   if(!id)throw Error('Server save unavailable. Check your club login and connection. Saved on this device only.');
   if(indicator)indicator.textContent='✓ Saved to server';
  }catch(err){if(indicator)indicator.textContent='⚠ '+(err?.message||'Server save failed; local copy retained.');}
