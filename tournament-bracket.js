@@ -99,9 +99,29 @@ function koHomeRender(){
    if(!card||!item||card.querySelector('[data-ko-delete-event]'))return;
    var del=document.createElement('button');del.type='button';del.className='scs-ko-delete-button scs-ko-delete-event';del.textContent='Delete League';del.dataset.koDeleteEvent=id;
    del.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koDeleteLeague(id)};card.appendChild(del);
+   if(koAssistAvailable(id)){var assist=document.createElement('button');assist.type='button';assist.className='scs-ko-event-assist';assist.textContent='Assist';assist.setAttribute('aria-label','Edit '+(item.title||'event')+' with Knockout Assist');assist.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koOpenSavedAssist(id)};card.appendChild(assist);}
   });
  }
  root.querySelectorAll('[data-ko-nav]').forEach(function(b){if(b.dataset.koNav==='clubs'){var label=b.querySelector('.scs-tm-nav-label');if(label)label.textContent='Teams';}b.onclick=function(){var t=b.dataset.koNav;if(t==='home')koHomeRender();else if(koActiveId)koOpenEvent(koActiveId,t==='clubs'?'players':t==='match'?'match':'flowchart');else alert('Add an event first.')}});
+}
+// Assist can be reopened only while the saved event has not begun playing.
+function koAssistAvailable(id){
+ if(readonly||!koMain)return false;
+ var state=koEventLoad(id),item=koMain.events.find(function(e){return e.id===id});
+ if(!item||!state||!Array.isArray(state.entries)||!state.entries.length)return false;
+ if(state.live===true||state.started===true||Object.keys(state.results||{}).length||Number(item.completed||0)>0)return false;
+ if(Array.isArray(state.matchCenterQueue)&&state.matchCenterQueue.some(function(m){return !!(m.started_at||m.start_time||['scoring','scored','completed','complete','under_approval','approval'].includes(String(m.score_status||m.status||'').toLowerCase()))}))return false;
+ if(window.SCSCourtCenter&&typeof window.SCSCourtCenter.tournamentGame==='function'&&Array.isArray(state.matches)){
+  for(var m of state.matches){var game=window.SCSCourtCenter.tournamentGame(m.id);if(game&&(game.started_at||game.start_time||['scoring','scored','completed','complete'].includes(String(game.score_status||'').toLowerCase())))return false;}
+ }
+ return true;
+}
+function koOpenSavedAssist(id){
+ if(!koAssistAvailable(id))return;
+ koOpenEvent(id,'flowchart');
+ // Keep the saved draw, BYE layout and team assignments; only reopen the wizard UI.
+ assistSaved=false;assistStep=0;byeSelection=null;selected=null;swapEntryId=null;
+ creationScreenPinned=false;assistIndex();ensureAssistHeader();
 }
 function koEventRows(events,gender){if(!events.length)return '<p class="scs-ko-empty">No events</p>';return events.map(function(e){var active=e.id===koActiveId;return '<button type="button" class="scs-ko-event-row'+(active?' active':'')+'" onclick="SCSTournament.selectKnockoutEvent(\''+esc(e.id)+'\')"><span class="scs-ko-event-code '+gender+'">'+esc(e.title)+'</span><span class="scs-ko-event-detail"><strong>'+esc(e.title)+'</strong><small>'+(e.teams||0)+' teams · '+(e.completed||0)+'/'+(e.matches||0)+' matches completed</small>'+(active?'<em>✓ Active Event</em>':'')+'</span><span>›</span></button>'}).join('')}
 function koOpenEvent(id,tab){if(!koMain||!koMain.events.some(function(e){return e.id===id}))return;koActiveId=id;koMain.activeEventId=id;koSaveMain();koHome=false;window.ScsApi.events.leaveHome(root);var saved=koEventLoad(id);tournamentActiveTab=tab||'flowchart';assistStep=0;assistSaved=!!(saved&&(saved.assistFinalized||(saved.matches&&saved.matches.length)));draw=saved||restoreAssistDraft()||init();assistAssignmentsConfirmed=!!(draw.assistAssignmentsConfirmed||assistAssignmentsConfirmed);draw.assistAssignmentsConfirmed=assistAssignmentsConfirmed;if(!draw.title)draw.title=koMain.events.find(function(e){return e.id===id}).title;creationScreenPinned=!saved||!saved.matches||!saved.matches.length;bracketViewInitialized=false;bracketScrollState=null;readonly=false;saveFn=localTournamentSave;clearFn=localTournamentClear;selected=null;ensure();render();observeAssistHeader()}

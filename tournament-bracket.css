@@ -564,3 +564,7 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-tm-swap-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;margin:0 0 8px;background:#192b44;border:1px solid #3d628b;border-radius:10px;color:#d9eaff;font-size:12px;}
 .scs-tm-swap-toolbar button{padding:7px 11px;border-radius:8px;border:1px solid #7bb9f6;background:#294f80;color:white;white-space:nowrap;}
 .scs-tm-swap-toolbar button[hidden]{display:none!important;}
+
+/* V370: event-level Assist action, without changing the event card layout. */
+.scs-ko-event-assist{display:inline-flex;align-items:center;justify-content:center;margin:8px 12px 8px auto;padding:7px 17px;border:1px solid #63d6af;border-radius:999px;background:#124c45;color:#a4f7d7;font:inherit;font-weight:700;cursor:pointer;position:relative;z-index:2}
+.scs-ko-event-assist:focus-visible{outline:2px solid #a4f7d7;outline-offset:2px}
