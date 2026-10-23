@@ -1,5 +1,5 @@
 {
-  "version": "V394",
-  "build": "2026-10-23",
-  "scope": "Remove VS from canonical shared match renderer and court renderer"
+  "version": "V395",
+  "build": "2026-10-24",
+  "scope": "Shared team outcome colors: winner green, loser red, unplayed neutral"
 }

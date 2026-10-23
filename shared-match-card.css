@@ -81,3 +81,15 @@
   border:0!important;border-top:1px solid #248c75!important;
   border-radius:0!important;box-shadow:none!important;
 }
+
+/* V395: outcome determines team color, never left/right position.
+   Applies to every completed/under-approval/scored card rendered by shared scoredBody(). */
+.scs-tm-completed-content .scs-tm-completed-team.is-pending,
+.scs-tm-completed-row .scs-tm-completed-team.is-pending,
+.scs-tm-court-result .scs-tm-completed-team.is-pending{background:#254565!important}
+.scs-tm-completed-content .scs-tm-completed-team.is-winner,
+.scs-tm-completed-row .scs-tm-completed-team.is-winner,
+.scs-tm-court-result .scs-tm-completed-team.is-winner{background:#194c43!important}
+.scs-tm-completed-content .scs-tm-completed-team.is-loser,
+.scs-tm-completed-row .scs-tm-completed-team.is-loser,
+.scs-tm-court-result .scs-tm-completed-team.is-loser{background:#6a303b!important}
