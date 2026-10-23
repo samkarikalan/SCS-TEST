@@ -248,7 +248,7 @@ function standings(){
 function startMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='assigned')return;m.status='playing';m.startedAt=Date.now();save();render()}
 function scoreMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='playing')return;if(!window.SCSScoring||!SCSScoring.openGroupMatch){alert('Scoreboard is unavailable.');return}el().hidden=true;SCSScoring.openGroupMatch({sessionId:'local-group-'+id,round:1,court:m.court,pair1:assignments[m.a],pair2:assignments[m.b],courtCenter:true,groupId:id})}
 function scoreUpdate(id,score,winner){const m=matches.find(x=>x.id===id);if(!m||!['playing','score_ready'].includes(m.status))return false;m.score=score;if(winner){m.winner=winner;m.status='score_ready'}save();render();return true}
-function approveMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='score_ready'||!['L','R'].includes(m.winner)||!m.score||!m.score.finished)return; m.status='approved';m.completedOrder=++assignmentSerial;m.completedCourt=m.court;m.court=null;save();render()}
+function approveMatch(id){const m=matches.find(x=>x.id===id);if(!SCSSharedMatchCenter.approveLocal(m,{before:match=>{match.completedOrder=++assignmentSerial;match.completedCourt=match.court}}))return;save();render()}
 function assignCourt(id){let m=matches.find(x=>x.id===id);if(!m||m.court)return;if(teamBusy(m.a)||teamBusy(m.b)){alert('A team is already assigned to another court.');return}let free=Array.from({length:courtCount},(_,i)=>i+1).filter(n=>!matches.some(x=>x.court===n));assigningMatch=id;render()}
 // Group Assist uses existing player, setup, group assignment and match cards.
 // The local group record is a draft until Step 4 confirms it.

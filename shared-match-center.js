@@ -56,5 +56,15 @@ function panel(o){
  const tabs=[['waiting','Waiting',wait.length],['approval','Under Approval',review.length],['completed','Completed',done.length]];if(!o.hideRanking)tabs.push(['ranking','Ranking',null]);
  return '<section class="scs-tm-live-center"><div class="scs-tm-live-center-head"><div><small>LIVE TOURNAMENT</small><h3>Courts &amp; Match Assignment</h3></div><div class="scs-tm-court-picker scs-tm-live-count">'+btn('−',attrs.change(-1))+'<b>'+count+'</b>'+btn('+',attrs.change(1))+'</div></div><div class="scs-tm-live-courts">'+Array.from({length:count},(_,i)=>{const c=items.find(x=>x.number===i+1);return court(c||{number:i+1})}).join('')+'</div>'+chooser+'<div class="scs-tm-live-tabs">'+tabs.map(([id,label,n])=>btn(label+(n===null?'':' <b>'+n+'</b>'),attrs.tab(id),current===id?'active':'')).join('')+'</div>'+(current==='ranking'?(o.ranking||'<div class="scs-tm-live-empty">Ranking updates from approved results.</div>'):current==='approval'?(review.map(completed).join('')||'<div class="scs-tm-live-empty">No matches awaiting approval.</div>'):current==='completed'?(done.map(completed).join('')||'<div class="scs-tm-live-empty">No approved matches yet.</div>'):(waitingContent(wait)||'<div class="scs-tm-live-empty">No matches awaiting play.</div>'))+'</section>';
 }
-window.SCSSharedMatchCenter={court,waiting,completed,panel};
+// Shared approval contract: the three tournament adapters keep their own
+// persistence and progression, while eligibility and basic state transition
+// live in one place. Knockout uses Court Center's asynchronous approval API.
+function canApprove(match){return !!(match&&match.status==='score_ready'&&match.score&&match.score.finished&&['L','R'].includes(match.winner))}
+function approveLocal(match,options){
+ if(!canApprove(match))return false;
+ if(options&&typeof options.before==='function')options.before(match);
+ match.status='approved';match.court=null;
+ return true;
+}
+window.SCSSharedMatchCenter={court,waiting,completed,panel,canApprove,approveLocal};
 })();
