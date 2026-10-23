@@ -12,6 +12,11 @@ api.cards.player=function(name,levelMarkup=''){
 // Shared player roster row: used by tournament modules with their own player selection rules.
 api.cards.rosterPlayer=function({name='',levelMarkup='',subClub='',accent='#5279aa',level=undefined,gender=null}={}){
  const pill=subClub?'<span class="scs-team-inline-club-pill scs-api-subclub-pill" style="--pill-accent:'+esc(accent)+'">'+esc(subClub)+'</span>':'';
+ // Shared tournament level pill, using the same class and level colors as team cards.
+ if(level!==undefined&&level!==null&&Number(level)>=1&&Number(level)<=5){
+  const prefix=/female|woman|lady|women|f$/i.test(String(gender||''))?'L':'M';
+  levelMarkup='<span class="scs-team-level-pill scs-api-level-pill" data-level="'+esc(level)+'">'+prefix+esc(level)+'</span>';
+ }
  const player=api.cards.player(name,levelMarkup);
  return '<div class="scs-api-roster-row">'+player+pill+'</div>';
 };

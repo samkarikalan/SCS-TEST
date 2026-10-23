@@ -577,3 +577,10 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-ko-event-actions .scs-ko-event-assist,.scs-ko-event-actions .scs-ko-delete-event{display:inline-flex;align-items:center;justify-content:center;margin:0;min-height:37px;padding:7px 16px;border-radius:999px;font-size:.82rem;line-height:1.2}
 .scs-ko-event-actions .scs-ko-delete-event{border:1px solid #d77b86;color:#ffa0a8;background:transparent}
 .scs-ko-event-actions .scs-ko-event-assist{border:1px solid #63d6af;color:#a4f7d7;background:#124c45}
+
+/* V374: tournament player list uses the same level/club pills as team cards. */
+.scs-tm-player-pool .scs-api-roster-row .scs-api-level-pill{flex:0 0 auto;margin-left:auto}
+.scs-tm-player-pool .scs-api-roster-row .scs-api-subclub-pill{background:#983263;color:#fff;border-radius:999px;font-size:.73rem;font-weight:750;padding:3px 9px;max-width:40%}
+.scs-tm-player-pool .scs-api-roster-row .scs-tm-shared-player{gap:9px}
+.scs-tm-player-pool .scs-api-roster-row .scs-tm-shared-name{overflow-wrap:anywhere}
+@media(max-width:420px){.scs-tm-player-pool .scs-api-roster-row{gap:6px;padding:9px 8px}.scs-tm-player-pool .scs-api-roster-row .scs-api-level-pill{padding:2px 6px!important}.scs-tm-player-pool .scs-api-roster-row .scs-api-subclub-pill{padding:2px 7px;max-width:39%}}
