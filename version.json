@@ -1,5 +1,5 @@
 {
-  "version": "V392",
+  "version": "V393",
   "build": "2026-10-23",
-  "scope": "Unified completed match-card appearance across Knockout Group and Team"
+  "scope": "Compact shared match card: remove nested border, VS strip, extra spacing and winner outline"
 }

@@ -67,3 +67,29 @@
  display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:6px!important;padding-left:35px!important;
 }
 .scs-team-sheet .scs-team-match-shell .scs-team-card-club{display:none!important}
+
+/* V393 — compact unified match cards: presentation only. */
+/* Keep the page's Round heading, remove the redundant fixture-card frame. */
+.scs-ko-generated-fixtures .scs-ko-fixture-card{
+  margin:8px 0!important;padding:0!important;border:0!important;
+  border-radius:0!important;overflow:visible!important;background:transparent!important;
+}
+/* Single outer card border, no extra inset margins. */
+.scs-ko-generated-fixtures .scs-ko-fixture-card .scs-tm-completed-row{
+  margin:0!important;border:1px solid #456b9b!important;border-radius:15px!important;
+}
+/* A team background already separates opponents; no VS bar. */
+.scs-tm-completed-row .scs-tm-completed-vs{display:none!important}
+/* Compact player rows while retaining names, gender, level and club metadata. */
+.scs-tm-completed-row .scs-tm-completed-team{
+  gap:6px!important;padding:10px 12px!important;
+}
+.scs-tm-completed-row .scs-tm-completed-players{gap:5px!important}
+.scs-tm-completed-row .scs-match-player-identity{gap:2px!important}
+.scs-tm-completed-row .scs-match-player-meta{gap:5px!important}
+/* Winner is a continuous section of the same card. */
+.scs-tm-completed-row .scs-tm-completed-winner{
+  margin:0!important;padding:11px 13px!important;
+  border:0!important;border-top:1px solid #248c75!important;
+  border-radius:0!important;box-shadow:none!important;
+}
