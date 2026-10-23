@@ -589,3 +589,11 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-shared-tournament-roster-row .scs-team-level-pill{display:inline-flex!important;align-items:center;justify-content:center;border-radius:999px;flex:0 0 auto}
 .scs-shared-tournament-roster-row .scs-team-club-pill{display:inline-flex!important;align-items:center;justify-content:center;border-radius:999px;flex:0 1 auto;min-width:0;max-width:45%;overflow:hidden;text-overflow:ellipsis}
 .scs-shared-tournament-roster-row .scs-tm-shared-name{min-width:0;overflow-wrap:anywhere}
+
+/* V376: preserve existing team card; prevent clipping and use shared subclub colors. */
+.scs-tm-player-pool .scs-api-roster-row .scs-api-subclub-pill{background:var(--scs-team-club-color,#5279aa)!important}
+.scs-tm-compact-player .scs-api-roster-row{display:flex;align-items:center;gap:8px;min-width:0;width:100%}
+.scs-tm-compact-player .scs-api-roster-row>.scs-tm-shared-player{flex:1 1 auto;min-width:0;width:auto}
+.scs-tm-compact-player .scs-api-roster-row>.scs-team-club-pill{flex:0 1 auto;max-width:38%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:var(--scs-team-club-color,#5279aa)!important}
+.scs-tm-compact-player .scs-tm-shared-name{min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.scs-tm-compact-player .scs-tm-shared-player .scs-team-level-pill{flex:0 0 auto}

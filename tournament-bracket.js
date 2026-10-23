@@ -673,7 +673,7 @@ function tournamentPlayerRow(name){
   var matches=(draw&&Array.isArray(draw.selectedPlayerDetails)?draw.selectedPlayerDetails:[]).filter(function(p){return String(p.player||'').trim().toLowerCase()===String(name||'').trim().toLowerCase()});
   var record=matches.find(function(p){return subClub&&String(p.subClub||'')===subClub})||(matches.length===1?matches[0]:null);
   var displayClub=record&&record.subClub||subClub;
-  var html=ScsApi.cards.rosterPlayer({name:name,levelMarkup:level,subClub:displayClub,level:record&&record.level,gender:record&&record.gender});
+  var html=ScsApi.cards.rosterPlayer({name:name,levelMarkup:level,subClub:displayClub,subClubId:record&&record.subClubId,level:record&&record.level,gender:record&&record.gender});
   if(record)html=html.replace('data-tm-player="'+esc(name)+'"','data-tm-player="'+esc(name)+'" data-tm-player-id="'+esc(record.playerId||'')+'" data-tm-subclub-id="'+esc(record.subClubId||'')+'" data-tm-gender="'+esc(record.gender||'')+'" data-tm-level="'+(record.level??'')+'"');
   return html;
  }
