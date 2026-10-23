@@ -41,17 +41,6 @@
  justify-self:end!important;padding:0!important;margin:0!important;text-align:right!important;
  white-space:nowrap!important;font-variant-numeric:tabular-nums!important;
 }
-:where(.scs-team-sheet,.scs-ko-generated-fixtures,.scs-tm-unified-match-center) .scs-tm-completed-vs,
-.scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs{
- display:flex!important;align-items:center!important;gap:9px!important;margin:0!important;
- padding:5px 12px!important;background:#101d30!important;color:#9fc5ff!important;text-align:center!important;
-}
-:where(.scs-team-sheet,.scs-ko-generated-fixtures,.scs-tm-unified-match-center) .scs-tm-completed-vs::before,
-:where(.scs-team-sheet,.scs-ko-generated-fixtures,.scs-tm-unified-match-center) .scs-tm-completed-vs::after,
-.scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs::before,
-.scs-team-sheet .scs-team-match-shell .scs-tm-completed-vs::after{
- content:""!important;display:block!important;flex:1!important;height:1px!important;background:#365a82!important;
-}
 :where(.scs-team-sheet,.scs-ko-generated-fixtures,.scs-tm-unified-match-center) .scs-tm-completed-winner,
 .scs-team-sheet .scs-team-match-shell .scs-tm-completed-winner{
  display:flex!important;align-items:center!important;gap:10px!important;margin:10px 0 0!important;
@@ -79,7 +68,6 @@
   margin:0!important;border:1px solid #456b9b!important;border-radius:15px!important;
 }
 /* A team background already separates opponents; no VS bar. */
-.scs-tm-completed-row .scs-tm-completed-vs{display:none!important}
 /* Compact player rows while retaining names, gender, level and club metadata. */
 .scs-tm-completed-row .scs-tm-completed-team{
   gap:6px!important;padding:10px 12px!important;
