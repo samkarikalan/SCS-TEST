@@ -1,5 +1,5 @@
 {
-  "version": "V387",
+  "version": "V388",
   "build": "2026-10-23",
-  "scope": "Use tournament player metadata renderer in knockout generated, scored and court match cards"
+  "scope": "Preserve player metadata through knockout Setup Pattern previews and confirmation"
 }

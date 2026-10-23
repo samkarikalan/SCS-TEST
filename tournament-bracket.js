@@ -308,7 +308,23 @@ function previewByeSelection(){
      could be counted but would not actually change the bracket. */
   var leftFull=(byeSelection.leftSelected||[]).map(Number).slice(),rightFull=(byeSelection.rightSelected||[]).map(Number).slice();
   if(leftFull.length!==byeSelection.needLeft||rightFull.length!==byeSelection.needRight)return false;
-  var names=byeSelection.names;draw=generateCustomTwoSided(n,l,leftFull,rightFull,byeSelection.title,names,byeSelection.leftCut,byeSelection.rightCut);
+  var names=byeSelection.names;
+  // Preview is not an identity edit. Preserve the original roster and each
+  // team's complete player records before replacing the bracket geometry.
+  var original=byeSelection.sourceDraw||draw;
+  var next=generateCustomTwoSided(n,l,leftFull,rightFull,byeSelection.title,names,byeSelection.leftCut,byeSelection.rightCut);
+  if(original){
+    var originals=Array.isArray(original.entries)?original.entries:[];
+    next.entries=next.entries.map(function(entry,i){
+      var prev=originals.find(function(e){return Number(e.id)===Number(entry.id)})||originals[i];
+      return prev?Object.assign({},prev,{id:entry.id}):entry;
+    });
+    ['selectedPlayerDetails','selectedClubIds','selectedClubs','clubId','mainClubId','playerPool','allPlayers'].forEach(function(k){
+      if(original[k]!==undefined)next[k]=JSON.parse(JSON.stringify(original[k]));
+    });
+  }
+  preserveTeamPlayerDetails(next);
+  draw=next;
   draw.byePreview=true;draw.previewSelectedByeIds=selectedByeIds();draw.previewAutoByeIds=leftFull.concat(rightFull).filter(function(id){return draw.previewSelectedByeIds.indexOf(id)<0});
   render();return true;
 }
@@ -1291,6 +1307,7 @@ function editPattern(){
   var ri=patterns.right.findIndex(function(p){return key(p.byes)===rk&&(rc==null||Number(rc)===Number(p.cut))});
   if(li<0)li=0;if(ri<0)ri=0;
   byeSelection={total:n,leftCount:l,needLeft:needL,needRight:needR,leftSelected:[],rightSelected:[],leftPatterns:patterns.left,rightPatterns:patterns.right,leftIndex:li,rightIndex:ri,patternMode:'left',title:title,names:draw.entries.map(function(e){return e.name||('Entry '+e.id)}),imageReference:!!draw.imageReference};
+  byeSelection.sourceDraw=JSON.parse(JSON.stringify(draw));
   applyCurrentByePattern();
 }
 function renderHome(){scanImage=null;scanRecognition=null;creationScreenPinned=true;render()}
@@ -1329,6 +1346,7 @@ function setupByes(){
   if(!patterns.left.length||!patterns.right.length){alert('SCS could not build a valid balanced BYE pattern for these side counts.');return}
   var leftIndex=0,rightIndex=0;if(rec){var lk=(rec.leftByeIds||[]).slice().sort(function(a,b){return a-b}).join(','),rk=(rec.rightByeIds||[]).slice().sort(function(a,b){return a-b}).join(',');var lf=patterns.left.findIndex(function(p){return (p.byes||[]).slice().sort(function(a,b){return a-b}).join(',')===lk&&(rec.leftBranchCut==null||Number(rec.leftBranchCut)===Number(p.cut))}),rf=patterns.right.findIndex(function(p){return (p.byes||[]).slice().sort(function(a,b){return a-b}).join(',')===rk&&(rec.rightBranchCut==null||Number(rec.rightBranchCut)===Number(p.cut))});if(lf>=0)leftIndex=lf;if(rf>=0)rightIndex=rf}
   byeSelection={total:n,leftCount:l,needLeft:needL,needRight:needR,leftSelected:[],rightSelected:[],leftPatterns:patterns.left,rightPatterns:patterns.right,leftIndex:leftIndex,rightIndex:rightIndex,patternMode:'left',title:title,names:names,imageReference:!!scanImage};
+  byeSelection.sourceDraw=JSON.parse(JSON.stringify(draw));
   applyCurrentByePattern();
 }
 async function confirmByeSelection(){
@@ -1338,16 +1356,17 @@ async function confirmByeSelection(){
   // The pattern generator creates name-only entries. Carry the original player
   // identities and tournament roster into the new bracket by stable entry slot.
   // Only the bracket positions/matches should be regenerated.
-  if(draw){
-   var oldEntries=Array.isArray(draw.entries)?draw.entries:[];
+  if(byeSelection.sourceDraw||draw){
+   var originalDraw=byeSelection.sourceDraw||draw;
+   var oldEntries=Array.isArray(originalDraw.entries)?originalDraw.entries:[];
    next.entries=next.entries.map(function(entry,i){
     var previous=oldEntries.find(function(e){return Number(e.id)===Number(entry.id)})||oldEntries[i];
     return previous?Object.assign({},previous,{id:entry.id}):entry;
    });
-   if(Array.isArray(draw.selectedPlayerDetails))
-    next.selectedPlayerDetails=JSON.parse(JSON.stringify(draw.selectedPlayerDetails));
+   if(Array.isArray(originalDraw.selectedPlayerDetails))
+    next.selectedPlayerDetails=JSON.parse(JSON.stringify(originalDraw.selectedPlayerDetails));
    ['selectedClubIds','selectedClubs','clubId','mainClubId','playerPool','allPlayers'].forEach(function(k){
-    if(draw[k]!==undefined)next[k]=JSON.parse(JSON.stringify(draw[k]));
+    if(originalDraw[k]!==undefined)next[k]=JSON.parse(JSON.stringify(originalDraw[k]));
    });
   }
   preserveTeamPlayerDetails(next);
