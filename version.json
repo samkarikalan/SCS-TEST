@@ -1,1 +1,5 @@
-{"version":"V385","build":"2026-10-23","scope":"Non-destructive saved tournament player metadata"}
+{
+  "version": "V387",
+  "build": "2026-10-23",
+  "scope": "Use tournament player metadata renderer in knockout generated, scored and court match cards"
+}
