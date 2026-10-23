@@ -893,3 +893,16 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-team-sheet .scs-tm-serving-player:has(.scs-match-player-identity){flex-wrap:nowrap!important;align-items:flex-start!important}
 .scs-team-sheet .scs-tm-serving-player>.scs-match-player-identity{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
 .scs-team-sheet .scs-match-player-meta{padding-left:35px}
+
+/* V391: Team cards use the same two-row player identity as Knockout. */
+.scs-team-sheet .scs-tm-completed-players .scs-tm-serving-player:has(.scs-match-player-identity){
+ display:flex!important;align-items:flex-start!important;min-width:0;
+}
+.scs-team-sheet .scs-tm-completed-players .scs-match-player-identity,
+.scs-team-sheet .scs-tm-court-teams .scs-match-player-identity{
+ display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:4px!important;min-width:0;max-width:100%;
+}
+.scs-team-sheet .scs-match-player-name{display:flex!important;align-items:center;min-width:0;max-width:100%}
+.scs-team-sheet .scs-match-player-meta{display:flex!important;align-items:center;gap:5px;flex-wrap:wrap;padding-left:35px!important;min-width:0;max-width:100%}
+.scs-team-sheet .scs-tm-completed-team{display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;align-items:center}
+.scs-team-sheet .scs-tm-completed-team-score{grid-column:2;align-self:center;white-space:nowrap}

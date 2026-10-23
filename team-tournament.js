@@ -390,9 +390,18 @@ function showMatrixEncounter(id){
 function scoreText(m){let sets=m.score?.completedSets||[];return sets.map(s=>(s.score||[]).join('–')).join(' | ')}
 // Extend the shared Match Center locally; other tournament types keep their existing tabs.
 function teamMatchPlayer(name){
- const match=state.clubs.map((c,i)=>({c,i,p:(c.selectedPlayerDetails||[]).find(p=>playerKey(p.player||p.name)===playerKey(name))})).find(x=>x.p);
- if(!match)return SCSSharedMatchCenter.playerIdentity(name,{});
- return SCSSharedMatchCenter.playerIdentity(name,{level:match.p.level,gender:match.p.gender,subClub:match.p.subClub||match.c.name,accent:clubAccent(match.i)});
+ // Resolve against the selected clubs in this tournament only.
+ const key=playerKey(name);
+ const found=state.clubs.map((club,index)=>({
+  club,index,
+  player:(club.selectedPlayerDetails||[]).find(p=>playerKey(p.player||p.name)===key)
+ })).find(x=>x.player)||state.clubs.map((club,index)=>({club,index})).find(x=>(x.club.players||[]).some(p=>playerKey(p)===key));
+ const record=found&&found.player||{};
+ const level=record.level??teamPlayerLevels.get(key)??teamLevel(name);
+ const club=found&&found.club;
+ const subClub=record.subClub||record.subclub||record.subClubName||club&&club.name||'';
+ const accent=found?clubAccent(found.index):'#5279aa';
+ return SCSSharedMatchCenter.playerIdentity(name,{level,gender:record.gender,subClub,accent});
 }
 function teamMatchCenterPanel(options){return SCSSharedMatchCenter.panel(options)}
 function matchCenter(){
@@ -412,6 +421,7 @@ function decorateTeamCard(card,m){
  teams.forEach((team,i)=>{const id=i===0?e.a:e.b;team.querySelectorAll('.scs-team-card-club').forEach(label=>label.remove());team.classList.toggle('scs-team-losing-players',m.status==='approved'&&['L','R'].includes(m.winner)&&(i===(m.winner==='L'?1:0)));
   // V252: one compact club pill beside each player's name, within the existing row.
   team.querySelectorAll('.scs-tm-completed-players .scs-tm-serving-player').forEach(row=>{
+   if(row.querySelector('.scs-match-player-identity'))return;
    if(row.querySelector('.scs-team-inline-club-pill'))return;
    const pill=document.createElement('span');pill.className='scs-team-inline-club-pill';pill.textContent=clubName(id)+' Club';
    pill.style.setProperty('--pill-accent',clubAccent(id));

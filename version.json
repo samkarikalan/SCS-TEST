@@ -1,5 +1,5 @@
 {
-  "version": "V390",
+  "version": "V391",
   "build": "2026-10-23",
-  "scope": "Shared two-row player identity on Team Group and Knockout Match Center"
+  "scope": "Team Tournament shared two-row match player cards with level and club"
 }
