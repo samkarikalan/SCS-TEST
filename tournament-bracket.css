@@ -594,3 +594,9 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-tm-completed-team{grid-template-columns:minmax(0,1fr) max-content!important}
 .scs-tm-completed-team-score{align-self:center;white-space:nowrap}
 .scs-tm-court-teams .scs-tm-serving-player{margin-bottom:5px}
+
+/* V396: Court assignment is exclusively in the Knockout Tournament fixture cards. */
+.scs-ko-court-chooser{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 0}
+.scs-ko-court-chooser strong{flex-basis:100%}
+.scs-ko-court-chooser button{max-width:100%;white-space:normal}
+.scs-ko-court-chooser button:disabled{opacity:.45}

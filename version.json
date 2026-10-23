@@ -1,5 +1,5 @@
 {
-  "version": "V395",
+  "version": "V396",
   "build": "2026-10-24",
-  "scope": "Shared team outcome colors: winner green, loser red, unplayed neutral"
+  "scope": "Knockout court assignment in Tournament page; Match Center starts matches; scoreboard on both"
 }
