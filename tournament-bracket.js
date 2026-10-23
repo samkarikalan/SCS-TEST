@@ -909,18 +909,7 @@ function knockoutFixtureCards(){
 
     if(game){actions+='<span>Assigned to '+(game.court?'Court '+esc(game.court):'waiting list')+'</span>'}
     else if(!/^(Winner|Loser) of /.test(info.a)&&!/^(Winner|Loser) of /.test(info.b)&&!/^Entry \d+$/.test(info.a)&&!/^Entry \d+$/.test(info.b))actions+='<button type="button" onclick="SCSTournament.assign('+m.id+')">Assign Court</button>';
-    if(Number(draw.assigningMatch)===Number(m.id)){
-     var courtState=window.SCSCourtCenter&&SCSCourtCenter.liveState?SCSCourtCenter.liveState():null;
-     var total=Math.max(1,Number(courtState&&courtState.courtCount)||Number(draw.numCourts)||1);
-     var games=courtState&&courtState.games||[];
-     actions+='<div class="scs-ko-court-chooser"><strong>Choose court</strong>';
-     for(var c=1;c<=total;c++){
-      var occupied=games.find(function(x){return Number(x.court)===c&&x.court_center_status!=='approved'});
-      var locked=occupied&&(occupied.started_at||occupied.score||occupied.score_status);
-      actions+='<button type="button" '+(locked?'disabled ':'')+'onclick="SCSTournament.selectAssignmentCourt('+c+')">Court '+c+' · '+(locked?'Occupied':occupied?'Replace match':'Free')+'</button>';
-     }
-     actions+='<button type="button" onclick="SCSTournament.cancelCourtSelection()">Cancel</button></div>';
-    }
+ 
    }
    html+='<div class="scs-ko-fixture-card scs-team-match-shell" data-match-id="'+m.id+'"'+(savedScore?' role="button" tabindex="0" aria-label="Open match scoreboard" onclick="if(!event.target.closest(\'[onclick],button,a,input,select\'))SCSTournament.openMatchScore('+m.id+')" onkeydown="if(event.target===this&&(event.key===\'Enter\'||event.key===\' \')){event.preventDefault();SCSTournament.openMatchScore('+m.id+')}"':'')+'>'+card+(actions?'<div class="scs-ko-fixture-actions">'+actions+'</div>':'')+'</div>';
   });
@@ -1453,20 +1442,18 @@ function assign(id){
  var recent=latestCompletedPlayerKeys(games),target=getMatch(id),alternatives=playableTournamentMatches();
  if(target&&matchNeedsRest(target,recent)&&alternatives.some(function(m){return !matchNeedsRest(m,recent)})){alert('Give these players one match of rest. Assign another ready match first.');return;}
  draw.assigningMatch=Number(id);
- var free=cc.freeCourts?cc.freeCourts():[];
- if(free.length===1){selectAssignmentCourt(free[0]);return;}
- render();
+ var count=Math.max(1,Number(state.courtCount)||Number(draw.numCourts)||1);
+ SCSCourtAssignmentPopup.open({title:'Match '+matchDisplayNumber(id),courts:Array.from({length:count},function(_,i){return {number:i+1,occupied:games.some(function(g){return Number(g.court)===i+1&&g.court_center_status!=='approved'})}}),onChoose:function(n){return selectAssignmentCourt(n)}});
 }
-function cancelCourtSelection(){if(draw){draw.assigningMatch=0;render()}}
+function cancelCourtSelection(){SCSCourtAssignmentPopup.close();if(draw){draw.assigningMatch=0;render()}}
 function quickAssign(id){var cc=window.SCSCourtCenter,info=matchInfo(id);if(!cc||!info){alert('Tournament courts unavailable.');return}var free=cc.freeCourts?cc.freeCourts():[];draw.assigningMatch=Number(id);if(free.length===1){selectAssignmentCourt(free[0]);return}render()}
 async function selectAssignmentCourt(court){
  if(!draw||!draw.assigningMatch)return;
  var id=Number(draw.assigningMatch),cc=window.SCSCourtCenter,state=cc.liveState(),games=state.games||[];
  var occupied=games.find(function(g){return Number(g.court)===Number(court)&&g.court_center_status!=='approved'&&Number(g.tournament_match)!==id});
- if(occupied&&(occupied.started_at||occupied.score||occupied.score_status)){alert('This court has a started match.');return;}
- if(occupied&&!confirm('Replace Match '+occupied.tournament_match+' on Court '+court+'?'))return;
- try{var ok=await cc.assignTournamentMatch(id,matchInfo(id),Number(court));if(ok){draw.assigningMatch=0;render()}}
- catch(e){alert(e.message||'Court assignment failed.');}
+ if(occupied){alert('Court is occupied. Select a free court.');return false;}
+ try{var ok=await cc.assignTournamentMatch(id,matchInfo(id),Number(court));if(ok){draw.assigningMatch=0;render();return true}return false}
+ catch(e){alert(e.message||'Court assignment failed.');return false;}
 }
 
 async function changeLiveCourts(delta){

@@ -1,5 +1,5 @@
 {
-  "version": "V396",
+  "version": "V397",
   "build": "2026-10-24",
-  "scope": "Knockout court assignment in Tournament page; Match Center starts matches; scoreboard on both"
+  "scope": "Shared modal court assignment in Team and Knockout tournaments"
 }
