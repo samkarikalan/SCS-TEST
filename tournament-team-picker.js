@@ -24,7 +24,7 @@ function bindTeamSelectors(modal,config){
  });
 }
 // Shared player presentation, scoped to team formation (not match cards).
-function stableClubColor(name){return window.ScsApi?.cards?.subclubColor?.(name)||'#5279aa'}
+function stableClubColor(name){let h=2166136261;for(const c of String(name||'').trim().toLowerCase()){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return 'hsl('+((h>>>0)%360)+' 54% 40%)'}
 function decorate(container){
  if(!container)return;
  container.querySelectorAll('.scs-api-roster-row').forEach(row=>{
@@ -35,7 +35,7 @@ function decorate(container){
   const details=document.createElement('span');details.className='scs-team-player-details';
   const meta=document.createElement('span');meta.className='scs-team-player-meta';
   if(level){level.classList.add('scs-team-level-pill');const digit=(level.textContent||'').match(/[1-5]/);if(digit)level.dataset.level=digit[0];meta.appendChild(level)}
-  if(club){club.classList.add('scs-team-club-pill');club.style.setProperty('--scs-team-club-color',club.style.getPropertyValue('--pill-accent')||stableClubColor(club.textContent));meta.appendChild(club)}
+  if(club){club.classList.add('scs-team-club-pill');club.style.setProperty('--scs-team-club-color',stableClubColor(club.textContent));meta.appendChild(club)}
   details.appendChild(name);details.appendChild(meta);player.appendChild(details);
   row.dataset.teamPills='yes';
  });

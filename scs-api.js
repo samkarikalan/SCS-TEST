@@ -10,46 +10,15 @@ api.cards.player=function(name,levelMarkup=''){
  return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+levelMarkup+'</span>';
 };
 // Shared player roster row: used by tournament modules with their own player selection rules.
-// Stable subclub colors, shared by every tournament renderer. Same name/id -> same color.
-const subclubColors=['#a3366e','#327fb6','#2d916f','#9260bd','#b17a29','#aa5356','#477c99','#7771b5','#688d35','#b06292'];
-api.cards.subclubColor=function(name,id){
- const key=String(id||name||'').trim().toLocaleLowerCase();
- if(!key)return '#5279aa';
- let hash=2166136261;
- for(const ch of key){hash=Math.imul(hash^ch.charCodeAt(0),16777619)}
- return subclubColors[(hash>>>0)%subclubColors.length];
-};
-api.cards.rosterPlayer=function({name='',levelMarkup='',subClub='',subClubId='',accent=null,level=undefined,gender=null}={}){
- const pill=subClub?'<span class="scs-team-inline-club-pill scs-api-subclub-pill" style="--pill-accent:'+esc(accent||api.cards.subclubColor(subClub,subClubId))+'">'+esc(subClub)+'</span>':'';
+api.cards.rosterPlayer=function({name='',levelMarkup='',subClub='',accent='#5279aa',level=undefined,gender=null}={}){
+ const pill=subClub?'<span class="scs-team-inline-club-pill scs-api-subclub-pill" style="--pill-accent:'+esc(accent)+'">'+esc(subClub)+'</span>':'';
  // Shared tournament level pill, using the same class and level colors as team cards.
  if(level!==undefined&&level!==null&&Number(level)>=1&&Number(level)<=5){
   const prefix=/female|woman|lady|women|f$/i.test(String(gender||''))?'L':'M';
   levelMarkup='<span class="scs-team-level-pill scs-api-level-pill" data-level="'+esc(level)+'">'+prefix+esc(level)+'</span>';
  }
- if(!levelMarkup)levelMarkup='<span class="scs-tournament-gender-level scs-team-level-pill scs-api-level-pill">—</span>';
  const player=api.cards.player(name,levelMarkup);
  return '<div class="scs-api-roster-row">'+player+pill+'</div>';
-};
-// Shared tournament roster presentation. Keep each tournament's existing data and actions.
-api.cards.hydrateRoster=function(root){
- if(!root)return;
- root.querySelectorAll('.scs-api-roster-row').forEach(row=>{
-  const level=row.querySelector('.scs-api-level-pill,.scs-tournament-gender-level');
-  if(level){
-   level.classList.add('scs-team-level-pill');
-   const digit=(level.textContent||'').match(/[1-5]/);
-   if(digit)level.dataset.level=digit[0];
-  }
-  const club=row.querySelector('.scs-api-subclub-pill,.scs-team-inline-club-pill');
-  if(club){
-   club.classList.add('scs-team-club-pill');
-   if(!club.style.getPropertyValue('--scs-team-club-color')){
-    const accent=club.style.getPropertyValue('--pill-accent');
-    club.style.setProperty('--scs-team-club-color',accent||api.cards.subclubColor(club.textContent.trim(),club.dataset.subclubId||''));
-   }
-  }
-  row.classList.add('scs-shared-tournament-roster-row');
- });
 };
 api.buttons.render=function({label='',action='',className='',disabled=false}={}){
  return '<button type="button"'+(action?' data-'+esc(action):'')+(className?' class="'+esc(className)+'"':'')+(disabled?' disabled':'')+'>'+esc(label)+'</button>';

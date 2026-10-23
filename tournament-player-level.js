@@ -28,7 +28,7 @@ function hydrate(root){
   slot.replaceChildren(ring(name,info?.gender,info?.level));
   slot.dataset.levelPending='0';
   const label=slot.closest('.scs-tm-shared-player')?.querySelector('.scs-tournament-gender-level');
-  if(label){const prefix=/female|woman|lady|women|f$/i.test(String(info?.gender||''))?'L':'M';label.textContent=valid(info?.level)?prefix+info.level:'—';label.classList.toggle('scs-level-female',prefix==='L');label.classList.add('scs-team-level-pill','scs-api-level-pill');if(valid(info?.level)){label.dataset.level=String(info.level)}else{delete label.dataset.level;}}
+  if(label){const prefix=/female|woman|lady|women|f$/i.test(String(info?.gender||''))?'L':'M';label.textContent=valid(info?.level)?prefix+info.level:'—';label.classList.toggle('scs-level-female',prefix==='L');}
  });
 }
 window.SCSTournamentPlayerLevel={hydrate,load,ring,setRoster,clear:()=>cache.clear()};
