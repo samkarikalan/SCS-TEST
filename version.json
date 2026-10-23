@@ -1,1 +1,5 @@
-{"version":"V380","build":"2026-10-23","scope":"Step 2: common match approval eligibility and transition for Group and Team"}
+{
+  "version": "V381",
+  "build": "2026-10-23",
+  "scope": "Shared player levels and subclubs in generated matches and court cards"
+}

@@ -843,7 +843,7 @@ function details(){
  if((score||r)&&window.SCSSharedMatchCenter&&typeof SCSSharedMatchCenter.completed==='function'){
   var winner='';if(r&&r.winner){if(String(r.winner)===String(info.a))winner='left';else if(String(r.winner)===String(info.b))winner='right'}
   var left=splitTeam(info.a).players,right=splitTeam(info.b).players;
-  return SCSSharedMatchCenter.completed({number:matchDisplayNumber(selected),title:'Match '+matchDisplayNumber(selected),left:info.a,right:info.b,leftPlayers:left,rightPlayers:right,score:String(score||'').replace(/\s*·\s*/g,' | '),server:currentServingPlayer(g),winner:winner});
+  return SCSSharedMatchCenter.completed({number:matchDisplayNumber(selected),title:'Match '+matchDisplayNumber(selected),left:info.a,right:info.b,leftPlayers:left,rightPlayers:right,score:String(score||'').replace(/\s*·\s*/g,' | '),server:currentServingPlayer(g),winner:winner,playerRenderer:tournamentPlayerRow});
  }
  var h='<h3>Match '+matchDisplayNumber(selected)+'</h3><p>'+esc(info.a)+' <b>VS</b> '+esc(info.b)+'</p>';
  if(!readonly){['a','b'].forEach(function(side){var src=m[side];if(editableEntryFromSource(src))h+='<button type="button" onclick="SCSTournament.editEntry('+src+')">Edit '+(side==='a'?'Team A':'Team B')+'</button> '})}

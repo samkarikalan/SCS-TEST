@@ -630,3 +630,14 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-tm-compact-player .scs-team-player-meta>.scs-team-club-pill{order:1!important;flex:0 1 auto!important;max-width:100%!important;min-width:0!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;text-align:center!important;background:var(--scs-team-club-color,#5279aa)!important}
 .scs-tm-compact-player .scs-tm-ring-slot{flex:0 0 auto!important}
 @media(max-width:420px){.scs-tm-compact-player .scs-tm-shared-player>.scs-team-player-details{gap:5px!important}.scs-tm-compact-player .scs-team-player-details>.scs-tm-shared-name{min-width:72px!important}.scs-tm-compact-player .scs-team-player-meta{gap:4px!important}}
+
+/* V381: Shared player identity in generated fixtures and assigned/scored courts. */
+.scs-ko-generated-fixtures .scs-tm-completed-players .scs-api-roster-row,
+.scs-tm-live-center .scs-tm-completed-players .scs-api-roster-row,
+.scs-tm-live-center .scs-tm-court-teams .scs-api-roster-row{display:flex;align-items:center;gap:6px;min-width:0;width:100%;flex-wrap:wrap}
+.scs-ko-generated-fixtures .scs-api-roster-row .scs-tm-shared-player,
+.scs-tm-live-center .scs-api-roster-row .scs-tm-shared-player{flex:1 1 auto;min-width:75px;display:flex;align-items:center;gap:6px}
+.scs-ko-generated-fixtures .scs-api-roster-row .scs-api-subclub-pill,
+.scs-tm-live-center .scs-api-roster-row .scs-api-subclub-pill{flex:0 1 auto;max-width:100%;white-space:normal;overflow-wrap:anywhere;text-overflow:clip;background:var(--scs-team-club-color,#5279aa)!important}
+.scs-ko-generated-fixtures .scs-api-roster-row .scs-api-level-pill,
+.scs-tm-live-center .scs-api-roster-row .scs-api-level-pill{flex:0 0 auto}
