@@ -525,8 +525,8 @@ function scsRenderMyTournamentRows(){
   const leagueText=leagues.length?'<em>'+leagues.length+' league'+(leagues.length===1?'':'s')+' · '+scsTournamentEscape(leagues.map(x=>x.title||'League').join(', '))+'</em>':'';
   const when=row.updated_at?new Date(row.updated_at).toLocaleString():'Saved online';
   const action=row.status==='completed'?'View results ›':row.status==='live'?'Open live ›':'Continue ›';
-  const onOpen=row.status==='completed'
-   ?`scsOpenMyCompletedTournament(decodeURIComponent('${id}'),'${format}')`
+  const onOpen=(row.status==='completed'||row.status==='live')
+   ?`scsOpenLiveTournament(decodeURIComponent('${id}'),'${format}','scsTournamentContinue')`
    :`scsOpenContinueTournament(decodeURIComponent('${id}'),'${format}')`;
   return '<div class="scs-tmgr-tournament-card '+format+'"><button class="scs-tmgr-tournament-open" onclick="'+onOpen+'"><span><small>'+label+' · '+status+'</small><strong>'+title+'</strong><em>Updated '+scsTournamentEscape(when)+'</em></span><b>'+action+'</b></button><button type="button" class="scs-tmgr-tournament-delete" data-delete-tournament="'+scsTournamentEscape(row.id||'')+'" onclick="scsDeleteTournament(event,decodeURIComponent(\''+id+'\'),\''+format+'\',decodeURIComponent(\''+encodeURIComponent(row.title||'Tournament')+'\'))">Delete</button></div>';
  }).join('');

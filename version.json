@@ -1,5 +1,5 @@
 {
-  "version": "V382",
+  "version": "V383",
   "build": "2026-10-23",
-  "scope": "Protect existing knockout player metadata during save and reopen"
+  "scope": "Route live tournament cards to format-specific live viewer, preserving My Tournaments return"
 }
