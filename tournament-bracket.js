@@ -19,28 +19,20 @@ function koDraftKey(){return ASSIST_DRAFT_KEY+(koActiveId?'-'+koActiveId:'')}
 // Preserve each team member's registered identity in the saved event state.
 // Entry labels alone are insufficient to restore level, gender and sub-club.
 function preserveTeamPlayerDetails(d){
+ // Saved player metadata is authoritative: never rebuild it from team labels.
  if(!d||!Array.isArray(d.entries))return d;
- var roster=Array.isArray(d.selectedPlayerDetails)?d.selectedPlayerDetails:[];
- var byName=new Map();
- function add(p){if(!p||typeof p!=='object')return;var name=String(p.player||p.name||'').trim();if(!name)return;var key=name.toLocaleLowerCase();if(!byName.has(key))byName.set(key,[]);var group=byName.get(key);if(!group.some(function(x){return String(x.playerId||'')===String(p.playerId||'')&&String(x.subClubId||x.subClub||'')===String(p.subClubId||p.subClub||'')}))group.push(p)}
- roster.forEach(add);
- d.entries.forEach(function(entry){(Array.isArray(entry.playerDetails)?entry.playerDetails:[]).forEach(add)});
- var recovered=[];
+ var roster=Array.isArray(d.selectedPlayerDetails)?d.selectedPlayerDetails.slice():[];
+ var keyOf=function(p){return String(p&&(p.playerId||p.id)||'')+'|'+String(p&&(p.player||p.name)||'').trim().toLocaleLowerCase()+'|'+String(p&&(p.subClubId||p.subClub)||'')};
+ var known=new Set(roster.map(keyOf));
  d.entries.forEach(function(entry){
-  var names=String(entry.name||'').split(/\s+\/\s+/).map(function(n){return n.trim()}).filter(Boolean);
-  var previous=Array.isArray(entry.playerDetails)?entry.playerDetails:[];
-  entry.playerDetails=names.map(function(name){
-   var key=name.toLocaleLowerCase(),candidates=byName.get(key)||[];
-   var match=previous.find(function(p){return String(p.player||p.name||'').trim().toLocaleLowerCase()===key});
-   if(!match&&candidates.length===1)match=candidates[0];
-   return match?Object.assign({},match,{player:name}):{player:name};
+  if(!Array.isArray(entry.playerDetails))return;
+  entry.playerDetails.forEach(function(p){
+   if(!p||typeof p!=='object'||!(p.level!=null||p.subClub||p.subClubId||p.playerId))return;
+   var key=keyOf(p);
+   if(!known.has(key)){roster.push(p);known.add(key)}
   });
-  entry.playerDetails.forEach(function(p){if(p.playerId||p.level!=null||p.subClubId||p.subClub)recovered.push(p)});
  });
- // Restore metadata from saved entry snapshots without discarding other selected players.
- var existing=new Set(roster.map(function(p){return String(p.player||'').trim().toLocaleLowerCase()+'|'+String(p.subClubId||p.subClub||'')}));
- recovered.forEach(function(p){var k=String(p.player||'').trim().toLocaleLowerCase()+'|'+String(p.subClubId||p.subClub||'');if(!existing.has(k)){roster.push(p);existing.add(k)}});
- d.selectedPlayerDetails=roster;
+ if(roster.length)d.selectedPlayerDetails=roster;
  return d;
 }
 function koEventLoad(id){try{return preserveTeamPlayerDetails(JSON.parse(localStorage.getItem(koEventKey(id))||'null'))}catch(_){return null}}
