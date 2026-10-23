@@ -626,8 +626,25 @@ async function scsOpenLiveTournament(id,format,sourceOverlay){
   if(format==='team'&&window.SCSTeamTournament){try{localStorage.setItem('scs_team_tournament_v1',JSON.stringify(state))}catch(_){}SCSTeamTournament.open('view');return}
   if(format==='group'&&window.SCSGroupTournament){if(typeof SCSGroupTournament.openLive==='function')SCSGroupTournament.openLive(state);else SCSGroupTournament.open();if(typeof SCSGroupTournament.openSection==='function')SCSGroupTournament.openSection('tournament');return}
   if(format==='knockout'&&window.SCSTournament&&typeof SCSTournament.open==='function'){
-    if(window.SCSCourtCenter&&typeof SCSCourtCenter.resumeTournament==='function')try{await SCSCourtCenter.resumeTournament(state)}catch(_){}
-    SCSTournament.open(Object.assign({},state,{live:true,livePage:true}),true);return
+    // Open the selected saved event first. Court Center recovery is optional and
+    // must never delay or redirect the tournament viewer on a slow connection.
+    try{
+      SCSTournament.open(Object.assign({},state,{live:true,livePage:true}),true);
+      var knockoutOverlay=document.getElementById('scsTournamentOverlay');
+      if(!knockoutOverlay||knockoutOverlay.hidden)throw new Error('Tournament viewer did not open');
+    }catch(openError){
+      scsReturnToTournamentParent();
+      alert(openError&&openError.message||'Could not open the selected tournament.');
+      return;
+    }
+    // Resume court state after rendering. Never replace the selected saved draw
+    // with a different court session, and do not navigate to Practice/Home.
+    if(window.SCSCourtCenter&&typeof SCSCourtCenter.resumeTournament==='function'){
+      Promise.resolve().then(function(){return SCSCourtCenter.resumeTournament(state)}).catch(function(error){
+        console.warn('Tournament court session could not be resumed',error);
+      });
+    }
+    return;
   }
   scsReturnToTournamentParent();alert('Tournament view is still loading. Please try again.')
 }

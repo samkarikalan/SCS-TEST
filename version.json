@@ -1,5 +1,5 @@
 {
-  "version": "V383",
+  "version": "V384",
   "build": "2026-10-23",
-  "scope": "Route live tournament cards to format-specific live viewer, preserving My Tournaments return"
+  "scope": "Open saved knockout live viewer before nonblocking court session recovery"
 }
