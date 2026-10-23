@@ -45,7 +45,7 @@ api.cards.hydrateRoster=function(root){
    club.classList.add('scs-team-club-pill');
    if(!club.style.getPropertyValue('--scs-team-club-color')){
     const accent=club.style.getPropertyValue('--pill-accent');
-    club.style.setProperty('--scs-team-club-color',api.cards.subclubColor(club.textContent.trim(),club.dataset.subclubId||''));
+    club.style.setProperty('--scs-team-club-color',accent||api.cards.subclubColor(club.textContent.trim(),club.dataset.subclubId||''));
    }
   }
   row.classList.add('scs-shared-tournament-roster-row');

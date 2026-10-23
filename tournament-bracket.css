@@ -605,3 +605,15 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-shared-tournament-roster-row .scs-api-level-pill{margin-left:0!important;flex:0 0 auto;white-space:nowrap}
 .scs-shared-tournament-roster-row>.scs-api-subclub-pill{flex:0 1 auto;min-width:0;max-width:38%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:var(--scs-team-club-color,#5279aa)!important}
 .scs-tm-player-pool .scs-shared-tournament-roster-row .scs-tm-shared-name{overflow-wrap:anywhere}
+
+/* V378: preserve existing compact team cards; no decorative left stripe.
+   Shared player order is ring > name > level > subclub.  Never clip subclub names. */
+.scs-tm-compact-team{border-left-width:2px!important}
+.scs-tm-compact-player .scs-api-roster-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;min-width:0}
+.scs-tm-compact-player .scs-api-roster-row>.scs-tm-shared-player{display:flex;flex:1 1 auto;min-width:0;gap:8px;align-items:center}
+.scs-tm-compact-player .scs-tm-shared-player>.scs-tm-shared-name{order:1;flex:1 1 auto;min-width:0;overflow-wrap:anywhere;white-space:normal;text-overflow:clip}
+.scs-tm-compact-player .scs-tm-shared-player>.scs-api-level-pill,
+.scs-tm-compact-player .scs-tm-shared-player>.scs-team-level-pill{order:2;flex:0 0 auto}
+.scs-tm-compact-player .scs-api-roster-row>.scs-team-club-pill,
+.scs-tm-compact-player .scs-api-roster-row>.scs-api-subclub-pill{order:3;flex:0 0 auto;max-width:100%;min-width:0;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;text-align:center}
+.scs-tm-compact-player .scs-team-club-pill{background:var(--scs-team-club-color,var(--pill-accent,#5279aa))!important}
