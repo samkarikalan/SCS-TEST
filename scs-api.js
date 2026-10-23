@@ -26,6 +26,7 @@ api.cards.rosterPlayer=function({name='',levelMarkup='',subClub='',subClubId='',
   const prefix=/female|woman|lady|women|f$/i.test(String(gender||''))?'L':'M';
   levelMarkup='<span class="scs-team-level-pill scs-api-level-pill" data-level="'+esc(level)+'">'+prefix+esc(level)+'</span>';
  }
+ if(!levelMarkup)levelMarkup='<span class="scs-tournament-gender-level scs-team-level-pill scs-api-level-pill">—</span>';
  const player=api.cards.player(name,levelMarkup);
  return '<div class="scs-api-roster-row">'+player+pill+'</div>';
 };
