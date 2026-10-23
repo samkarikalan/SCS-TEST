@@ -1,5 +1,5 @@
 {
-  "version": "V381",
+  "version": "V382",
   "build": "2026-10-23",
-  "scope": "Shared player levels and subclubs in generated matches and court cards"
+  "scope": "Protect existing knockout player metadata during save and reopen"
 }
