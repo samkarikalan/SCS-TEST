@@ -1029,13 +1029,24 @@ function organizeTournamentTabs(){
  playersPanel.innerHTML=tournamentPoolCard()+assistTeamsCard();
  panel('players',Array.from(playersPanel.children));
  teamPanels.forEach(function(el){if(el&&el.parentNode)el.remove()});
- var fixtureList=document.createElement('div');fixtureList.innerHTML=knockoutFixtureCards();var tournamentPanel=panel('flowchart',[workspace,hint,details,fixtureList]);
+ var fixtureList=document.createElement('div');fixtureList.innerHTML=knockoutFixtureCards();
+ // Saved fixtures can be started directly from the Tournament tab; Assist is optional.
+ if(!readonly&&!draw.live&&koFixturesReady()){
+  var startAction=document.createElement('button');startAction.type='button';startAction.className='scs-tm-start-live';
+  startAction.textContent='▶ Start Tournament';startAction.onclick=function(){startSavedTournament()};
+  fixtureList.insertBefore(startAction,fixtureList.firstChild);
+ }
+ var tournamentPanel=panel('flowchart',[workspace,hint,details,fixtureList]);
  // Reuse the existing Match Center ranking content in Tournament; no stylesheet changes.
  var koRanking=document.createElement('div');koRanking.hidden=true;koRanking.innerHTML='<div class="scs-tm-live-empty">Ranking updates from approved results.</div>';
  var koTabs=document.createElement('nav');koTabs.className='scs-tm-live-tabs';koTabs.innerHTML='<button type="button" class="active">All</button><button type="button">Ranking</button>';
  koTabs.children[0].onclick=function(){koRanking.hidden=true;Array.from(tournamentPanel.children).forEach(function(e){if(e!==koTabs&&e!==koRanking)e.hidden=false});koTabs.children[0].classList.add('active');koTabs.children[1].classList.remove('active')};
  koTabs.children[1].onclick=function(){Array.from(tournamentPanel.children).forEach(function(e){if(e!==koTabs&&e!==koRanking)e.hidden=true});koRanking.hidden=false;koTabs.children[1].classList.add('active');koTabs.children[0].classList.remove('active')};
- tournamentPanel.insertBefore(koTabs,tournamentPanel.firstChild);tournamentPanel.appendChild(koRanking);panel('match',match?[match]:[function(){var empty=document.createElement('section');empty.className='scs-tm-pool';empty.innerHTML='<h3>Match Center</h3><p>Start the knockout tournament to assign courts and conduct matches.</p>';return empty}()]);
+ tournamentPanel.insertBefore(koTabs,tournamentPanel.firstChild);tournamentPanel.appendChild(koRanking);panel('match',match?[match]:[function(){var empty=document.createElement('section');empty.className='scs-tm-pool';empty.innerHTML='<h3>Match Center</h3><p>Start the knockout tournament to assign courts and conduct matches.</p>';
+ if(!readonly&&!draw.live&&koFixturesReady()){
+  var startAction=document.createElement('button');startAction.type='button';startAction.className='scs-tm-start-live';
+  startAction.textContent='▶ Start Tournament';startAction.onclick=function(){startSavedTournament()};empty.appendChild(startAction);
+ }return empty}()]);
  // Spectators reuse the live Match Center markup but cannot operate any court or match.
  if(readonly&&live){var viewPanel=root.querySelector('[data-tm-panel="match"]');if(viewPanel){viewPanel.querySelectorAll('button').forEach(function(btn){if(!btn.closest('.scs-tm-live-tabs'))btn.remove()});viewPanel.querySelectorAll('[onclick]').forEach(function(node){var call=node.getAttribute('onclick')||'';if(!/^SCSTournament\.liveTab\(/.test(call))node.removeAttribute('onclick')});}}
  if(!tabs.some(function(t){return t[0]===tournamentActiveTab}))tournamentActiveTab='main';

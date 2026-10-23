@@ -1,5 +1,5 @@
 {
-  "version": "V388",
+  "version": "V389",
   "build": "2026-10-23",
-  "scope": "Preserve player metadata through knockout Setup Pattern previews and confirmation"
+  "scope": "Expose existing knockout start action on saved Tournament and Match Center tabs"
 }
