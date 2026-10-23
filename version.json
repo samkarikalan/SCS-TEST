@@ -1,5 +1,5 @@
 {
-  "version": "V389",
+  "version": "V390",
   "build": "2026-10-23",
-  "scope": "Expose existing knockout start action on saved Tournament and Match Center tabs"
+  "scope": "Shared two-row player identity on Team Group and Knockout Match Center"
 }

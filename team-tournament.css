@@ -888,3 +888,8 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-api-player-selector .scs-tournament-gender-level{white-space:nowrap;margin-left:auto}
 .scs-api-player-selector .scs-api-subclub-pill{flex:none;white-space:nowrap}
 .scs-api-player-selector .scs-team-editor-head p{margin:4px 0 8px}
+
+/* V390: keep original Team match card and right-side scores. */
+.scs-team-sheet .scs-tm-serving-player:has(.scs-match-player-identity){flex-wrap:nowrap!important;align-items:flex-start!important}
+.scs-team-sheet .scs-tm-serving-player>.scs-match-player-identity{display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0}
+.scs-team-sheet .scs-match-player-meta{padding-left:35px}

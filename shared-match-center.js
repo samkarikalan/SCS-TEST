@@ -4,6 +4,17 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;',
 function samePlayer(a,b){return String(a||'').trim().toLocaleLowerCase()===String(b||'').trim().toLocaleLowerCase()}
 function serverMark(name,server){return server&&samePlayer(name,server)?'<span class="scs-tm-server-shuttle" title="Serving" aria-label="Serving">🏸</span>':''}
 function playerRows(names,playerRenderer,server){return (names||[]).map(n=>'<span class="scs-tm-serving-player">'+(playerRenderer?playerRenderer(n):esc(n))+serverMark(n,server)+'</span>').join('')}
+function playerIdentity(name,detail){
+ const d=detail||{},v=Number(d.level),valid=Number.isInteger(v)&&v>=1&&v<=5;
+ const gender=String(d.gender||'');
+ const prefix=/female|woman|lady|women|^f$/i.test(gender)?'L':'M';
+ const label=valid?'<span class="scs-team-level-pill scs-api-level-pill" data-level="'+v+'">'+prefix+v+'</span>':'';
+ const club=String(d.subClub||d.club||'').trim();
+ const color=String(d.accent||'#5279aa');
+ const safeColor=/^#[0-9a-fA-F]{3,8}$/.test(color)?color:'#5279aa';
+ const clubPill=club?'<span class="scs-team-inline-club-pill scs-api-subclub-pill" style="--pill-accent:'+safeColor+'">'+esc(club)+'</span>':'';
+ return '<span class="scs-match-player-identity"><span class="scs-match-player-name">'+(window.ScsApi&&ScsApi.cards?ScsApi.cards.player(name,''):'<span class="scs-tm-shared-name">'+esc(name)+'</span>')+'</span>'+(label||clubPill?'<span class="scs-match-player-meta">'+label+clubPill+'</span>':'')+'</span>';
+}
 function court(o){
  if(!o.match)return '<div class="scs-tm-court-card is-free"><div class="scs-tm-court-head"><strong>COURT '+o.number+'</strong><span>FREE</span></div><p>— Empty Court —</p></div>';
  let m=o.match;
@@ -56,5 +67,5 @@ function panel(o){
  const tabs=[['waiting','Waiting',wait.length],['approval','Under Approval',review.length],['completed','Completed',done.length]];if(!o.hideRanking)tabs.push(['ranking','Ranking',null]);
  return '<section class="scs-tm-live-center"><div class="scs-tm-live-center-head"><div><small>LIVE TOURNAMENT</small><h3>Courts &amp; Match Assignment</h3></div><div class="scs-tm-court-picker scs-tm-live-count">'+btn('−',attrs.change(-1))+'<b>'+count+'</b>'+btn('+',attrs.change(1))+'</div></div><div class="scs-tm-live-courts">'+Array.from({length:count},(_,i)=>{const c=items.find(x=>x.number===i+1);return court(c||{number:i+1})}).join('')+'</div>'+chooser+'<div class="scs-tm-live-tabs">'+tabs.map(([id,label,n])=>btn(label+(n===null?'':' <b>'+n+'</b>'),attrs.tab(id),current===id?'active':'')).join('')+'</div>'+(current==='ranking'?(o.ranking||'<div class="scs-tm-live-empty">Ranking updates from approved results.</div>'):current==='approval'?(review.map(completed).join('')||'<div class="scs-tm-live-empty">No matches awaiting approval.</div>'):current==='completed'?(done.map(completed).join('')||'<div class="scs-tm-live-empty">No approved matches yet.</div>'):(waitingContent(wait)||'<div class="scs-tm-live-empty">No matches awaiting play.</div>'))+'</section>';
 }
-window.SCSSharedMatchCenter={court,waiting,completed,panel};
+window.SCSSharedMatchCenter={court,waiting,completed,panel,playerIdentity};
 })();

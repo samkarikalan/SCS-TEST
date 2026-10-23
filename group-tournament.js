@@ -138,6 +138,10 @@ function groups(){
 }
 
 function playerRow(name){return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+escapeHTML(name)+'"></span><span class="scs-tm-shared-name">'+escapeHTML(name)+'</span></span>'}
+function groupMatchPlayer(name){
+ const d=groupSelectedPlayerDetails.find(p=>String(p.player||p.name||'').trim().toLocaleLowerCase()===String(name||'').trim().toLocaleLowerCase());
+ return SCSSharedMatchCenter.playerIdentity(name,d||{});
+}
 function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(el());}
 function openPlayersManager(){
  if(viewOnly)return;
@@ -230,12 +234,12 @@ function matchCenter(){
   const ready=m.status==='score_ready',playing=m.status==='playing';
   const sets=m.score&&m.score.completedSets;
   const serving=m.score&&m.score.finished!==true&&Array.isArray(m.score.names)&&Number.isInteger(m.score.server)?m.score.names[m.score.server]||'':'';
-  return {number:n,playerRenderer:playerRow,match:{status:ready?'AWAITING APPROVAL':playing?'IN PROGRESS':'ASSIGNED (Not Started)',label:m.id+' · Group '+groupLabel(m.group),groupIndex:m.group,left:assignments[m.a]||[],right:assignments[m.b]||[],ready,started:playing||ready,score:Array.isArray(sets)?sets.map(set=>(set.score||[]).join('–')).join(' | '):'',server:serving,winner:m.winner==='L'?'left':m.winner==='R'?'right':null,action:ready?'data-approve="'+escapeHTML(m.id)+'"':playing?'data-score="'+escapeHTML(m.id)+'"':'data-start-match="'+escapeHTML(m.id)+'"',actionLabel:ready?'Approve Result':playing?'View Score':'Start Match',cardAction:'data-group-court-card="'+escapeHTML(m.id)+'"'}};
+  return {number:n,playerRenderer:groupMatchPlayer,match:{status:ready?'AWAITING APPROVAL':playing?'IN PROGRESS':'ASSIGNED (Not Started)',label:m.id+' · Group '+groupLabel(m.group),groupIndex:m.group,left:assignments[m.a]||[],right:assignments[m.b]||[],ready,started:playing||ready,score:Array.isArray(sets)?sets.map(set=>(set.score||[]).join('–')).join(' | '):'',server:serving,winner:m.winner==='L'?'left':m.winner==='R'?'right':null,action:ready?'data-approve="'+escapeHTML(m.id)+'"':playing?'data-score="'+escapeHTML(m.id)+'"':'data-start-match="'+escapeHTML(m.id)+'"',actionLabel:ready?'Approve Result':playing?'View Score':'Start Match',cardAction:'data-group-court-card="'+escapeHTML(m.id)+'"'}};
  });
  const pending=matches.filter(m=>m.status==='pending'||m.status==='assigned'||m.status==='playing'||m.status==='score_ready');
  const done=matches.filter(m=>m.status==='approved');
  const underApproval=matches.filter(m=>m.status==='score_ready');
- const groupScoreCard=m=>({number:m.id,left:(assignments[m.a]||[]).join(' / '),right:(assignments[m.b]||[]).join(' / '),leftPlayers:assignments[m.a]||[],rightPlayers:assignments[m.b]||[],score:groupCompletedScore(m),winner:m.winner==='L'?'left':m.winner==='R'?'right':null,action:m.score?'data-group-completed-score="'+escapeHTML(m.id)+'"':'',actionLabel:m.score?'View Scoreboard':'',cardAction:m.score?'data-group-completed-card="'+escapeHTML(m.id)+'"':''});
+ const groupScoreCard=m=>({number:m.id,left:(assignments[m.a]||[]).join(' / '),right:(assignments[m.b]||[]).join(' / '),leftPlayers:assignments[m.a]||[],rightPlayers:assignments[m.b]||[],playerRenderer:groupMatchPlayer,score:groupCompletedScore(m),winner:m.winner==='L'?'left':m.winner==='R'?'right':null,action:m.score?'data-group-completed-score="'+escapeHTML(m.id)+'"':'',actionLabel:m.score?'View Scoreboard':'',cardAction:m.score?'data-group-completed-card="'+escapeHTML(m.id)+'"':''});
  return '<div class="scs-tm-unified-match-center">'+SCSSharedMatchCenter.panel({courtCount,courts,tab:matchTab,hideRanking:true,assigning:assigningMatch,ranking:standings(),
   waiting:pending.sort((a,b)=>(priority.get(a.id)??99999)-(priority.get(b.id)??99999)).map(m=>({number:m.id,groupIndex:m.group,heading:'Group '+groupLabel(m.group),left:(assignments[m.a]||[]).join(' / '),right:(assignments[m.b]||[]).join(' / '),label:m.court?'Assigned · Court '+m.court:priority.has(m.id)?'Assign':'Waiting',assigned:!!m.court,action:m.status==='pending'&&priority.has(m.id)?'data-assign="'+escapeHTML(m.id)+'"':''})),
   underApproval:underApproval.map(groupScoreCard),completed:done.map(groupScoreCard),
