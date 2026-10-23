@@ -1,5 +1,5 @@
 {
-  "version": "V397",
+  "version": "V398",
   "build": "2026-10-24",
-  "scope": "Shared modal court assignment in Team and Knockout tournaments"
+  "scope": "Shared court assignment success confirmation for Team and Knockout"
 }
