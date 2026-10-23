@@ -679,7 +679,7 @@ function tournamentPlayerRow(name){
  }
  return '<div class="scs-api-roster-row"><span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span>'+level+'</span></div>';
 }
-function hydrateTournamentPlayerCards(){if(window.SCSTournamentPlayerLevel)(window.SCSTournamentPlayerLevel.setRoster(root,draw&&draw.selectedPlayerDetails),window.SCSTournamentPlayerLevel.hydrate(root));if(window.SCSTeamPicker&&root){root.querySelectorAll('.scs-tm-mobile-picker,.scs-tm-teams-flat').forEach(function(el){SCSTeamPicker.decorate(el);el.querySelectorAll(".scs-team-level-pill").forEach(function(b){var n=(b.textContent||"").match(/[1-5]/);if(n)b.dataset.level=n[0]})})}}
+function hydrateTournamentPlayerCards(){if(window.ScsApi&&ScsApi.cards&&ScsApi.cards.hydrateRoster)ScsApi.cards.hydrateRoster(root);if(window.SCSTournamentPlayerLevel)(window.SCSTournamentPlayerLevel.setRoster(root,draw&&draw.selectedPlayerDetails),window.SCSTournamentPlayerLevel.hydrate(root));if(window.SCSTeamPicker&&root){root.querySelectorAll('.scs-tm-mobile-picker,.scs-tm-teams-flat').forEach(function(el){SCSTeamPicker.decorate(el);el.querySelectorAll(".scs-team-level-pill").forEach(function(b){var n=(b.textContent||"").match(/[1-5]/);if(n)b.dataset.level=n[0]})})}}
 var poolExpanded=false;
 function togglePool(){poolExpanded=!poolExpanded;render();}
 function tournamentPoolCard(){

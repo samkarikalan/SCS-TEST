@@ -20,6 +20,27 @@ api.cards.rosterPlayer=function({name='',levelMarkup='',subClub='',accent='#5279
  const player=api.cards.player(name,levelMarkup);
  return '<div class="scs-api-roster-row">'+player+pill+'</div>';
 };
+// Shared tournament roster presentation. Keep each tournament's existing data and actions.
+api.cards.hydrateRoster=function(root){
+ if(!root)return;
+ root.querySelectorAll('.scs-api-roster-row').forEach(row=>{
+  const level=row.querySelector('.scs-api-level-pill,.scs-tournament-gender-level');
+  if(level){
+   level.classList.add('scs-team-level-pill');
+   const digit=(level.textContent||'').match(/[1-5]/);
+   if(digit)level.dataset.level=digit[0];
+  }
+  const club=row.querySelector('.scs-api-subclub-pill,.scs-team-inline-club-pill');
+  if(club){
+   club.classList.add('scs-team-club-pill');
+   if(!club.style.getPropertyValue('--scs-team-club-color')){
+    const accent=club.style.getPropertyValue('--pill-accent');
+    if(accent)club.style.setProperty('--scs-team-club-color',accent);
+   }
+  }
+  row.classList.add('scs-shared-tournament-roster-row');
+ });
+};
 api.buttons.render=function({label='',action='',className='',disabled=false}={}){
  return '<button type="button"'+(action?' data-'+esc(action):'')+(className?' class="'+esc(className)+'"':'')+(disabled?' disabled':'')+'>'+esc(label)+'</button>';
 };

@@ -138,7 +138,7 @@ function groups(){
 }
 
 function playerRow(name){return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+escapeHTML(name)+'"></span><span class="scs-tm-shared-name">'+escapeHTML(name)+'</span></span>'}
-function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(el());}
+function hydratePlayerCards(){if(window.ScsApi&&ScsApi.cards&&ScsApi.cards.hydrateRoster)ScsApi.cards.hydrateRoster(el());if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(el());}
 function openPlayersManager(){
  if(viewOnly)return;
  window.ScsApi.players.select({selected:groupSelectedPlayerDetails,onDone:function(players){

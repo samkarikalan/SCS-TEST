@@ -242,7 +242,7 @@ function registry(){
  return [...new Map(names.map(n=>[playerKey(n),n])).values()].sort((a,b)=>a.localeCompare(b));
 }
 function playerRow(name){return window.ScsApi.cards.player(name,teamLevelLabel(name));}
-function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel){window.SCSTournamentPlayerLevel.setRoster(root(),state.clubs.flatMap(c=>c.selectedPlayerDetails||[]));window.SCSTournamentPlayerLevel.hydrate(root());}}
+function hydratePlayerCards(){if(window.ScsApi&&ScsApi.cards&&ScsApi.cards.hydrateRoster)ScsApi.cards.hydrateRoster(root());if(window.SCSTournamentPlayerLevel){window.SCSTournamentPlayerLevel.setRoster(root(),state.clubs.flatMap(c=>c.selectedPlayerDetails||[]));window.SCSTournamentPlayerLevel.hydrate(root());}}
 let editingClub=null,clubDraft=null;
 const teamPlayerLevels=new Map();
 function teamLevel(name){const record=state.clubs.flatMap(c=>c.selectedPlayerDetails||[]).find(p=>playerKey(p.player)===playerKey(name));const v=record?.level??teamPlayerLevels.get(playerKey(name));return v!==null&&v!==undefined&&Number.isInteger(Number(v))&&Number(v)>=1&&Number(v)<=5?Number(v):null;}
