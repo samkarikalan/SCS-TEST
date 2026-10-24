@@ -1,5 +1,5 @@
 {
-  "version": "V401",
+  "version": "V402",
   "build": "2026-10-24",
-  "scope": "Group Assist shared Knockout player and team formation UI"
+  "scope": "Group Assist shared picker only, legacy pair inputs removed"
 }
