@@ -111,3 +111,13 @@
 .scs-tm-unified-match-center .scs-tm-completed-content,.scs-tm-unified-match-center .scs-tm-completed-vs{background:#101d30!important}
 body.light-mode .scs-tm-unified-match-center .scs-tm-completed-row,body.light-mode .scs-tm-unified-match-center .scs-tm-completed-content,body.light-mode .scs-tm-unified-match-center .scs-tm-completed-vs{background:#f0f3f8!important}
 body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:#e0e7f1!important}
+
+/* V400: Group Assist uses Knockout's compact team and roster layout. */
+.scs-gt-assist-team-list{display:grid;gap:10px;padding:12px 0}
+.scs-gt-assist-team-list .scs-tm-compact-team{min-width:0}
+.scs-gt-assist-team-list .scs-tm-compact-team-head button{min-height:34px;padding:4px 11px;margin-left:6px;border:1px solid #6388b8;border-radius:8px;background:#28476d;color:#fff}
+.scs-gt-assist-team-list .scs-tm-compact-player{min-width:0}
+.scs-gt-sheet .scs-tm-player-pool .scs-tm-pool-chips{display:flex;flex-direction:column;gap:8px;padding:10px 0}
+.scs-gt-sheet .scs-tm-player-pool .scs-api-roster-row{display:flex;min-width:0;padding:9px 11px;background:#34486a;border:1px solid #53739a;border-radius:10px}
+.scs-gt-sheet .scs-match-player-identity{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.scs-gt-sheet .scs-match-player-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-left:35px}

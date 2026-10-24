@@ -142,7 +142,23 @@ function groups(){
  }).join('');
 }
 
-function playerRow(name){return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+escapeHTML(name)+'"></span><span class="scs-tm-shared-name">'+escapeHTML(name)+'</span></span>'}
+function playerRow(name){
+ if(window.SCSTeamPicker&&SCSTeamPicker.rosterRow)return SCSTeamPicker.rosterRow(name,groupSelectedPlayerDetails);
+ return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+escapeHTML(name)+'"></span><span class="scs-tm-shared-name">'+escapeHTML(name)+'</span></span>';
+}
+// Group Assist reuses the Knockout compact-team layout and shared picker.
+// These two views were previously referenced without implementations.
+let poolExpanded=false;
+function players(){
+ const names=pool.length?pool:groupSelectedPlayerDetails.map(p=>p.player||p.name).filter(Boolean);
+ return '<section class="scs-tm-pool scs-tm-player-pool"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT PLAYERS</small><h3>Players ('+names.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-toggle-pool aria-expanded="'+poolExpanded+'">'+(poolExpanded?'Hide ▲':'Show ▼')+'</button><button type="button" data-open-manager>+ Players Manager</button></div></div>'+(poolExpanded?(names.length?'<div class="scs-tm-pool-chips">'+names.map(playerRow).join('')+'</div>':'<p>Select players using Players Manager.</p>'):'')+'</section>';
+}
+function teamsCard(){
+ return '<section class="scs-tm-pool scs-tm-teams-flat"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT TEAMS</small><h3>Teams ('+teamDrafts.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-add-team aria-label="Add team" title="Add team">+</button></div></div>'+(teamDrafts.length?'<div class="scs-gt-assist-team-list">'+teamDrafts.map((team,i)=>{
+ const actions='<button type="button" data-edit-team="'+i+'" aria-label="Edit team '+(i+1)+'">✎</button><button type="button" data-remove-team="'+i+'" aria-label="Remove team '+(i+1)+'">×</button>';
+ return window.SCSTeamPicker&&SCSTeamPicker.compactTeamCard?SCSTeamPicker.compactTeamCard(i,team,groupSelectedPlayerDetails,actions):'<div class="scs-tm-compact-team"><strong>Team '+(i+1)+'</strong><button type="button" data-edit-team="'+i+'">Edit</button>'+team.map(playerRow).join('')+'</div>';
+ }).join('')+'</div>':'<p class="scs-gt-empty">Add a team and choose two players using the shared team picker.</p>')+'</section>';
+}
 function groupMatchPlayer(name){
  const d=groupSelectedPlayerDetails.find(p=>String(p.player||p.name||'').trim().toLocaleLowerCase()===String(name||'').trim().toLocaleLowerCase());
  return SCSSharedMatchCenter.playerIdentity(name,d||{});
@@ -151,7 +167,7 @@ function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTourn
 function openPlayersManager(){
  if(viewOnly)return;
  window.ScsApi.players.select({selected:groupSelectedPlayerDetails,onDone:function(players){
-  groupSelectedPlayerDetails=players;pool=[...new Set(players.map(p=>p.player))];save();render();
+  groupSelectedPlayerDetails=players;pool=[...new Set(players.map(p=>p.player||p.name).filter(Boolean))];save();render();
  }});
 }
 function playersManagerReturned(){
@@ -167,7 +183,7 @@ function editor(id){
   const draftIndex=Number(draftMatch[1]);if(!Number.isInteger(draftIndex)||draftIndex<0||draftIndex>=teamDrafts.length)return;
   const old=teamDrafts[draftIndex]||[];
   const used=new Set(teamDrafts.filter((_,i)=>i!==draftIndex).flat().map(n=>String(n).toLowerCase()));
-  const names=(pool.length?pool:registry()).filter(n=>!used.has(n.toLowerCase()));
+  const names=pool.filter(n=>!used.has(n.toLowerCase()));
   const modal=document.createElement('section');modal.className='scs-tm-entry-modal';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
   modal.innerHTML='<div class="scs-tm-entry-editor"><button type="button" class="scs-tm-entry-close" data-cancel aria-label="Close player assignment">×</button><h3>Entry '+(draftIndex+1)+' · Assign Players</h3><p>Choose players from the tournament pool, or enter a name manually.</p>'+[1,2].map(num=>{let val=old[num-1]||'';return '<label>Player '+num+'<select class="scs-tm-player-select" data-player="'+num+'"><option value="">Select player</option>'+names.map(n=>'<option value="'+escapeHTML(n)+'"'+(n===val?' selected':'')+'>'+escapeHTML(n)+'</option>').join('')+'</select><input data-input="'+num+'" autocomplete="off" placeholder="Or type player name" value="'+escapeHTML(val)+'"></label>'}).join('')+'<div class="scs-tm-entry-player-preview">'+old.map(playerRow).join('')+'</div><div class="scs-tm-import-actions"><button type="button" data-add-next-team>+ Add Team</button><button type="button" class="scs-tm-primary" data-done>Done</button></div><p class="scs-tm-entry-status" role="status"></p></div>';
   el().appendChild(modal);if(window.SCSTeamPicker){const picker=document.createElement('div');picker.className='scs-gt-shared-picker';modal.querySelector('.scs-tm-entry-editor p').after(picker);SCSTeamPicker.render(picker,{names,selected:old,max:2,row:playerRow,onChange:a=>{[1,2].forEach((n,i)=>modal.querySelector('[data-input="'+n+'"]').value=a[i]||'')}});modal.querySelectorAll('.scs-tm-player-select').forEach(x=>x.closest('label').querySelector('select').hidden=true)}modal.querySelector('[data-cancel]').onclick=()=>modal.remove();modal.querySelectorAll('[data-player]').forEach(select=>select.onchange=()=>{if(select.value)modal.querySelector('[data-input="'+select.dataset.player+'"]').value=select.value});
@@ -180,7 +196,7 @@ function editor(id){
  if(!Number.isInteger(gi)||!Number.isInteger(ti)||gi<0||ti<0||gi>=config.groups||ti>=config.per)return;
  const old=assignments[id]||[];
  const used=new Set(Object.entries(assignments).filter(([k])=>k!==id).flatMap(([,v])=>v).map(n=>n.toLowerCase()));
- const names=(pool.length?pool:registry()).filter(n=>!used.has(n.toLowerCase()));
+ const names=pool.filter(n=>!used.has(n.toLowerCase()));
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
  const opts=names.map(n=>'<option value="'+escapeHTML(n)+'">'+escapeHTML(n)+'</option>').join('');
  modal.innerHTML='<div class="scs-tm-entry-editor"><button type="button" class="scs-tm-entry-close" data-cancel aria-label="Close player assignment">×</button><h3>Group '+groupLabel(gi)+' · Team '+(ti+1)+' · Assign Players</h3><p>Choose players from the tournament pool, or enter a name manually.</p>'+[1,2].map(num=>{let val=old[num-1]||'';return '<label>Player '+num+'<select class="scs-tm-player-select" data-player="'+num+'"><option value="">Select player</option>'+names.map(n=>'<option value="'+escapeHTML(n)+'"'+(n===val?' selected':'')+'>'+escapeHTML(n)+'</option>').join('')+'</select><input data-input="'+num+'" autocomplete="off" placeholder="Or type player name" value="'+escapeHTML(val)+'"></label>'}).join('')+'<div class="scs-tm-entry-player-preview">'+old.map(playerRow).join('')+'</div><div class="scs-tm-import-actions"><button type="button" class="scs-tm-primary" data-done>Done</button></div><p class="scs-tm-entry-status" role="status"></p></div>';
@@ -319,6 +335,7 @@ el().querySelectorAll('[data-assist-done]').forEach(x=>x.onclick=()=>assistDone(
 el().querySelectorAll('[data-config]').forEach(x=>x.onchange=()=>{let n=Number(x.value);if(!Number.isInteger(n)||n<1||n>64){alert('Enter a whole number between 1 and 64.');render();return}config[x.dataset.config]=x.dataset.config==='knockouts'?Math.min(2,n):n;assistPatternReady=false;save();render()});
  const titleInput=el().querySelector('[data-title]');if(titleInput)titleInput.onchange=()=>{title=titleInput.value.trim().slice(0,120);save();render()};
  const toggle=el().querySelector('[data-toggle-pool]');if(toggle)toggle.onclick=()=>{poolExpanded=!poolExpanded;render()};const manager=el().querySelector('[data-open-manager]');if(manager)manager.onclick=openPlayersManager;hydratePlayerCards();
+ el().querySelectorAll('[data-edit-team]').forEach(x=>x.onclick=()=>editor('draft:'+x.dataset.editTeam));
  const addTeam=el().querySelector('[data-add-team]');if(addTeam)addTeam.onclick=()=>{if(teamDrafts.length>=64){alert('Maximum 64 teams.');return}teamDrafts.push(['','']);save();render();editor('draft:'+(teamDrafts.length-1))};
  el().querySelectorAll('[data-remove-team]').forEach(x=>x.onclick=e=>{e.stopPropagation();teamDrafts.splice(Number(x.dataset.removeTeam),1);save();render()});
 el().querySelectorAll('[data-slot]').forEach(x=>x.onclick=()=>{if(!started)editor(x.dataset.slot)});

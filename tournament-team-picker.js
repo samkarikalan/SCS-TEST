@@ -40,5 +40,18 @@ function decorate(container){
   row.dataset.teamPills='yes';
  });
 }
-window.SCSTeamPicker={render,bindTeamSelectors,decorate};
+// Common player identity for team-formation views. Metadata comes from the
+// tournament-selected roster; never fall back to unrelated global players.
+function rosterRow(name,roster){
+ const matches=(Array.isArray(roster)?roster:[]).filter(p=>String(p.player||p.name||'').trim().toLocaleLowerCase()===String(name||'').trim().toLocaleLowerCase());
+ const d=matches.length===1?matches[0]:null;
+ if(window.SCSSharedMatchCenter&&typeof SCSSharedMatchCenter.playerIdentity==='function')
+  return '<div class="scs-api-roster-row">'+SCSSharedMatchCenter.playerIdentity(name,d||{})+'</div>';
+ return '<div class="scs-api-roster-row"><span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+esc(name)+'"></span><span class="scs-tm-shared-name">'+esc(name)+'</span></span></div>';
+}
+function compactTeamCard(index,names,roster,actions){
+ const players=(Array.isArray(names)?names:[]).filter(Boolean);
+ return '<article class="scs-tm-compact-team"><div class="scs-tm-compact-team-head"><span>Team '+(index+1)+'</span>'+(actions||'')+'</div><div class="scs-tm-compact-players">'+(players.length?players.map(n=>'<div class="scs-tm-compact-player">'+rosterRow(n,roster)+'</div>').join(''):'<span class="scs-tm-roster-empty">Select two players</span>')+'</div></article>';
+}
+window.SCSTeamPicker={render,bindTeamSelectors,decorate,rosterRow,compactTeamCard};
 })();
