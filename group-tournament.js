@@ -167,7 +167,7 @@ function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTourn
 function openPlayersManager(){
  if(viewOnly)return;
  if(!window.ScsApi||!ScsApi.players||typeof ScsApi.players.select!=='function')return;
- window.ScsApi.players.select({selected:groupSelectedPlayerDetails,onDone:function(players){
+ window.SCSTournamentPlayersPage.open({selected:groupSelectedPlayerDetails,onDone:function(players){
   groupSelectedPlayerDetails=players;pool=[...new Set(players.map(p=>p.player||p.name).filter(Boolean))];save();render();
  }});
 }

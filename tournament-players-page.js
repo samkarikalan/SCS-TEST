@@ -1,0 +1,2 @@
+/* V403: Common Players page entry for all tournament types. */
+(function(){'use strict';window.SCSTournamentPlayersPage={open:function(options){var api=window.ScsApi&&window.ScsApi.players;if(!api||typeof api.select!=='function'){console.error('Shared Players Manager unavailable');return false;}return api.select({selected:Array.isArray(options&&options.selected)?options.selected:[],onDone:function(players){if(options&&typeof options.onDone==='function')options.onDone(Array.isArray(players)?players:[]);}});}};})();

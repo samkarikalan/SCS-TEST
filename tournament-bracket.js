@@ -720,7 +720,7 @@ function tournamentTeamsCard(){
 function openPlayersManager(){
  if(!draw||!root||readonly)return;
  const previous=Array.isArray(draw.selectedPlayerDetails)?draw.selectedPlayerDetails:[];
- window.ScsApi.players.select({selected:previous,onDone:function(players){
+ window.SCSTournamentPlayersPage.open({selected:previous,onDone:function(players){
   draw.selectedPlayerDetails=players;
   preserveTeamPlayerDetails(draw);
   const byClub=new Map();players.forEach(p=>{if(!byClub.has(p.subClub))byClub.set(p.subClub,[]);byClub.get(p.subClub).push(p.player)});
