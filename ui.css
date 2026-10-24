@@ -36548,3 +36548,9 @@ body.scs-tournament-register-open #vaultRegisterPage{padding-bottom:24px!importa
 .scs-tr-clubs small{color:#c4b7ff}
 
 .scs-team-registered-club{display:grid;gap:8px;margin:12px 0}.scs-team-registered-club label{display:grid;gap:6px}.scs-team-registered-club select{width:100%;padding:12px;border-radius:10px;background:#172942;color:#fff;border:1px solid #6c86af}.scs-team-registered-club small{color:#b7c6dc}
+
+/* Professional scoring-picker action integrated into each court card. */
+.scs-score-live-match .scs-conduct-start{display:flex;width:calc(100% - 28px);min-height:48px;align-items:center;justify-content:space-between;margin:8px 14px 14px;padding:11px 15px;border:1px solid #48d8ad;border-radius:12px;background:linear-gradient(135deg,#10a77b,#087d63);color:#fff;font:inherit;font-size:.92rem;font-weight:850;letter-spacing:.01em;box-shadow:0 8px 18px rgba(3,126,91,.22);cursor:pointer}
+.scs-score-live-match .scs-conduct-start::after{content:'→';display:grid;place-items:center;width:25px;height:25px;margin-left:12px;border-radius:50%;background:rgba(255,255,255,.16);font-size:1rem;line-height:1}
+.scs-score-live-match .scs-conduct-start:hover{filter:brightness(1.07)}
+.scs-score-live-match .scs-conduct-start:focus-visible{outline:3px solid rgba(91,221,183,.35);outline-offset:2px}

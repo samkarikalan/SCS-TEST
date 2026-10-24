@@ -68,6 +68,11 @@ function open(mode,viewState){
  render();
 }
 function close(){el()?.remove();if(window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
+function updateCompletedScore(id,score,winner){
+ const m=matches.find(v=>String(v.id)===String(id));
+ if(!m||viewOnly||!m.score||!score?.finished)return false;
+ m.score=score;m.winner=winner;save();render();return true;
+}
 function card(title,body){return '<section class="scs-gt-card"><h3>'+title+'</h3>'+body+'</section>'}
 function setup(){
 let fields=[['groups','Number of groups',config.groups],['per','Teams per group',config.per],['knockouts','Number of knockouts (1 or 2)',config.knockouts],['top',config.knockouts===1?'Qualifiers per group':'Top knockout qualifiers per group',config.top]];
@@ -321,7 +326,6 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
  el().querySelectorAll('[data-assign]').forEach(x=>x.onclick=()=>assignCourt(x.dataset.assign));
  el().querySelectorAll('[data-start-match]').forEach(x=>x.onclick=()=>startMatch(x.dataset.startMatch));
  el().querySelectorAll('[data-score]').forEach(x=>x.onclick=()=>scoreMatch(x.dataset.score));
- function updateCompletedScore(id,score,winner){const m=matches.find(v=>String(v.id)===String(id));if(!m||viewOnly||!m.score||!score?.finished)return false;m.score=score;m.winner=winner;save();render();return true}
  function openGroupSaved(id,editable=false){const m=matches.find(v=>String(v.id)===String(id));if(!m?.score||!window.SCSScoring?.openCompleted)return;const overlay=el();overlay.hidden=true;try{if(editable&&!viewOnly&&SCSScoring.openEditableCompleted)SCSScoring.openEditableCompleted(m.id,m.score,(score,winner)=>updateCompletedScore(m.id,score,winner));else SCSScoring.openCompleted(m.score)}catch(err){overlay.hidden=false;console.error('Group saved scoreboard:',err)}}
  el().querySelectorAll('[data-group-completed-score]').forEach(x=>x.onclick=e=>{e.stopPropagation();openGroupSaved(x.dataset.groupCompletedScore,tab!=='match')});
  el().querySelectorAll('[data-group-completed-card]').forEach(x=>{const open=()=>openGroupSaved(x.dataset.groupCompletedCard,tab!=='match');x.addEventListener('click',e=>{if(!e.target.closest('button,a,input,select'))open()});x.addEventListener('keydown',e=>{if(e.target===x&&(e.key==='Enter'||e.key===' ')){e.preventDefault();open()}})});

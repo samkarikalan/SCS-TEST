@@ -40,7 +40,7 @@
 
 
 /* V50 manual bracket: outside team cards only; all matches are compact numbered junctions. */
-.scs-tm-template-entry{position:absolute;z-index:2;width:170px;height:54px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:7px 10px;border:1px solid #6386b5;border-radius:10px;background:#263e61;color:#f5f8ff;text-align:center;font-size:12px;font-weight:700;overflow-wrap:anywhere}
+.scs-tm-template-entry{position:absolute;z-index:2;width:170px;height:112px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;padding:7px 10px;border:1px solid #6386b5;border-radius:10px;background:#263e61;color:#f5f8ff;text-align:center;font-size:12px;font-weight:700;overflow:hidden;overflow-wrap:anywhere}
 .scs-tm-template-junction{position:absolute;z-index:3;width:46px;height:46px;min-width:46px;min-height:46px;padding:0;border-radius:50%;border:3px solid #7f9bd1;background:#172235;color:#f7f9ff;display:grid;place-items:center;font:800 13px/1 system-ui,-apple-system,sans-serif;cursor:pointer;box-shadow:none}
 .scs-tm-template-junction.final{border-width:4px;border-color:#f2c15f;background:#26364c}
 .scs-tm-template-junction.selected{outline:4px solid #ffc46b;outline-offset:3px}
@@ -206,7 +206,7 @@
 .scs-tm-template-entry .scs-tm-shared-player{display:flex;align-items:center;gap:5px;min-width:0;font-size:11px;line-height:1.15;text-align:left}
 .scs-tm-template-entry .scs-tm-ring-slot{display:inline-flex;flex:none;align-items:center;justify-content:center;transform:scale(.65);transform-origin:center;width:23px;height:23px}
 .scs-tm-template-entry .scs-tm-shared-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.scs-tm-template-entry:has(.scs-tm-bracket-players){height:66px}
+.scs-tm-template-entry:has(.scs-tm-bracket-players){height:112px}
 
 /* V127 tournament-only controls */
 .scs-tm-pool-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
@@ -559,11 +559,35 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-ko-generated-fixtures .scs-team-match-shell .scs-tm-completed-team:last-child{border-left:0;background:color-mix(in srgb,var(--team-right) 25%,#12213a);padding:12px;border-radius:0 0 9px 9px}
 .scs-ko-generated-fixtures .scs-team-match-shell[aria-label] {cursor:pointer}
 /* V369: knockout assignment swap feedback, scoped to bracket entries. */
-.scs-tm-template-entry.scs-swap-selected{z-index:20!important;background:#1769b6!important;border:3px solid #9cdbff!important;color:#fff!important;box-shadow:0 0 0 4px rgba(90,175,255,.26),0 12px 22px rgba(0,0,0,.48)!important;transform:scale(1.5);transition:transform .16s,background .16s;}
-.scs-tm-template-entry.scs-swap-recent{z-index:12!important;background:#17634c!important;border:3px solid #83e9b9!important;color:#fff!important;box-shadow:0 0 0 3px rgba(100,245,182,.22)!important;transition:background .2s;}
-.scs-tm-swap-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;margin:0 0 8px;background:#192b44;border:1px solid #3d628b;border-radius:10px;color:#d9eaff;font-size:12px;}
+.scs-tm-template-entry{transition:transform .25s ease,background .2s,border-color .2s,box-shadow .2s}
+.scs-tm-template-entry.scs-swap-selected{z-index:20!important;background:#1769b6!important;border:3px solid #9cdbff!important;color:#fff!important;box-shadow:0 0 0 4px rgba(90,175,255,.26),0 12px 22px rgba(0,0,0,.48)!important;transform:scale(1.5);transition:transform .2s ease,background .16s;}
+.scs-tm-template-entry.scs-swap-recent{z-index:20!important;background:#17634c!important;border:3px solid #83e9b9!important;color:#fff!important;box-shadow:0 0 0 4px rgba(100,245,182,.26),0 12px 22px rgba(0,0,0,.48)!important;transform:scale(1.5);transition:transform .25s ease,background .2s;animation:scs-tm-swap-confirm 1.8s ease-in-out both;}
+@keyframes scs-tm-swap-confirm{0%{transform:scale(1.12)}15%,78%{transform:scale(1.5)}100%{transform:scale(1.38)}}
+@media(prefers-reduced-motion:reduce){.scs-tm-template-entry.scs-swap-recent{animation:none}}
+.scs-tm-swap-toolbar{display:none!important}
 .scs-tm-swap-toolbar button{padding:7px 11px;border-radius:8px;border:1px solid #7bb9f6;background:#294f80;color:white;white-space:nowrap;}
 .scs-tm-swap-toolbar button[hidden]{display:none!important;}
+.scs-tm-zoom-bar .scs-tm-swap-undo{margin-left:auto;min-width:96px;min-height:42px;padding:7px 11px;border:1px solid #63b99b;background:transparent;color:#a9ead3;font-size:14px;font-weight:700;line-height:1.1;white-space:nowrap;box-shadow:none}
+.scs-tm-zoom-bar .scs-tm-swap-undo::before{content:'↶';margin-right:5px;font-size:15px}
+.scs-tm-zoom-bar:has(.scs-tm-swap-undo) .scs-tm-gesture-hint{flex:0 0 100%;margin-left:0;text-align:right}
+.scs-tm-zoom-bar .scs-tm-swap-undo[hidden]{display:inline-flex!important;visibility:hidden;pointer-events:none}
+
+/* V397: compact, professional Generate Fixtures step. */
+.scs-ko-fixtures-step{width:min(100%,620px);margin:0 auto;padding:22px 16px 32px;box-sizing:border-box}
+.scs-ko-fixtures-card{position:relative;overflow:hidden;padding:22px;border:1px solid #3d5f86;border-radius:18px;background:linear-gradient(145deg,#1c304b 0%,#14243a 100%);box-shadow:0 14px 32px rgba(2,10,24,.28)}
+.scs-ko-fixtures-card::after{content:'';position:absolute;right:-52px;top:-62px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(45,212,191,.13),transparent 68%);pointer-events:none}
+.scs-ko-fixtures-heading{position:relative;z-index:1;display:flex;align-items:center;gap:13px}
+.scs-ko-fixtures-icon{display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;border:1px solid #4f8db7;border-radius:13px;background:#203f60;color:#7dd3fc;font-size:24px}
+.scs-ko-fixtures-heading small{display:block;margin-bottom:3px;color:#78d9c1;font-size:.68rem;font-weight:900;letter-spacing:.14em}
+.scs-ko-fixtures-heading h3{margin:0;color:#fff;font-size:1.35rem;line-height:1.15}
+.scs-ko-fixtures-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0 16px}
+.scs-ko-fixtures-metrics>div{display:flex;align-items:baseline;gap:7px;padding:12px 14px;border:1px solid rgba(111,153,199,.3);border-radius:12px;background:rgba(8,23,41,.35)}
+.scs-ko-fixtures-metrics strong{color:#fff;font-size:1.35rem;line-height:1}
+.scs-ko-fixtures-metrics span{color:#b8cae0;font-size:.82rem;font-weight:700}
+.scs-ko-fixtures-copy{margin:0 0 20px;color:#c9d7e8;font-size:.92rem;line-height:1.5}
+.scs-ko-generate-button{display:flex;width:100%;min-height:48px;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid #4ce0aa;border-radius:12px;background:linear-gradient(135deg,#10ad7d,#078d69);color:#fff;font:inherit;font-weight:850;box-shadow:0 8px 20px rgba(6,148,106,.22);cursor:pointer}
+.scs-ko-generate-button:hover{filter:brightness(1.07)}
+.scs-ko-generate-button:focus-visible{outline:3px solid rgba(116,234,196,.35);outline-offset:2px}
 
 /* V370: event-level Assist action, without changing the event card layout. */
 .scs-ko-event-assist{display:inline-flex;align-items:center;justify-content:center;margin:8px 12px 8px auto;padding:7px 17px;border:1px solid #63d6af;border-radius:999px;background:#124c45;color:#a4f7d7;font:inherit;font-weight:700;cursor:pointer;position:relative;z-index:2}

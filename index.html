@@ -108,7 +108,7 @@ html,body{overscroll-behavior:none;}
   <script src="offline-db.js?v=V149" defer></script>
   <script src="snapshot.js?v=V149" defer></script>
 
-  <script src="supabase.js?v=V365" defer></script>
+  <script src="supabase.js?v=V366" defer></script>
 
   <script src="auth.js?v=V149" defer></script>
 
@@ -123,8 +123,8 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V367" defer></script>
-  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V355" defer></script><script src="tournament-bracket.js?v=V397" defer></script>
-  <script src="court-center.js?v=V155" defer></script>
+  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V355" defer></script><script src="tournament-bracket.js?v=V399" defer></script>
+  <script src="court-center.js?v=V399" defer></script>
 
   <script src="games.js?v=V149" defer></script>
 
@@ -486,7 +486,9 @@ let scsMyTournamentRows=[];
 function scsGroupKnockoutTournamentRows(rows){
  // Shared parent/event grouping for Knockout, Group and Team. Never group by title.
  const parents=new Map(), grouped=new Map(), result=[];
- rows.forEach(r=>{const s=r.state||{};if(s._scsMainTournament&&s._scsClientTournamentId)parents.set(r.format+':'+s._scsClientTournamentId,r)});
+ // Rows arrive newest first. Keep the newest master snapshot for each stable
+ // client ID instead of overwriting it with progressively older duplicates.
+ rows.forEach(r=>{const s=r.state||{},key=r.format+':'+s._scsClientTournamentId;if(s._scsMainTournament&&s._scsClientTournamentId&&!parents.has(key))parents.set(key,r)});
  rows.forEach(r=>{
   const s=r.state||{};
   const parentId=s._scsParentTournamentId||s._scsTeamMainId||s._scsKoMainId||'';
@@ -562,16 +564,16 @@ function scsCloseTournamentContinue(){var e=document.getElementById('scsTourname
 async function scsDeleteTournament(event,id,format,title){
  if(event){event.preventDefault();event.stopPropagation()}
  if(!id||typeof window.dbDeleteTournamentById!=='function'){alert('Server deletion is unavailable. Please reload and retry.');return}
- if(!confirm('Delete the entire tournament "'+String(title||'Tournament')+'" and its leagues from the server? This cannot be undone.'))return;
+ if(!confirm('Permanently delete the entire tournament "'+String(title||'Tournament')+'", every event and all saved versions from the server? No backup will be kept. This cannot be undone.'))return;
  const button=event&&event.currentTarget;
  if(button){button.disabled=true;button.textContent='Deleting…'}
  try{
   const grouped=scsMyTournamentRows.find(r=>String(r.id)===String(id));
-  const ids=grouped&&Array.isArray(grouped._scsLeagueRows)?[...grouped._scsLeagueRows.map(r=>r.id),...(grouped._scsLeagueRows.some(r=>String(r.id)===String(id))?[]:[id])]:[id];
-  for(const recordId of ids){const result=await window.dbDeleteTournamentById(recordId);if(result!==true)throw new Error('Server did not confirm deletion of '+recordId);}
+  const result=await window.dbDeleteTournamentById(id);
+  if(result!==true)throw new Error('Server did not confirm permanent deletion.');
   if(typeof window.dbListClubTournaments==='function'){
    const remaining=await window.dbListClubTournaments(['draft','live','completed'])||[];
-   if(remaining.some(r=>ids.some(recordId=>String(r.id)===String(recordId))))throw new Error('Tournament is still on the server. Please retry.');
+   if(remaining.some(r=>String(r.id)===String(id)))throw new Error('Tournament is still on the server. Please retry.');
   }
   // Close the deleted tournament view if it is still displayed.
   const active=document.getElementById('scsTournamentOverlay');
@@ -593,7 +595,11 @@ async function scsOpenContinueTournament(id,format){
   scsTournamentRememberParent('scsTournamentContinue');var e=document.getElementById('scsTournamentContinue');if(e)e.hidden=true;
   if(format==='team'&&window.SCSTeamTournament){SCSTeamTournament.open();return}
   if(format==='group'&&window.SCSGroupTournament){SCSGroupTournament.open();return}
-  if(format==='knockout'&&window.SCSTournament&&SCSTournament.enterSavedTournament){if(typeof SCSTournament.adoptCloudEvent==='function')SCSTournament.adoptCloudEvent(row.state);SCSTournament.enterSavedTournament();return}
+  if(format==='knockout'&&window.SCSTournament&&SCSTournament.enterSavedTournament){
+   if(row.state&&row.state._scsMainTournament&&typeof SCSTournament.adoptCloudMaster==='function')SCSTournament.adoptCloudMaster(row.state,row._scsEventStates||[]);
+   else if(typeof SCSTournament.adoptCloudEvent==='function')SCSTournament.adoptCloudEvent(row.state);
+   SCSTournament.enterSavedTournament();return
+  }
   alert('Tournament view is still loading. Please try again.');
 }
 function scsTournamentEscape(value){return String(value==null?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
@@ -655,7 +661,7 @@ function scsStartKnockoutTournament(){
   alert('Tournament is still loading. Please try again.');
 }
 </script>
-<link rel="stylesheet" href="./group-tournament.css?v=V358"><script src="./shared-match-center.js?v=V395" defer></script><script src="./group-tournament.js?v=V367" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V321"><link rel="stylesheet" href="./shared-match-card.css?v=V395"><script src="./scs-api.js?v=V374" defer></script><script src="./team-tournament.js?v=V397" defer></script>
+<link rel="stylesheet" href="./group-tournament.css?v=V358"><script src="./shared-match-center.js?v=V395" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V321"><link rel="stylesheet" href="./shared-match-card.css?v=V395"><script src="./scs-api.js?v=V374" defer></script><script src="./group-tournament.js?v=V369" defer></script><script src="./team-tournament.js?v=V397" defer></script>
 
 <style id="scs-tournament-manager-v1">
 .scs-tmgr-overlay{position:fixed;inset:0;z-index:10038;background:rgba(3,8,18,.78);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;padding:16px}
