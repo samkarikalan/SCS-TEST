@@ -155,8 +155,8 @@ function players(){
 }
 function teamsCard(){
  return '<section class="scs-tm-pool scs-tm-teams-flat"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT TEAMS</small><h3>Teams ('+teamDrafts.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-add-team aria-label="Add team" title="Add team">+</button></div></div>'+(teamDrafts.length?'<div class="scs-gt-assist-team-list">'+teamDrafts.map((team,i)=>{
- const actions='<button type="button" data-edit-team="'+i+'" aria-label="Edit team '+(i+1)+'">✎</button><button type="button" data-remove-team="'+i+'" aria-label="Remove team '+(i+1)+'">×</button>';
- return window.SCSTeamPicker&&SCSTeamPicker.compactTeamCard?SCSTeamPicker.compactTeamCard(i,team,groupSelectedPlayerDetails,actions):'<div class="scs-tm-compact-team"><strong>Team '+(i+1)+'</strong><button type="button" data-edit-team="'+i+'">Edit</button>'+team.map(playerRow).join('')+'</div>';
+ const actions='<details class="scs-tm-compact-actions"><summary aria-label="Team '+(i+1)+' actions" title="Team actions">⋮</summary><div class="scs-tm-compact-action-menu"><button type="button" data-edit-team="'+i+'">✎ Edit team</button><button type="button" data-remove-team="'+i+'">− Remove team</button></div></details>';
+ return window.SCSTeamPicker&&SCSTeamPicker.compactTeamCard?SCSTeamPicker.compactTeamCard(i,team,groupSelectedPlayerDetails,actions):'<article class="scs-tm-compact-team"><div class="scs-tm-compact-team-head"><span>Team '+(i+1)+'</span>'+actions+'</div><div class="scs-tm-compact-players">'+team.map(playerRow).join('')+'</div></article>';
  }).join('')+'</div>':'<p class="scs-gt-empty">Add a team and choose two players using the shared team picker.</p>')+'</section>';
 }
 function groupMatchPlayer(name){
@@ -166,6 +166,7 @@ function groupMatchPlayer(name){
 function hydratePlayerCards(){if(window.SCSTournamentPlayerLevel)window.SCSTournamentPlayerLevel.hydrate(el());}
 function openPlayersManager(){
  if(viewOnly)return;
+ if(!window.ScsApi||!ScsApi.players||typeof ScsApi.players.select!=='function')return;
  window.ScsApi.players.select({selected:groupSelectedPlayerDetails,onDone:function(players){
   groupSelectedPlayerDetails=players;pool=[...new Set(players.map(p=>p.player||p.name).filter(Boolean))];save();render();
  }});

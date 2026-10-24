@@ -121,3 +121,15 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-gt-sheet .scs-tm-player-pool .scs-api-roster-row{display:flex;min-width:0;padding:9px 11px;background:#34486a;border:1px solid #53739a;border-radius:10px}
 .scs-gt-sheet .scs-match-player-identity{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
 .scs-gt-sheet .scs-match-player-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-left:35px}
+
+/* V401: Group Assist uses Knockout's compact team cards and action menu. */
+.scs-gt-overlay .scs-tm-compact-team{position:relative;min-width:0;background:#1c3555;border:1px solid #53759d;border-left:5px solid #2598e8;border-radius:12px;padding:12px;overflow:visible}
+.scs-gt-overlay .scs-tm-compact-team-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700}
+.scs-gt-overlay .scs-tm-compact-players{display:grid;gap:8px;padding-top:10px}
+.scs-gt-overlay .scs-tm-compact-actions{position:relative;z-index:2}
+.scs-gt-overlay .scs-tm-compact-actions summary{list-style:none;display:grid;place-items:center;width:38px;height:36px;border-radius:9px;background:#365fb0;color:white;font-size:24px;cursor:pointer}
+.scs-gt-overlay .scs-tm-compact-actions summary::-webkit-details-marker{display:none}
+.scs-gt-overlay .scs-tm-compact-action-menu{position:absolute;right:0;top:38px;z-index:20;display:flex;flex-direction:column;min-width:155px;padding:5px;border:1px solid #7394c5;border-radius:10px;background:#243854;box-shadow:0 8px 18px #0008}
+.scs-gt-overlay .scs-tm-compact-action-menu button{border:0;background:transparent;color:white;text-align:left;min-height:42px;padding:8px;font:inherit}
+.scs-gt-overlay .scs-tm-compact-action-menu button:last-child{color:#ffb3b3}
+.scs-gt-overlay .scs-api-player-selector{position:fixed;inset:0;z-index:1000005;display:flex;align-items:center;justify-content:center;background:#050d1bcc}
