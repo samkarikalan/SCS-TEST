@@ -1,5 +1,5 @@
 {
-  "version": "V403",
+  "version": "V404",
   "build": "2026-10-24",
-  "scope": "Phase 1 common Players page entry across all three tournaments; legacy entry points archived"
+  "scope": "Group Tournament Matches tab, court assignment in Tournament page, assigned-only Match Center"
 }
