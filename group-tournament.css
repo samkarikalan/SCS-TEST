@@ -147,3 +147,13 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-gt-overlay .scs-tm-compact-action-menu button{border:0;background:transparent;color:white;text-align:left;min-height:42px;padding:8px;font:inherit}
 .scs-gt-overlay .scs-tm-compact-action-menu button:last-child{color:#ffb3b3}
 .scs-gt-overlay .scs-api-player-selector{position:fixed;inset:0;z-index:1000005;display:flex;align-items:center;justify-content:center;background:#050d1bcc}
+
+/* V405: Group page is a roster, not a standings/history page. */
+.scs-gt-roster-page .scs-tm-player-pool .scs-tm-pool-chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:9px;padding:12px 0}
+.scs-gt-roster-page .scs-tm-player-pool .scs-tm-pool-chips>.scs-tm-shared-player{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;min-height:60px;padding:10px 12px;border:1px solid #4c6892;border-radius:12px;background:#253a59}
+.scs-gt-roster-page .scs-tm-player-pool .scs-tm-pool-chips .scs-tm-shared-name{flex:1 1 130px;min-width:0;overflow-wrap:anywhere}
+.scs-gt-roster-page .scs-tm-player-pool .scs-tm-pool-chips .scs-team-inline-club-pill,.scs-gt-roster-page .scs-tm-player-pool .scs-tm-pool-chips .scs-api-subclub-pill{max-width:100%;width:auto;min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+.scs-gt-roster-groups{display:grid;gap:14px;margin-top:16px}
+.scs-gt-roster-team-list{display:grid;gap:10px;margin-top:12px}
+.scs-gt-roster-team .scs-tm-compact-team{width:100%;min-width:0}
+.scs-gt-roster-count{color:#bed1eb;font-size:.8rem;white-space:nowrap}

@@ -1,5 +1,5 @@
 {
-  "version": "V404",
-  "build": "2026-10-24",
-  "scope": "Group Tournament Matches tab, court assignment in Tournament page, assigned-only Match Center"
+  "version": "V405",
+  "build": "2026-10-25",
+  "scope": "Group bottom navigation label and roster-only Group page; compact player cards"
 }

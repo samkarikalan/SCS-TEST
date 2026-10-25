@@ -142,6 +142,18 @@ function groups(){
  }).join('');
 }
 
+// Group section: roster and group assignments only; no standings or match history.
+function groupRoster(){
+ return '<div class="scs-gt-roster-groups">'+Array.from({length:config.groups},(_,g)=>{
+  const entries=Array.from({length:config.per},(_,j)=>({id:g+':'+j,players:assignments[g+':'+j]||[]}));
+  return '<section class="scs-tm-pool scs-gt-roster-group"><div class="scs-tm-pool-heading"><div><small>GROUP '+groupLabel(g)+'</small><h3>Group '+groupLabel(g)+'</h3></div><span class="scs-gt-roster-count">'+entries.filter(t=>t.players.length===2).length+' / '+config.per+' teams</span></div><div class="scs-gt-roster-team-list">'+entries.map((t,i)=>{
+   const card=window.SCSTeamPicker&&SCSTeamPicker.compactTeamCard
+    ?SCSTeamPicker.compactTeamCard(i,t.players,groupSelectedPlayerDetails,'')
+    :'<article class="scs-tm-compact-team"><strong>Team '+(i+1)+'</strong><div class="scs-tm-compact-players">'+(t.players.length?t.players.map(playerRow).join(''):'<span class="scs-gt-unassigned">Not assigned</span>')+'</div></article>';
+   return '<div class="scs-gt-roster-team">'+card+'</div>';
+  }).join('')+'</div></section>';
+ }).join('')+'</div>';
+}
 function playerRow(name){
  if(window.SCSTeamPicker&&SCSTeamPicker.rosterRow)return SCSTeamPicker.rosterRow(name,groupSelectedPlayerDetails);
  return '<span class="scs-tm-shared-player"><span class="scs-tm-ring-slot" data-tm-player="'+escapeHTML(name)+'"></span><span class="scs-tm-shared-name">'+escapeHTML(name)+'</span></span>';
@@ -341,7 +353,7 @@ function view(){
 if(tab==='main'&&tournamentView==='ranking')return standings();
 if(tab==='main'&&tournamentView==='matches')return tournamentMatches();
 if(tab==='main')return (started?card('Group Tournament Started','<p>'+matches.length+' round-robin matches generated.</p>'):card('Start Group Tournament','<p>Assign all teams before starting.</p><button class="scs-gt-primary" data-start>Start Group Tournament</button>'))+card('Tournament Overview','<p>'+config.groups+' groups · '+config.per+' teams per group · '+config.knockouts+' knockout tournament'+(config.knockouts===1?'':'s')+'</p><p>Teams assigned: '+Object.keys(assignments).length+' / '+config.groups*config.per+'</p>')+groups()+card('Knockout qualification','<p>Top: '+config.top+' per group'+(config.knockouts===2?' · Bottom: '+config.bottom+' per group':'')+'</p><p class="scs-gt-empty">Bracket will appear after qualification is implemented in Stage 2.</p>');
-if(tab==='players')return players();
+if(tab==='players')return '<div class="scs-gt-roster-page">'+players()+groupRoster()+'</div>';
 if(tab==='groups')return groups();
 if(tab==='knockouts')return card('Knockout 1 — Top','<p>'+config.top+' qualifying positions per group</p><p class="scs-gt-empty">No qualified teams yet.</p>')+(config.knockouts===2?card('Knockout 2 — Bottom','<p>'+config.bottom+' qualifying positions per group</p><p class="scs-gt-empty">No qualified teams yet.</p>'):'');
 return matchCenter();
@@ -350,7 +362,7 @@ function tournamentBottomNav(assisting){
  const active=assisting?(assistStep===1?'teams':assistStep>=2?'tournament':''):(tab==='players'?'teams':tab==='match'?'match':'tournament');
  const tournamentReady=!assisting||assistComplete(1);
  const liveReady=!assisting&&started;
- const items=[['home','Home','⌂',true],['teams','Clubs','♙',true],['tournament','Tournament','⑂',tournamentReady],['match','Match Center','▣',liveReady]];
+ const items=[['home','Home','⌂',true],['teams','Group','♙',true],['tournament','Tournament','⑂',tournamentReady],['match','Match Center','▣',liveReady]];
  return '<nav class="scs-tm-organized-tabs scs-tm-bottom-nav scs-gt-bottom-nav" aria-label="Group tournament sections">'+items.map(([key,label,icon,enabled])=>'<button type="button" data-group-nav="'+key+'" class="'+(active===key?'active':'')+'" '+(enabled?'':'disabled')+(active===key?' aria-current="page"':'')+'><span class="scs-tm-nav-icon" aria-hidden="true">'+icon+'</span><span class="scs-tm-nav-label">'+label+'</span></button>').join('')+'</nav>';
 }
 function render(){
