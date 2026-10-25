@@ -1,5 +1,1 @@
-{
-  "version": "V405",
-  "build": "2026-10-25",
-  "scope": "Group bottom navigation label and roster-only Group page; compact player cards"
-}
+{"version":"V406","build":"2026-10-26","scope":"Durable server-sync queue for tournaments; restore existing knockout Court Center sessions"}

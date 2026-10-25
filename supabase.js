@@ -239,36 +239,62 @@ function dbSaveTournamentState(format,state) {
   const timer=_scsTournamentSaveTimers.get(key);
   if(timer){clearTimeout(timer);_scsTournamentSaveTimers.delete(key);}
   _scsTournamentPending.delete(key);
+  const explicitRevision=_scsOutboxPut(key,format,JSON.parse(JSON.stringify(state)));
   const previous=_scsTournamentSaveChains.get(key)||Promise.resolve();
   const job=previous.catch(()=>{}).then(async()=>{
     const id=await _scsSaveTournamentOnce(format,state);
     if(id)state._scsCloudTournamentId=id;
+    _scsOutboxClearIfSame(key,explicitRevision);
     return id;
   });
   _scsTournamentSaveChains.set(key,job);
   job.finally(()=>{if(_scsTournamentSaveChains.get(key)===job)_scsTournamentSaveChains.delete(key)}).catch(()=>{});
   return job;
 }
+/* Durable tournament outbox: an offline/failed save survives reload.
+   Writes are serialized by dbSaveTournamentState; only successful server
+   acknowledgements clear the queued snapshot. */
+const SCS_TOURNAMENT_OUTBOX_KEY='scs_tournament_sync_outbox_v406';
+function _scsOutboxRead(){try{return JSON.parse(localStorage.getItem(SCS_TOURNAMENT_OUTBOX_KEY)||'{}')||{}}catch(_){return {}}}
+function _scsOutboxWrite(data){try{localStorage.setItem(SCS_TOURNAMENT_OUTBOX_KEY,JSON.stringify(data))}catch(e){console.warn('Tournament outbox storage:',e)}}
+function _scsOutboxPut(key,format,snapshot){
+ const box=_scsOutboxRead(),revision=Date.now()+'-'+Math.random().toString(36).slice(2);
+ box[key]={format,state:snapshot,revision};_scsOutboxWrite(box);return revision;
+}
+function _scsOutboxClearIfSame(key,revision){
+ const box=_scsOutboxRead();
+ if(box[key]&&box[key].revision===revision){delete box[key];_scsOutboxWrite(box)}
+}
+function scsFlushTournamentCloudSaves(){
+ const box=_scsOutboxRead();
+ return Promise.all(Object.keys(box).map(async key=>{
+  const item=box[key];if(!item||!item.state)return;
+  const club=getMyClub();if(!club?.id||key.indexOf(club.id+':')!==0)return;
+  try{await dbSaveTournamentState(item.format,item.state);_scsOutboxClearIfSame(key,item.revision)}
+  catch(e){console.warn('Tournament sync pending:',e.message)}
+ }));
+}
 function scsQueueTournamentCloudSave(format,state) {
-  if(!state||typeof state!=='object')return;
-  const club=getMyClub();
-  if(!club?.id)return;
-  const key=_scsTournamentSaveKey(club.id,format,state);
-  let snapshot;
-  try{snapshot=JSON.parse(JSON.stringify(state))}catch(_){return}
-  _scsTournamentPending.set(key,snapshot);
-  const previous=_scsTournamentSaveTimers.get(key);
-  if(previous)clearTimeout(previous);
-  _scsTournamentSaveTimers.set(key,setTimeout(()=>{
-    _scsTournamentSaveTimers.delete(key);
-    const latest=_scsTournamentPending.get(key);
-    if(!latest)return;
-    _scsTournamentPending.delete(key);
-    dbSaveTournamentState(format,latest).catch(e=>{
-      console.warn('Tournament cloud save:',e.message);
-      // Retain the latest snapshot locally for retry on the next change.
-    });
-  },700));
+ if(!['knockout','group','team'].includes(format)||!state||typeof state!=='object')return;
+ const club=getMyClub();if(!club?.id)return;
+ const key=_scsTournamentSaveKey(club.id,format,state);
+ let snapshot;try{snapshot=JSON.parse(JSON.stringify(state))}catch(_){return}
+ const revision=_scsOutboxPut(key,format,snapshot);
+ _scsTournamentPending.set(key,snapshot);
+ const previous=_scsTournamentSaveTimers.get(key);if(previous)clearTimeout(previous);
+ _scsTournamentSaveTimers.set(key,setTimeout(async()=>{
+  _scsTournamentSaveTimers.delete(key);
+  const latest=_scsTournamentPending.get(key);
+  if(!latest)return;
+  _scsTournamentPending.delete(key);
+  try{await dbSaveTournamentState(format,latest);_scsOutboxClearIfSame(key,revision)}
+  catch(e){console.warn('Tournament cloud save pending retry:',e.message)}
+ },700));
+}
+if(typeof window!=='undefined'){
+ window.addEventListener('online',scsFlushTournamentCloudSaves);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)scsFlushTournamentCloudSaves()});
+ setTimeout(scsFlushTournamentCloudSaves,2500);
 }
 function scsResetTournamentCloudIdentity(format) {
   const club=getMyClub();
@@ -1820,3 +1846,5 @@ async function dbRecordRoundMatches(updatedRatings) {
     }
   } catch(e) { console.warn('dbRecordRoundMatches error:', e.message); }
 }
+
+window.scsFlushTournamentCloudSaves=scsFlushTournamentCloudSaves;
