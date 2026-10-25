@@ -17,7 +17,7 @@ function groupEnsureMain(){try{groupMain=JSON.parse(localStorage.getItem(GROUP_M
 function groupHomeRender(){groupHome=true;const root=el();if(!root)return;const events=groupMain.events.map(e=>{let v={};try{v=JSON.parse(localStorage.getItem(groupEventKey(e.id))||'{}')}catch(_){}return {...e,teams:Object.keys(v.assignments||{}).length,clubs:Object.values(v.assignments||{}).filter(a=>Array.isArray(a)&&a.some(Boolean)).map((_,i)=>'Team '+(i+1)),matches:(v.matches||[]).length,completed:(v.matches||[]).filter(m=>m.status==='approved').length}});
  window.ScsApi.events.mountHome(root,{title:groupMain.title||'Group Tournament',events,activeEventId:groupEventId,viewOnly,navAttribute:'data-group-nav',ariaLabel:'Group tournament sections'});
  root.querySelector('[data-close]').onclick=close;root.querySelectorAll('[data-open-event]').forEach(b=>b.onclick=()=>groupOpenEvent(b.dataset.openEvent));const add=root.querySelector('[data-add-event]');if(add)add.onclick=groupAddEvent;root.querySelectorAll('[data-group-nav]').forEach(b=>b.onclick=()=>{const target=b.dataset.groupNav;if(target==='home')groupHomeRender();else if(groupEventId)groupOpenEvent(groupEventId,target);else alert('Add an event first.')})}
-function groupOpenEvent(id,section){if(!groupMain.events.some(e=>e.id===id))return;groupEventId=id;groupMain.activeEventId=id;groupMainSave();groupHome=false;window.ScsApi.events.leaveHome(el());applyState(JSON.parse(localStorage.getItem(groupEventKey(id))||'null')||{title:groupMain.events.find(e=>e.id===id).title});assistStep=0;tab=section==='clubs'?'players':section==='match'?'match':'groups';render()}
+function groupOpenEvent(id,section){if(!groupMain.events.some(e=>e.id===id))return;groupEventId=id;groupMain.activeEventId=id;groupMainSave();groupHome=false;window.ScsApi.events.leaveHome(el());applyState(JSON.parse(localStorage.getItem(groupEventKey(id))||'null')||{title:groupMain.events.find(e=>e.id===id).title});assistStep=0;tab=section==='clubs'?'players':section==='match'?'match':'main';render()}
 function groupAddEvent(){window.ScsApi.events.requestEvent({parentTitle:groupMain.title,onCreate:title=>{if(groupMain.events.some(e=>e.title.toLowerCase()===title.toLowerCase())){alert('Event already exists.');return}const id=groupId();groupMain.events.push({id,title});groupMain.activeEventId=id;groupMainSave();localStorage.setItem(groupEventKey(id),JSON.stringify({title,created:false,assistMode:true,config:{groups:4,per:4,knockouts:1,top:2,bottom:1},pool:[],teamDrafts:[],assignments:{},matches:[],started:false}));groupOpenEvent(id,'tournament')}})}
 
  let groupSelectedPlayerDetails=[];
@@ -271,18 +271,22 @@ function matchCenter(){
 function tournamentMatches(){
  if(!started)return card('Matches','Start the tournament to generate fixtures.');
  const priority=new Map(rankMatches().ranked.map((x,i)=>[x.m.id,i]));
- return Array.from({length:config.groups},(_,g)=>{
+ return '<section class="scs-gt-generated-fixtures"><h3>Generated Matches</h3>'+Array.from({length:config.groups},(_,g)=>{
   const groupMatches=matches.filter(m=>m.group===g).sort((a,b)=>(priority.get(a.id)??99999)-(priority.get(b.id)??99999));
-  return '<section class="scs-gt-card scs-gt-tournament-matches"><h3>Group '+groupLabel(g)+'</h3><p>'+groupMatches.length+' matches</p>'+groupMatches.map(m=>{
-   const match={number:m.id,leftPlayers:assignments[m.a]||[],rightPlayers:assignments[m.b]||[],playerRenderer:groupMatchPlayer,
-    score:groupCompletedScore(m),winner:m.winner==='L'?'left':m.winner==='R'?'right':null,
-    action:m.score?'data-group-completed-score="'+escapeHTML(m.id)+'"':'',actionLabel:m.score?'View Scoreboard':'',
-    cardAction:m.score?'data-group-completed-card="'+escapeHTML(m.id)+'"':''};
+  return '<section class="scs-ko-fixture-round"><h4>Group '+groupLabel(g)+' · '+groupMatches.length+' matches</h4>'+groupMatches.map(m=>{
+   const left=assignments[m.a]||[],right=assignments[m.b]||[];
+   const match={number:m.id,title:'Match '+m.id,left:left.join(' / '),right:right.join(' / '),leftPlayers:left,rightPlayers:right,playerRenderer:groupMatchPlayer,
+    score:groupCompletedScore(m),winner:m.winner==='L'?'left':m.winner==='R'?'right':null};
+   let matchCard=SCSSharedMatchCenter.completed(match);
+   if(m.status!=='approved')matchCard=matchCard.replace('<span class="scs-tm-completed-check">✓</span>','<span class="scs-ko-fixture-pending">○</span>');
    const status=m.status==='approved'?'Completed':m.status==='score_ready'?'Under Approval':m.status==='playing'?'In Progress':m.court?'Assigned · Court '+m.court:'Pending';
-   return '<div class="scs-gt-tournament-fixture">'+SCSSharedMatchCenter.completed(match)+'<div class="scs-gt-fixture-actions"><span>'+escapeHTML(status)+'</span>'+
-    (!viewOnly&&m.status==='pending'?'<button type="button" class="scs-gt-primary" data-assign="'+escapeHTML(m.id)+'">Assign Court</button>':'')+'</div></div>';
+   let actions=m.score?'<button type="button" data-group-completed-score="'+escapeHTML(m.id)+'">View Scoreboard</button>':'';
+   if(!viewOnly&&m.status==='pending')actions+='<button type="button" data-assign="'+escapeHTML(m.id)+'">Assign Court</button>';
+   if(m.status!=='pending'&&m.status!=='approved')actions='<span>'+escapeHTML(status)+'</span>'+actions;
+   const cardAction=m.score?' role="button" tabindex="0" data-group-completed-card="'+escapeHTML(m.id)+'"':'';
+   return '<div class="scs-ko-fixture-card scs-team-match-shell" data-match-id="'+escapeHTML(m.id)+'"'+cardAction+'>'+matchCard+(actions?'<div class="scs-ko-fixture-actions">'+actions+'</div>':'')+'</div>';
   }).join('')+'</section>';
- }).join('');
+ }).join('')+'</section>';
 }
 function standings(){
  return Array.from({length:config.groups},(_,g)=>'<section class="scs-gt-standings-summary"><h4>Group '+groupLabel(g)+'</h4>'+groupResults(g).map((t,i)=>'<p>'+(i+1)+'. '+(assignments[t.id]||[]).map(escapeHTML).join(' / ')+' · W '+t.w+' · GD '+(t.gw-t.gl)+' · PD '+(t.pf-t.pa)+'</p>').join('')+'</section>').join('');
@@ -355,8 +359,8 @@ if(groupHome){groupHomeRender();return;}
 const assisting=assistMode&&!started;
 let body;
 if(assisting)body=assistStep===0?assistIndex():assistView();
-else body='<header><strong>'+escapeHTML(title)+'</strong><div class="scs-team-save-actions"><button type="button" data-group-save-now '+(viewOnly?'disabled':'')+'>Save Tournament</button><button data-action="close" aria-label="Close">✕</button></div></header><div data-group-save-status role="status" aria-live="polite"></div>'+(tab==='main'?'<nav class="scs-tm-live-tabs"><button data-tournament-view="all" class="'+(tournamentView==='all'?'active':'')+'">All</button><button data-tournament-view="ranking" class="'+(tournamentView==='ranking'?'active':'')+'">Ranking</button><button data-tournament-view="matches" class="'+(tournamentView==='matches'?'active':'')+'">Matches</button></nav>':'')+((tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view()+'<button class="scs-gt-secondary" data-action="new">New Group Tournament</button>';
-el().innerHTML='<div class="scs-gt-sheet" role="dialog" aria-modal="true">'+body+'</div>'+tournamentBottomNav(assisting);
+else body='<header><strong>'+escapeHTML(title)+'</strong><div class="scs-team-save-actions"><button type="button" data-group-save-now '+(viewOnly?'disabled':'')+'>Save Tournament</button><button data-action="close" aria-label="Close">✕</button></div></header><div data-group-save-status role="status" aria-live="polite"></div>'+(tab==='main'?'<nav class="scs-tm-live-tabs"><button data-tournament-view="all" class="'+(tournamentView==='all'?'active':'')+'">All</button><button data-tournament-view="ranking" class="'+(tournamentView==='ranking'?'active':'')+'">Ranking</button><button data-tournament-view="matches" class="'+(tournamentView==='matches'?'active':'')+'">Matches</button></nav>':'')+((tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view();
+el().innerHTML='<div class="scs-gt-sheet'+(!assisting&&tab==='main'&&tournamentView==='matches'?' scs-ko-generated-fixtures scs-gt-matches-page':'')+'" role="dialog" aria-modal="true">'+body+'</div>'+tournamentBottomNav(assisting);
 el().querySelector('[data-group-save-now]')?.addEventListener('click',saveGroupTournamentNow);
 const closeButton=el().querySelector('[data-action="close"]');if(closeButton)closeButton.onclick=close;
 el().querySelectorAll('[data-assist-step]').forEach(x=>x.onclick=()=>{assistStep=Number(x.dataset.assistStep);render()});
@@ -391,7 +395,6 @@ el().querySelectorAll('[data-match-tab]').forEach(x=>x.onclick=()=>{matchTab=x.d
   tab=target==='teams'?'players':target==='tournament'?'main':target;save();render();
  });
 let create=el().querySelector('[data-action="create"]');if(create)create.onclick=()=>{const input=el().querySelector('[data-title]');title=String(input?input.value:title).trim().slice(0,120);if(!title){alert('Enter a tournament name before creating the groups.');if(input)input.focus();return}if(config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Qualifiers cannot exceed teams per group.');return}created=true;tab='main';save();render()};
- let fresh=el().querySelector('[data-action="new"]');if(fresh)fresh.onclick=()=>{if(confirm('Start a new group tournament setup?')){title='';created=false;assistMode=true;assistStep=0;assistPatternReady=false;started=false;matches=[];assignmentSerial=0;teamDrafts=[];assignments={};matchTab='waiting';assigningMatch=null;save();render()}};
 }
-window.SCSGroupTournament={open,openLive:function(state){open('view',state)},close,playersManagerReturned,scoreUpdate,updateCompletedScore,openSection:function(section){tab=section==='teams'?'players':section==='match'?'match':'groups';save();render()},returnFromScore:function(){if(el())el().hidden=false}};
+window.SCSGroupTournament={open,openLive:function(state){open('view',state)},close,playersManagerReturned,scoreUpdate,updateCompletedScore,openSection:function(section){tab=section==='teams'?'players':section==='match'?'match':'main';save();render()},returnFromScore:function(){if(el())el().hidden=false}};
 })();

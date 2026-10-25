@@ -110,6 +110,20 @@
 .scs-tm-unified-match-center .scs-tm-completed-title{background:#1a2940!important;border-left:0!important}
 .scs-tm-unified-match-center .scs-tm-completed-content,.scs-tm-unified-match-center .scs-tm-completed-vs{background:#101d30!important}
 body.light-mode .scs-tm-unified-match-center .scs-tm-completed-row,body.light-mode .scs-tm-unified-match-center .scs-tm-completed-content,body.light-mode .scs-tm-unified-match-center .scs-tm-completed-vs{background:#f0f3f8!important}
+
+/* Match the Knockout fixture action: one primary action spans the card. */
+.scs-gt-overlay .scs-ko-fixture-actions button{
+  flex:1 1 100%!important;
+  width:100%!important;
+}
+.scs-gt-matches-page>.scs-gt-generated-fixtures{
+  margin:14px 0 0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+.scs-gt-matches-page>.scs-gt-generated-fixtures>h3{margin:4px 0 16px;font-size:1.2rem}
 body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:#e0e7f1!important}
 
 /* V400: Group Assist uses Knockout's compact team and roster layout. */
