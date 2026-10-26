@@ -150,3 +150,9 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 
 /* Group matrix uses Team Tournament matrix styles. */
 .scs-gt-sheet .scs-team-matrix{padding:12px 2px 22px;min-width:0}.scs-gt-sheet .scs-team-matrix h4{margin:20px 0 10px;color:#b6cbeb}.scs-gt-sheet .scs-team-matrix-scroll{margin-bottom:18px}
+
+/* V410: independent stage tabs inside Group Matrix */
+.scs-gt-sheet .scs-gt-matrix-tabs{display:flex;gap:8px;overflow-x:auto;max-width:100%;padding:4px 0 12px;margin:10px 0 14px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.scs-gt-sheet .scs-gt-matrix-tabs button{flex:0 0 auto;white-space:nowrap;padding:11px 15px;border:1px solid #577399;border-radius:12px;background:#283b59;color:#e5ebf9;font:inherit;font-weight:600}
+.scs-gt-sheet .scs-gt-matrix-tabs button.active{color:#a78bfa;border-color:#9775fa;box-shadow:inset 0 -3px #9775fa}
+.scs-gt-sheet .scs-gt-matrix-knockout-empty{border:1px solid #4a6389;border-radius:14px;padding:16px;margin-top:14px}

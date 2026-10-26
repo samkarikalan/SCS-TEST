@@ -21,7 +21,7 @@ function groupOpenEvent(id,section){if(!groupMain.events.some(e=>e.id===id))retu
 function groupAddEvent(){window.ScsApi.events.requestEvent({parentTitle:groupMain.title,onCreate:title=>{if(groupMain.events.some(e=>e.title.toLowerCase()===title.toLowerCase())){alert('Event already exists.');return}const id=groupId();groupMain.events.push({id,title});groupMain.activeEventId=id;groupMainSave();localStorage.setItem(groupEventKey(id),JSON.stringify({title,created:false,assistMode:true,config:{groups:4,per:4,knockouts:1,top:2,bottom:1},pool:[],teamDrafts:[],assignments:{},matches:[],started:false}));groupOpenEvent(id,'tournament')}})}
 
  let groupSelectedPlayerDetails=[];
- let cloudTournamentId='',clientTournamentId='',title='',config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',tournamentView='all',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null,viewOnly=false;
+ let cloudTournamentId='',clientTournamentId='',title='',config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',tournamentView='all',matrixSection='group-0',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null,viewOnly=false;
 const el=()=>document.getElementById('scsGroupTournament');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function load(){try{let v=JSON.parse(localStorage.getItem(groupEventId?groupEventKey(groupEventId):KEY));if(v){cloudTournamentId=v._scsCloudTournamentId||'';clientTournamentId=v._scsClientTournamentId||'';title=String(v.title||'Group Tournament');config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];groupSelectedPlayerDetails=Array.isArray(v.selectedPlayerDetails)?v.selectedPlayerDetails:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
@@ -310,7 +310,17 @@ function standings(){
 
 // Same matrix classes and bottom-sheet UI as Team Tournament; per-group fixtures.
 function groupMatrix(){
- return '<section class="scs-team-matrix"><h3>Round-robin results matrix</h3><p>Rank: match wins → head-to-head → set difference → rally point difference. Swipe horizontally; tap a match for results.</p>'+Array.from({length:config.groups},(_,g)=>{
+ const sections=Array.from({length:config.groups},(_,g)=>'<button type="button" data-group-matrix-section="group-'+g+'" class="'+(matrixSection==='group-'+g?'active':'')+'">Group '+groupLabel(g)+'</button>').join('');
+ const knockoutTabs=Array.from({length:Math.max(1,Math.min(2,Number(config.knockouts)||1))},(_,i)=>'<button type="button" data-group-matrix-section="knockout-'+i+'" class="'+(matrixSection==='knockout-'+i?'active':'')+'">'+(config.knockouts===2?(i===0?'Top Knockout':'Bottom Knockout'):'Knockout')+'</button>').join('');
+ const selected=String(matrixSection||'group-0');
+ const tabs='<nav class="scs-gt-matrix-tabs" aria-label="Matrix stages">'+sections+knockoutTabs+'</nav>';
+ if(selected.startsWith('knockout-')){
+  const idx=Number(selected.slice(9))||0;
+  const qualifiers=idx===0?config.top:config.bottom;
+  return '<section class="scs-team-matrix"><h3>Results Matrix</h3>'+tabs+'<div class="scs-gt-matrix-knockout-empty"><h4>'+(config.knockouts===2?(idx===0?'Top Knockout':'Bottom Knockout'):'Knockout')+'</h4><p>'+qualifiers+' qualifying team'+(qualifiers===1?'':'s')+' per group.</p><p>Knockout fixtures and results are not yet generated in this Group Tournament. They will appear when the knockout stage is implemented.</p></div></section>';
+ }
+ const g=Math.max(0,Math.min(config.groups-1,Number(selected.slice(6))||0));
+ return '<section class="scs-team-matrix"><h3>Round-robin results matrix</h3>'+tabs+'<p>Rank: match wins → head-to-head → set difference → rally point difference. Swipe horizontally; tap a match for results.</p>'+[g].map(g=>{
   const ids=Array.from({length:config.per},(_,i)=>g+':'+i).filter(id=>Array.isArray(assignments[id])&&assignments[id].some(Boolean));
   const rows=groupResults(g),rank=new Map(rows.map((r,i)=>[r.id,i+1]));
   const label=id=>(assignments[id]||[]).filter(Boolean).join(' / ')||'Team '+(Number(id.split(':')[1])+1);
@@ -436,6 +446,7 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
  el().querySelectorAll('[data-approve]').forEach(x=>x.onclick=()=>approveMatch(x.dataset.approve));
  
  el().querySelectorAll('[data-courts]').forEach(x=>x.onclick=()=>{courtCount=Math.max(1,Math.min(32,courtCount+Number(x.dataset.courts),...matches.filter(m=>m.court).map(m=>m.court)));save();render()});
+ el().querySelectorAll('[data-group-matrix-section]').forEach(x=>x.addEventListener('click',()=>{matrixSection=x.dataset.groupMatrixSection;render()}));
  el().querySelectorAll('[data-group-matrix-match]').forEach(x=>x.addEventListener('click',()=>showGroupMatrixMatch(x.dataset.groupMatrixMatch)));
  el().querySelectorAll('[data-tournament-view]').forEach(x=>x.onclick=()=>{tournamentView=x.dataset.tournamentView;render()});
 el().querySelectorAll('[data-match-tab]').forEach(x=>x.onclick=()=>{matchTab=x.dataset.matchTab;render()});
