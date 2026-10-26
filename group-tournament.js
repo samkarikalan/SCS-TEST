@@ -292,10 +292,14 @@ function tournamentMatches(){
    let matchCard=SCSSharedMatchCenter.completed(match);
    if(m.status!=='approved')matchCard=matchCard.replace('<span class="scs-tm-completed-check">✓</span>','<span class="scs-ko-fixture-pending">○</span>');
    const status=m.status==='approved'?'Completed':m.status==='score_ready'?'Under Approval':m.status==='playing'?'In Progress':m.court?'Assigned · Court '+m.court:'Pending';
-   let actions=m.score?'<button type="button" data-group-completed-score="'+escapeHTML(m.id)+'">View Scoreboard</button>':'';
-   if(!viewOnly&&m.status==='pending')actions+='<button type="button" data-assign="'+escapeHTML(m.id)+'">Assign Court</button>';
-   if(m.status!=='pending'&&m.status!=='approved')actions='<span>'+escapeHTML(status)+'</span>'+actions;
-   const cardAction=m.score?' role="button" tabindex="0" data-group-completed-card="'+escapeHTML(m.id)+'"':'';
+   // The Tournament page follows the same action states as Knockout.
+   // Completed results expose their scoreboard; assigned matches display
+   // their court without an additional action button.
+   let actions=m.status==='approved'&&m.score?'<button type="button" data-group-completed-score="'+escapeHTML(m.id)+'">View Scoreboard</button>':'';
+   if(!viewOnly&&m.status==='pending')actions='<button type="button" data-assign="'+escapeHTML(m.id)+'">Assign Court</button>';
+   if(m.court&&m.status!=='approved')actions='<span>Assigned to Court '+escapeHTML(String(m.court))+'</span>';
+   if(m.status==='approved'&&!m.score)actions='';
+   const cardAction=m.status==='approved'&&m.score?' role="button" tabindex="0" data-group-completed-card="'+escapeHTML(m.id)+'"':'';
    return '<div class="scs-ko-fixture-card scs-team-match-shell" data-match-id="'+escapeHTML(m.id)+'"'+cardAction+'>'+matchCard+(actions?'<div class="scs-ko-fixture-actions">'+actions+'</div>':'')+'</div>';
   }).join('')+'</section>';
  }).join('')+'</section>';
