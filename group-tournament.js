@@ -42,8 +42,13 @@ function groupKnockoutOpen(stage){
   saved.selectedPlayerDetails=teams.flatMap(t=>t.details);
   saved._scsGroupEventId=id;saved._scsGroupKnockoutStage=stage;
   saved.assistAssignmentsConfirmed=true;saved.knockoutFixturesGenerated=true;saved.assistFinalized=true;
+  // Group qualifiers have already completed team assignment and bracket creation.
+  // Enter the proven Knockout pre-start assistant, not the unstarted court cards.
+  saved.livePage=true;saved.live=false;saved.numCourts=Math.max(1,Number(saved.numCourts)||2);
   localStorage.setItem(key,JSON.stringify(saved));
  }
+ // Upgrade V413/V414 saved group brackets without overwriting match progress.
+ if(saved&&!saved.live&&!saved.livePage){saved.livePage=true;saved.assistFinalized=true;saved.assistAssignmentsConfirmed=true;saved.knockoutFixturesGenerated=true;localStorage.setItem(key,JSON.stringify(saved));}
  if(!window.SCSTournament||typeof window.SCSTournament.open!=='function'){alert('Knockout module is unavailable.');return}
  try{window.SCSTournament.open(saved,false,function(updated){localStorage.setItem(key,JSON.stringify(updated));return Promise.resolve(updated)});}
  catch(error){console.error('Group knockout launch failed',error);alert('Could not open Knockout. '+(error&&error.message||'Please retry.'));}

@@ -1,5 +1,4 @@
 {
-  "version": "V414",
-  "build": "2026-10-26",
-  "scope": "Group knockout launch visibility and modal stacking"
+  "version": "V415",
+  "scope": "Group-to-Knockout prestart assistant and start persistence"
 }

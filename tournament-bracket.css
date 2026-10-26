@@ -627,3 +627,6 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 
 /* V414: Knockout modal must appear above Group Tournament overlay (z-index 999999). */
 #scsTournamentOverlay:not([hidden]){z-index:1000010!important}
+
+/* V415: Group-to-Knockout uses the existing pre-start assistant */
+.scs-ko-group-start-guide{padding:14px;margin-bottom:14px;border:1px solid #6986b7;border-radius:12px;background:#233958;color:#edf4ff}.scs-ko-group-start-guide strong{font-size:1.05rem}.scs-ko-group-start-guide p{margin:9px 0;line-height:1.45}
