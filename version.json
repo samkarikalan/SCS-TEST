@@ -1,1 +1,5 @@
-{"version": "V411", "build": "2026-10-26", "scope": "Group Matches: per-group and knockout tabs, status filters"}
+{
+  "version": "V412",
+  "build": "2026-10-26",
+  "scope": "Group event two stage tiles Step 1"
+}

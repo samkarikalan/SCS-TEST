@@ -160,3 +160,18 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 /* V411: Group Matches uses the existing Matrix tab styling. */
 .scs-gt-matches-tabs,.scs-gt-match-status-tabs{margin:12px 0 16px}
 .scs-gt-match-status-tabs button{font-size:.9em}
+
+/* V412: Group event stage tiles */
+.scs-gt-stage-home{padding:18px;min-height:65vh;color:#eaf1ff}
+.scs-gt-stage-home header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.scs-gt-stage-home header h2{margin:0;overflow-wrap:anywhere}
+.scs-gt-stage-home [data-stage-back]{border:1px solid #6382ad;border-radius:12px;background:#273c5c;color:#fff;padding:12px}
+.scs-gt-stage-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.scs-gt-stage-tile{display:flex;flex-direction:column;align-items:flex-start;gap:12px;text-align:left;padding:20px 14px;min-height:205px;border:1px solid #5687bf;border-radius:18px;background:#1b3453;color:#eff5ff;min-width:0}
+.scs-gt-stage-tile strong{font-size:1.1rem}
+.scs-gt-stage-tile small{color:#bacce5;line-height:1.5}
+.scs-gt-stage-icon{font-size:2rem}
+.scs-gt-stage-label{margin-top:auto;color:#9fd1ff;font-weight:700}
+.scs-gt-stage-tile:disabled{opacity:.63;cursor:not-allowed}
+.scs-gt-stage-knockout{border-color:#8c7aaf;background:#272c4a}
+@media(max-width:360px){.scs-gt-stage-tiles{grid-template-columns:1fr}}

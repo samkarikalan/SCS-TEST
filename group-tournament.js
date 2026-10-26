@@ -16,9 +16,25 @@ function groupEnsureMain(){try{groupMain=JSON.parse(localStorage.getItem(GROUP_M
  if(!Array.isArray(groupMain.events))groupMain.events=[];groupEventId=groupMain.events.some(e=>e.id===groupMain.activeEventId)?groupMain.activeEventId:(groupMain.events[0]?.id||null);groupMain.activeEventId=groupEventId;groupMainSave()}
 function groupHomeRender(){groupHome=true;const root=el();if(!root)return;const events=groupMain.events.map(e=>{let v={};try{v=JSON.parse(localStorage.getItem(groupEventKey(e.id))||'{}')}catch(_){}return {...e,teams:Object.keys(v.assignments||{}).length,clubs:Object.values(v.assignments||{}).filter(a=>Array.isArray(a)&&a.some(Boolean)).map((_,i)=>'Team '+(i+1)),matches:(v.matches||[]).length,completed:(v.matches||[]).filter(m=>m.status==='approved').length}});
  window.ScsApi.events.mountHome(root,{title:groupMain.title||'Group Tournament',events,activeEventId:groupEventId,viewOnly,navAttribute:'data-group-nav',ariaLabel:'Group tournament sections'});
- root.querySelector('[data-close]').onclick=close;root.querySelectorAll('[data-open-event]').forEach(b=>b.onclick=()=>groupOpenEvent(b.dataset.openEvent));const add=root.querySelector('[data-add-event]');if(add)add.onclick=groupAddEvent;root.querySelectorAll('[data-group-nav]').forEach(b=>b.onclick=()=>{const target=b.dataset.groupNav;if(target==='home')groupHomeRender();else if(groupEventId)groupOpenEvent(groupEventId,target);else alert('Add an event first.')})}
+ root.querySelector('[data-close]').onclick=close;root.querySelectorAll('[data-open-event]').forEach(b=>b.onclick=()=>groupEventStageHome(b.dataset.openEvent));const add=root.querySelector('[data-add-event]');if(add)add.onclick=groupAddEvent;root.querySelectorAll('[data-group-nav]').forEach(b=>b.onclick=()=>{const target=b.dataset.groupNav;if(target==='home')groupHomeRender();else if(groupEventId)groupOpenEvent(groupEventId,target);else alert('Add an event first.')})}
+function groupEventStageHome(id){
+ if(!groupMain||!groupMain.events.some(e=>e.id===id))return;
+ groupEventId=id;groupMain.activeEventId=id;groupMainSave();groupHome=true;
+ const root=el();if(!root)return;
+ let data={};try{data=JSON.parse(localStorage.getItem(groupEventKey(id))||'{}')}catch(_){}
+ const event=groupMain.events.find(e=>e.id===id);
+ const ms=Array.isArray(data.matches)?data.matches:[];
+ const complete=!!data.started&&ms.length>0&&ms.every(m=>m.status==='approved');
+ const count=ms.filter(m=>m.status==='approved').length;
+ root.classList.add('scs-api-home-host');
+ root.innerHTML='<div class="scs-gt-stage-home"><header><button type="button" data-stage-back>‹ Events</button><h2>'+escapeHTML(event.title||'Group Event')+'</h2></header>'+
+ '<div class="scs-gt-stage-tiles"><button type="button" class="scs-gt-stage-tile" data-stage-group><span class="scs-gt-stage-icon">♟</span><strong>Group Stage</strong><small>'+count+' / '+ms.length+' matches completed</small><span class="scs-gt-stage-label">Open Group Stage ›</span></button>'+
+ '<button type="button" class="scs-gt-stage-tile scs-gt-stage-knockout" data-stage-knockout disabled><span class="scs-gt-stage-icon">🏆</span><strong>Knockout Stage</strong><small>'+(complete?'Group stage completed':'Locked until all group matches are approved')+'</small><span class="scs-gt-stage-label">Available in Step 2</span></button></div></div>';
+ root.querySelector('[data-stage-back]').onclick=groupHomeRender;
+ root.querySelector('[data-stage-group]').onclick=()=>groupOpenEvent(id,'tournament');
+}
 function groupOpenEvent(id,section){if(!groupMain.events.some(e=>e.id===id))return;groupEventId=id;groupMain.activeEventId=id;groupMainSave();groupHome=false;window.ScsApi.events.leaveHome(el());applyState(JSON.parse(localStorage.getItem(groupEventKey(id))||'null')||{title:groupMain.events.find(e=>e.id===id).title});assistStep=0;tab=section==='clubs'?'players':section==='match'?'match':'main';render()}
-function groupAddEvent(){window.ScsApi.events.requestEvent({parentTitle:groupMain.title,onCreate:title=>{if(groupMain.events.some(e=>e.title.toLowerCase()===title.toLowerCase())){alert('Event already exists.');return}const id=groupId();groupMain.events.push({id,title});groupMain.activeEventId=id;groupMainSave();localStorage.setItem(groupEventKey(id),JSON.stringify({title,created:false,assistMode:true,config:{groups:4,per:4,knockouts:1,top:2,bottom:1},pool:[],teamDrafts:[],assignments:{},matches:[],started:false}));groupOpenEvent(id,'tournament')}})}
+function groupAddEvent(){window.ScsApi.events.requestEvent({parentTitle:groupMain.title,onCreate:title=>{if(groupMain.events.some(e=>e.title.toLowerCase()===title.toLowerCase())){alert('Event already exists.');return}const id=groupId();groupMain.events.push({id,title});groupMain.activeEventId=id;groupMainSave();localStorage.setItem(groupEventKey(id),JSON.stringify({title,created:false,assistMode:true,config:{groups:4,per:4,knockouts:1,top:2,bottom:1},pool:[],teamDrafts:[],assignments:{},matches:[],started:false}));groupEventStageHome(id)}})}
 
  let groupSelectedPlayerDetails=[];
  let cloudTournamentId='',clientTournamentId='',title='',config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',tournamentView='all',matrixSection='group-0',matchesSection='group-0',matchesStatus='all',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null,viewOnly=false;
