@@ -44,15 +44,16 @@ function groupKnockoutOpen(stage){
   saved.assistAssignmentsConfirmed=true;saved.knockoutFixturesGenerated=true;saved.assistFinalized=true;
   localStorage.setItem(key,JSON.stringify(saved));
  }
- if(!window.SCSTournament||typeof SCSTournament.open!=='function'){alert('Knockout module is unavailable.');return}
- window.SCSTournament.open(saved,false,function(updated){localStorage.setItem(key,JSON.stringify(updated));return Promise.resolve(updated)});
+ if(!window.SCSTournament||typeof window.SCSTournament.open!=='function'){alert('Knockout module is unavailable.');return}
+ try{window.SCSTournament.open(saved,false,function(updated){localStorage.setItem(key,JSON.stringify(updated));return Promise.resolve(updated)});}
+ catch(error){console.error('Group knockout launch failed',error);alert('Could not open Knockout. '+(error&&error.message||'Please retry.'));}
 }
 function groupKnockoutPreview(stage){
  const data={config,assignments,selectedPlayerDetails:groupSelectedPlayerDetails,matches,started};
  const complete=groupKnockoutReady(data),candidates=complete?groupKnockoutCandidates(data,stage):[];
  const label=Number(config.knockouts)===2?(stage===0?'Top Knockout':'Bottom Knockout'):'Knockout';
  return '<div class="scs-gt-matrix-knockout-empty"><h4>'+label+'</h4><p>'+(stage===0?config.top:config.bottom)+' qualifying teams per group</p>'+
- (complete?'<p>Qualified teams from approved group rankings:</p>'+Array.from({length:config.groups},(_,g)=>'<div class="scs-gt-qualified-group"><strong>Group '+groupLabel(g)+'</strong>'+candidates.filter(t=>t.group===g).map(t=>'<p>'+t.rank+'. '+escapeHTML(t.players.join(' / '))+'</p>').join('')+'</div>').join('')+'<button type="button" class="scs-gt-primary" data-group-knockout-continue="'+stage+'">Continue to Knockout</button>':'<p>Knockout becomes available after all group matches are completed and approved.</p>')+'</div>';
+ (complete?'<p>Qualified teams from approved group rankings:</p>'+Array.from({length:config.groups},(_,g)=>'<div class="scs-gt-qualified-group"><strong>Group '+groupLabel(g)+'</strong>'+candidates.filter(t=>t.group===g).map(t=>'<p>'+t.rank+'. '+escapeHTML(t.players.join(' / '))+'</p>').join('')+'</div>').join('')+'<button type="button" class="scs-gt-primary scs-gt-knockout-launch" data-group-knockout-continue="'+stage+'">'+(localStorage.getItem('scs_group_knockout_'+groupEventId+'_'+stage)?'Continue Knockout':'Generate Knockout')+'</button>':'<p>Knockout becomes available after all group matches are completed and approved.</p>')+'</div>';
 }
 function groupEventStageHome(id){
  if(!groupMain||!groupMain.events.some(e=>e.id===id))return;

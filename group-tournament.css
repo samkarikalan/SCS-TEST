@@ -175,3 +175,6 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-gt-stage-tile:disabled{opacity:.63;cursor:not-allowed}
 .scs-gt-stage-knockout{border-color:#8c7aaf;background:#272c4a}
 @media(max-width:360px){.scs-gt-stage-tiles{grid-template-columns:1fr}}
+
+/* V414: Knockout launch button in the matrix */
+.scs-gt-sheet .scs-gt-matrix-knockout-empty .scs-gt-knockout-launch{display:block;width:100%;min-height:52px;margin-top:22px;padding:12px 18px;border:1px solid #86b8ff;border-radius:12px;background:#3167b6!important;color:#fff!important;font:inherit;font-size:1rem;font-weight:750;text-align:center;cursor:pointer;touch-action:manipulation}

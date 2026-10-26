@@ -624,3 +624,6 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-ko-court-chooser strong{flex-basis:100%}
 .scs-ko-court-chooser button{max-width:100%;white-space:normal}
 .scs-ko-court-chooser button:disabled{opacity:.45}
+
+/* V414: Knockout modal must appear above Group Tournament overlay (z-index 999999). */
+#scsTournamentOverlay:not([hidden]){z-index:1000010!important}
