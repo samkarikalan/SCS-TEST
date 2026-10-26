@@ -1,5 +1,4 @@
 {
-  "version": "V427",
-  "build": "2026-10-26",
-  "scope": "Approved knockout winner advancement"
+  "version": "V428",
+  "scope": "Render the next knockout court assignment immediately"
 }
