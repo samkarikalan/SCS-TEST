@@ -893,7 +893,7 @@ function details(){
  }
  var h='<h3>Match '+matchDisplayNumber(selected)+'</h3><p>'+esc(info.a)+' <b>VS</b> '+esc(info.b)+'</p>';
  if(!readonly&&!groupChildMode){['a','b'].forEach(function(side){var src=m[side];if(editableEntryFromSource(src))h+='<button type="button" onclick="SCSTournament.editEntry('+src+')">Edit '+(side==='a'?'Team A':'Team B')+'</button> '})}
- if(!readonly&&!r&&g)h+='<p>Assigned to '+(g.court?'Court '+g.court:'waiting list')+'.</p>';return h
+ if(!readonly&&!r&&g&&g.court)h+='<p>Assigned to Court '+g.court+'.</p>';return h
 }
 // V330: Generated knockout fixtures use the existing shared SCS match card.
 // The bracket remains the authoritative source for match positions and BYEs.
@@ -942,9 +942,15 @@ function knockoutFixtureCards(){
    var actions='';
    if(savedScore)actions+='<button type="button" onclick="SCSTournament.openMatchScore('+m.id+','+(!readonly&&!!result)+')">View Scoreboard</button>';
    if(!readonly&&!result){
-
-    if(game){actions+='<span>Assigned to '+(game.court?'Court '+esc(game.court):'waiting list')+'</span>'}
- 
+    // Every playable, unfinished fixture has a direct court assignment action.
+    // A scored/started match must never be reassigned from the fixture card.
+    var ready=!!(info.a&&info.b&&!/^Winner of |^Loser of /i.test(info.a)&&!/^Winner of |^Loser of /i.test(info.b));
+    var started=!!(game&&(game.started_at||game.score_status==='scoring'||game.score_status==='scored'||(game.score&&game.score.finished)));
+    if(game&&game.court){actions+='<span>Assigned to Court '+esc(game.court)+'</span>'}
+    else if(started){actions+='<span>Match in progress</span>'}
+    else if(ready&&draw.live===true){actions+='<button type="button" onclick="SCSTournament.assign('+m.id+')">Assign Court</button>'}
+    else if(ready){actions+='<span>Start Tournament to assign a court</span>'}
+    else{actions+='<span>Waiting for previous round</span>'}
    }
    html+='<div class="scs-ko-fixture-card scs-team-match-shell" data-match-id="'+m.id+'"'+(savedScore?' role="button" tabindex="0" aria-label="Open match scoreboard" onclick="if(!event.target.closest(\'[onclick],button,a,input,select\'))SCSTournament.openMatchScore('+m.id+')" onkeydown="if(event.target===this&&(event.key===\'Enter\'||event.key===\' \')){event.preventDefault();SCSTournament.openMatchScore('+m.id+')}"':'')+'>'+card+(actions?'<div class="scs-ko-fixture-actions">'+actions+'</div>':'')+'</div>';
   });

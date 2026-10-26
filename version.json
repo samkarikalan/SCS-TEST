@@ -1,4 +1,4 @@
 {
-  "version": "V425",
-  "scope": "Render the next knockout court assignment immediately"
+  "version": "V426",
+  "scope": "Knockout ready-match court assignment buttons"
 }
