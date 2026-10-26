@@ -156,3 +156,7 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-gt-sheet .scs-gt-matrix-tabs button{flex:0 0 auto;white-space:nowrap;padding:11px 15px;border:1px solid #577399;border-radius:12px;background:#283b59;color:#e5ebf9;font:inherit;font-weight:600}
 .scs-gt-sheet .scs-gt-matrix-tabs button.active{color:#a78bfa;border-color:#9775fa;box-shadow:inset 0 -3px #9775fa}
 .scs-gt-sheet .scs-gt-matrix-knockout-empty{border:1px solid #4a6389;border-radius:14px;padding:16px;margin-top:14px}
+
+/* V411: Group Matches uses the existing Matrix tab styling. */
+.scs-gt-matches-tabs,.scs-gt-match-status-tabs{margin:12px 0 16px}
+.scs-gt-match-status-tabs button{font-size:.9em}
