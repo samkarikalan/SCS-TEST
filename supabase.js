@@ -229,7 +229,7 @@ async function _scsSaveTournamentOnce(format, state) {
   localStorage.setItem(idKey,id); // compatibility for legacy consumers
   return id;
 }
-function dbSaveTournamentState(format,state) {
+function dbSaveTournamentState(format,state,options={}) {
   if(!['knockout','group','team'].includes(format)||!state||typeof state!=='object')return Promise.resolve(null);
   const club=getMyClub();
   if(!club?.id)return Promise.reject(new Error('Select a club before saving the tournament.'));
@@ -239,7 +239,7 @@ function dbSaveTournamentState(format,state) {
   const timer=_scsTournamentSaveTimers.get(key);
   if(timer){clearTimeout(timer);_scsTournamentSaveTimers.delete(key);}
   _scsTournamentPending.delete(key);
-  const explicitRevision=_scsOutboxPut(key,format,JSON.parse(JSON.stringify(state)));
+  const explicitRevision=options.outboxRevision||_scsOutboxPut(key,format,JSON.parse(JSON.stringify(state)));
   const previous=_scsTournamentSaveChains.get(key)||Promise.resolve();
   const job=previous.catch(()=>{}).then(async()=>{
     const id=await _scsSaveTournamentOnce(format,state);
@@ -270,7 +270,7 @@ function scsFlushTournamentCloudSaves(){
  return Promise.all(Object.keys(box).map(async key=>{
   const item=box[key];if(!item||!item.state)return;
   const club=getMyClub();if(!club?.id||key.indexOf(club.id+':')!==0)return;
-  try{await dbSaveTournamentState(item.format,item.state);_scsOutboxClearIfSame(key,item.revision)}
+  try{await dbSaveTournamentState(item.format,item.state,{outboxRevision:item.revision})}
   catch(e){console.warn('Tournament sync pending:',e.message)}
  }));
 }
@@ -287,7 +287,7 @@ function scsQueueTournamentCloudSave(format,state) {
   const latest=_scsTournamentPending.get(key);
   if(!latest)return;
   _scsTournamentPending.delete(key);
-  try{await dbSaveTournamentState(format,latest);_scsOutboxClearIfSame(key,revision)}
+  try{await dbSaveTournamentState(format,latest,{outboxRevision:revision})}
   catch(e){console.warn('Tournament cloud save pending retry:',e.message)}
  },700));
 }
@@ -1848,3 +1848,14 @@ async function dbRecordRoundMatches(updatedRatings) {
 }
 
 window.scsFlushTournamentCloudSaves=scsFlushTournamentCloudSaves;
+
+/* V407 unified public persistence gateway. All tournament formats use the
+   same writer/outbox; existing family-aware loaders are retained underneath. */
+window.SCSTournamentStore=Object.freeze({
+ save:(format,state)=>dbSaveTournamentState(format,state),
+ queue:(format,state)=>scsQueueTournamentCloudSave(format,state),
+ sync:()=>scsFlushTournamentCloudSaves(),
+ load:(id)=>dbLoadTournamentById(id),
+ list:(statuses)=>dbListClubTournaments(statuses),
+ loadLatest:(format)=>dbLoadLatestTournament(format)
+});

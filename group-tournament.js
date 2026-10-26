@@ -9,7 +9,7 @@ function groupMainSave(){
  groupMain._scsMainTournament=true;
  groupMain._scsClientTournamentId=groupMain._scsClientTournamentId||groupMain.id||(groupMain.id=groupId());
  localStorage.setItem(GROUP_MAIN_KEY,JSON.stringify(groupMain));
- if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('group',groupMain);
+ if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('group',groupMain);
 }
 function groupEnsureMain(){try{groupMain=JSON.parse(localStorage.getItem(GROUP_MAIN_KEY)||'null')}catch(_){groupMain=null}
  if(!groupMain){groupMain={title:'Group Tournament',events:[],activeEventId:null};try{const legacy=JSON.parse(localStorage.getItem(KEY)||'null');if(legacy&&(legacy.created||legacy.started||legacy.title)){const id=groupId();groupMain.events.push({id,title:legacy.title||'Group Event'});groupMain.activeEventId=id;localStorage.setItem(groupEventKey(id),JSON.stringify(legacy))}}catch(_){}}
@@ -25,7 +25,7 @@ function groupAddEvent(){window.ScsApi.events.requestEvent({parentTitle:groupMai
 const el=()=>document.getElementById('scsGroupTournament');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function load(){try{let v=JSON.parse(localStorage.getItem(groupEventId?groupEventKey(groupEventId):KEY));if(v){cloudTournamentId=v._scsCloudTournamentId||'';clientTournamentId=v._scsClientTournamentId||'';title=String(v.title||'Group Tournament');config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];groupSelectedPlayerDetails=Array.isArray(v.selectedPlayerDetails)?v.selectedPlayerDetails:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
- function save(){try{if(viewOnly)return;const state={_scsCloudTournamentId:cloudTournamentId,_scsClientTournamentId:clientTournamentId,_scsParentTournamentId:groupMain?groupMain._scsClientTournamentId||groupMain.id:null,_scsParentTournamentTitle:groupMain?groupMain.title:null,_scsGroupEventId:groupEventId,_scsMainTournament:false,title,config,created,assistMode,assistPatternReady,pool,selectedPlayerDetails:groupSelectedPlayerDetails,teamDrafts,assignments,started,matches,courtCount,assignmentSerial};if(typeof window.scsEnsureTournamentClientId==='function')clientTournamentId=state._scsClientTournamentId=window.scsEnsureTournamentClientId(state);localStorage.setItem(groupEventId?groupEventKey(groupEventId):KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('group',state)}catch(e){}}
+ function save(){try{if(viewOnly)return;const state={_scsCloudTournamentId:cloudTournamentId,_scsClientTournamentId:clientTournamentId,_scsParentTournamentId:groupMain?groupMain._scsClientTournamentId||groupMain.id:null,_scsParentTournamentTitle:groupMain?groupMain.title:null,_scsGroupEventId:groupEventId,_scsMainTournament:false,title,config,created,assistMode,assistPatternReady,pool,selectedPlayerDetails:groupSelectedPlayerDetails,teamDrafts,assignments,started,matches,courtCount,assignmentSerial};if(typeof window.scsEnsureTournamentClientId==='function')clientTournamentId=state._scsClientTournamentId=window.scsEnsureTournamentClientId(state);localStorage.setItem(groupEventId?groupEventKey(groupEventId):KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('group',state)}catch(e){}}
 let groupSaveBusy=false;
 async function saveGroupTournamentNow(){
  if(viewOnly||groupSaveBusy)return;
@@ -37,7 +37,7 @@ async function saveGroupTournamentNow(){
   save();
   const snapshot=JSON.parse(localStorage.getItem(groupEventId?groupEventKey(groupEventId):KEY)||'null');
   if(!snapshot||typeof window.dbSaveTournamentState!=='function')throw Error('Server save unavailable; local copy retained.');
-  const id=await window.dbSaveTournamentState('group',snapshot);
+  const id=await window.SCSTournamentStore.save('group',snapshot);
   if(!id)throw Error('Server did not confirm save; local copy retained.');
   cloudTournamentId=id;
   snapshot._scsCloudTournamentId=id;

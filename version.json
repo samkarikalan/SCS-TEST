@@ -1,1 +1,1 @@
-{"version":"V406","build":"2026-10-26","scope":"Durable server-sync queue for tournaments; restore existing knockout Court Center sessions"}
+{"version":"V407","build":"2026-10-26","scope":"Shared tournament persistence gateway and durable retry revision fix"}

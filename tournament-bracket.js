@@ -12,7 +12,7 @@ function koSaveMain(){
  koMain._scsMainTournament=true;
  koMain._scsClientTournamentId=koMain._scsClientTournamentId||koMain.id;
  localStorage.setItem(KO_MAIN_KEY,JSON.stringify(koMain));
- if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',koMain);
+ if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('knockout',koMain);
 }
 function koEventKey(id){return 'scs_knockout_event_'+id}
 function koDraftKey(){return ASSIST_DRAFT_KEY+(koActiveId?'-'+koActiveId:'')}
@@ -38,12 +38,12 @@ function preserveTeamPlayerDetails(d){
 function koEventLoad(id){try{return preserveTeamPlayerDetails(JSON.parse(localStorage.getItem(koEventKey(id))||'null'))}catch(_){return null}}
 function koSyncEvent(d){preserveTeamPlayerDetails(d);if(!koMain||!koActiveId||readonly)return;var item=koMain.events.find(function(e){return e.id===koActiveId});if(!item)return;item.title=d.title||item.title;item.matches=(d.matches||[]).length;item.completed=Object.keys(d.results||{}).length;item.teams=(d.entries||[]).length;item.updatedAt=Date.now();koMain.activeEventId=koActiveId;koSaveMain();localStorage.setItem(koEventKey(koActiveId),JSON.stringify(d))}
 function localTournamentLoad(){try{if(koMain&&koActiveId){var event=koEventLoad(koActiveId);if(event)return event}var x=JSON.parse(localStorage.getItem(LOCAL_TOURNAMENT_KEY)||'null');return x&&x.matches&&x.matches.length?preserveTeamPlayerDetails(x):null}catch(_){return null}}
-function localTournamentSave(d){try{preserveTeamPlayerDetails(d);if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
+function localTournamentSave(d){try{preserveTeamPlayerDetails(d);if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
 async function koSaveCloudNow(d){
  preserveTeamPlayerDetails(d);
  if(typeof window.dbSaveTournamentState!=='function')return;
  if(koMain&&koActiveId){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}
- var id=await window.dbSaveTournamentState('knockout',d);
+ var id=await window.SCSTournamentStore.save('knockout',d);
  if(id&&koMain&&koActiveId)koSyncEvent(d);
  return id;
 }
@@ -1235,7 +1235,7 @@ async function assistSaveDraft(){
   // The original confirmed save path uses the same server API. Use it for
   // incomplete drafts too, without changing the active page or setup state.
   if(typeof window.dbSaveTournamentState!=='function')throw Error('Server saving is unavailable');
-  var id=await window.dbSaveTournamentState('knockout',draw);
+  var id=await window.SCSTournamentStore.save('knockout',draw);
   if(!id)throw Error('Server did not confirm the save');
   draw._scsCloudTournamentId=id;
   saveAssistDraft();

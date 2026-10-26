@@ -5,7 +5,7 @@ const KEY='scs_team_tournament_v1';
 let state={title:'',clubs:[],encounters:[],courtCount:1,serial:0,matchesPerEncounter:3},tab='fixtures',matchTab='waiting',assigning=null,viewOnly=false,selectedEncounterId=null;
 const root=()=>document.getElementById('scsTeamTournament');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const save=()=>{if(!viewOnly){if(state._scsTeamMainId&&state._scsClientTournamentId)localStorage.setItem('scs_team_event_'+state._scsClientTournamentId,JSON.stringify(state));localStorage.setItem(KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('team',state);if(state._scsTeamMainId)saveEventIndex()}};
+const save=()=>{if(!viewOnly){if(state._scsTeamMainId&&state._scsClientTournamentId)localStorage.setItem('scs_team_event_'+state._scsClientTournamentId,JSON.stringify(state));localStorage.setItem(KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('team',state);if(state._scsTeamMainId)saveEventIndex()}};
 let teamSaveBusy=false;
 async function saveTeamTournamentNow(){
  if(viewOnly)return;
@@ -19,7 +19,7 @@ async function saveTeamTournamentNow(){
  try{
   localStorage.setItem(KEY,JSON.stringify(state));
   if(typeof window.dbSaveTournamentState!=='function')throw Error('Server save is unavailable. Saved on this device only.');
-  const id=await window.dbSaveTournamentState('team',state);if(id){state._scsCloudTournamentId=id;localStorage.setItem(KEY,JSON.stringify(state));if(state._scsTeamMainId){localStorage.setItem('scs_team_event_'+state._scsClientTournamentId,JSON.stringify(state));saveEventIndex();}}
+  const id=await window.SCSTournamentStore.save('team',state);if(id){state._scsCloudTournamentId=id;localStorage.setItem(KEY,JSON.stringify(state));if(state._scsTeamMainId){localStorage.setItem('scs_team_event_'+state._scsClientTournamentId,JSON.stringify(state));saveEventIndex();}}
   if(!id)throw Error('Server save unavailable. Check your club login and connection. Saved on this device only.');
   if(indicator)indicator.textContent='✓ Saved to server';
  }catch(err){if(indicator)indicator.textContent='⚠ '+(err?.message||'Server save failed; local copy retained.');}
@@ -52,7 +52,7 @@ function newId(){return typeof crypto!=='undefined'&&crypto.randomUUID?crypto.ra
 function persistMain(){
  if(!main||viewOnly)return;
  localStorage.setItem(MAIN_KEY,JSON.stringify(main));
- if(typeof window.scsQueueTournamentCloudSave==='function')window.scsQueueTournamentCloudSave('team',main);
+ if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('team',main);
 }
 function saveEventIndex(){
  if(!main||!state._scsTeamMainId)return;
@@ -85,7 +85,7 @@ function submitMain(){
  main={title:name,_scsMainTournament:true,_scsClientTournamentId:newId(),events:[],createdAt:new Date().toISOString()};
  creatingMain=false;
  persistMain();
- if(typeof window.dbSaveTournamentState==='function')window.dbSaveTournamentState('team',main).then(id=>{if(id){main._scsCloudTournamentId=id;persistMain()}}).catch(e=>console.warn('Main tournament save:',e));
+ if(typeof window.dbSaveTournamentState==='function')window.SCSTournamentStore.save('team',main).then(id=>{if(id){main._scsCloudTournamentId=id;persistMain()}}).catch(e=>console.warn('Main tournament save:',e));
  openMain();
 }
 function mainNameForm(){return window.ScsApi.events.createForm()}
@@ -111,7 +111,7 @@ function submitEvent(){
  if(typeof window.dbSaveTournamentState==='function'){
   const eventId=state._scsClientTournamentId;
   const snapshot=JSON.parse(JSON.stringify(state));
-  window.dbSaveTournamentState('team',snapshot).then(id=>{
+  window.SCSTournamentStore.save('team',snapshot).then(id=>{
    if(!id)return;
    const entry=main?.events.find(e=>e.id===eventId);
    if(entry){entry.cloudId=id;persistMain()}
