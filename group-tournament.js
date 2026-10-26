@@ -17,6 +17,43 @@ function groupEnsureMain(){try{groupMain=JSON.parse(localStorage.getItem(GROUP_M
 function groupHomeRender(){groupHome=true;const root=el();if(!root)return;const events=groupMain.events.map(e=>{let v={};try{v=JSON.parse(localStorage.getItem(groupEventKey(e.id))||'{}')}catch(_){}return {...e,teams:Object.keys(v.assignments||{}).length,clubs:Object.values(v.assignments||{}).filter(a=>Array.isArray(a)&&a.some(Boolean)).map((_,i)=>'Team '+(i+1)),matches:(v.matches||[]).length,completed:(v.matches||[]).filter(m=>m.status==='approved').length}});
  window.ScsApi.events.mountHome(root,{title:groupMain.title||'Group Tournament',events,activeEventId:groupEventId,viewOnly,navAttribute:'data-group-nav',ariaLabel:'Group tournament sections'});
  root.querySelector('[data-close]').onclick=close;root.querySelectorAll('[data-open-event]').forEach(b=>b.onclick=()=>groupEventStageHome(b.dataset.openEvent));const add=root.querySelector('[data-add-event]');if(add)add.onclick=groupAddEvent;root.querySelectorAll('[data-group-nav]').forEach(b=>b.onclick=()=>{const target=b.dataset.groupNav;if(target==='home')groupHomeRender();else if(groupEventId)groupOpenEvent(groupEventId,target);else alert('Add an event first.')})}
+function groupKnockoutReady(data){const ms=Array.isArray(data.matches)?data.matches:[];return !!data.started&&ms.length>0&&ms.every(m=>m.status==='approved')}
+function groupKnockoutCandidates(data,stage){
+ const cfg=data.config||{},count=Number(stage===0?cfg.top:cfg.bottom)||0,offset=stage===0?0:Number(cfg.top)||0;
+ const all=[];
+ for(let g=0;g<(Number(cfg.groups)||0);g++){
+  const ranked=groupResults(g);
+  ranked.slice(offset,offset+count).forEach((t,i)=>{const players=(data.assignments||{})[t.id]||[];all.push({id:t.id,group:g,rank:offset+i+1,players,details:(data.selectedPlayerDetails||[]).filter(p=>players.some(n=>String(p.name||p.player||'')===String(n)))});});
+ }
+ return all;
+}
+function groupKnockoutOpen(stage){
+ const id=groupEventId,data=JSON.parse(localStorage.getItem(groupEventKey(id))||'{}');
+ if(!groupKnockoutReady(data)){alert('Complete and approve every group match first.');return}
+ const key='scs_group_knockout_'+id+'_'+stage;
+ let saved=JSON.parse(localStorage.getItem(key)||'null');
+ if(!saved){
+  const teams=groupKnockoutCandidates(data,stage);
+  if(teams.length<4||teams.length>64){alert('Knockout bracket requires 4 to 64 qualified teams.');return}
+  if(!window.SCSTournament||typeof SCSTournament.generateCustomTwoSided!=='function'){alert('Knockout module is unavailable.');return}
+  const left=Math.ceil(teams.length/2),names=teams.map(t=>t.players.join(' / '));
+  saved=SCSTournament.generateCustomTwoSided(teams.length,left,null,null,(data.title||'Event')+(Number(data.config?.knockouts)===2?(stage===0?' — Top Knockout':' — Bottom Knockout'):' — Knockout'),names);
+  saved.entries.forEach((e,i)=>{e.playerDetails=teams[i].details;e.groupSource=teams[i].id;e.groupRank=teams[i].rank});
+  saved.selectedPlayerDetails=teams.flatMap(t=>t.details);
+  saved._scsGroupEventId=id;saved._scsGroupKnockoutStage=stage;
+  saved.assistAssignmentsConfirmed=true;saved.knockoutFixturesGenerated=true;saved.assistFinalized=true;
+  localStorage.setItem(key,JSON.stringify(saved));
+ }
+ if(!window.SCSTournament||typeof SCSTournament.open!=='function'){alert('Knockout module is unavailable.');return}
+ window.SCSTournament.open(saved,false,function(updated){localStorage.setItem(key,JSON.stringify(updated));return Promise.resolve(updated)});
+}
+function groupKnockoutPreview(stage){
+ const data={config,assignments,selectedPlayerDetails:groupSelectedPlayerDetails,matches,started};
+ const complete=groupKnockoutReady(data),candidates=complete?groupKnockoutCandidates(data,stage):[];
+ const label=Number(config.knockouts)===2?(stage===0?'Top Knockout':'Bottom Knockout'):'Knockout';
+ return '<div class="scs-gt-matrix-knockout-empty"><h4>'+label+'</h4><p>'+(stage===0?config.top:config.bottom)+' qualifying teams per group</p>'+
+ (complete?'<p>Qualified teams from approved group rankings:</p>'+Array.from({length:config.groups},(_,g)=>'<div class="scs-gt-qualified-group"><strong>Group '+groupLabel(g)+'</strong>'+candidates.filter(t=>t.group===g).map(t=>'<p>'+t.rank+'. '+escapeHTML(t.players.join(' / '))+'</p>').join('')+'</div>').join('')+'<button type="button" class="scs-gt-primary" data-group-knockout-continue="'+stage+'">Continue to Knockout</button>':'<p>Knockout becomes available after all group matches are completed and approved.</p>')+'</div>';
+}
 function groupEventStageHome(id){
  if(!groupMain||!groupMain.events.some(e=>e.id===id))return;
  groupEventId=id;groupMain.activeEventId=id;groupMainSave();groupHome=true;
@@ -24,14 +61,15 @@ function groupEventStageHome(id){
  let data={};try{data=JSON.parse(localStorage.getItem(groupEventKey(id))||'{}')}catch(_){}
  const event=groupMain.events.find(e=>e.id===id);
  const ms=Array.isArray(data.matches)?data.matches:[];
- const complete=!!data.started&&ms.length>0&&ms.every(m=>m.status==='approved');
+ const complete=groupKnockoutReady(data);
  const count=ms.filter(m=>m.status==='approved').length;
  root.classList.add('scs-api-home-host');
  root.innerHTML='<div class="scs-gt-stage-home"><header><button type="button" data-stage-back>‹ Events</button><h2>'+escapeHTML(event.title||'Group Event')+'</h2></header>'+
  '<div class="scs-gt-stage-tiles"><button type="button" class="scs-gt-stage-tile" data-stage-group><span class="scs-gt-stage-icon">♟</span><strong>Group Stage</strong><small>'+count+' / '+ms.length+' matches completed</small><span class="scs-gt-stage-label">Open Group Stage ›</span></button>'+
- '<button type="button" class="scs-gt-stage-tile scs-gt-stage-knockout" data-stage-knockout disabled><span class="scs-gt-stage-icon">🏆</span><strong>Knockout Stage</strong><small>'+(complete?'Group stage completed':'Locked until all group matches are approved')+'</small><span class="scs-gt-stage-label">Available in Step 2</span></button></div></div>';
+ '<button type="button" class="scs-gt-stage-tile scs-gt-stage-knockout" data-stage-knockout '+(complete?'':'disabled')+'><span class="scs-gt-stage-icon">🏆</span><strong>Knockout Stage</strong><small>'+(complete?'Group stage completed':'Locked until all group matches are approved')+'</small><span class="scs-gt-stage-label">Continue to Knockout</span></button></div></div>';
  root.querySelector('[data-stage-back]').onclick=groupHomeRender;
  root.querySelector('[data-stage-group]').onclick=()=>groupOpenEvent(id,'tournament');
+ if(complete)root.querySelector('[data-stage-knockout]').onclick=()=>{groupOpenEvent(id,'tournament');matrixSection='knockout-0';tournamentView='matrix';render()};
 }
 function groupOpenEvent(id,section){if(!groupMain.events.some(e=>e.id===id))return;groupEventId=id;groupMain.activeEventId=id;groupMainSave();groupHome=false;window.ScsApi.events.leaveHome(el());applyState(JSON.parse(localStorage.getItem(groupEventKey(id))||'null')||{title:groupMain.events.find(e=>e.id===id).title});assistStep=0;tab=section==='clubs'?'players':section==='match'?'match':'main';render()}
 function groupAddEvent(){window.ScsApi.events.requestEvent({parentTitle:groupMain.title,onCreate:title=>{if(groupMain.events.some(e=>e.title.toLowerCase()===title.toLowerCase())){alert('Event already exists.');return}const id=groupId();groupMain.events.push({id,title});groupMain.activeEventId=id;groupMainSave();localStorage.setItem(groupEventKey(id),JSON.stringify({title,created:false,assistMode:true,config:{groups:4,per:4,knockouts:1,top:2,bottom:1},pool:[],teamDrafts:[],assignments:{},matches:[],started:false}));groupEventStageHome(id)}})}
@@ -338,7 +376,7 @@ function groupMatrix(){
  if(selected.startsWith('knockout-')){
   const idx=Number(selected.slice(9))||0;
   const qualifiers=idx===0?config.top:config.bottom;
-  return '<section class="scs-team-matrix"><h3>Results Matrix</h3>'+tabs+'<div class="scs-gt-matrix-knockout-empty"><h4>'+(config.knockouts===2?(idx===0?'Top Knockout':'Bottom Knockout'):'Knockout')+'</h4><p>'+qualifiers+' qualifying team'+(qualifiers===1?'':'s')+' per group.</p><p>Knockout fixtures and results are not yet generated in this Group Tournament. They will appear when the knockout stage is implemented.</p></div></section>';
+  return '<section class="scs-team-matrix"><h3>Results Matrix</h3>'+tabs+groupKnockoutPreview(idx)+'</section>';
  }
  const g=Math.max(0,Math.min(config.groups-1,Number(selected.slice(6))||0));
  return '<section class="scs-team-matrix"><h3>Round-robin results matrix</h3>'+tabs+'<p>Rank: match wins → head-to-head → set difference → rally point difference. Swipe horizontally; tap a match for results.</p>'+[g].map(g=>{
@@ -469,6 +507,7 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
  el().querySelectorAll('[data-courts]').forEach(x=>x.onclick=()=>{courtCount=Math.max(1,Math.min(32,courtCount+Number(x.dataset.courts),...matches.filter(m=>m.court).map(m=>m.court)));save();render()});
  el().querySelectorAll('[data-group-matches-section]').forEach(x=>x.addEventListener('click',()=>{matchesSection=x.dataset.groupMatchesSection;matchesStatus='all';render()}));
  el().querySelectorAll('[data-group-matches-status]').forEach(x=>x.addEventListener('click',()=>{matchesStatus=x.dataset.groupMatchesStatus;render()}));
+ el().querySelectorAll('[data-group-knockout-continue]').forEach(b=>b.onclick=()=>groupKnockoutOpen(Number(b.dataset.groupKnockoutContinue)));
  el().querySelectorAll('[data-group-matrix-section]').forEach(x=>x.addEventListener('click',()=>{matrixSection=x.dataset.groupMatrixSection;render()}));
  el().querySelectorAll('[data-group-matrix-match]').forEach(x=>x.addEventListener('click',()=>showGroupMatrixMatch(x.dataset.groupMatrixMatch)));
  el().querySelectorAll('[data-tournament-view]').forEach(x=>x.onclick=()=>{tournamentView=x.dataset.tournamentView;render()});
