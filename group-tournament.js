@@ -50,7 +50,7 @@ function groupKnockoutOpen(stage){
  // Upgrade V413/V414 saved group brackets without overwriting match progress.
  if(saved&&!saved.live&&!saved.livePage){saved.livePage=true;saved.assistFinalized=true;saved.assistAssignmentsConfirmed=true;saved.knockoutFixturesGenerated=true;localStorage.setItem(key,JSON.stringify(saved));}
  if(!window.SCSTournament||typeof window.SCSTournament.open!=='function'){alert('Knockout module is unavailable.');return}
- try{window.SCSTournament.open(saved,false,function(updated){localStorage.setItem(key,JSON.stringify(updated));return Promise.resolve(updated)});}
+ try{window.SCSTournament.open(saved,false,function(updated){localStorage.setItem(key,JSON.stringify(updated));return Promise.resolve(updated)});if(saved.live&&typeof window.SCSTournament.resumeGroupCourtSession==='function')window.SCSTournament.resumeGroupCourtSession();}
  catch(error){console.error('Group knockout launch failed',error);alert('Could not open Knockout. '+(error&&error.message||'Please retry.'));}
 }
 function groupKnockoutPreview(stage){

@@ -1,6 +1,6 @@
 /* V37: editable OCR entries and player/club parsing; input-driven knockout draw. OCR reads text; the organizer confirms teams and connections. */
 (function(){'use strict';
-var assistStep=0,assistSaved=false,draw=null,readonly=false,selected=null,saveFn=null,assignFn=null,clearFn=null,root=null,scanImage=null,scanText='',scanBusy=false,scanRecognition=null,zoom=1,panX=0,panY=0,gesture=null,byeSelection=null,lastLiveRenderSignature='';
+var assistStep=0,assistSaved=false,draw=null,readonly=false,selected=null,saveFn=null,assignFn=null,clearFn=null,root=null,scanImage=null,scanText='',scanBusy=false,scanRecognition=null,zoom=1,panX=0,panY=0,gesture=null,byeSelection=null,lastLiveRenderSignature='',groupChildMode=false;
 var LOCAL_TOURNAMENT_KEY='scs_knockout_tournament_v94';
 /* V291: one parent knockout tournament with independent event draws. The original
    knockout generator, bracket and match center remain the event implementation. */
@@ -38,9 +38,10 @@ function preserveTeamPlayerDetails(d){
 function koEventLoad(id){try{return preserveTeamPlayerDetails(JSON.parse(localStorage.getItem(koEventKey(id))||'null'))}catch(_){return null}}
 function koSyncEvent(d){preserveTeamPlayerDetails(d);if(!koMain||!koActiveId||readonly)return;var item=koMain.events.find(function(e){return e.id===koActiveId});if(!item)return;item.title=d.title||item.title;item.matches=(d.matches||[]).length;item.completed=Object.keys(d.results||{}).length;item.teams=(d.entries||[]).length;item.updatedAt=Date.now();koMain.activeEventId=koActiveId;koSaveMain();localStorage.setItem(koEventKey(koActiveId),JSON.stringify(d))}
 function localTournamentLoad(){try{if(koMain&&koActiveId){var event=koEventLoad(koActiveId);if(event)return event}var x=JSON.parse(localStorage.getItem(LOCAL_TOURNAMENT_KEY)||'null');return x&&x.matches&&x.matches.length?preserveTeamPlayerDetails(x):null}catch(_){return null}}
-function localTournamentSave(d){try{preserveTeamPlayerDetails(d);if(d&&d._scsGroupEventId!=null&&d._scsGroupKnockoutStage!=null)localStorage.setItem('scs_group_knockout_'+d._scsGroupEventId+'_'+d._scsGroupKnockoutStage,JSON.stringify(d));if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
+function localTournamentSave(d){try{preserveTeamPlayerDetails(d);if(d&&d._scsGroupEventId!=null&&d._scsGroupKnockoutStage!=null){localStorage.setItem('scs_group_knockout_'+d._scsGroupEventId+'_'+d._scsGroupKnockoutStage,JSON.stringify(d));return Promise.resolve(d)}if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
 async function koSaveCloudNow(d){
  preserveTeamPlayerDetails(d);
+ if(d&&d._scsGroupEventId!=null&&d._scsGroupKnockoutStage!=null)return 'group-child';
  if(typeof window.dbSaveTournamentState!=='function')return;
  if(koMain&&koActiveId){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}
  var id=await window.SCSTournamentStore.save('knockout',d);
@@ -57,7 +58,7 @@ async function koSaveProgressNow(){
  try{
   if(window.SCSCourtCenter?.tournamentGame&&Array.isArray(draw.matches))draw.matches.forEach(m=>koCaptureMatchScore(m.id,SCSCourtCenter.tournamentGame(m.id)));
   await localTournamentSave(draw);
-  const id=await koSaveCloudNow(draw);
+   const id=groupChildMode?'group-child':await koSaveCloudNow(draw);
   if(!id)throw Error('Server did not confirm save; local copy retained.');
   if(indicator)indicator.textContent='✓ Saved to server';
  }catch(e){if(indicator)indicator.textContent='⚠ '+(e.message||'Server save failed; local copy retained.');}
@@ -586,6 +587,25 @@ function orderedMatches(){
  return ordered
 }
 function matchDisplayNumber(id){var list=orderedMatches(),index=list.findIndex(function(m){return String(m.id)===String(id)});return index<0?id:index+1}
+function knockoutStageLabel(match){
+ if(!match)return 'Match';
+ if(match.third)return 'Third Place';
+ if(match.final)return 'Final';
+ var matches=(draw&&draw.matches||[]).filter(function(m){return !m.third}),finalMatch=matches.find(function(m){return m.final})||matches.slice().sort(function(a,b){return Number(b.round||0)-Number(a.round||0)})[0];
+ var distance=0,current=match,seen={};
+ while(current&&finalMatch&&String(current.id)!==String(finalMatch.id)&&!seen[current.id]){
+  seen[current.id]=true;
+  var source='W'+current.id;
+  current=matches.find(function(m){return String(m.a)===source||String(m.b)===source});
+  distance++;
+ }
+ if(!current||!finalMatch||String(current.id)!==String(finalMatch.id))distance=Math.max(0,(Number(finalMatch&&finalMatch.round)||1)-(Number(match.round)||1));
+ if(distance===0)return 'Final';
+ if(distance===1)return 'Semifinal';
+ if(distance===2)return 'Quarterfinal';
+ var size=Math.pow(2,distance+1);
+ return 'Round of '+size;
+}
 function resolve(src){if(src==null)return 'BYE';if(typeof src==='number'){var e=draw.entries.find(function(e){return e.id===src});return e?(e.name||'Entry '+src):'Entry '+src}var type=String(src).charAt(0),id=String(src).slice(1),r=draw.results[id];return r?(type==='L'?r.loser:r.winner):(type==='L'?'Loser':'Winner')+' of '+matchDisplayNumber(id)}
 function matchInfo(id){var m=getMatch(id);if(!m)return null;return {a:resolve(m.a),b:resolve(m.b),number:matchDisplayNumber(id)}}
 function button(s,call){return '<button type="button" onclick="SCSTournament.'+call+'">'+s+'</button>'}
@@ -786,7 +806,7 @@ function holdSwapFeedback(){if(swapRecentTimer)clearTimeout(swapRecentTimer);swa
 function finishSwapRender(){render();holdSwapFeedback()}
 function undoTeamSwap(){if(!swapUndo||tournamentStarted())return;if(swapRecentTimer){clearTimeout(swapRecentTimer);swapRecentTimer=null}var a=draw.entries.find(function(e){return e.id===swapUndo[0]}),b=draw.entries.find(function(e){return e.id===swapUndo[1]});if(!a||!b)return;var name=a.name;a.name=b.name;b.name=name;swapUndo=null;swapRecentIds=[];swapEntryId=null;if(saveFn)Promise.resolve(saveFn(draw)).then(render);else render()}
 function entryTap(id){
- if(readonly)return;id=Number(id);if(byeSelection)return;
+ if(readonly||groupChildMode)return;id=Number(id);if(byeSelection)return;
  if(entryInStartedMatch(id)){alert('This team is locked because its match has already started.');return}
  if(tournamentStarted()){editEntry(id);return}
  if(swapEntryId==null){swapEntryId=id;swapRecentIds=[];swapDecorate();var entry=draw.entries.find(function(e){return e.id===id});swapStatus((entry&&entry.name||'Team')+' selected — tap another team to swap.');return}
@@ -797,7 +817,7 @@ function entryTap(id){
 }
 
 function editEntry(id){
- if(readonly)return;
+ if(readonly||groupChildMode)return;
  var e=draw.entries.find(function(x){return Number(x.id)===Number(id)});if(!e)return;
  if(entryInStartedMatch(id)){alert('This team already played and cannot be changed.');return}
  selected=null;render();
@@ -872,8 +892,8 @@ function details(){
   return SCSSharedMatchCenter.completed({number:matchDisplayNumber(selected),title:'Match '+matchDisplayNumber(selected),left:info.a,right:info.b,leftPlayers:left,rightPlayers:right,score:String(score||'').replace(/\s*·\s*/g,' | '),server:currentServingPlayer(g),winner:winner,playerRenderer:tournamentPlayerRow});
  }
  var h='<h3>Match '+matchDisplayNumber(selected)+'</h3><p>'+esc(info.a)+' <b>VS</b> '+esc(info.b)+'</p>';
- if(!readonly){['a','b'].forEach(function(side){var src=m[side];if(editableEntryFromSource(src))h+='<button type="button" onclick="SCSTournament.editEntry('+src+')">Edit '+(side==='a'?'Team A':'Team B')+'</button> '})}
- if(!readonly&&!r){if(g)h+='<p>Assigned to '+(g.court?'Court '+g.court:'waiting list')+'.</p>';else if(!/^(Winner|Loser) of /.test(info.a)&&!/^(Winner|Loser) of /.test(info.b)&&!/^Entry \d+$/.test(info.a)&&!/^Entry \d+$/.test(info.b))h+=button('Assign match','assign('+selected+')');else h+='<p>Complete the entry names and previous matches before court assignment.</p>'}return h
+ if(!readonly&&!groupChildMode){['a','b'].forEach(function(side){var src=m[side];if(editableEntryFromSource(src))h+='<button type="button" onclick="SCSTournament.editEntry('+src+')">Edit '+(side==='a'?'Team A':'Team B')+'</button> '})}
+ if(!readonly&&!r&&g)h+='<p>Assigned to '+(g.court?'Court '+g.court:'waiting list')+'.</p>';return h
 }
 // V330: Generated knockout fixtures use the existing shared SCS match card.
 // The bracket remains the authoritative source for match positions and BYEs.
@@ -895,18 +915,18 @@ function knockoutFixtureCards(){
  });
  var html='<section class="scs-ko-generated-fixtures"><h3>Generated Matches</h3>';
  groups.forEach(function(matches,round){
-  html+='<section class="scs-ko-fixture-round"><h4>Round '+round+'</h4>';
+  html+='<section class="scs-ko-fixture-round"><h4>'+esc(knockoutStageLabel(matches[0]))+'</h4>';
   matches.forEach(function(m){
    var info=matchInfo(m.id),result=(draw.results||{})[m.id],game=window.SCSCourtCenter&&SCSCourtCenter.tournamentGame?SCSCourtCenter.tournamentGame(m.id):null;
    var left=splitTeam(info.a).players,right=splitTeam(info.b).players;
    var winner=result&&result.winner===info.a?'left':result&&result.winner===info.b?'right':null;
    var scored=scoreSummary(game);
    var savedScore=koScoreForMatch(m.id);if(!scored&&savedScore)scored=scoreSummary({score:savedScore});
-   var card=shared.completed({number:matchDisplayNumber(m.id),title:'Match '+matchDisplayNumber(m.id),left:info.a,right:info.b,leftPlayers:left,rightPlayers:right,score:String(scored||'').replace(/\s*·\s*/g,' | '),winner:winner,playerRenderer:tournamentPlayerRow});
+   var card=shared.completed({number:matchDisplayNumber(m.id),title:knockoutStageLabel(m)+' · Match '+matchDisplayNumber(m.id),left:info.a,right:info.b,leftPlayers:left,rightPlayers:right,score:String(scored||'').replace(/\s*·\s*/g,' | '),winner:winner,playerRenderer:tournamentPlayerRow});
    if(!result){card=card.replace('<span class="scs-tm-completed-check">✓</span>','<span class="scs-ko-fixture-pending">○</span>')}
    // Reuse the existing team edit popup by tapping the team's player area.
    // Keep the shared match card markup and styles untouched.
-   if(!readonly&&!result){
+    if(!readonly&&!groupChildMode&&!result){
     ['a','b'].forEach(function(side,index){
      var src=m[side];
      if(!editableEntryFromSource(src))return;
@@ -924,7 +944,6 @@ function knockoutFixtureCards(){
    if(!readonly&&!result){
 
     if(game){actions+='<span>Assigned to '+(game.court?'Court '+esc(game.court):'waiting list')+'</span>'}
-    else if(!/^(Winner|Loser) of /.test(info.a)&&!/^(Winner|Loser) of /.test(info.b)&&!/^Entry \d+$/.test(info.a)&&!/^Entry \d+$/.test(info.b))actions+='<button type="button" onclick="SCSTournament.assign('+m.id+')">Assign Court</button>';
  
    }
    html+='<div class="scs-ko-fixture-card scs-team-match-shell" data-match-id="'+m.id+'"'+(savedScore?' role="button" tabindex="0" aria-label="Open match scoreboard" onclick="if(!event.target.closest(\'[onclick],button,a,input,select\'))SCSTournament.openMatchScore('+m.id+')" onkeydown="if(event.target===this&&(event.key===\'Enter\'||event.key===\' \')){event.preventDefault();SCSTournament.openMatchScore('+m.id+')}"':'')+'>'+card+(actions?'<div class="scs-ko-fixture-actions">'+actions+'</div>':'')+'</div>';
@@ -957,6 +976,16 @@ async function koResumeOpenedEvent(eventId,saved){
 }
 async function enterSavedTournament(){koMainStart();koShowHome();return;readonly=false;tournamentActiveTab='main';var saved=localTournamentLoad();if(!saved){alert('No saved tournament found.');render();return}try{assistSaved=true;creationScreenPinned=false;bracketViewInitialized=false;bracketScrollState=null;draw=saved;selected=null;swapEntryId=null;draw.livePage=true;ensure();restoreTournamentPlayerPool(draw);root=document.getElementById('scsTournamentOverlay');if(root)root.hidden=false;render();if(saved.live===true&&window.SCSCourtCenter&&typeof SCSCourtCenter.resumeTournament==='function'){try{var state=await Promise.race([SCSCourtCenter.resumeTournament(saved),new Promise(function(_,reject){setTimeout(function(){reject(new Error('Court session timed out'))},6000)})]);if(state&&state.tournament&&sameSavedTournament(saved,state.tournament)){draw=state.tournament;draw.live=true;draw.livePage=true;draw.numCourts=state.courtCount;restoreTournamentPlayerPool(draw);await localTournamentSave(draw)}}catch(_){/* keep the saved bracket usable; Match Center can retry */}}render()}catch(e){if(root)root.hidden=false;render();alert(e.message||'Could not open the tournament.')}}
 function openCourtCenter(){if(window.SCSCourtCenter&&typeof window.SCSCourtCenter.open==='function'){window.SCSCourtCenter.open();return}alert('Court Center is not available.')}
+async function resumeGroupCourtSession(){
+ if(!groupChildMode||!draw||draw.live!==true||!window.SCSCourtCenter)return false;
+ try{
+  var state=typeof SCSCourtCenter.resumeTournament==='function'?await SCSCourtCenter.resumeTournament(draw):null;
+  if(!state&&typeof SCSCourtCenter.startTournament==='function')state=await SCSCourtCenter.startTournament(draw,Math.max(1,Number(draw.numCourts)||1));
+  if(!state)return false;
+  draw.numCourts=Math.max(1,Number(state.courtCount)||Number(draw.numCourts)||1);
+  render();return true;
+ }catch(e){console.warn('Group knockout Court Center recovery:',e&&e.message||e);return false}
+}
 function liveTournamentPanel(){
   if(!draw||draw.live!==true)return '';
   var state=window.SCSCourtCenter&&SCSCourtCenter.liveState?SCSCourtCenter.liveState():{ready:false,courtCount:Number(draw.numCourts)||1,games:[]};
@@ -964,7 +993,7 @@ function liveTournamentPanel(){
   function tg(id){return allGames.find(function(g){return Number(g.tournament_match)===Number(id)})}
   var matches=draw.matches.map(function(m){return {m:m,info:matchInfo(m.id),g:tg(m.id)}});
   var completed=matches.filter(function(x){return (x.g&&x.g.court_center_status==='approved')||!!draw.results[x.m.id]});
-  var waiting=matches.filter(function(x){return (x.g&&x.g.court)&&(!x.g||x.g.court_center_status!=='approved')&&!draw.results[x.m.id]&&!/^(Winner|Loser) of /.test(x.info.a)&&!/^(Winner|Loser) of /.test(x.info.b)&&!/^Entry \d+$/.test(x.info.a)&&!/^Entry \d+$/.test(x.info.b)});
+   var waiting=matches.filter(function(x){return (!x.g||x.g.court_center_status!=='approved')&&!draw.results[x.m.id]&&!/^(Winner|Loser) of /.test(x.info.a)&&!/^(Winner|Loser) of /.test(x.info.b)&&!/^Entry \d+$/.test(x.info.a)&&!/^Entry \d+$/.test(x.info.b)});
   var recentPlayers=latestCompletedPlayerKeys(allGames),freshWaiting=waiting.filter(function(x){return !x.g&&!matchNeedsRest(x.m,recentPlayers)}),canRotate=freshWaiting.length>0;
   waiting.sort(function(a,b){var ar=!a.g&&matchNeedsRest(a.m,recentPlayers),br=!b.g&&matchNeedsRest(b.m,recentPlayers);return Number(ar)-Number(br)||matchDisplayNumber(a.m.id)-matchDisplayNumber(b.m.id)});
   var tab=draw.liveTab||'waiting',targetCourt=Number(draw.assigningCourt)||0;
@@ -975,11 +1004,11 @@ function liveTournamentPanel(){
     var n=i+1,g=allGames.find(function(x){return Number(x.court)===n&&x.court_center_status!=='approved'});
     if(!g)return {number:n};
     var id=Number(g.tournament_match),info=id?matchInfo(id):null,ready=g.score_status==='scored',playing=g.score_status==='scoring';
-    return {number:n,playerRenderer:tournamentPlayerRow,match:{status:ready?'AWAITING APPROVAL':playing?'IN PROGRESS':'ASSIGNED (Not Started)',label:'MATCH '+matchDisplayNumber(id),left:(g.pair1||[]).length?g.pair1:splitTeam(info?info.a:'').players,right:(g.pair2||[]).length?g.pair2:splitTeam(info?info.b:'').players,score:scoreText(g),server:currentServingPlayer(g),winner:g&&g.winner==='L'?'left':g&&g.winner==='R'?'right':null,ready:ready,started:playing||ready||!!g.started_at,action:ready?'onclick="SCSTournament.approveLive('+id+')"':playing?'onclick="SCSScoring.open()"':'onclick="SCSTournament.startCourtMatch('+id+')"',actionLabel:ready?'Approve Result':playing?'View Score':'Start Match',cardAction:'data-ko-court-card="'+id+'"'}};
+    return {number:n,playerRenderer:tournamentPlayerRow,match:{status:ready?'AWAITING APPROVAL':playing?'IN PROGRESS':'ASSIGNED (Not Started)',label:knockoutStageLabel(getMatch(id))+' · MATCH '+matchDisplayNumber(id),left:(g.pair1||[]).length?g.pair1:splitTeam(info?info.a:'').players,right:(g.pair2||[]).length?g.pair2:splitTeam(info?info.b:'').players,score:scoreText(g),server:currentServingPlayer(g),winner:g&&g.winner==='L'?'left':g&&g.winner==='R'?'right':null,ready:ready,started:playing||ready||!!g.started_at,action:ready?'onclick="SCSTournament.approveLive('+id+')"':playing?'onclick="SCSTournament.openCourtScore('+id+')"':'onclick="SCSTournament.startCourtMatch('+id+')"',actionLabel:ready?'Approve Result':playing?'Continue Scoring':'Start Match',cardAction:'data-ko-court-card="'+id+'"'}};
   });
   return '<div class="scs-tm-unified-match-center">'+SCSSharedMatchCenter.panel({courtCount,courts,tab,hideRanking:true,assigning:0,
-   waiting:waiting.map(function(x){var g=x.g;return {number:matchDisplayNumber(x.m.id),left:x.info.a,right:x.info.b,label:'Court '+g.court+' · '+(g.score_status==='scored'?'Under Approval':g.score_status==='scoring'?'In Progress':'Assigned'),assigned:true}}),
-   completed:completed.map(function(x){var r=draw.results[x.m.id],winner=r?(r.winner===x.info.a?'left':r.winner===x.info.b?'right':null):null;if(!winner)winner=x.g&&x.g.winner==='L'?'left':x.g&&x.g.winner==='R'?'right':null;return {number:matchDisplayNumber(x.m.id),left:x.info.a,right:x.info.b,leftPlayers:splitTeam(x.info.a).players,rightPlayers:splitTeam(x.info.b).players,score:scoreText(x.g)||scoreSummary({score:koScoreForMatch(x.m.id)}),winner:winner,playerRenderer:tournamentPlayerRow,action:koScoreForMatch(x.m.id)?'onclick="SCSTournament.openMatchScore('+x.m.id+')"':'',actionLabel:'View Scoreboard',cardAction:koScoreForMatch(x.m.id)?'data-ko-completed-card="'+x.m.id+'"':''}}),
+    waiting:waiting.map(function(x){var g=x.g,assigned=!!(g&&g.court);return {number:matchDisplayNumber(x.m.id),heading:knockoutStageLabel(x.m),left:x.info.a,right:x.info.b,label:assigned?'Court '+g.court+' · '+(g.score_status==='scored'?'Under Approval':g.score_status==='scoring'?'In Progress':'Assigned'):'Assign Court',assigned:assigned,action:assigned?'':'onclick="SCSTournament.assign('+x.m.id+')"'}}),
+   completed:completed.map(function(x){var r=draw.results[x.m.id],winner=r?(r.winner===x.info.a?'left':r.winner===x.info.b?'right':null):null;if(!winner)winner=x.g&&x.g.winner==='L'?'left':x.g&&x.g.winner==='R'?'right':null;return {number:matchDisplayNumber(x.m.id),title:knockoutStageLabel(x.m)+' · Match '+matchDisplayNumber(x.m.id),left:x.info.a,right:x.info.b,leftPlayers:splitTeam(x.info.a).players,rightPlayers:splitTeam(x.info.b).players,score:scoreText(x.g)||scoreSummary({score:koScoreForMatch(x.m.id)}),winner:winner,playerRenderer:tournamentPlayerRow,action:koScoreForMatch(x.m.id)?'onclick="SCSTournament.openMatchScore('+x.m.id+')"':'',actionLabel:'View Scoreboard',cardAction:koScoreForMatch(x.m.id)?'data-ko-completed-card="'+x.m.id+'"':''}}),
    attrs:{change:n=>'onclick="SCSTournament.changeLiveCourts('+n+')"',choose:n=>'',cancel:'onclick="SCSTournament.cancelCourtSelection()"',tab:id=>'onclick="SCSTournament.liveTab(\''+id+'\')"'}
   })+'</div>';
 }
@@ -1002,9 +1031,13 @@ function switchTournamentCenterTab(name){
  if(name==='flowchart'){requestAnimationFrame(function(){applyZoom();wires();bindGestures()})}
 }
 function switchTournamentTab(name){
+ if(groupChildMode&&['flowchart','match'].indexOf(name)<0)return;
  if(name==='main'&&koMain){koShowHome();return}
  if(koHome&&koMain){if(koActiveId)koOpenEvent(koActiveId,name);else alert('Add an event first.');return}
  if(['main','players','flowchart','match'].indexOf(name)<0)return;
+ if(name==='match'&&draw&&draw.live===true&&playableTournamentMatches().length&&draw.liveTab!=='waiting'){
+  draw.liveTab='waiting';tournamentActiveTab='match';render();return;
+ }
  tournamentActiveTab=name;
  if(!root)return;
  root.querySelectorAll('[data-tm-tab]').forEach(function(button){var active=button.getAttribute('data-tm-tab')===name;button.classList.toggle('active',active);button.setAttribute('aria-selected',active?'true':'false')});
@@ -1029,7 +1062,7 @@ function organizeTournamentTabs(){
  var details=root.querySelector('.scs-tm-details');
  var old=root.querySelector('.scs-tm-organized-tabs');if(old)old.remove();
  var live=draw.live===true||readonly;
- var tabs=[['main','home'],['players','clubs'],['flowchart','tournament'],['match','match']];
+ var tabs=groupChildMode?[['flowchart','tournament'],['match','match']]:[['main','home'],['players','clubs'],['flowchart','tournament'],['match','match']];
  var bar;
  if(window.ScsApi&&ScsApi.navigation&&typeof ScsApi.navigation.bottom==='function'){
   var host=document.createElement('div');
@@ -1047,19 +1080,21 @@ function organizeTournamentTabs(){
   bar.querySelectorAll('[data-tm-nav]').forEach(function(btn){
    btn.onclick=function(){var key=btn.getAttribute('data-tm-nav');var found=tabs.find(function(t){return t[1]===key});if(found)switchTournamentTab(found[0]);};
   });
+  if(groupChildMode)bar.querySelectorAll('[data-tm-nav]').forEach(function(btn){if(!tabs.some(function(t){return t[1]===btn.getAttribute('data-tm-nav')}))btn.remove()});
  }else{
   bar=document.createElement('nav');bar.className='scs-tm-organized-tabs scs-tm-bottom-nav';bar.setAttribute('aria-label','Tournament sections');
-  [['main','Home'],['players','Teams'],['flowchart','Tournament'],['match','Match Center']].forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.textContent=item[1];btn.setAttribute('data-tm-tab',item[0]);btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
+   (groupChildMode?[['flowchart','Bracket'],['match','Match Center']]:[['main','Home'],['players','Teams'],['flowchart','Tournament'],['match','Match Center']]).forEach(function(item){var btn=document.createElement('button');btn.type='button';btn.textContent=item[1];btn.setAttribute('data-tm-tab',item[0]);btn.onclick=function(){switchTournamentTab(item[0])};bar.appendChild(btn)});
  }
  bar.querySelectorAll('[data-tm-nav]').forEach(function(btn){var key=btn.getAttribute('data-tm-nav');var found=tabs.find(function(t){return t[1]===key});if(found)btn.setAttribute('data-tm-tab',found[0]);});
  root.insertBefore(bar,root.firstChild);
+ if(groupChildMode){var backToGroup=document.createElement('button');backToGroup.type='button';backToGroup.className='scs-tm-group-back';backToGroup.textContent='‹ Group Tournament';backToGroup.onclick=close;bar.insertAdjacentElement('afterend',backToGroup)}
  function panel(name,els){var wrap=document.createElement('section');wrap.className='scs-tm-tab-panel';wrap.setAttribute('data-tm-panel',name);root.appendChild(wrap);els.forEach(function(el){if(el)wrap.appendChild(el)});return wrap}
- panel('main',[summary]);
+ if(!groupChildMode)panel('main',[summary]);
  // Knockout Teams uses the very same cards and metadata hydration as Assist Step 1.
  // Do not maintain a second, reduced roster layout.
  var playersPanel=document.createElement('div');
  playersPanel.innerHTML=tournamentPoolCard()+assistTeamsCard();
- panel('players',Array.from(playersPanel.children));
+ if(!groupChildMode)panel('players',Array.from(playersPanel.children));
  teamPanels.forEach(function(el){if(el&&el.parentNode)el.remove()});
  var fixtureList=document.createElement('div');fixtureList.innerHTML=knockoutFixtureCards();
  // Saved fixtures can be started directly from the Tournament tab; Assist is optional.
@@ -1068,7 +1103,7 @@ function organizeTournamentTabs(){
   startAction.textContent='▶ Start Tournament';startAction.onclick=function(){startSavedTournament()};
   fixtureList.insertBefore(startAction,fixtureList.firstChild);
  }
- var tournamentPanel=panel('flowchart',[workspace,hint,details,fixtureList]);
+ var tournamentPanel=panel('flowchart',groupChildMode?[summary,workspace,hint,details,fixtureList]:[workspace,hint,details,fixtureList]);
  // Reuse the existing Match Center ranking content in Tournament; no stylesheet changes.
  var koRanking=document.createElement('div');koRanking.hidden=true;koRanking.innerHTML='<div class="scs-tm-live-empty">Ranking updates from approved results.</div>';
  var koTabs=document.createElement('nav');koTabs.className='scs-tm-live-tabs';koTabs.innerHTML='<button type="button" class="active">All</button><button type="button">Ranking</button>';
@@ -1081,7 +1116,7 @@ function organizeTournamentTabs(){
  }return empty}()]);
  // Spectators reuse the live Match Center markup but cannot operate any court or match.
  if(readonly&&live){var viewPanel=root.querySelector('[data-tm-panel="match"]');if(viewPanel){viewPanel.querySelectorAll('button').forEach(function(btn){if(!btn.closest('.scs-tm-live-tabs'))btn.remove()});viewPanel.querySelectorAll('[onclick]').forEach(function(node){var call=node.getAttribute('onclick')||'';if(!/^SCSTournament\.liveTab\(/.test(call))node.removeAttribute('onclick')});}}
- if(!tabs.some(function(t){return t[0]===tournamentActiveTab}))tournamentActiveTab='main';
+ if(!tabs.some(function(t){return t[0]===tournamentActiveTab}))tournamentActiveTab=groupChildMode?'flowchart':'main';
  switchTournamentTab(tournamentActiveTab);
 }
 
@@ -1361,7 +1396,7 @@ function editPattern(){
 function renderHome(){scanImage=null;scanRecognition=null;creationScreenPinned=true;render()}
 function cancelEditor(){var e=root&&root.querySelector('.scs-tm-editor');if(e)e.remove();render()}
 
-function open(data,ro,onSave,onAssign,onClear){if(data==='new'){window.ScsApi.events.requestCreate({onCreate:function(name){koMain={id:koId(),title:name,events:[],activeEventId:null};koActiveId=null;koSaveMain();koShowHome()},onCancel:function(){if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}});return}if(!ro&&!data){if(!koReadMain()&&!localStorage.getItem(LOCAL_TOURNAMENT_KEY)){window.ScsApi.events.requestCreate({onCreate:function(name){koMain={id:koId(),title:name,events:[],activeEventId:null};koSaveMain();koShowHome()},onCancel:function(){if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}});return}koMainStart();koShowHome();return}tournamentActiveTab='main';assistStep=0;assistSaved=!!(data&&data.assistFinalized);draw=ro&&data?JSON.parse(JSON.stringify(data)):(data||(restoreAssistDraft()||init()));assistAssignmentsConfirmed=!!(assistAssignmentsConfirmed||draw.assistAssignmentsConfirmed);draw.assistAssignmentsConfirmed=assistAssignmentsConfirmed;creationScreenPinned=!data||!data.matches||!data.matches.length;bracketViewInitialized=false;bracketScrollState=null;ensure();readonly=!!ro;saveFn=onSave||localTournamentSave;assignFn=onAssign;clearFn=onClear||localTournamentClear;selected=null;zoom=1;root=document.getElementById('scsTournamentOverlay');root.hidden=false;render();observeAssistHeader()}
+function open(data,ro,onSave,onAssign,onClear){if(data==='new'){window.ScsApi.events.requestCreate({onCreate:function(name){koMain={id:koId(),title:name,events:[],activeEventId:null};koActiveId=null;koSaveMain();koShowHome()},onCancel:function(){if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}});return}if(!ro&&!data){if(!koReadMain()&&!localStorage.getItem(LOCAL_TOURNAMENT_KEY)){window.ScsApi.events.requestCreate({onCreate:function(name){koMain={id:koId(),title:name,events:[],activeEventId:null};koSaveMain();koShowHome()},onCancel:function(){if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}});return}koMainStart();koShowHome();return}groupChildMode=!!(data&&data._scsGroupEventId!=null&&data._scsGroupKnockoutStage!=null);tournamentActiveTab=groupChildMode?'flowchart':'main';assistStep=0;assistSaved=!!(data&&data.assistFinalized);draw=ro&&data?JSON.parse(JSON.stringify(data)):(data||(restoreAssistDraft()||init()));assistAssignmentsConfirmed=!!(assistAssignmentsConfirmed||draw.assistAssignmentsConfirmed);draw.assistAssignmentsConfirmed=assistAssignmentsConfirmed;creationScreenPinned=!data||!data.matches||!data.matches.length;bracketViewInitialized=false;bracketScrollState=null;ensure();readonly=!!ro;saveFn=onSave||localTournamentSave;assignFn=onAssign;clearFn=onClear||localTournamentClear;selected=null;zoom=1;root=document.getElementById('scsTournamentOverlay');root.classList.toggle('scs-tm-group-child',groupChildMode);root.hidden=false;render();observeAssistHeader()}
 
 async function clearTournament(){
   if(readonly)return;
@@ -1381,7 +1416,7 @@ async function clearTournament(){
     scanImage=null;zoom=1;render();
   }catch(e){alert(e.message||'Could not clear tournament.')}
 }
-function close(){if(assistHeaderObserver){assistHeaderObserver.disconnect();assistHeaderObserver=null}if(koMain&&draw&&draw.matches&&draw.matches.length&&!readonly)koSyncEvent(draw);saveAssistDraft();if(root)root.hidden=true;root=null;if(window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}function load(data){draw=data||init();ensure()}function select(id){if(koScoreForMatch(id)){openMatchScore(id,!readonly);return}selected=id;render()}
+function close(){if(assistHeaderObserver){assistHeaderObserver.disconnect();assistHeaderObserver=null}var wasGroupChild=groupChildMode;if(!wasGroupChild&&koMain&&draw&&draw.matches&&draw.matches.length&&!readonly)koSyncEvent(draw);if(!wasGroupChild)saveAssistDraft();if(root){root.hidden=true;root.classList.remove('scs-tm-group-child')}root=null;groupChildMode=false;if(!wasGroupChild&&window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}function load(data){draw=data||init();ensure()}function select(id){if(koScoreForMatch(id)){openMatchScore(id,!readonly);return}selected=id;render()}
 function editor(){creationScreenPinned=false;if(readonly)return;if(Object.keys(draw.results).length){alert('Approved results must be cleared before changing the draw.');return}var old=root.querySelector('.scs-tm-editor,.scs-tm-import,.scs-tm-review');if(old)old.remove();var current=draw.entries.length||8,left=draw.leftCount||Math.ceil(current/2),right=current-left;var el=document.createElement('section');el.className='scs-tm-editor';el.innerHTML='<div class="scs-tm-step">STEP 1 · SIDE ENTRIES</div><h3>Create tournament structure</h3><p class="scs-tm-editor-help">'+(scanImage?'Reference image loaded. Use the same SCS creator below; player names are ignored at this stage.':'Set the total teams. SCS splits the sides evenly and creates valid BYE positions automatically.')+'</p><div class="scs-tm-form-grid scs-tm-compact-grid"><label class="scs-tm-title-field">Tournament title<input id="tmTitle" value="'+esc(draw.title||'Tournament')+'"></label><label class="scs-tm-total-field">Total teams<input id="tmCount" type="number" min="4" max="64" value="'+current+'"></label><div class="scs-tm-side-row"><label>Left side<input id="tmLeft" type="number" min="1" value="'+left+'"></label><label>Right side<input id="tmRight" type="number" min="1" value="'+right+'"></label></div></div><p id="tmSetupStatus" class="scs-tm-note"></p><div class="scs-tm-import-actions"><button type="button" class="scs-tm-primary" id="tmNextByes" onclick="SCSTournament.setupByes()">Build Bracket</button>'+'</div>';var workspace=root.querySelector('.scs-tm-workspace');if(workspace)root.insertBefore(el,workspace);else root.appendChild(el);function update(){var n=Number(el.querySelector('#tmCount').value),l=Number(el.querySelector('#tmLeft').value),r=Number(el.querySelector('#tmRight').value),valid=Number.isInteger(n)&&n>=4&&n<=64&&Number.isInteger(l)&&l>=1&&Number.isInteger(r)&&r>=1&&l+r===n,needL=valid?firstRoundByeNeed(l):0,needR=valid?firstRoundByeNeed(r):0;el.querySelector('#tmSetupStatus').textContent=valid?'Left '+l+' · '+needL+' bye(s) · Right '+r+' · '+needR+' bye(s).':'Left + Right must equal Total teams.';el.querySelector('#tmNextByes').disabled=!valid}el.querySelector('#tmCount').addEventListener('input',function(){var n=Number(this.value);if(Number.isInteger(n)&&n>=4&&n<=64){var l=Math.ceil(n/2);el.querySelector('#tmLeft').value=l;el.querySelector('#tmRight').value=n-l}update()});['#tmLeft','#tmRight'].forEach(function(q){el.querySelector(q).addEventListener('input',update)});update()}
 function setupByes(){
   var panel=root&&root.querySelector('.scs-tm-editor');if(!panel)return;
@@ -1452,7 +1487,7 @@ function renderLiveSafe(){
   requestAnimationFrame(function(){window.scrollTo(0,y)});
 }
 function liveTab(name){if(!draw)return;draw.liveTab=name;render();}
-function approveLive(id){var g=window.SCSCourtCenter&&SCSCourtCenter.tournamentGame&&SCSCourtCenter.tournamentGame(id);if(!g)return;if(g.score_status!=='scored'){alert('Complete the score first.');return;}koCaptureMatchScore(id,g);localTournamentSave(draw);if(window.SCSCourtCenter&&SCSCourtCenter.approve)SCSCourtCenter.approve(g.ccid).then(function(){draw.liveTab='completed';localTournamentSave(draw);render();});}
+function approveLive(id){var g=window.SCSCourtCenter&&SCSCourtCenter.tournamentGame&&SCSCourtCenter.tournamentGame(id);if(!g)return;if(g.score_status!=='scored'){alert('Complete the score first.');return;}koCaptureMatchScore(id,g);localTournamentSave(draw);if(window.SCSCourtCenter&&SCSCourtCenter.approve)SCSCourtCenter.approve(g.ccid).then(function(){draw.liveTab='waiting';localTournamentSave(draw);render();});}
 function chooseCourt(n){draw.assigningCourt=Number(n)||0;draw.liveTab='waiting';render()}
 async function queueMatch(id){
  if(readonly||!draw||!draw.live||!draw.knockoutFixturesGenerated)return;
@@ -1511,13 +1546,17 @@ async function changeLiveCourts(delta){
   render();
  }catch(e){alert(e.message||'Unable to change court count.')}
 }
-function startCourtMatch(id){if(!window.SCSCourtCenter||!SCSCourtCenter.startTournamentMatch){alert('Match Center is still loading.');return}SCSCourtCenter.startTournamentMatch(id).then(function(ok){if(!ok)throw new Error('Match assignment is unavailable. Reopen Match Center and try again.');render();if(window.SCSScoring&&SCSScoring.open)SCSScoring.open();else alert('Scoring is still loading.');}).catch(function(e){alert((e&&e.message)||'Could not start this match.');})}
+function openCourtScore(id){var match=window.SCSCourtCenter&&SCSCourtCenter.scoringMatch&&SCSCourtCenter.scoringMatch(id);if(match&&window.SCSScoring&&typeof SCSScoring.openGroupMatch==='function'){SCSScoring.openGroupMatch(match);return true}alert('Scoring match is unavailable. Reopen Match Center and try again.');return false}
+function startCourtMatch(id){if(!window.SCSCourtCenter||!SCSCourtCenter.startTournamentMatch){alert('Match Center is still loading.');return}SCSCourtCenter.startTournamentMatch(id).then(function(ok){if(!ok)throw new Error('Match assignment is unavailable. Reopen Match Center and try again.');render();openCourtScore(id)}).catch(function(e){alert((e&&e.message)||'Could not start this match.');})}
 
 function approved(id,winner){var info=matchInfo(id);if(!info||winner!==info.a&&winner!==info.b)throw Error('Winner must match a team in the bracket');draw.results[id]={winner:winner,loser:winner===info.a?info.b:info.a};render()}
 window.SCSTournament={saveProgressNow:koSaveProgressNow,adoptCloudMaster:koAdoptCloudMaster,adoptCloudEvent:koAdoptCloudEvent,generateKnockoutFixtures:koGenerateFixtures,assistSaveDraft:assistSaveDraft,quickAssign:quickAssign,assistOpen:assistOpen,assistBack:assistBack,assistCloseStep:assistCloseStep,assistPatternPage:assistPatternPage,assistClearPattern:assistClearPattern,assistConfirmPage:assistConfirmPage,assistAddTeam:assistAddTeam,addNextTeam:addNextTeam,assistRemoveTeam:assistRemoveTeam,assistFinishPlayers:assistFinishPlayers,assistConfirmAssignments:assistConfirmAssignments,autoAssignTournament:autoAssignTournament,togglePool:togglePool,setBracketHeight:setBracketHeight,switchTournamentCenterTab:switchTournamentCenterTab,openPlayersManager:openPlayersManager,playersManagerReturned:playersManagerReturned,filterPlayerPool:filterPlayerPool,setPoolPlayer:setPoolPlayer,chooseCourt:chooseCourt,selectAssignmentCourt:selectAssignmentCourt,cancelCourtSelection:cancelCourtSelection,changeLiveCourts:changeLiveCourts,startCourtMatch:startCourtMatch,liveTab:liveTab,approveLive:approveLive,renderLive:renderLiveSafe,init:init,analyzeBracketImage:analyzeBracketImage,generate:generate,generateTwoSided:generateTwoSided,generateCustomTwoSided:generateCustomTwoSided,emptyBracket:emptyBracket,cleanOCR:cleanOCR,splitTeam:splitTeam,removeEntry:removeEntry,load:load,open:open,close:close,pickImage:pickImage,renderHome:renderHome,manualCreate:manualCreate,editPattern:editPattern,setupByes:setupByes,confirmByeSelection:confirmByeSelection,cancelByeSelection,nextByePattern:nextByePattern,setByePatternMode:setByePatternMode,createManualTemplate:createManualTemplate,createImageFlow:createImageFlow,backToImportedImage:backToImportedImage,buildImageFlow:buildImageFlow,select:select,openMatchScore:openMatchScore,koUpdateCompletedScore:koUpdateCompletedScore,entryTap:entryTap,undoTeamSwap:undoTeamSwap,editEntry:editEntry,closeEntryPopup:closeEntryPopup,doneEntry:doneEntry,editEntry:editEntry,saveEntry:saveEntry,fit:fit,zoomBy:zoomBy,edit:edit,editor:editor,review:review,cancelEditor:cancelEditor,scan:scan,example:example,recognize:recognize,applyScan:applyScan,saveScan:saveScan,cancelReview:cancelReview,assign:assign,queueMatch:queueMatch,approved:approved,matchInfo:matchInfo,clearTournament:clearTournament,saveTournament:saveTournament,startLive:startLive,enterSavedTournament:enterSavedTournament,startSavedTournament:startSavedTournament,setTournamentCourts:setTournamentCourts,openCourtCenter:openCourtCenter};
 window.SCSTournament.generateCustomTwoSided=generateCustomTwoSided;
 window.SCSTournament.switchTournamentTab=switchTournamentTab;
 window.SCSTournament.selectKnockoutEvent=function(id){koOpenEvent(id,'flowchart')};
+window.SCSTournament.currentDraw=function(){return draw};
+window.SCSTournament.resumeGroupCourtSession=resumeGroupCourtSession;
+window.SCSTournament.openCourtScore=openCourtScore;
 window.SCSTournament.addKnockoutEvent=koAddEvent;
 window.SCSTournament.renameKnockout=koRename;
 window.SCSTournament.showKnockoutHome=koShowHome;
