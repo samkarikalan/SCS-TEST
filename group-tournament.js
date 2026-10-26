@@ -307,6 +307,41 @@ function tournamentMatches(){
 function standings(){
  return Array.from({length:config.groups},(_,g)=>'<section class="scs-gt-standings-summary"><h4>Group '+groupLabel(g)+'</h4>'+groupResults(g).map((t,i)=>'<p>'+(i+1)+'. '+(assignments[t.id]||[]).map(escapeHTML).join(' / ')+' · W '+t.w+' · GD '+(t.gw-t.gl)+' · PD '+(t.pf-t.pa)+'</p>').join('')+'</section>').join('');
 }
+
+// Same matrix classes and bottom-sheet UI as Team Tournament; per-group fixtures.
+function groupMatrix(){
+ return '<section class="scs-team-matrix"><h3>Round-robin results matrix</h3><p>Rank: match wins → head-to-head → set difference → rally point difference. Swipe horizontally; tap a match for results.</p>'+Array.from({length:config.groups},(_,g)=>{
+  const ids=Array.from({length:config.per},(_,i)=>g+':'+i).filter(id=>Array.isArray(assignments[id])&&assignments[id].some(Boolean));
+  const rows=groupResults(g),rank=new Map(rows.map((r,i)=>[r.id,i+1]));
+  const label=id=>(assignments[id]||[]).filter(Boolean).join(' / ')||'Team '+(Number(id.split(':')[1])+1);
+  return '<h4>Group '+groupLabel(g)+'</h4><div class="scs-team-matrix-scroll"><table class="scs-team-matrix-table"><thead><tr><th class="scs-team-matrix-sticky">Team</th>'+ids.map(id=>'<th style="--matrix-accent:#395d91">'+escapeHTML(label(id))+'</th>').join('')+'<th>W–L</th><th>Sets W–L</th><th>Rally F–A</th><th>Point diff.</th><th>Rank</th></tr></thead><tbody>'+ids.map(a=>{
+   const r=rows.find(x=>x.id===a);
+   return '<tr><th class="scs-team-matrix-sticky" style="--matrix-accent:#395d91">'+escapeHTML(label(a))+'</th>'+ids.map(b=>{
+    if(a===b)return '<td class="scs-team-matrix-self">╲</td>';
+    const m=matches.find(x=>Number(x.group)===g&&((x.a===a&&x.b===b)||(x.a===b&&x.b===a)));
+    if(!m)return '<td>—</td>';
+    const done=m.status==='approved'&&['L','R'].includes(m.winner),won=done&&(m.winner==='L'?m.a:m.b)===a;
+    return '<td><button type="button" class="scs-team-matrix-cell" data-group-matrix-match="'+escapeHTML(m.id)+'"><small>'+escapeHTML(m.id)+'</small><strong>'+(done?(won?'Won':'Lost'):m.status==='pending'?'Pending':'In progress')+'</strong><span>'+(done?(won?'1–0':'0–1'):'0–0')+'</span></button></td>';
+   }).join('')+'<td>'+(r?.w||0)+'–'+(r?.l||0)+'</td><td>'+(r?.gw||0)+'–'+(r?.gl||0)+'</td><td>'+(r?.pf||0)+'–'+(r?.pa||0)+'</td><td>'+((r?.pf||0)-(r?.pa||0))+'</td><td>'+(rank.get(a)||'—')+'</td></tr>';
+  }).join('')+'</tbody></table></div>';
+ }).join('')+'</section>';
+}
+function showGroupMatrixMatch(id){
+ const m=matches.find(x=>String(x.id)===String(id)),host=el();if(!m||!host)return;
+ host.querySelector('.scs-team-matrix-overlay')?.remove();
+ const left=(assignments[m.a]||[]).join(' / '),right=(assignments[m.b]||[]).join(' / ');
+ const status=m.status==='approved'?(m.winner==='L'?left:right)+' won':m.status.replace(/_/g,' ');
+ const overlay=document.createElement('div');overlay.className='scs-team-matrix-overlay';
+ overlay.innerHTML='<div class="scs-team-matrix-backdrop" data-group-matrix-dismiss></div><section class="scs-team-matrix-bottom-sheet" role="dialog" aria-modal="true" aria-label="Match details"><div class="scs-team-matrix-sheet-head"><span class="scs-team-matrix-sheet-label"></span><button type="button" data-group-matrix-dismiss aria-label="Close">✕</button></div><div class="scs-team-matrix-sheet-content"><h3>'+escapeHTML(m.id)+' · Group '+groupLabel(m.group)+'</h3><div class="scs-team-matrix-detail-row"><strong>'+escapeHTML(left)+'</strong><span>vs</span><strong>'+escapeHTML(right)+'</strong></div><div class="scs-team-matrix-detail-row"><strong>'+escapeHTML(status)+'</strong><span>'+escapeHTML(groupCompletedScore(m)||'No score yet')+'</span></div>'+(m.status==='approved'&&m.score?'<button type="button" data-matrix-score>View Scoreboard</button>':'')+'</div></section>';
+ host.appendChild(overlay);
+ const close=()=>{overlay.remove();document.removeEventListener('keydown',onKey)};
+ const onKey=e=>{if(e.key==='Escape')close()};document.addEventListener('keydown',onKey);
+ overlay.querySelectorAll('[data-group-matrix-dismiss]').forEach(x=>x.addEventListener('click',close));
+ overlay.querySelector('[data-matrix-score]')?.addEventListener('click',()=>{if(!window.SCSScoring?.openCompleted)return;host.hidden=true;try{SCSScoring.openCompleted(m.score);close()}catch(err){host.hidden=false;console.error(err)}});
+ let y=0;const sheet=overlay.querySelector('.scs-team-matrix-bottom-sheet');sheet.addEventListener('touchstart',e=>{y=e.touches[0].clientY},{passive:true});sheet.addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-y>110&&overlay.querySelector('.scs-team-matrix-sheet-content').scrollTop===0)close()},{passive:true});
+ overlay.querySelector('[data-group-matrix-dismiss].scs-team-matrix-sheet-head button')?.focus();
+}
+
 function startMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='assigned')return;m.status='playing';m.startedAt=Date.now();save();render()}
 function scoreMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='playing')return;if(!window.SCSScoring||!SCSScoring.openGroupMatch){alert('Scoreboard is unavailable.');return}el().hidden=true;SCSScoring.openGroupMatch({sessionId:'local-group-'+id,round:1,court:m.court,pair1:assignments[m.a],pair2:assignments[m.b],courtCenter:true,groupId:id})}
 function scoreUpdate(id,score,winner){const m=matches.find(x=>x.id===id);if(!m||!['playing','score_ready'].includes(m.status))return false;m.score=score;if(winner){m.winner=winner;m.status='score_ready'}save();render();return true}
@@ -355,6 +390,7 @@ function assistDone(step){
 }
 function view(){
 if(tab==='main'&&tournamentView==='ranking')return standings();
+if(tab==='main'&&tournamentView==='matrix')return groupMatrix();
 if(tab==='main'&&tournamentView==='matches')return tournamentMatches();
 if(tab==='main')return (started?card('Group Tournament Started','<p>'+matches.length+' round-robin matches generated.</p>'):card('Start Group Tournament','<p>Assign all teams before starting.</p><button class="scs-gt-primary" data-start>Start Group Tournament</button>'))+card('Tournament Overview','<p>'+config.groups+' groups · '+config.per+' teams per group · '+config.knockouts+' knockout tournament'+(config.knockouts===1?'':'s')+'</p><p>Teams assigned: '+Object.keys(assignments).length+' / '+config.groups*config.per+'</p>')+groups()+card('Knockout qualification','<p>Top: '+config.top+' per group'+(config.knockouts===2?' · Bottom: '+config.bottom+' per group':'')+'</p><p class="scs-gt-empty">Bracket will appear after qualification is implemented in Stage 2.</p>');
 if(tab==='players')return '<div class="scs-gt-roster-page">'+players()+groupRoster()+'</div>';
@@ -375,7 +411,7 @@ if(groupHome){groupHomeRender();return;}
 const assisting=assistMode&&!started;
 let body;
 if(assisting)body=assistStep===0?assistIndex():assistView();
-else body='<header><strong>'+escapeHTML(title)+'</strong><div class="scs-team-save-actions"><button type="button" data-group-save-now '+(viewOnly?'disabled':'')+'>Save Tournament</button><button data-action="close" aria-label="Close">✕</button></div></header><div data-group-save-status role="status" aria-live="polite"></div>'+(tab==='main'?'<nav class="scs-tm-live-tabs"><button data-tournament-view="all" class="'+(tournamentView==='all'?'active':'')+'">All</button><button data-tournament-view="ranking" class="'+(tournamentView==='ranking'?'active':'')+'">Ranking</button><button data-tournament-view="matches" class="'+(tournamentView==='matches'?'active':'')+'">Matches</button></nav>':'')+((tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view();
+else body='<header><strong>'+escapeHTML(title)+'</strong><div class="scs-team-save-actions"><button type="button" data-group-save-now '+(viewOnly?'disabled':'')+'>Save Tournament</button><button data-action="close" aria-label="Close">✕</button></div></header><div data-group-save-status role="status" aria-live="polite"></div>'+(tab==='main'?'<nav class="scs-tm-live-tabs"><button data-tournament-view="all" class="'+(tournamentView==='all'?'active':'')+'">All</button><button data-tournament-view="ranking" class="'+(tournamentView==='ranking'?'active':'')+'">Ranking</button><button data-tournament-view="matrix" class="'+(tournamentView==='matrix'?'active':'')+'">Matrix</button><button data-tournament-view="matches" class="'+(tournamentView==='matches'?'active':'')+'">Matches</button></nav>':'')+((tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view();
 el().innerHTML='<div class="scs-gt-sheet'+(!assisting&&tab==='main'&&tournamentView==='matches'?' scs-ko-generated-fixtures scs-gt-matches-page':'')+'" role="dialog" aria-modal="true">'+body+'</div>'+tournamentBottomNav(assisting);
 el().querySelector('[data-group-save-now]')?.addEventListener('click',saveGroupTournamentNow);
 const closeButton=el().querySelector('[data-action="close"]');if(closeButton)closeButton.onclick=close;
@@ -400,6 +436,7 @@ let start=el().querySelector('[data-start]');if(start)start.onclick=startTournam
  el().querySelectorAll('[data-approve]').forEach(x=>x.onclick=()=>approveMatch(x.dataset.approve));
  
  el().querySelectorAll('[data-courts]').forEach(x=>x.onclick=()=>{courtCount=Math.max(1,Math.min(32,courtCount+Number(x.dataset.courts),...matches.filter(m=>m.court).map(m=>m.court)));save();render()});
+ el().querySelectorAll('[data-group-matrix-match]').forEach(x=>x.addEventListener('click',()=>showGroupMatrixMatch(x.dataset.groupMatrixMatch)));
  el().querySelectorAll('[data-tournament-view]').forEach(x=>x.onclick=()=>{tournamentView=x.dataset.tournamentView;render()});
 el().querySelectorAll('[data-match-tab]').forEach(x=>x.onclick=()=>{matchTab=x.dataset.matchTab;render()});
  el().querySelectorAll('[data-choose-court]').forEach(x=>x.onclick=()=>{const n=Number(x.dataset.chooseCourt),m=matches.find(y=>y.id===assigningMatch);if(!m||m.court||teamBusy(m.a)||teamBusy(m.b))return;const occupant=matches.find(y=>y.court===n);if(occupant){if(occupant.status!=='assigned'){alert('This court has a started match.');return}if(!confirm('Replace '+occupant.id+' on Court '+n+'?'))return;occupant.court=null;occupant.status='pending';occupant.assignedOrder=0;}m.court=n;m.status='assigned';m.assignedOrder=++assignmentSerial;assigningMatch=null;save();render()});
