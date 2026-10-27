@@ -55,7 +55,14 @@ function koEventResultsSummary(events){return '<section class="scs-ko-event-resu
  return '<div class="scs-ko-result-row"><strong>'+esc(e.title||'Event')+'</strong><span>'+(d&&d.status==='completed'?'✓ Completed':f?'Final played · Awaiting completion':'Result pending')+'</span><p>🏆 Winner: '+esc(f?f.winner:'Pending')+'</p><p>🥈 Runner-up: '+esc(f?f.runner:'Pending')+'</p></div>';
 }).join('')+'</section>';}
 
-function localTournamentSave(d){try{koUpdateCompletion(d);preserveTeamPlayerDetails(d);if(d&&d._scsGroupEventId!=null&&d._scsGroupKnockoutStage!=null){localStorage.setItem('scs_group_knockout_'+d._scsGroupEventId+'_'+d._scsGroupKnockoutStage,JSON.stringify(d));return Promise.resolve(d)}if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
+function localTournamentSave(d){try{koUpdateCompletion(d);preserveTeamPlayerDetails(d);if(d&&d._scsGroupEventId!=null&&d._scsGroupKnockoutStage!=null){localStorage.setItem('scs_group_knockout_'+d._scsGroupEventId+'_'+d._scsGroupKnockoutStage,JSON.stringify(d));
+  // Store the qualified bracket as a child knockout event, never as a new tournament.
+  if(d._scsParentTournamentId){
+   d._scsSourceEventKey=String(d._scsGroupEventId);
+   d._scsClientTournamentId=d._scsClientTournamentId||String(d._scsGroupEventId)+'-knockout-'+d._scsGroupKnockoutStage;
+   if(window.SCSTournamentStore)window.SCSTournamentStore.queue('knockout',d);
+  }
+  return Promise.resolve(d)}if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
 async function koSaveCloudNow(d){
  preserveTeamPlayerDetails(d);
  if(d&&d._scsGroupEventId!=null&&d._scsGroupKnockoutStage!=null)return 'group-child';

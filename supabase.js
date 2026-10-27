@@ -187,11 +187,53 @@ function _scsTournamentStatus(format, state) {
   return state && state.live === true ? 'live' : 'draft';
 }
 
+// V439: parent tournaments and child events use separate tables. Existing legacy
+// tournament rows remain readable; no automatic migration or deletion occurs.
+function _scsEventParent(state){return state._scsParentTournamentId||state._scsTeamMainId||state._scsKoMainId||null}
+function _scsEventKey(format,state){return String(state._scsGroupKnockoutStage!=null?state._scsClientTournamentId:(state._scsKoEventId||state._scsGroupEventId||state._scsClientTournamentId||''))}
+function _scsEventStage(format,state){return state._scsGroupKnockoutStage!=null?'knockout':format}
+function _scsMainLocalKey(format){return format==='group'?'scs_group_multi_event_v1':format==='team'?'scs_team_main_tournament_v1':'scs_knockout_multi_event_v1'}
+async function _scsSaveEvent(format,state,club,key){
+ const parentClient=String(_scsEventParent(state));
+ let parents=await sbGet('tournaments',`club_id=eq.${encodeURIComponent(club.id)}&state->>_scsClientTournamentId=eq.${encodeURIComponent(parentClient)}&limit=1&select=id,state`).catch(()=>[]);
+ if(!parents.length){
+  let main=null;for(const family of [format,'group']){try{main=JSON.parse(localStorage.getItem(_scsMainLocalKey(family))||'null')}catch(_){}if(main&&String(main._scsClientTournamentId||main.id)===parentClient)break;main=null;}
+  if(main&&String(main._scsClientTournamentId||main.id)===parentClient&&main._scsMainTournament){
+   await dbSaveTournamentState(format,main);
+   parents=await sbGet('tournaments',`club_id=eq.${encodeURIComponent(club.id)}&state->>_scsClientTournamentId=eq.${encodeURIComponent(parentClient)}&limit=1&select=id,state`);
+  }
+ }
+ if(!parents.length)throw Error('Parent tournament must be saved before its event.');
+ const parent=parents[0];
+ const eventKey=_scsEventKey(format,state);
+ const status=_scsTournamentStatus(format,state),now=new Date().toISOString();
+ const stage=_scsEventStage(format,state);
+ const payload={tournament_id:parent.id,event_key:eventKey,title:String(state.title||'Event').slice(0,120),format:stage,status,
+  stage_kind:stage,num_courts:Math.max(1,Number(state.courtCount||state.numCourts)||1),state,updated_at:now,
+  source_event_id:null,qualification_data:{}};
+ // The group-to-knockout link is preserved in the event state. A concrete
+ // source_event_id is attached only when a valid parent event row exists.
+ if(state._scsSourceEventKey){
+  const source=await sbGet('tournament_events',`tournament_id=eq.${parent.id}&event_key=eq.${encodeURIComponent(state._scsSourceEventKey)}&select=id&limit=1`);
+  if(source[0])payload.source_event_id=source[0].id;
+ }
+ if(status==='live')payload.started_at=state.startedAt||state.started_at||now;
+ if(status==='completed')payload.completed_at=state.completedAt||state.completed_at||now;
+ const rows=await sbUpsert('tournament_events',payload,'tournament_id,event_key');
+ let id=rows?.[0]?.id;
+ if(!id){const found=await sbGet('tournament_events',`tournament_id=eq.${parent.id}&event_key=eq.${encodeURIComponent(eventKey)}&select=id&limit=1`);id=found?.[0]?.id;}
+ if(!id)throw Error('Event save returned no ID.');
+ state._scsCloudTournamentId=id;
+ _scsTournamentServerIds.set(key,id);
+ _scsTournamentLocalIdentity(format,state,id);
+ return id;
+}
 async function _scsSaveTournamentOnce(format, state) {
   const club=getMyClub();
   if (!club?.id) return null;
   const user=typeof authGetUser==='function'?authGetUser():null;
   const key=_scsTournamentSaveKey(club.id,format,state);
+  if(_scsEventParent(state)&&!state._scsMainTournament)return _scsSaveEvent(format,state,club,key);
   const idKey=_scsTournamentCloudIdKey(club.id,format);
   let id=state._scsCloudTournamentId||_scsTournamentServerIds.get(key)||'';
   // Queue saves work with cloned snapshots, so a cloud ID assigned to one
@@ -341,6 +383,13 @@ async function dbLoadTournamentById(id) {
   ).catch(() => []);
   const row = rows && rows[0];
   if (!row || !row.state || Number(row.state_version || 1) > SCS_TOURNAMENT_STATE_VERSION) return null;
+  if(row.format==='team'&&row.state._scsMainTournament){
+    const events=await sbGet('tournament_events',`tournament_id=eq.${row.id}&select=id,event_key,state`).catch(()=>[]);
+    const wanted=new Set((row.state.events||[]).map(e=>String(e.id)));
+    const eventStates=events.filter(e=>wanted.has(String(e.event_key))).map(e=>({...e.state,_scsCloudTournamentId:e.id}));
+    eventStates.forEach(e=>localStorage.setItem('scs_team_event_'+e._scsClientTournamentId,JSON.stringify(e)));
+    return {...row,_scsEventStates:eventStates};
+  }
   if(row.format==='knockout'&&row.state._scsMainTournament){
     const family=await dbLoadKnockoutTournamentFamily(row.state._scsClientTournamentId||row.state.id);
     if(family)return family;
@@ -368,10 +417,12 @@ async function dbLoadKnockoutTournamentFamily(masterId) {
   const master=JSON.parse(JSON.stringify(masterRow.state));
   master._scsCloudTournamentId=masterRow.id;
   const wanted=new Set((Array.isArray(master.events)?master.events:[]).map(event=>String(event.id)));
+  const eventRows=await sbGet('tournament_events',`tournament_id=eq.${masterRow.id}&select=id,event_key,state`).catch(()=>[]);
   const eventStates=[];
   for(const event of (master.events||[])){
     const eventId=String(event.id);
-    const child=rows.find(row=>{
+    const savedEvent=eventRows.find(row=>String(row.event_key)===eventId);
+    const child=savedEvent||rows.find(row=>{
       const state=row.state||{};
       if(state._scsMainTournament)return false;
       const parent=state._scsParentTournamentId||state._scsKoMainId||'';
@@ -404,10 +455,12 @@ async function dbLoadGroupTournamentFamily(masterId) {
   const master=JSON.parse(JSON.stringify(masterRow.state));
   master._scsCloudTournamentId=masterRow.id;
   const wanted=new Set((Array.isArray(master.events)?master.events:[]).map(event=>String(event.id)));
+  const eventRows=await sbGet('tournament_events',`tournament_id=eq.${masterRow.id}&select=id,event_key,state`).catch(()=>[]);
   const eventStates=[];
   for(const event of (master.events||[])){
     const eventId=String(event.id);
-    const child=rows.find(row=>{
+    const savedEvent=eventRows.find(row=>String(row.event_key)===eventId);
+    const child=savedEvent||rows.find(row=>{
       const childState=row.state||{};
       if(childState._scsMainTournament)return false;
       const parent=childState._scsParentTournamentId||'';

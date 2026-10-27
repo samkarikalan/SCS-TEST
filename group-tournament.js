@@ -32,6 +32,7 @@ function groupKnockoutOpen(stage){
  if(!groupKnockoutReady(data)){alert('Complete and approve every group match first.');return}
  const key='scs_group_knockout_'+id+'_'+stage;
  let saved=JSON.parse(localStorage.getItem(key)||'null');
+ if(saved){saved._scsParentTournamentId=groupMain._scsClientTournamentId||groupMain.id;saved._scsSourceEventKey=id;saved._scsClientTournamentId=id+'-knockout-'+stage;}
  if(!saved){
   const teams=groupKnockoutCandidates(data,stage);
   if(teams.length<4||teams.length>64){alert('Knockout bracket requires 4 to 64 qualified teams.');return}
@@ -41,6 +42,9 @@ function groupKnockoutOpen(stage){
   saved.entries.forEach((e,i)=>{e.playerDetails=teams[i].details;e.groupSource=teams[i].id;e.groupRank=teams[i].rank});
   saved.selectedPlayerDetails=teams.flatMap(t=>t.details);
   saved._scsGroupEventId=id;saved._scsGroupKnockoutStage=stage;
+  saved._scsParentTournamentId=groupMain._scsClientTournamentId||groupMain.id;
+  saved._scsSourceEventKey=id;
+  saved._scsClientTournamentId=id+'-knockout-'+stage;
   saved.assistAssignmentsConfirmed=true;saved.knockoutFixturesGenerated=true;saved.assistFinalized=true;
   // Group qualifiers have already completed team assignment and bracket creation.
   // Enter the proven Knockout pre-start assistant, not the unstarted court cards.
