@@ -650,3 +650,5 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 /* V430: existing child selector must stack above the knockout page controls. */
 #scsTournamentOverlay .scs-api-player-selector{z-index:100100!important}
 #scsTournamentOverlay:has(.scs-api-player-selector) .scs-tm-bottom-nav{visibility:hidden}
+
+.scs-ko-champion{margin:12px 16px;padding:20px;border:1px solid #5fae8c;border-radius:16px;background:#173c35;color:#e9fff4;text-align:center}.scs-ko-champion strong{color:#8fe5b5;font-size:1.15rem}.scs-ko-champion h3{margin:12px 0 6px}.scs-ko-champion p{font-size:1.15rem;font-weight:700;overflow-wrap:anywhere}
