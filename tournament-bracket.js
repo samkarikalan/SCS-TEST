@@ -1521,7 +1521,28 @@ function renderLiveSafe(){
   requestAnimationFrame(function(){window.scrollTo(0,y)});
 }
 function liveTab(name){if(!draw)return;draw.liveTab=name;render();}
-function approveLive(id){var g=window.SCSCourtCenter&&SCSCourtCenter.tournamentGame&&SCSCourtCenter.tournamentGame(id);if(!g)return;if(g.score_status!=='scored'){alert('Complete the score first.');return;}koCaptureMatchScore(id,g);localTournamentSave(draw);if(window.SCSCourtCenter&&SCSCourtCenter.approve)SCSCourtCenter.approve(g.ccid).then(function(){draw.liveTab='waiting';localTournamentSave(draw);render();});}
+async function approveLive(id){
+ var g=window.SCSCourtCenter&&SCSCourtCenter.tournamentGame&&SCSCourtCenter.tournamentGame(id);
+ if(!g)return;
+ if(g.score_status!=='scored'){alert('Complete the score first.');return;}
+ if(!window.SCSCourtCenter||typeof SCSCourtCenter.approve!=='function')return;
+ var info=matchInfo(id),winnerSide=g.winner;
+ if(!info||!info.a||!info.b||(winnerSide!=='L'&&winnerSide!=='R')){alert('The match winner is not available for approval.');return;}
+ // Do not publish an approved bracket result until Court Center confirms approval.
+ try{
+  await SCSCourtCenter.approve(g.ccid);
+  var approvedGame=SCSCourtCenter.tournamentGame&&SCSCourtCenter.tournamentGame(id);
+  if(!approvedGame||approvedGame.court_center_status!=='approved')throw new Error('Match approval was not confirmed.');
+  koCaptureMatchScore(id,approvedGame);
+  if(!draw.results)draw.results={};
+  var winningTeam=winnerSide==='L'?info.a:info.b;
+  draw.results[id]={winner:winningTeam,loser:winnerSide==='L'?info.b:info.a};
+  draw.live=true;
+  draw.liveTab='waiting';
+  await localTournamentSave(draw);
+  render();
+ }catch(e){alert(e&&e.message||'Could not save approved match result.');}
+}
 function chooseCourt(n){draw.assigningCourt=Number(n)||0;draw.liveTab='waiting';render()}
 async function queueMatch(id){
  if(readonly||!draw||!draw.live||!draw.knockoutFixturesGenerated)return;

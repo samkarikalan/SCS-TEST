@@ -1,5 +1,1 @@
-{
-  "version": "V436",
-  "build": "2026-10-27",
-  "scope": "Event-specific started state: hide start/edit; show court assignment cards"
-}
+{"version":"V437","build":"2026-10-27","scope":"Persist approved event winner and loser to bracket results after Court Center approval"}
