@@ -666,3 +666,16 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 /* V441: reuse existing SCS winner cup asset in completed event card. */
 .scs-ko-completed-event-result:has(.scs-ko-completed-winner-cup){display:flex;align-items:center;gap:8px}
 .scs-ko-completed-winner-cup{width:28px;height:28px;object-fit:contain;flex:none}
+
+/* V443: immersive bracket viewer. Keeps the existing chart and zoom/pan handlers. */
+.scs-bracket-view-controls{display:flex;gap:6px;align-items:center;margin-left:auto}
+.scs-bracket-view-controls button{min-width:42px;min-height:42px;padding:6px 10px;font-size:22px;line-height:1}
+.scs-bracket-view-controls button[aria-pressed="true"]{border-color:#7de5ba;background:#245d53}
+.scs-bracket-view-controls .scs-bracket-exit{display:none}
+.scs-tm-bracket-shell.scs-bracket-immersive{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;z-index:110100!important;background:#101725!important;padding:calc(8px + env(safe-area-inset-top)) 8px calc(8px + env(safe-area-inset-bottom))!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;border-radius:0!important}
+.scs-bracket-immersive .scs-tm-zoom-bar{flex:0 0 auto!important;display:flex!important}
+.scs-bracket-immersive .scs-tm-scroll,.scs-tm-workspace[data-live-tournament="true"] .scs-bracket-immersive .scs-tm-scroll{height:auto!important;min-height:0!important;flex:1 1 auto!important;margin:0!important}
+.scs-bracket-immersive .scs-tm-height-control,.scs-bracket-immersive .scs-tm-gesture-hint{display:none!important}
+.scs-bracket-immersive .scs-bracket-exit{display:inline-flex!important;align-items:center;justify-content:center}
+.scs-bracket-landscape{inset:auto!important;top:0!important;left:100vw!important;width:100dvh!important;height:100vw!important;transform:rotate(90deg)!important;transform-origin:top left!important;padding:8px!important}
+@media(max-width:600px){.scs-bracket-immersive .scs-tm-zoom-bar{gap:4px}.scs-bracket-immersive .scs-tm-zoom-bar button{min-width:36px;min-height:38px;padding:5px 8px}.scs-bracket-immersive .scs-bracket-view-controls{gap:3px}}
