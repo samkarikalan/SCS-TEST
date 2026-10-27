@@ -679,3 +679,17 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 .scs-bracket-immersive .scs-bracket-exit{display:inline-flex!important;align-items:center;justify-content:center}
 .scs-bracket-landscape{inset:auto!important;top:0!important;left:100vw!important;width:100dvh!important;height:100vw!important;transform:rotate(90deg)!important;transform-origin:top left!important;padding:8px!important}
 @media(max-width:600px){.scs-bracket-immersive .scs-tm-zoom-bar{gap:4px}.scs-bracket-immersive .scs-tm-zoom-bar button{min-width:36px;min-height:38px;padding:5px 8px}.scs-bracket-immersive .scs-bracket-view-controls{gap:3px}}
+
+/* V444: selected match popup */
+.scs-ko-match-overlay{position:fixed;inset:0;z-index:120000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+.scs-ko-match-dialog{background:#1b2a42;color:#f4f7ff;border:1px solid #6582a8;border-radius:18px;padding:20px;width:min(100%,460px);max-height:85dvh;overflow:auto;box-shadow:0 20px 60px #0008}
+.scs-ko-match-dialog-head{display:flex;align-items:start;justify-content:space-between;gap:12px}
+.scs-ko-match-dialog-head strong{display:block;font-size:1.15rem}
+.scs-ko-match-dialog-head small,.scs-ko-match-dialog-teams small{display:block;color:#b6c9e1;margin-top:6px}
+.scs-ko-match-dialog-head button{border:1px solid #6484b3;border-radius:10px;background:#29456a;color:white;min-width:42px;min-height:42px}
+.scs-ko-match-dialog-teams{display:grid;gap:10px;margin:20px 0}
+.scs-ko-match-dialog-teams>div{background:#243c5b;border-radius:10px;padding:14px;overflow-wrap:anywhere}
+.scs-ko-match-dialog-teams strong{display:block;margin-top:6px}
+.scs-ko-match-dialog-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.scs-ko-match-dialog-actions button{background:#3269c4;color:white;border:1px solid #78a5ef;border-radius:10px;padding:12px 16px;font-weight:600}
+.scs-ko-match-dialog-actions p{width:100%;margin:4px 0}

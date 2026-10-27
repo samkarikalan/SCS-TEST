@@ -1196,7 +1196,7 @@ function organizeTournamentTabs(){
  playersPanel.innerHTML=tournamentPoolCard()+assistTeamsCard();
  if(!groupChildMode)panel('players',Array.from(playersPanel.children));
  teamPanels.forEach(function(el){if(el&&el.parentNode)el.remove()});
- var fixtureList=document.createElement('div');fixtureList.innerHTML=knockoutFixtureCards();
+ var fixtureList=document.createElement('div'); // Match details now open from numbered bracket junctions.
  // Tournament start is available only from the event's Assist step.
  var tournamentPanel=panel('flowchart',groupChildMode?[summary,workspace,hint,details,fixtureList]:[workspace,hint,details,fixtureList]);
  // Reuse the existing Match Center ranking content in Tournament; no stylesheet changes.
@@ -1457,7 +1457,7 @@ function scsBracketViewer(mode){
  if(controls){controls.querySelectorAll('[data-bracket-mode]').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-bracket-mode')===scsBracketViewerMode))});}
  requestAnimationFrame(function(){requestAnimationFrame(fit)});
 }
-function scsBracketViewerCleanup(){document.body.classList.remove('scs-bracket-viewing');scsBracketViewerMode='normal'}
+function scsBracketViewerCleanup(){closeBracketMatchPopup();document.body.classList.remove('scs-bracket-viewing');scsBracketViewerMode='normal'}
 function arrangeBracketControls(){
  if(!root)return;
  var main=root.querySelector('.scs-tm-main'),scroll=main&&main.querySelector('#scsTmScroll'),toolbar=main&&main.querySelector('.scs-tm-zoom-bar');
@@ -1531,7 +1531,56 @@ async function clearTournament(){
     scanImage=null;zoom=1;render();
   }catch(e){alert(e.message||'Could not clear tournament.')}
 }
-function close(){if(assistHeaderObserver){assistHeaderObserver.disconnect();assistHeaderObserver=null}var wasGroupChild=groupChildMode;if(!wasGroupChild&&koMain&&draw&&draw.matches&&draw.matches.length&&!readonly)koSyncEvent(draw);if(!wasGroupChild)saveAssistDraft();if(root){root.hidden=true;root.classList.remove('scs-tm-group-child')}root=null;groupChildMode=false;if(!wasGroupChild&&window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}function load(data){draw=data||init();ensure();if(!readonly&&draw&&koEventIsComplete(draw))koUpdateCompletion(draw)}function select(id){if(koScoreForMatch(id)){openMatchScore(id,!readonly);return}selected=id;render()}
+function close(){if(assistHeaderObserver){assistHeaderObserver.disconnect();assistHeaderObserver=null}var wasGroupChild=groupChildMode;if(!wasGroupChild&&koMain&&draw&&draw.matches&&draw.matches.length&&!readonly)koSyncEvent(draw);if(!wasGroupChild)saveAssistDraft();if(root){root.hidden=true;root.classList.remove('scs-tm-group-child')}root=null;groupChildMode=false;if(!wasGroupChild&&window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}function load(data){draw=data||init();ensure();if(!readonly&&draw&&koEventIsComplete(draw))koUpdateCompletion(draw)}function closeBracketMatchPopup(){
+ var popup=document.getElementById('scsKoMatchPopup');
+ if(popup)popup.remove();
+ selected=null;
+}
+function select(id){
+ if(!getMatch(id))return;
+ var old=document.getElementById('scsKoMatchPopup');
+ if(old&&Number(old.getAttribute('data-match-id'))===Number(id)){closeBracketMatchPopup();return}
+ if(old)old.remove();
+ selected=Number(id);
+ var m=getMatch(id),info=matchInfo(id),r=(draw.results||{})[id],
+  game=window.SCSCourtCenter&&SCSCourtCenter.tournamentGame&&SCSCourtCenter.tournamentGame(id),
+  score=koScoreForMatch(id),complete=!!r,assigned=!!(game&&game.court);
+ var overlay=document.createElement('div');
+ overlay.id='scsKoMatchPopup';overlay.className='scs-ko-match-overlay';
+ overlay.setAttribute('data-match-id',String(id));
+ overlay.setAttribute('role','presentation');
+ overlay.onclick=function(e){if(e.target===overlay)closeBracketMatchPopup()};
+ var card=document.createElement('section');card.className='scs-ko-match-dialog';
+ card.setAttribute('role','dialog');card.setAttribute('aria-modal','true');
+ card.setAttribute('aria-label','Match '+matchDisplayNumber(id));
+ var heading=document.createElement('div');heading.className='scs-ko-match-dialog-head';
+ heading.innerHTML='<div><strong>'+esc(knockoutStageLabel(m))+' · Match '+matchDisplayNumber(id)+'</strong><small>'+esc(complete?'Completed':assigned?'Court '+game.court:'Waiting for court')+'</small></div><button type="button" aria-label="Close match details">✕</button>';
+ heading.querySelector('button').onclick=closeBracketMatchPopup;card.appendChild(heading);
+ var teams=document.createElement('div');teams.className='scs-ko-match-dialog-teams';
+ var left=document.createElement('div'),right=document.createElement('div');
+ left.innerHTML='<small>Team 1</small><strong>'+esc(info.a)+'</strong>';
+ right.innerHTML='<small>Team 2</small><strong>'+esc(info.b)+'</strong>';
+ teams.appendChild(left);teams.appendChild(right);card.appendChild(teams);
+ var actions=document.createElement('div');actions.className='scs-ko-match-dialog-actions';
+ if(complete){
+  var winner=document.createElement('p');winner.textContent='Winner: '+(r.winner||'Result recorded');actions.appendChild(winner);
+ }
+ if(score){
+  var view=document.createElement('button');view.type='button';view.textContent='View Scoreboard';
+  view.onclick=function(){closeBracketMatchPopup();openMatchScore(id,!readonly&&complete)};
+  actions.appendChild(view);
+ }
+ if(!readonly&&!complete&&tournamentStarted()&&!assigned){
+  var ready=info.a&&info.b&&!/^(Winner|Loser) of |^Entry \\d+$/.test(info.a)&&!/^(Winner|Loser) of |^Entry \\d+$/.test(info.b);
+  if(ready){var assignBtn=document.createElement('button');assignBtn.type='button';assignBtn.textContent='Assign to Court';assignBtn.onclick=function(){closeBracketMatchPopup();assign(id)};actions.appendChild(assignBtn)}
+  else{var note=document.createElement('p');note.textContent='Waiting for both teams to qualify.';actions.appendChild(note)}
+ }else if(assigned&&!complete){
+  var status=document.createElement('p');status.textContent='Assigned to Court '+game.court;actions.appendChild(status);
+ }
+ card.appendChild(actions);overlay.appendChild(card);document.body.appendChild(overlay);
+ heading.querySelector('button').focus();
+}
+
 function editor(){creationScreenPinned=false;if(readonly)return;if(Object.keys(draw.results).length){alert('Approved results must be cleared before changing the draw.');return}var old=root.querySelector('.scs-tm-editor,.scs-tm-import,.scs-tm-review');if(old)old.remove();var current=draw.entries.length||8,left=draw.leftCount||Math.ceil(current/2),right=current-left;var el=document.createElement('section');el.className='scs-tm-editor';el.innerHTML='<div class="scs-tm-step">STEP 1 · SIDE ENTRIES</div><h3>Create tournament structure</h3><p class="scs-tm-editor-help">'+(scanImage?'Reference image loaded. Use the same SCS creator below; player names are ignored at this stage.':'Set the total teams. SCS splits the sides evenly and creates valid BYE positions automatically.')+'</p><div class="scs-tm-form-grid scs-tm-compact-grid"><label class="scs-tm-title-field">Tournament title<input id="tmTitle" value="'+esc(draw.title||'Tournament')+'"></label><label class="scs-tm-total-field">Total teams<input id="tmCount" type="number" min="4" max="64" value="'+current+'"></label><div class="scs-tm-side-row"><label>Left side<input id="tmLeft" type="number" min="1" value="'+left+'"></label><label>Right side<input id="tmRight" type="number" min="1" value="'+right+'"></label></div></div><p id="tmSetupStatus" class="scs-tm-note"></p><div class="scs-tm-import-actions"><button type="button" class="scs-tm-primary" id="tmNextByes" onclick="SCSTournament.setupByes()">Build Bracket</button>'+'</div>';var workspace=root.querySelector('.scs-tm-workspace');if(workspace)root.insertBefore(el,workspace);else root.appendChild(el);function update(){var n=Number(el.querySelector('#tmCount').value),l=Number(el.querySelector('#tmLeft').value),r=Number(el.querySelector('#tmRight').value),valid=Number.isInteger(n)&&n>=4&&n<=64&&Number.isInteger(l)&&l>=1&&Number.isInteger(r)&&r>=1&&l+r===n,needL=valid?firstRoundByeNeed(l):0,needR=valid?firstRoundByeNeed(r):0;el.querySelector('#tmSetupStatus').textContent=valid?'Left '+l+' · '+needL+' bye(s) · Right '+r+' · '+needR+' bye(s).':'Left + Right must equal Total teams.';el.querySelector('#tmNextByes').disabled=!valid}el.querySelector('#tmCount').addEventListener('input',function(){var n=Number(this.value);if(Number.isInteger(n)&&n>=4&&n<=64){var l=Math.ceil(n/2);el.querySelector('#tmLeft').value=l;el.querySelector('#tmRight').value=n-l}update()});['#tmLeft','#tmRight'].forEach(function(q){el.querySelector(q).addEventListener('input',update)});update()}
 function setupByes(){
   var panel=root&&root.querySelector('.scs-tm-editor');if(!panel)return;
