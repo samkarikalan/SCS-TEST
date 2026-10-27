@@ -658,3 +658,7 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 
 /* V434: event results and explicit completion confirmation */
 .scs-ko-event-results{padding:12px 16px;margin:12px 0}.scs-ko-event-results h3{margin:0 0 10px}.scs-ko-result-row{padding:12px;margin:8px 0;border:1px solid var(--border,#7b8790);border-radius:12px}.scs-ko-result-row span{display:block;font-size:.85rem;opacity:.85}.scs-ko-result-row p{margin:6px 0 0;overflow-wrap:anywhere}.scs-ko-champion button{margin-top:12px;padding:12px 16px;border-radius:10px;cursor:pointer}
+
+/* V440: completed knockout event results replace its overview, not a second results card. */
+.scs-team-event-details .scs-ko-completed-event-status{color:#76dcb1;display:block}
+.scs-team-event-details .scs-ko-completed-event-result{display:block;overflow-wrap:anywhere;line-height:1.4;margin-top:4px}

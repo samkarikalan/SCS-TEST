@@ -120,8 +120,23 @@ function koHomeRender(){
  var events=(koMain.events||[]).map(function(e){var saved=koEventLoad(e.id),finished=koCompletion(saved);return Object.assign({},e,{status:saved&&saved.status==='completed'?'completed':'active',champion:finished?finished.winner:e.champion,clubs:e.clubs||Array.from({length:Number(e.teams)||0},function(_,i){return 'Team '+(i+1)})})});
  window.ScsApi.events.mountHome(root,{title:koMain.title||'Knockout Tournament',events:events,activeEventId:koActiveId,viewOnly:readonly,navAttribute:'data-ko-nav',ariaLabel:'Knockout tournament sections'});
  root.querySelector('[data-close]').onclick=close;
- root.insertAdjacentHTML('beforeend',koEventResultsSummary(koMain.events));
- root.querySelectorAll('[data-open-event]').forEach(function(b){b.onclick=function(){koOpenEvent(b.dataset.openEvent,'flowchart')}});root.querySelectorAll('[data-open-event]').forEach(function(b){var state=koEventLoad(b.dataset.openEvent),finished=koCompletion(state);if(!finished)return;var detail=b.querySelector('.scs-ko-event-detail')||b;var mark=document.createElement('div');mark.className='scs-ko-completed-event-mark';mark.textContent=(state&&state.status==='completed'?'🏆 Tournament Completed ✓':'Final played · Awaiting completion')+' · Winner: '+finished.winner+' · Runner-up: '+koFinalStanding(state).runner;detail.appendChild(mark)});
+ root.querySelectorAll('[data-open-event]').forEach(function(b){b.onclick=function(){koOpenEvent(b.dataset.openEvent,'flowchart')}});root.querySelectorAll('[data-open-event]').forEach(function(b){
+  var state=koEventLoad(b.dataset.openEvent);
+  // Only organizer-approved completion replaces the event overview. A played final
+  // alone still requires approval and must retain the normal progress display.
+  if(!state||state.status!=='completed')return;
+  var standing=koFinalStanding(state);
+  if(!standing)return;
+  var detail=b.querySelector('.scs-team-event-details')||b.querySelector('.scs-ko-event-detail');
+  if(!detail)return;
+  detail.replaceChildren();
+  var status=document.createElement('strong');status.className='scs-ko-completed-event-status';status.textContent='✓ Completed';detail.appendChild(status);
+  [['🏆 Winner',standing.winner],['🥈 Runner-up',standing.runner]].forEach(function(pair){
+   var line=document.createElement('span');line.className='scs-ko-completed-event-result';
+   line.textContent=pair[0]+': '+pair[1];detail.appendChild(line);
+  });
+  var progress=document.createElement('small');progress.textContent=(state.entries||[]).length+' teams · '+Object.keys(state.results||{}).length+' / '+(state.matches||[]).length+' matches completed';detail.appendChild(progress);
+ });
  var add=root.querySelector('[data-add-event]');if(add)add.onclick=koAddEvent;
  var rename=root.querySelector('[data-ko-rename]');if(rename)rename.onclick=koRename;
  if(!readonly){
