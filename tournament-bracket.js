@@ -1518,17 +1518,8 @@ function select(id){
   card.removeAttribute('onclick');card.removeAttribute('onkeydown');card.removeAttribute('tabindex');
   dialog.appendChild(card);
  }
- var actions=document.createElement('div');actions.className='scs-ko-selected-actions';
- if(score){var scoreBtn=document.createElement('button');scoreBtn.type='button';scoreBtn.textContent='View Scoreboard';
-  scoreBtn.onclick=function(){closeMatchPopup();openMatchScore(id,!readonly&&!!result)};actions.appendChild(scoreBtn)}
- var ready=info.a&&info.b&&!/^(Winner|Loser) of |^Entry \d+$/.test(info.a)&&!/^(Winner|Loser) of |^Entry \d+$/.test(info.b);
- if(!readonly&&!result&&!game?.court&&ready&&tournamentStarted()){
-  // Use the existing court assignment dialog; no duplicate assignment UI.
-  var assignBtn=document.createElement('button');assignBtn.type='button';assignBtn.className='scs-ko-selected-assign';
-  assignBtn.textContent='Assign to Court';assignBtn.onclick=function(){closeMatchPopup();assign(id)};
-  actions.appendChild(assignBtn);
- }else if(!result&&!ready){var wait=document.createElement('p');wait.textContent='Waiting for both teams to qualify.';actions.appendChild(wait)}
- if(actions.childNodes.length)dialog.appendChild(actions);
+ // The cloned shared match card already owns its Assign Court and scoreboard
+ // actions. Never append duplicate popup actions or navigate to Conduct.
  overlay.appendChild(dialog);document.body.appendChild(overlay);closeBtn.focus();
 }
 
