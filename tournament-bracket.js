@@ -1160,7 +1160,7 @@ function organizeTournamentTabs(){
  playersPanel.innerHTML=tournamentPoolCard()+assistTeamsCard();
  if(!groupChildMode)panel('players',Array.from(playersPanel.children));
  teamPanels.forEach(function(el){if(el&&el.parentNode)el.remove()});
- var fixtureList=null; // Bracket junctions open one selected match popup instead.
+ var fixtureList=document.createElement('div');fixtureList.innerHTML=knockoutFixtureCards(); // Preserve all generated match cards; junction taps still open only the selected match popup.
  // Tournament start is available only from the event's Assist step.
  var tournamentPanel=panel('flowchart',groupChildMode?[summary,workspace,hint,details,fixtureList]:[workspace,hint,details,fixtureList]);
  // Reuse the existing Match Center ranking content in Tournament; no stylesheet changes.
@@ -1496,22 +1496,39 @@ function select(id){
  var title=document.createElement('strong');title.textContent=knockoutStageLabel(m)+' · Match '+number;
  var closeBtn=document.createElement('button');closeBtn.type='button';closeBtn.textContent='✕';closeBtn.setAttribute('aria-label','Close match popup');closeBtn.onclick=closeMatchPopup;
  head.append(title,closeBtn);dialog.appendChild(head);
- var teams=document.createElement('div');teams.className='scs-ko-selected-teams';
- [info.a,info.b].forEach(function(name,i){var row=document.createElement('div');
- var label=document.createElement('small');label.textContent='Team '+(i+1);
- var value=document.createElement('strong');value.textContent=name||'To be decided';row.append(label,value);teams.appendChild(row)});
- dialog.appendChild(teams);
- var status=document.createElement('p');status.className='scs-ko-selected-status';
- status.textContent=result?'Completed · Winner: '+result.winner:game&&game.court?'Assigned to Court '+game.court:'Waiting for court';
- dialog.appendChild(status);
+ // Use the exact existing generated match card, including shared player rows,
+ // colors, score, status and its established actions. Never create a second card UI.
+ var fixture=root&&root.querySelector('.scs-ko-fixture-card[data-match-id="'+String(id)+'"]');
+ var card=fixture?fixture.cloneNode(true):null;
+ if(!card){
+  // A match may be selected before the Generated Matches section is mounted.
+  // Build it with the same shared renderer, not a custom popup team layout.
+  var shared=window.SCSSharedMatchCenter;
+  if(shared&&typeof shared.completed==='function'){
+   var left=splitTeam(info.a).players,right=splitTeam(info.b).players;
+   var winner=result&&result.winner===info.a?'left':result&&result.winner===info.b?'right':null;
+   var scored=scoreSummary(game),saved=koScoreForMatch(id);
+   if(!scored&&saved)scored=scoreSummary({score:saved});
+   card=document.createElement('div');card.className='scs-ko-fixture-card scs-team-match-shell';
+   card.innerHTML=shared.completed({number:number,title:knockoutStageLabel(m)+' · Match '+number,left:info.a,right:info.b,leftPlayers:left,rightPlayers:right,score:String(scored||'').replace(/\s*·\s*/g,' | '),winner:winner,playerRenderer:tournamentPlayerRow});
+  }
+ }
+ if(card){
+  // The outer card is no longer a separate popup action target.
+  card.removeAttribute('onclick');card.removeAttribute('onkeydown');card.removeAttribute('tabindex');
+  dialog.appendChild(card);
+ }
+ var actions=document.createElement('div');actions.className='scs-ko-selected-actions';
  if(score){var scoreBtn=document.createElement('button');scoreBtn.type='button';scoreBtn.textContent='View Scoreboard';
- scoreBtn.onclick=function(){closeMatchPopup();openMatchScore(id,!readonly&&!!result)};dialog.appendChild(scoreBtn)}
+  scoreBtn.onclick=function(){closeMatchPopup();openMatchScore(id,!readonly&&!!result)};actions.appendChild(scoreBtn)}
  var ready=info.a&&info.b&&!/^(Winner|Loser) of |^Entry \d+$/.test(info.a)&&!/^(Winner|Loser) of |^Entry \d+$/.test(info.b);
  if(!readonly&&!result&&!game?.court&&ready&&tournamentStarted()){
+  // Use the existing court assignment dialog; no duplicate assignment UI.
   var assignBtn=document.createElement('button');assignBtn.type='button';assignBtn.className='scs-ko-selected-assign';
   assignBtn.textContent='Assign to Court';assignBtn.onclick=function(){closeMatchPopup();assign(id)};
-  dialog.appendChild(assignBtn);
- }else if(!result&&!ready){var wait=document.createElement('p');wait.textContent='Waiting for both teams to qualify.';dialog.appendChild(wait)}
+  actions.appendChild(assignBtn);
+ }else if(!result&&!ready){var wait=document.createElement('p');wait.textContent='Waiting for both teams to qualify.';actions.appendChild(wait)}
+ if(actions.childNodes.length)dialog.appendChild(actions);
  overlay.appendChild(dialog);document.body.appendChild(overlay);closeBtn.focus();
 }
 
