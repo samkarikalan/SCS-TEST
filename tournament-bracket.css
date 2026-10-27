@@ -655,3 +655,6 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 
 /* V433: completed-event marker */
 .scs-ko-completed-event-mark{margin-top:7px;color:#86e6b8;font-size:.88em;font-weight:700;overflow-wrap:anywhere}
+
+/* V434: event results and explicit completion confirmation */
+.scs-ko-event-results{padding:12px 16px;margin:12px 0}.scs-ko-event-results h3{margin:0 0 10px}.scs-ko-result-row{padding:12px;margin:8px 0;border:1px solid var(--border,#7b8790);border-radius:12px}.scs-ko-result-row span{display:block;font-size:.85rem;opacity:.85}.scs-ko-result-row p{margin:6px 0 0;overflow-wrap:anywhere}.scs-ko-champion button{margin-top:12px;padding:12px 16px;border-radius:10px;cursor:pointer}

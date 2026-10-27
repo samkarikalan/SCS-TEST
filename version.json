@@ -1,5 +1,5 @@
 {
-  "version": "V433",
+  "version": "V434",
   "build": "2026-10-27",
-  "scope": "Auto-open Assist until event start; completed event champion marker"
+  "scope": "Event winner/runner-up results; manual tournament completion"
 }
