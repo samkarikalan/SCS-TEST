@@ -1,5 +1,5 @@
 {
-  "version": "V431",
+  "version": "V432",
   "build": "2026-10-27",
-  "scope": "Knockout champion and tournament completion"
+  "scope": "Assist until event start; start only inside Assist"
 }

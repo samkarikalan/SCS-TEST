@@ -109,6 +109,8 @@ function koHomeRender(){
    var card=document.createElement('div');card.className='scs-ko-event-item';
    b.parentNode.insertBefore(card,b);card.appendChild(b);
    var actions=document.createElement('div');actions.className='scs-ko-event-actions';
+   var savedEvent=koEventLoad(id);
+   var showAssist=!koAssistHasStarted(savedEvent);
    var assist=document.createElement('button');assist.type='button';assist.className='scs-ko-event-assist';
    assist.dataset.koEventAssist=id;assist.textContent='Assist';
    assist.setAttribute('aria-label','Open '+(item.title||'event')+' Knockout Assist');
@@ -117,13 +119,13 @@ function koHomeRender(){
    del.textContent='Delete';del.dataset.koDeleteEvent=id;
    del.setAttribute('aria-label','Delete '+(item.title||'event'));
    del.onclick=function(ev){ev.preventDefault();ev.stopPropagation();koDeleteLeague(id)};
-   actions.appendChild(assist);actions.appendChild(del);card.appendChild(actions);
+   if(showAssist)actions.appendChild(assist);actions.appendChild(del);card.appendChild(actions);
   });
  }
  root.querySelectorAll('[data-ko-nav]').forEach(function(b){if(b.dataset.koNav==='clubs'){var label=b.querySelector('.scs-tm-nav-label');if(label)label.textContent='Teams';}b.onclick=function(){var t=b.dataset.koNav;if(t==='home')koHomeRender();else if(koActiveId)koOpenEvent(koActiveId,t==='clubs'?'players':t==='match'?'match':'flowchart');else alert('Add an event first.')}});
 }
-// Visibility is unconditional; editability is based on whether play has begun.
-function koAssistAvailable(id){return !!(!readonly&&koMain&&koMain.events.some(function(e){return e.id===id}));}
+// Assist is available only until this event starts; completed bracket setup is not a start.
+function koAssistAvailable(id){return !!(!readonly&&koMain&&koMain.events.some(function(e){return e.id===id})&&!koAssistHasStarted(koEventLoad(id)));}
 function koAssistHasStarted(state){
  if(!state)return false;
  if(state.live===true||state.started===true||Object.keys(state.results||{}).length)return true;
@@ -1100,12 +1102,7 @@ function organizeTournamentTabs(){
  if(!groupChildMode)panel('players',Array.from(playersPanel.children));
  teamPanels.forEach(function(el){if(el&&el.parentNode)el.remove()});
  var fixtureList=document.createElement('div');fixtureList.innerHTML=knockoutFixtureCards();
- // Saved fixtures can be started directly from the Tournament tab; Assist is optional.
- if(!readonly&&!draw.live&&koFixturesReady()){
-  var startAction=document.createElement('button');startAction.type='button';startAction.className='scs-tm-start-live';
-  startAction.textContent='▶ Start Tournament';startAction.onclick=function(){startSavedTournament()};
-  fixtureList.insertBefore(startAction,fixtureList.firstChild);
- }
+ // Tournament start is available only from the event's Assist step.
  var tournamentPanel=panel('flowchart',groupChildMode?[summary,workspace,hint,details,fixtureList]:[workspace,hint,details,fixtureList]);
  // Reuse the existing Match Center ranking content in Tournament; no stylesheet changes.
  var koRanking=document.createElement('div');koRanking.hidden=true;koRanking.innerHTML='<div class="scs-tm-live-empty">Ranking updates from approved results.</div>';
@@ -1113,10 +1110,7 @@ function organizeTournamentTabs(){
  koTabs.children[0].onclick=function(){koRanking.hidden=true;Array.from(tournamentPanel.children).forEach(function(e){if(e!==koTabs&&e!==koRanking)e.hidden=false});koTabs.children[0].classList.add('active');koTabs.children[1].classList.remove('active')};
  koTabs.children[1].onclick=function(){Array.from(tournamentPanel.children).forEach(function(e){if(e!==koTabs&&e!==koRanking)e.hidden=true});koRanking.hidden=false;koTabs.children[1].classList.add('active');koTabs.children[0].classList.remove('active')};
  tournamentPanel.insertBefore(koTabs,tournamentPanel.firstChild);tournamentPanel.appendChild(koRanking);panel('match',match?[match]:[function(){var empty=document.createElement('section');empty.className='scs-tm-pool';empty.innerHTML='<h3>Match Center</h3><p>Start the knockout tournament to assign courts and conduct matches.</p>';
- if(!readonly&&!draw.live&&koFixturesReady()){
-  var startAction=document.createElement('button');startAction.type='button';startAction.className='scs-tm-start-live';
-  startAction.textContent='▶ Start Tournament';startAction.onclick=function(){startSavedTournament()};empty.appendChild(startAction);
- }return empty}()]);
+return empty}()]);
  // Spectators reuse the live Match Center markup but cannot operate any court or match.
  if(readonly&&live){var viewPanel=root.querySelector('[data-tm-panel="match"]');if(viewPanel){viewPanel.querySelectorAll('button').forEach(function(btn){if(!btn.closest('.scs-tm-live-tabs'))btn.remove()});viewPanel.querySelectorAll('[onclick]').forEach(function(node){var call=node.getAttribute('onclick')||'';if(!/^SCSTournament\.liveTab\(/.test(call))node.removeAttribute('onclick')});}}
  if(!tabs.some(function(t){return t[0]===tournamentActiveTab}))tournamentActiveTab=groupChildMode?'flowchart':'main';
@@ -1226,7 +1220,7 @@ function assistOpen(i){
  if(i===1){assistPatternPage();return}
  if(i===2){tournamentActiveTab='flowchart';render();return}
  if(i===3){koFixturesPage();return}
- if(i===4){startSavedTournament();return}
+ if(i===4){root.innerHTML='<section style="max-width:720px;margin:auto;padding:14px"><button type="button" onclick="SCSTournament.assistBack()">‹ Assist</button>'+tournamentStartPanel()+'</section>';return}
 }
 function koFixturesPage(){
  if(!root)return;
