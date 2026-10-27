@@ -131,9 +131,11 @@ function koHomeRender(){
   if(!detail)return;
   detail.replaceChildren();
   var status=document.createElement('strong');status.className='scs-ko-completed-event-status';status.textContent='✓ Completed';detail.appendChild(status);
-  [['🏆 Winner',standing.winner],['🥈 Runner-up',standing.runner]].forEach(function(pair){
+  // Reuse the existing SCS win-cup.png asset; runner-up needs no new image.
+  [['Winner',standing.winner],['🥈 Runner-up',standing.runner]].forEach(function(pair,index){
    var line=document.createElement('span');line.className='scs-ko-completed-event-result';
-   line.textContent=pair[0]+': '+pair[1];detail.appendChild(line);
+   if(index===0){var cup=document.createElement('img');cup.src='win-cup.png';cup.alt='';cup.className='scs-ko-completed-winner-cup';line.appendChild(cup)}
+   var label=document.createElement('span');label.textContent=pair[0]+': '+pair[1];line.appendChild(label);detail.appendChild(line);
   });
   var progress=document.createElement('small');progress.textContent=(state.entries||[]).length+' teams · '+Object.keys(state.results||{}).length+' / '+(state.matches||[]).length+' matches completed';detail.appendChild(progress);
  });

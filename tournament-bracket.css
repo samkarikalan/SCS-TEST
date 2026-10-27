@@ -662,3 +662,7 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 /* V440: completed knockout event results replace its overview, not a second results card. */
 .scs-team-event-details .scs-ko-completed-event-status{color:#76dcb1;display:block}
 .scs-team-event-details .scs-ko-completed-event-result{display:block;overflow-wrap:anywhere;line-height:1.4;margin-top:4px}
+
+/* V441: reuse existing SCS winner cup asset in completed event card. */
+.scs-ko-completed-event-result:has(.scs-ko-completed-winner-cup){display:flex;align-items:center;gap:8px}
+.scs-ko-completed-winner-cup{width:28px;height:28px;object-fit:contain;flex:none}
