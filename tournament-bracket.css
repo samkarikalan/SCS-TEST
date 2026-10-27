@@ -658,15 +658,3 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 
 /* V434: event results and explicit completion confirmation */
 .scs-ko-event-results{padding:12px 16px;margin:12px 0}.scs-ko-event-results h3{margin:0 0 10px}.scs-ko-result-row{padding:12px;margin:8px 0;border:1px solid var(--border,#7b8790);border-radius:12px}.scs-ko-result-row span{display:block;font-size:.85rem;opacity:.85}.scs-ko-result-row p{margin:6px 0 0;overflow-wrap:anywhere}.scs-ko-champion button{margin-top:12px;padding:12px 16px;border-radius:10px;cursor:pointer}
-
-/* V446: selected match modal; bracket and other pages remain untouched. */
-.scs-ko-selected-overlay{position:fixed;inset:0;z-index:2147482000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.72);box-sizing:border-box}
-.scs-ko-selected-dialog{box-sizing:border-box;width:min(100%,460px);max-height:85dvh;overflow:auto;border:1px solid #6783ac;border-radius:16px;padding:18px;background:#182a43;color:#f5f8ff;box-shadow:0 15px 60px #0009}
-.scs-ko-selected-head{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:1.12rem}
-.scs-ko-selected-head button{min-width:44px;min-height:44px;border:1px solid #6882a5;border-radius:9px;background:#294464;color:white}
-.scs-ko-selected-teams{display:grid;gap:10px;margin:16px 0}
-.scs-ko-selected-teams>div{padding:12px;background:#29415f;border-radius:10px;overflow-wrap:anywhere}
-.scs-ko-selected-teams small{display:block;color:#c2d1e5;margin-bottom:6px}
-.scs-ko-selected-teams strong{display:block}
-.scs-ko-selected-dialog>button{margin:6px 8px 0 0;padding:12px 18px;border-radius:10px;border:1px solid #89b1ec;background:#2b67bc;color:white;font-weight:600}
-.scs-ko-selected-status{margin:12px 0}
