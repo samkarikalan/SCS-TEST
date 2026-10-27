@@ -104,7 +104,12 @@ api.players.select=async function({selected=[],onDone,onCancel}={}){
  // Mount inside the invoking tournament overlay so its existing modal CSS and
  // stacking context apply. In particular, Team Tournament has a high-z-index
  // overlay and a body-mounted selector would be hidden underneath it on iOS.
- const host=document.activeElement?.closest?.('.scs-team-overlay, .scs-gt-overlay, .scs-tm-overlay') || document.querySelector('#scsGroupTournament:not([hidden])') || document.querySelector('#scsTeamTournament:not([hidden])') || document.body;
+ // Keep the existing shared selector within the *visible invoking page*.
+ // Group -> Knockout has two visible parent overlays; the knockout is the
+ // foreground page, regardless of which element retained keyboard focus.
+ const visibleKnockout=document.querySelector('#scsTournamentOverlay:not([hidden])');
+ const focusedHost=document.activeElement?.closest?.('.scs-team-overlay, .scs-gt-overlay, .scs-tm-overlay');
+ const host=visibleKnockout || focusedHost || document.querySelector('#scsGroupTournament:not([hidden])') || document.querySelector('#scsTeamTournament:not([hidden])') || document.body;
  host.appendChild(modal);
  const sel=modal.querySelector('[data-subclub]'),status=modal.querySelector('[data-status]'),list=modal.querySelector('[data-players]'),count=modal.querySelector('[data-count]');
  const finish=(value)=>{modal.remove();if(value===null){if(onCancel)onCancel();return null}if(onDone)onDone(value.map(p=>({playerId:p.playerId||null,player:p.player,subClubId:p.subClubId||null,subClub:p.subClub,gender:p.gender,level:p.level})));return value};

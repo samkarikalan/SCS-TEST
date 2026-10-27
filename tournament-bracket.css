@@ -646,3 +646,7 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 
 /* V415: Group-to-Knockout uses the existing pre-start assistant */
 .scs-ko-group-start-guide{padding:14px;margin-bottom:14px;border:1px solid #6986b7;border-radius:12px;background:#233958;color:#edf4ff}.scs-ko-group-start-guide strong{font-size:1.05rem}.scs-ko-group-start-guide p{margin:9px 0;line-height:1.45}
+
+/* V430: existing child selector must stack above the knockout page controls. */
+#scsTournamentOverlay .scs-api-player-selector{z-index:100100!important}
+#scsTournamentOverlay:has(.scs-api-player-selector) .scs-tm-bottom-nav{visibility:hidden}
