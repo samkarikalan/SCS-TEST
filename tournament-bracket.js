@@ -1002,7 +1002,29 @@ function setTournamentCourts(delta){
  if(preview)preview.innerHTML=Array.from({length:next},function(_,i){return '<div class="scs-tm-court-card is-free"><div class="scs-tm-court-head"><strong>COURT '+(i+1)+'</strong><span>FREE</span></div><p>Available when tournament starts</p></div>'}).join('');
  localTournamentSave(draw);
 }
-async function startSavedTournament(){if(tournamentStarted()){render();return}if(!koFixturesReady()){alert('Generate fixtures before starting the tournament.');return}await localTournamentSave(draw);if(!window.SCSCourtCenter||typeof SCSCourtCenter.startTournament!=='function'){alert('Court Center is still loading. Please try again.');return}try{draw.live=true;draw.livePage=true;draw.numCourts=Math.max(1,Math.min(20,Number(draw.numCourts)||2));if(typeof window.scsGetTournamentCloudIdentity==='function'){var cloudId=window.scsGetTournamentCloudIdentity('knockout');if(cloudId)draw._scsCloudTournamentId=cloudId}await SCSCourtCenter.startTournament(draw,draw.numCourts);await localTournamentSave(draw);if(saveFn&&saveFn!==localTournamentSave)await saveFn(draw);render()}catch(e){draw.live=false;alert(e.message||'Could not start the live tournament.')}}
+async function startSavedTournament(){
+ if(tournamentStarted()){render();return}
+ if(!koFixturesReady()){alert('Generate fixtures before starting the tournament.');return}
+ if(!window.SCSCourtCenter||typeof SCSCourtCenter.startTournament!=='function'){alert('Court Center is still loading. Please try again.');return}
+ var previousLive=draw.live,previousLivePage=draw.livePage,previousStartedAt=draw.startedAt;
+ try{
+  draw.numCourts=Math.max(1,Math.min(20,Number(draw.numCourts)||2));
+  // Start the Court Center first. Only a successful start marks this event live.
+  await SCSCourtCenter.startTournament(draw,draw.numCourts);
+ }catch(e){draw.live=previousLive;draw.livePage=previousLivePage;alert(e.message||'Could not start the live tournament.');return}
+ draw.live=true;draw.livePage=true;
+ draw.startedAt=previousStartedAt||new Date().toISOString();
+ // Preserve this event's own cloud identity. A format-wide ID can point to
+ // another event and must never be assigned here.
+ await localTournamentSave(draw);
+ render();
+ // Start Event is an explicit save, not merely a delayed autosave. The durable
+ // outbox created by localTournamentSave keeps the update for offline retry.
+ try{
+  if(typeof window.SCSTournamentStore?.save==='function')await koSaveCloudNow(draw);
+  if(saveFn&&saveFn!==localTournamentSave)await saveFn(draw);
+ }catch(e){console.warn('Event started locally; Supabase sync pending:',e);}
+}
 function sameSavedTournament(a,b){if(!a||!b)return false;var aei=String(a._scsKoEventId||''),bei=String(b._scsKoEventId||'');if(aei&&bei)return aei===bei;var ac=String(a._scsClientTournamentId||''),bc=String(b._scsClientTournamentId||'');if(ac&&bc)return ac===bc;var ai=String(a._scsCloudTournamentId||''),bi=String(b._scsCloudTournamentId||'');if(ai&&bi&&ai===bi)return true;var at=String(a.title||'').trim(),bt=String(b.title||'').trim();if(!at||at!==bt)return false;var ae=Array.isArray(a.entries)?a.entries:[],be=Array.isArray(b.entries)?b.entries:[];if(ae.length!==be.length)return false;return ae.every(function(e,i){return String(e&&e.name||'')===String(be[i]&&be[i].name||'')})}
 async function koResumeOpenedEvent(eventId,saved){
  if(!saved||!saved.matches||!saved.matches.length||!window.SCSCourtCenter||typeof SCSCourtCenter.resumeTournament!=='function')return;
