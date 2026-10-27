@@ -1,5 +1,5 @@
 {
-  "version": "V435",
+  "version": "V436",
   "build": "2026-10-27",
-  "scope": "Keep Assist court-count controls on same page"
+  "scope": "Event-specific started state: hide start/edit; show court assignment cards"
 }
