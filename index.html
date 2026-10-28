@@ -796,6 +796,24 @@ body>.scs-tmgr-side-menu>.scs-tmgr-side-home{margin-top:auto;border-top:1px soli
 #scsTournamentManager .scs-tmgr-side-menu>.scs-tmgr-side-home{margin-top:auto;border-top:1px solid #31415a;border-radius:0;color:#b4c4dc}
 @media(prefers-reduced-motion:reduce){#scsTournamentManager .scs-tmgr-side-menu{transition:none}}
 </style>
+<style id="scs-tournament-full-pages-v457">
+/* Tournament navigation surfaces only. Keep existing content and handlers. */
+#scsTournamentContinue.scs-tmgr-overlay,
+#scsTournamentLive.scs-tmgr-overlay,
+#scsTournamentTypePicker.scs-tournament-type-overlay{
+ position:fixed;inset:0;z-index:2147479001;display:block;overflow-y:auto;
+ padding:calc(env(safe-area-inset-top,0px) + 72px) 16px calc(env(safe-area-inset-bottom,0px) + 24px);
+ box-sizing:border-box;background:#0d1729;backdrop-filter:none;
+}
+#scsTournamentContinue[hidden],#scsTournamentLive[hidden],#scsTournamentTypePicker[hidden]{display:none!important}
+#scsTournamentContinue>.scs-tmgr-card,#scsTournamentLive>.scs-tmgr-card,
+#scsTournamentTypePicker>.scs-tournament-type-card{
+ width:100%;max-width:760px;min-height:calc(100% - 16px);max-height:none;
+ margin:0 auto;overflow:visible;box-sizing:border-box;background:transparent;
+ border:0;border-radius:0;box-shadow:none;padding:16px 8px 28px;
+}
+/* Existing registration and scoring screens remain their proven pages. */
+</style>
 </head>
 <body>
 
@@ -3794,7 +3812,7 @@ body>.scs-tmgr-side-menu>.scs-tmgr-side-home{margin-top:auto;border-top:1px soli
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V456', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V457', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4390,19 +4408,26 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
     var bar=host.querySelector('.scs-tmgr-simple-bar');if(bar)bar.hidden=true;
     function refresh(){
       var active=null;
-      Object.keys(titles).forEach(function(id){var el=document.getElementById(id);if(el&&!el.hidden&&getComputedStyle(el).display!=='none')active=id;});
-      var registration=document.body.classList.contains('scs-tournament-register-open');
-      if(registration)active='registration';
+      // Prioritize the actual visible page, not the previous menu selection.
+      ['scsTournamentManager','scsTournamentOverlay','scsTournamentContinue','scsTournamentLive','scsTournamentTypePicker'].forEach(function(id){
+        var el=document.getElementById(id);
+        if(el&&!el.hidden&&getComputedStyle(el).display!=='none')active=id;
+      });
+      var reg=document.getElementById('vaultRegisterPage');
+      if(document.body.classList.contains('scs-tournament-register-open')&&reg&&getComputedStyle(reg).display!=='none')active='registration';
+      // Conduct-a-Match can be rendered by the existing scoring module.
+      var score=document.querySelector('.scs-score-overlay:not([hidden]), #scsScoreOverlay:not([hidden])');
+      if(score&&getComputedStyle(score).display!=='none')active='scsScoreOverlay';
       header.hidden=!active;
       if(active){
-        var title=titles[active]||(active==='registration'?'Players Manager':'Tournament');
-        document.getElementById('scsTournamentDynamicTitle').textContent=title;
+        document.getElementById('scsTournamentDynamicTitle').textContent=titles[active]||(active==='registration'?'Players Manager':'Tournament');
       }
     }
     var observer=new MutationObserver(refresh);
     Object.keys(titles).forEach(function(id){var el=document.getElementById(id);if(el)observer.observe(el,{attributes:true,attributeFilter:['hidden','style','class']});});
     observer.observe(document.body,{attributes:true,attributeFilter:['class']});
     refresh();
+    window.scsRefreshTournamentHeader=refresh;
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
@@ -4418,6 +4443,7 @@ function scsTournamentMenuToggle(open){
 function scsTournamentMenuChoose(handler){
   scsTournamentMenuToggle(false);
   if(typeof window[handler]==='function')window[handler]();
+  if(typeof window.scsRefreshTournamentHeader==='function')window.scsRefreshTournamentHeader();
 }
 document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamentMenuToggle(false)});
 </script>
