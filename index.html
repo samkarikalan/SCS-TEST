@@ -722,27 +722,27 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 @media(max-width:380px){#myHubHomeView .myhub-home-sections{padding-left:12px;padding-right:12px}#myHubHomeView .myhub-home-card{padding:14px 12px;gap:10px}}
 </style>
 
-<style id="scs-tournament-v451-theme">
-/* Tournament-only typography and warm gold/teal theme.
+<style id="scs-tournament-v452-theme">
+/* Tournament-only typography and SCS navy-blue with gold accents.
    Practice Manager and all event handlers remain unchanged. */
-#scsTournamentManager.scs-tmgr-fullpage{background:#10151d}
+#scsTournamentManager.scs-tmgr-fullpage{background:#0e1728}
 #scsTournamentManager .scs-tmgr-kicker{font-size:.78rem;letter-spacing:.17em;color:#e4b95b;font-weight:800}
 #scsTournamentManager .scs-tmgr-kicker::before{background:#e4b95b;box-shadow:none}
 #scsTournamentManager .scs-tmgr-head h2{font-size:clamp(1.5rem,6vw,2rem);line-height:1.15;letter-spacing:-.025em;font-weight:800;margin:7px 0 8px;text-shadow:none}
-#scsTournamentManager .scs-tmgr-head p{font-size:.9rem;line-height:1.4;color:#c9bba3}
+#scsTournamentManager .scs-tmgr-head p{font-size:.9rem;line-height:1.4;color:#b2c6e0}
 #scsTournamentManager .scs-tmgr-head::after{background:linear-gradient(90deg,#d7a64b,rgba(215,166,75,.2),transparent)}
 #scsTournamentManager .scs-tmgr-hero-mark{color:#e7bd60}
-#scsTournamentManager .scs-activity-home-back{background:#3b3427;border:1px solid #9f814a;color:#fff4df;font-weight:700}
+#scsTournamentManager .scs-activity-home-back{background:#233d60;border:1px solid #7199c9;color:#f6faff;font-weight:700}
 #scsTournamentManager .scs-tmgr-actions{gap:14px}
-#scsTournamentManager .scs-tmgr-action{min-height:88px;padding:17px 16px;grid-template-columns:52px minmax(0,1fr) 22px;gap:14px;border-radius:20px;background:#29271f;border-color:#746247;box-shadow:none}
-#scsTournamentManager .scs-tmgr-icon{width:48px;height:48px;border-radius:14px;background:#453b2b;color:#f1ca7d}
+#scsTournamentManager .scs-tmgr-action{min-height:88px;padding:17px 16px;grid-template-columns:52px minmax(0,1fr) 22px;gap:14px;border-radius:20px;background:#1a2d49;border-color:#3e6087;box-shadow:none}
+#scsTournamentManager .scs-tmgr-icon{width:48px;height:48px;border-radius:14px;background:#253f62;color:#f1ca7d}
 #scsTournamentManager .scs-tmgr-copy strong{font-size:1rem;line-height:1.3}
-#scsTournamentManager .scs-tmgr-copy small{font-size:.79rem;line-height:1.35;margin-top:5px;color:#d2c2a8}
+#scsTournamentManager .scs-tmgr-copy small{font-size:.79rem;line-height:1.35;margin-top:5px;color:#b2c6e0}
 #scsTournamentManager .scs-tmgr-go{color:#e0bd7c}
-#scsTournamentManager .scs-tmgr-action.start{background:#19372f;border-color:#488e78}
-#scsTournamentManager .scs-tmgr-action.start .scs-tmgr-icon{background:#27584b;color:#a2f0ce}
-#scsTournamentManager .scs-tmgr-action.conduct{background:#352a3d;border-color:#80668f}
-#scsTournamentManager .scs-tmgr-action.conduct .scs-tmgr-icon{background:#51405f;color:#e6c5fa}
+#scsTournamentManager .scs-tmgr-action.start{background:#173b43;border-color:#388c86}
+#scsTournamentManager .scs-tmgr-action.start .scs-tmgr-icon{background:#245c59;color:#a2f0ce}
+#scsTournamentManager .scs-tmgr-action.conduct{background:#302543;border-color:#74549b}
+#scsTournamentManager .scs-tmgr-action.conduct .scs-tmgr-icon{background:#4a3668;color:#e6c5fa}
 @media(max-width:380px){
 #scsTournamentManager .scs-tmgr-action{grid-template-columns:44px minmax(0,1fr) 18px;gap:10px;padding:14px 12px}
 #scsTournamentManager .scs-tmgr-icon{width:44px;height:44px}
@@ -3745,7 +3745,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V451', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V452', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
