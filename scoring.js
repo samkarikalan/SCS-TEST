@@ -131,7 +131,23 @@ function restore(s){var x=JSON.parse(s);state.score=x.score;state.server=x.serve
 function setIsWon(a,b,setNo){var rule=state.setRules[setNo-1],hi=Math.max(a,b),lo=Math.min(a,b);return (hi>=rule.win&&hi-lo>=2)||hi>=rule.max;}
 function beginNextSet(){state.currentSet++;state.score=[0,0];state.entries=[];state.server=state.initialServer;state.positions=makePositions(state.initialServer,state.initialReceiver);}
 function addPoint(winnerTeam){if(!state||state.finished)return;state.history.push(snapshot());var servingTeam=teamOf(state.server);state.score[winnerTeam]++;var scoringPlayer;if(winnerTeam===servingTeam){scoringPlayer=state.server;var p=state.positions[winnerTeam];state.positions[winnerTeam]=[p[1],p[0]];}else{var court=(state.score[winnerTeam]%2===0)?0:1;state.server=state.positions[winnerTeam][court];scoringPlayer=state.server;}state.entries.push({player:scoringPlayer,score:state.score[winnerTeam],team:winnerTeam});var a=state.score[0],b=state.score[1];if(setIsWon(a,b,state.currentSet)){var setWinner=a>b?0:1;state.completedSets.push({set:state.currentSet,score:[a,b],winner:setWinner,server:state.server,positions:state.positions.map(function(p){return p.slice();}),entries:state.entries.map(function(e){return{player:e.player,score:e.score,team:e.team};})});state.setWins[setWinner]++;if(state.matchSets===1||state.setWins[setWinner]>=2){state.finished=true;}else{beginNextSet();}}render(true);syncLiveScore(null);}
-function undo(){if(!state||!state.history.length)return;restore(state.history.pop());syncLiveScore(null);}
+function undo(){
+ if(!state||!state.history.length||readOnly&&!teamEditMatchId)return;
+ var wasSaved=!!teamEditMatchId,priorFinished=state.finished,previous=state.history.pop();
+ restore(previous);
+ if(wasSaved){
+  // A saved result remains a saved result: only correct its score, never approval/status.
+  if(priorFinished&&!state.finished){
+   var last=state.completedSets[state.completedSets.length-1];
+   if(!last||Number(last.set)!==Number(state.currentSet)){
+    state.completedSets.push({set:state.currentSet,score:state.score.slice(),winner:state.score[0]>=state.score[1]?0:1,server:state.server,positions:state.positions.map(function(p){return p.slice();}),entries:state.entries.map(function(e){return Object.assign({},e);}),manuallyCorrected:true});
+   }
+  }
+  var current=state.completedSets[state.completedSets.length-1];
+  if(current){current.score=state.score.slice();current.entries=state.entries.map(function(e){return Object.assign({},e);});current.manuallyCorrected=true;}
+  state.finished=true;scoreEditDirty=true;render(false);
+ }else syncLiveScore(null);
+}
 function swapButtons(){if(!state)return;state.buttonOrder=state.buttonOrder==='ab'?'ba':'ab';render(false);}
 function buildTable(){var table=el('scsScoreTable'),cols=Math.max(30,state.entries.length+1),locked=state.entries.length>0||state.completedSets.length>0,h='<thead><tr><th>Player</th><th class="scs-score-role-head">S/R</th>';for(var c=0;c<cols;c++)h+='<th aria-label="Rally '+(c+1)+'"></th>';h+='</tr></thead><tbody>';for(var p=0;p<4;p++){var role=p===state.initialServer?'S':(p===state.initialReceiver?'R':'');var roleCls=role==='S'?' is-server':(role==='R'?' is-receiver':'');h+='<tr id="scsScoreRow'+p+'" class="'+(p<2?'team-a':'team-b')+'"><th><span>'+escapeHtml(state.names[p])+'</span><i>🏸</i><em></em></th><td class="scs-score-role-cell'+roleCls+(locked?' is-locked':'')+'"'+(locked?'':' onclick="SCSScoring.setInitialRole('+p+')"')+'>'+(role?'<span>'+role+'</span>':'')+'</td>';for(var c=0;c<cols;c++){var e=state.entries[c],v=(e&&e.player===p)?String(e.score):'';h+='<td class="'+(v?'has-score':'')+'">'+v+'</td>';}h+='</tr>';}h+='</tbody>';table.innerHTML=h;}
 function escapeHtml(s){return String(s).replace(/[&<>\"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]})}
