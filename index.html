@@ -877,6 +877,18 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay > .scs-p
 /* Tournament menu and fixed header own the top safe-area; page body scrolls below. */
 #scsTournamentOverlay:not([hidden]){top:var(--scs-tournament-header-bottom,calc(env(safe-area-inset-top,0px) + 72px))!important;bottom:0!important;height:auto!important;overflow-y:auto!important}
 </style>
+
+<style id="scs-tournament-initial-visibility-v464">
+/* All tournament screens are body siblings of Practice Home. Keep the entire
+   Practice surface out of view from the FIRST tournament render, not merely
+   its heading. Its DOM and event handlers remain untouched. */
+body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+/* Shared menu replaces the obsolete My Tournaments return button. */
+#scsTournamentContinue > .scs-tmgr-card > .scs-tmgr-back {display:none!important}
+</style>
 </head>
 <body>
 
@@ -3875,7 +3887,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay > .scs-p
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V463', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V464', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
