@@ -113,7 +113,7 @@ function koAdoptCloudEvent(state){
  var id=state._scsClientTournamentId||state._scsCloudTournamentId||koId();
  var event=koMain.events.find(function(e){return e.id===id});
  if(!event){event={id:id,title:state.title||'Knockout Event',teams:0,matches:0,completed:0};koMain.events.push(event)}
- koActiveId=id;koMain.activeEventId=id;koSaveMain();koSyncEvent(state);
+ koActiveId=id;koMain.activeEventId=id;var eventHost=document.getElementById('scsTournamentOverlay');if(eventHost){eventHost.classList.add('scs-ko-event-title-mode');eventHost.dataset.scsKoEventTitle=(koMain.events.find(function(e){return e.id===id})||{}).title||'Knockout Event';}koSaveMain();koSyncEvent(state);
  return true;
 }
 function koAdoptCloudMaster(state,eventStates){
@@ -242,7 +242,7 @@ async function koDeleteMain(){
  localStorage.removeItem(KO_MAIN_KEY);koMain=null;koActiveId=null;
  if(typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent();else close();
 }
-function koShowHome(){if(!root){root=document.getElementById('scsTournamentOverlay')}if(!koMain)koMainStart();root.hidden=false;koHomeRender()}
+function koShowHome(){if(!root){root=document.getElementById('scsTournamentOverlay')}if(root){root.classList.remove('scs-ko-event-title-mode');delete root.dataset.scsKoEventTitle;}if(!koMain)koMainStart();root.hidden=false;koHomeRender()}
 
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function nextPow2(n){var p=1;while(p<n)p*=2;return p}
@@ -1298,7 +1298,7 @@ function ensureAssistHeader(){
  var heading=header.querySelector('#scsKoStepTitle');if(heading)heading.textContent=titles[Math.max(0,Math.min(5,assistStep||0))];
  root.classList.toggle('scs-ko-assist-index-active',assistStep===0);
  root.classList.toggle('scs-ko-assist-step-active',assistStep>0);
- root.classList.toggle('scs-ko-event-title-mode',assistStep===5);
+ root.classList.toggle('scs-ko-event-title-mode',assistStep===5||!!(koActiveId&&assistSaved));
  root.dataset.scsKoEventTitle=(koMain&&koActiveId&&koMain.events.find(function(e){return e.id===koActiveId})||{}).title||draw&&draw.title||'Knockout Event';
  if(typeof window.scsRefreshTournamentHeader==='function')window.scsRefreshTournamentHeader();
  // Step-specific banners were previously duplicated beneath the persistent header.

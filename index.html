@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V367" defer></script>
-  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V467" defer></script>
+  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V468" defer></script>
   <script src="court-center.js?v=V425" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -3925,7 +3925,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V467', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V468', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4516,7 +4516,7 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
     if(panel&&panel.parentElement!==document.body)document.body.appendChild(panel);
     if(shade&&shade.parentElement!==document.body)document.body.appendChild(shade);
     var header=document.createElement('div');header.id='scsTournamentPersistentHeader';
-    header.innerHTML='<button type="button" aria-label="Open tournament menu" aria-controls="scsTournamentSideMenu" aria-expanded="false" onclick="scsTournamentMenuToggle(true)">☰</button><strong id="scsTournamentDynamicTitle">Tournament Manager</strong><button type="button" id="scsKoEventHeaderSave" hidden onclick="SCSTournament.assistSaveDraft()">▣ Save</button><span id="scsTournamentHeaderTrophy" aria-hidden="true">🏆</span>';
+    header.innerHTML='<button type="button" aria-label="Open tournament menu" aria-controls="scsTournamentSideMenu" aria-expanded="false" onclick="scsTournamentMenuToggle(true)">☰</button><strong id="scsTournamentDynamicTitle">Tournament Manager</strong><button type="button" id="scsKoEventHeaderSave" hidden onclick="scsSaveActiveKoEvent()">▣ Save</button><span id="scsTournamentHeaderTrophy" aria-hidden="true">🏆</span>';
     document.body.appendChild(header);
     var bar=host.querySelector('.scs-tmgr-simple-bar');if(bar)bar.hidden=true;
     function refresh(){
@@ -4549,6 +4549,17 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
+function scsSaveActiveKoEvent(){
+  if(!window.SCSTournament)return;
+  var overlay=document.getElementById('scsTournamentOverlay');
+  var save=document.getElementById('scsKoEventHeaderSave');
+  if(save)save.disabled=true;
+  try{
+    var live=overlay&&overlay.querySelector('[data-live-tournament="true"]');
+    var fn=live&&typeof SCSTournament.saveProgressNow==='function'?SCSTournament.saveProgressNow:SCSTournament.assistSaveDraft;
+    Promise.resolve(fn.call(SCSTournament)).finally(function(){if(save)save.disabled=false;});
+  }catch(e){if(save)save.disabled=false;throw e;}
+}
 function scsTournamentMenuToggle(open){
   var panel=document.getElementById('scsTournamentSideMenu');
   var shade=document.querySelector('.scs-tmgr-side-shade');
