@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V367" defer></script>
-  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V466" defer></script>
+  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V467" defer></script>
   <script src="court-center.js?v=V425" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -918,6 +918,14 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 /* Do not reveal previous module behind the step while scrolling. */
 #scsTournamentOverlay.scs-ko-assist-index-active > section,
 #scsTournamentOverlay.scs-ko-assist-step-active > section {position:relative;z-index:1}
+</style>
+<style id="scs-ko-event-header-v467">
+#scsTournamentPersistentHeader #scsKoEventHeaderSave{background:#099d78;color:white;border:0;border-radius:9px;padding:9px 13px;font:inherit;font-weight:700;white-space:nowrap}
+#scsTournamentPersistentHeader #scsKoEventHeaderSave[hidden],#scsTournamentPersistentHeader #scsTournamentHeaderTrophy[hidden]{display:none!important}
+#scsTournamentPersistentHeader #scsTournamentDynamicTitle{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Only the final event page uses the shared event title + Save. Assist steps retain their X. */
+#scsTournamentOverlay.scs-ko-event-title-mode #scsKoPersistentHeader{display:none!important}
+#scsTournamentOverlay.scs-ko-event-title-mode .scs-tm-tournament-title>h2{display:none!important}
 </style>
 </head>
 <body>
@@ -3917,7 +3925,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V466', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V467', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4508,7 +4516,7 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
     if(panel&&panel.parentElement!==document.body)document.body.appendChild(panel);
     if(shade&&shade.parentElement!==document.body)document.body.appendChild(shade);
     var header=document.createElement('div');header.id='scsTournamentPersistentHeader';
-    header.innerHTML='<button type="button" aria-label="Open tournament menu" aria-controls="scsTournamentSideMenu" aria-expanded="false" onclick="scsTournamentMenuToggle(true)">☰</button><strong id="scsTournamentDynamicTitle">Tournament Manager</strong><span aria-hidden="true">🏆</span>';
+    header.innerHTML='<button type="button" aria-label="Open tournament menu" aria-controls="scsTournamentSideMenu" aria-expanded="false" onclick="scsTournamentMenuToggle(true)">☰</button><strong id="scsTournamentDynamicTitle">Tournament Manager</strong><button type="button" id="scsKoEventHeaderSave" hidden onclick="SCSTournament.assistSaveDraft()">▣ Save</button><span id="scsTournamentHeaderTrophy" aria-hidden="true">🏆</span>';
     document.body.appendChild(header);
     var bar=host.querySelector('.scs-tmgr-simple-bar');if(bar)bar.hidden=true;
     function refresh(){
@@ -4524,8 +4532,13 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
       var score=document.getElementById('scsScoringOverlay');
       if(score&&!score.hidden&&getComputedStyle(score).display!=='none'&&document.getElementById('scsScoreMatchPicker')&&!document.getElementById('scsScoreMatchPicker').hidden)active='scsScoringOverlay';
       header.hidden=!active;
+      if(!active){var save=document.getElementById('scsKoEventHeaderSave');if(save)save.hidden=true;}
       if(active){
-        document.getElementById('scsTournamentDynamicTitle').textContent=titles[active]||(active==='registration'?'Players Manager':'Tournament');
+        var koEvent=document.getElementById('scsTournamentOverlay');
+        var eventMode=active==='scsTournamentOverlay'&&koEvent&&koEvent.classList.contains('scs-ko-event-title-mode');
+        document.getElementById('scsTournamentDynamicTitle').textContent=eventMode?(koEvent.dataset.scsKoEventTitle||'Knockout Event'):(titles[active]||(active==='registration'?'Players Manager':'Tournament'));
+        var save=document.getElementById('scsKoEventHeaderSave');if(save)save.hidden=!eventMode;
+        var trophy=document.getElementById('scsTournamentHeaderTrophy');if(trophy)trophy.hidden=!!eventMode;
       }
     }
     var observer=new MutationObserver(refresh);

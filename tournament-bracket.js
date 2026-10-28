@@ -1298,6 +1298,8 @@ function ensureAssistHeader(){
  var heading=header.querySelector('#scsKoStepTitle');if(heading)heading.textContent=titles[Math.max(0,Math.min(5,assistStep||0))];
  root.classList.toggle('scs-ko-assist-index-active',assistStep===0);
  root.classList.toggle('scs-ko-assist-step-active',assistStep>0);
+ root.classList.toggle('scs-ko-event-title-mode',assistStep===5);
+ root.dataset.scsKoEventTitle=(koMain&&koActiveId&&koMain.events.find(function(e){return e.id===koActiveId})||{}).title||draw&&draw.title||'Knockout Event';
  if(typeof window.scsRefreshTournamentHeader==='function')window.scsRefreshTournamentHeader();
  // Step-specific banners were previously duplicated beneath the persistent header.
  // Hide only those banners, never the actual step contents or their controls.
