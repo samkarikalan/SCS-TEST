@@ -66,11 +66,18 @@ function koEventHomeDetails(state){
  if(!complete||!standing)return '';
  return '<div class="scs-ko-home-standings"><div class="scs-ko-home-place"><span>🏆 Winner</span>'+koEventPlayerRows(state,standing.winner)+'</div><div class="scs-ko-home-place"><span>🥈 Runner-up</span>'+koEventPlayerRows(state,standing.runner)+'</div></div>';
 }
-function koCompleteMainTournament(){
+async function koCompleteMainTournament(){
  if(readonly||!koMain||koMain.status==='completed')return;
  if(!koMain.events.length||!koMain.events.every(function(e){var d=koEventLoad(e.id);return d&&d.status==='completed'&&!!koFinalStanding(d)}))return;
  if(!confirm('Mark the entire tournament as completed?'))return;
- koMain.status='completed';koMain.completedAt=new Date().toISOString();koSaveMain();koHomeRender();
+ var completed=Object.assign({},koMain,{status:'completed',completedAt:new Date().toISOString(),_scsMainTournament:true,_scsClientTournamentId:koMain._scsClientTournamentId||koMain.id});
+ try{
+  if(!window.SCSTournamentStore||typeof window.SCSTournamentStore.save!=='function')throw new Error('Tournament server save is unavailable.');
+  await window.SCSTournamentStore.save('knockout',completed);
+  koMain=completed;
+  localStorage.setItem(KO_MAIN_KEY,JSON.stringify(koMain));
+  koHomeRender();
+ }catch(e){alert('Tournament completion could not be saved. '+(e&&e.message||''));}
 }
 
 function localTournamentSave(d){try{koUpdateCompletion(d);preserveTeamPlayerDetails(d);if(d&&d._scsGroupEventId!=null&&d._scsGroupKnockoutStage!=null){localStorage.setItem('scs_group_knockout_'+d._scsGroupEventId+'_'+d._scsGroupKnockoutStage,JSON.stringify(d));return Promise.resolve(d)}if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
@@ -147,7 +154,7 @@ function koHomeRender(){
   b.appendChild(status);
   holder.insertAdjacentHTML('beforeend',koEventHomeDetails(state));
  });
- var add=root.querySelector('[data-add-event]');if(add)add.onclick=koAddEvent;
+ var add=root.querySelector('[data-add-event]');if(add){if(koMain.status==='completed')add.hidden=true;else add.onclick=koAddEvent;}
  var rename=root.querySelector('[data-ko-rename]');if(rename)rename.onclick=koRename;
  if(!readonly){
   root.querySelectorAll('[data-open-event]').forEach(function(b){
@@ -205,7 +212,7 @@ function koOpenSavedAssist(id){
 function koEventRows(events,gender){if(!events.length)return '<p class="scs-ko-empty">No events</p>';return events.map(function(e){var active=e.id===koActiveId;return '<button type="button" class="scs-ko-event-row'+(active?' active':'')+'" onclick="SCSTournament.selectKnockoutEvent(\''+esc(e.id)+'\')"><span class="scs-ko-event-code '+gender+'">'+esc(e.title)+'</span><span class="scs-ko-event-detail"><strong>'+esc(e.title)+'</strong><small>'+(e.teams||0)+' teams · '+(e.completed||0)+'/'+(e.matches||0)+' matches completed</small>'+(active?'<em>✓ Active Event</em>':'')+'</span><span>›</span></button>'}).join('')}
 function koOpenEvent(id,tab){if(!koMain||!koMain.events.some(function(e){return e.id===id}))return;koActiveId=id;koMain.activeEventId=id;koSaveMain();koHome=false;window.ScsApi.events.leaveHome(root);var saved=koEventLoad(id);tournamentActiveTab=tab||'flowchart';assistStep=0;assistSaved=!!(saved&&koAssistHasStarted(saved));draw=saved||restoreAssistDraft()||init();assistAssignmentsConfirmed=!!(draw.assistAssignmentsConfirmed||assistAssignmentsConfirmed);draw.assistAssignmentsConfirmed=assistAssignmentsConfirmed;if(!draw.title)draw.title=koMain.events.find(function(e){return e.id===id}).title;creationScreenPinned=assistSaved&&(!saved||!saved.matches||!saved.matches.length);bracketViewInitialized=false;bracketScrollState=null;readonly=false;saveFn=localTournamentSave;clearFn=localTournamentClear;selected=null;ensure();render();observeAssistHeader();if(assistSaved)koResumeOpenedEvent(id,saved)}
 function koRename(){if(!koMain)return;var name=prompt('Tournament name',koMain.title||'Knockout Tournament');if(name===null)return;name=name.trim();if(!name)return;koMain.title=name;koSaveMain();koHomeRender()}
-function koAddEvent(){if(!koMain)koMainStart();window.ScsApi.events.requestEvent({parentTitle:koMain.title,onCreate:function(name){if(koMain.events.some(function(e){return e.title.toLowerCase()===name.toLowerCase()})){alert('This event already exists.');return}var id=koId();koMain.events.push({id:id,title:name,teams:0,matches:0,completed:0});koSaveMain();koOpenEvent(id,'players')}})}
+function koAddEvent(){if(!koMain)koMainStart();if(koMain.status==='completed')return;window.ScsApi.events.requestEvent({parentTitle:koMain.title,onCreate:function(name){if(koMain.events.some(function(e){return e.title.toLowerCase()===name.toLowerCase()})){alert('This event already exists.');return}var id=koId();koMain.events.push({id:id,title:name,teams:0,matches:0,completed:0});koSaveMain();koOpenEvent(id,'players')}})}
 async function koDeleteCloudRecord(state){
  var id=state&&state._scsCloudTournamentId;
  if(!id)return;
