@@ -195,3 +195,6 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
   border:0;border-radius:0;box-shadow:none;background:#17253c;
 }
 @media(max-width:420px){#scsGroupTournament > .scs-gt-sheet{padding:12px}}
+
+/* V473: Shared tournament helper owns the header; Group content starts beneath it. */
+#scsGroupTournament.scs-gt-overlay{padding-top:var(--scs-tournament-header-bottom,calc(env(safe-area-inset-top) + 72px));}

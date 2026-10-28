@@ -127,7 +127,7 @@ function open(mode,viewState){
  if(!el()){let d=document.createElement('div');d.id='scsGroupTournament';d.className='scs-gt-overlay';document.body.appendChild(d)}
  render();
 }
-function close(){el()?.remove();if(window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
+function close(){el()?.remove();if(typeof window.scsRefreshTournamentHeader==='function')window.scsRefreshTournamentHeader();if(window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
 function updateCompletedScore(id,score,winner){
  const m=matches.find(v=>String(v.id)===String(id));
  if(!m||viewOnly||!m.score||!score?.finished)return false;
