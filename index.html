@@ -697,13 +697,13 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 </style>
 <style>#vaultRegisterPage.scs-tournament-level-mode .scs-tournament-rating-field{display:none!important}.scs-tournament-level-ring{position:relative}.scs-tournament-level-number{display:none!important;position:absolute;right:-5px;bottom:-5px;background:#182b47;color:#fff;border:1px solid #8da8cd;border-radius:8px;min-width:12px;height:13px;line-height:12px;text-align:center;font-size:10px;font-weight:800}</style><style>#vmEditModal.scs-tournament-level-mode .scs-tournament-rating-field{display:none!important}#vmEditModal.scs-tournament-level-mode .scs-tournament-level-field{display:block!important}</style><style>.scs-tmgr-filters{display:flex;gap:8px;margin:12px 0 18px}.scs-tmgr-filters button{flex:1;min-height:43px;padding:8px;border:1px solid #557096;border-radius:12px;background:#1b2d48;color:#c8d7ee;font-weight:700;font-size:.88rem}.scs-tmgr-filters button.is-active{background:#416ab3;border-color:#86aaff;color:#fff}</style><style>
 /* V450: visual-only Practice Manager alignment with Tournament Manager. */
-#myHubHomeView .scs-practice-manager-header{padding:22px 18px 14px;margin-bottom:18px;color:var(--text,#f7f8fc)}
-#myHubHomeView .scs-practice-eyebrow{color:#5bc4f1;font-size:.78rem;letter-spacing:.17em;font-weight:800;margin-bottom:12px}
-#myHubHomeView .scs-practice-manager-title{display:flex;justify-content:space-between;align-items:center;gap:14px;border-bottom:1px solid rgba(91,196,241,.36);padding-bottom:18px;margin-bottom:18px}
-#myHubHomeView .scs-practice-manager-title h1{font-size:clamp(1.5rem,6vw,2rem);line-height:1.15;margin:0 0 8px;font-weight:800;letter-spacing:-.025em}
-#myHubHomeView .scs-practice-manager-title p{font-size:.9rem;line-height:1.4;color:#b2c6e0;margin:0}
-#myHubHomeView .scs-practice-manager-icon{font-size:2rem;flex-shrink:0}
-#myHubHomeView .scs-practice-manager-header .scs-activity-home-back{margin:0;padding:11px 17px;border-radius:12px;background:#233d60;color:#f6faff;border:1px solid #7199c9;font-weight:700}
+#homePageOverlay .scs-practice-manager-header{padding:22px 18px 14px;margin-bottom:18px;color:var(--text,#f7f8fc)}
+#homePageOverlay .scs-practice-eyebrow{color:#5bc4f1;font-size:.78rem;letter-spacing:.17em;font-weight:800;margin-bottom:12px}
+#homePageOverlay .scs-practice-manager-title{display:flex;justify-content:space-between;align-items:center;gap:14px;border-bottom:1px solid rgba(91,196,241,.36);padding-bottom:18px;margin-bottom:18px}
+#homePageOverlay .scs-practice-manager-title h1{font-size:clamp(1.5rem,6vw,2rem);line-height:1.15;margin:0 0 8px;font-weight:800;letter-spacing:-.025em}
+#homePageOverlay .scs-practice-manager-title p{font-size:.9rem;line-height:1.4;color:#b2c6e0;margin:0}
+#homePageOverlay .scs-practice-manager-icon{font-size:2rem;flex-shrink:0}
+#homePageOverlay .scs-practice-manager-header .scs-activity-home-back{margin:0;padding:11px 17px;border-radius:12px;background:#233d60;color:#f6faff;border:1px solid #7199c9;font-weight:700}
 #myHubHomeView .myhub-home-sections{padding-left:16px;padding-right:16px}
 #myHubHomeView .myhub-home-section-title{font-size:1.12rem;margin:18px 2px 20px}
 #myHubHomeView .myhub-home-group,#myHubHomeView .scs-home-access-card{border-radius:20px;border:1px solid rgba(102,156,218,.43);box-shadow:none}
@@ -747,6 +747,12 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #scsTournamentManager .scs-tmgr-action{grid-template-columns:44px minmax(0,1fr) 18px;gap:10px;padding:14px 12px}
 #scsTournamentManager .scs-tmgr-icon{width:44px;height:44px}
 }
+</style>
+<style id="scs-practice-title-position-v453">
+/* Show the title above the user profile only on the Practice Home tab. */
+#homePageOverlay > .scs-practice-manager-header{padding:20px 18px 12px;margin-bottom:0}
+#homePageOverlay:not(:has(#myHubHomeView.is-active)) > .scs-practice-manager-header{display:none}
+#homePageOverlay > .home-topbar{margin-top:0}
 </style>
 </head>
 <body>
@@ -1311,6 +1317,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
   </div>
 </div>
 
+<header class="scs-practice-manager-header"><div class="scs-practice-eyebrow">— SCS · PRACTICE</div><div class="scs-practice-manager-title"><div><h1>Practice Manager</h1><p>Manage your activities, sessions and club.</p></div><span class="scs-practice-manager-icon" aria-hidden="true">🏸</span></div><button type="button" class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button></header>
 <!-- Top bar -->
 
 <div class="home-topbar home-app-header" aria-label="User home">
@@ -1946,7 +1953,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 
   <!-- ── My Hub Home: independent tab view ── -->
   <section id="myHubHomeView" class="myhub-tab-view is-active" data-myhub-view="home">
-  <header class="scs-practice-manager-header"><div class="scs-practice-eyebrow">— SCS · PRACTICE</div><div class="scs-practice-manager-title"><div><h1>Practice Manager</h1><p>Manage your activities, sessions and club.</p></div><span class="scs-practice-manager-icon" aria-hidden="true">🏸</span></div><button type="button" class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button></header>
+  
 
   <!-- ── My Card content inline (no tile, no navigation) ── -->
 
@@ -3745,7 +3752,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V452', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V453', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
