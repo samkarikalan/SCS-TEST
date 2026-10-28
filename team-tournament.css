@@ -906,3 +906,12 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 .scs-team-sheet .scs-match-player-meta{display:flex!important;align-items:center;gap:5px;flex-wrap:wrap;padding-left:35px!important;min-width:0;max-width:100%}
 .scs-team-sheet .scs-tm-completed-team{display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;align-items:center}
 .scs-team-sheet .scs-tm-completed-team-score{grid-column:2;align-self:center;white-space:nowrap}
+
+/* V480: Team Tournament uses the existing shared Tournament header, not a popup. */
+#scsTeamTournament.scs-team-overlay{position:fixed!important;inset:0!important;top:calc(56px + env(safe-area-inset-top))!important;bottom:0!important;width:100%!important;height:auto!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain;background:#101b2e!important;padding:0 0 calc(80px + env(safe-area-inset-bottom))!important;border:0!important;border-radius:0!important;box-shadow:none!important;}
+#scsTeamTournament .scs-team-sheet{width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;background:#192840!important;border:0!important;border-radius:0!important;margin:0!important;padding:16px 16px 24px!important;}
+#scsTeamTournament .scs-team-sheet>header{display:none!important;}
+#scsTeamTournament .scs-team-main-sheet>header button[data-close],
+#scsTeamTournament [data-event-cancel],#scsTeamTournament [data-main-cancel]{display:none!important;}
+#scsTeamTournament .scs-team-bottom-nav{z-index:1000002!important;}
+#scsTeamTournament[hidden]{display:none!important;}

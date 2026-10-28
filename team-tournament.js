@@ -480,6 +480,9 @@ function teamBottomNav(){
  return window.ScsApi.navigation.bottom({active,attribute:'data-team-nav',ariaLabel:'Team tournament sections'});
 }
 function render(){let r=root();if(!r)return;
+ r.hidden=false;
+ r.dataset.scsTeamPageKind=(!creatingMain&&!creatingEvent&&!mainMode)?'event':'home';
+ r.dataset.scsTeamPageTitle=creatingMain?'New Team Tournament':creatingEvent?'New Event':mainMode?(main?.title||'Team Tournament'):(state.title||'Team Tournament');
  if(creatingEvent){
  r.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-create-sheet" role="dialog" aria-label="Add Team Tournament Event"><header><strong>'+esc(main.title)+'</strong><button type="button" data-event-cancel aria-label="Close">✕</button></header>'+eventNameForm()+'</div>';
  r.querySelectorAll('[data-event-cancel]').forEach(b=>b.onclick=close);
