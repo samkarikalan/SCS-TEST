@@ -915,3 +915,19 @@ body.light-mode .scs-team-sheet .scs-team-match-shell .scs-team-inline-club-pill
 #scsTeamTournament [data-event-cancel],#scsTeamTournament [data-main-cancel]{display:none!important;}
 #scsTeamTournament .scs-team-bottom-nav{z-index:1000002!important;}
 #scsTeamTournament[hidden]{display:none!important;}
+
+/* V481: Remove only the legacy popup's enclosing cards on full-page Team setup/fixtures.
+   Club, roster, match and encounter cards remain unchanged. */
+#scsTeamTournament .scs-team-sheet > .scs-team-setup,
+#scsTeamTournament .scs-team-sheet > .scs-team-fixture-setup,
+#scsTeamTournament .scs-team-sheet > .scs-team-clubs-view > .scs-team-setup,
+#scsTeamTournament .scs-team-sheet > .scs-team-tournament-view > .scs-team-fixture-setup {
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  padding:0!important;
+  margin:0!important;
+  max-width:none!important;
+  width:100%!important;
+}
