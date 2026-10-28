@@ -90,6 +90,22 @@ html,body{overscroll-behavior:none;}
   width:100%;
   min-height:100dvh;
 }
+
+/* V482: Practice workspace full-page chrome; retain functional inner cards. */
+#scsPracticeSharedHeader{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:2147480900;min-height:56px;padding:8px 18px;box-sizing:border-box;display:flex;align-items:center;gap:14px;background:#0d1729;color:#f5f7fc;border-bottom:1px solid #334660}
+#scsPracticeSharedHeader[hidden],#scsPracticeSharedMenu[hidden]{display:none!important}
+#scsPracticeSharedHeader button{border:0;background:none;color:#e7b95d;font-size:1.6rem;min-width:44px;min-height:44px}
+#scsPracticeSharedHeader strong{font-size:1.12rem;font-weight:750}
+#scsPracticeSharedMenu{position:fixed;top:calc(env(safe-area-inset-top,0px) + 56px);left:0;z-index:2147480901;background:#14243c;min-width:min(85vw,300px);padding:12px;box-shadow:0 8px 24px #0008;border:1px solid #425b78;border-radius:0 0 12px 0}
+#scsPracticeSharedMenu button{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid #354965;padding:14px;color:#f5f7fc;font-size:1rem}
+body.scs-practice-fullpage #homePageOverlay>.scs-practice-manager-header{display:none!important}
+body.scs-practice-fullpage #homePageOverlay{padding-top:calc(env(safe-area-inset-top,0px) + 56px)!important}
+body.scs-practice-fullpage .page.scs-practice-main-page{padding-top:calc(env(safe-area-inset-top,0px) + 56px)!important}
+body.scs-practice-fullpage .page.scs-practice-main-page>.sheet-header{display:none!important}
+body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-title{border:0}
+/* Remove page-level shells, not player/round/slot/settings cards. */
+body.scs-practice-fullpage #homePageOverlay>.scs-practice-manager-header,body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-header{box-shadow:none}
+
 </style>
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png?v=V149">
   <link rel="manifest" href="/manifest.json?v=V209">
@@ -1490,6 +1506,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   </div>
 </div>
 
+<div id="scsPracticeSharedHeader" hidden><button type="button" aria-label="Open practice navigation" onclick="SCSPracticeNavigation.toggle()">☰</button><strong id="scsPracticeSharedTitle">My Hub</strong></div><nav id="scsPracticeSharedMenu" hidden aria-label="Practice modules"><button type="button" onclick="SCSPracticeNavigation.go('viewer')">My Hub</button><button type="button" onclick="SCSPracticeNavigation.go('players')">Player Manager</button><button type="button" onclick="SCSPracticeNavigation.go('organiser')">Rounds</button><button type="button" onclick="SCSPracticeNavigation.go('vault')">Slots</button><button type="button" onclick="SCSPracticeNavigation.go('settings')">Settings</button></nav>
 <header class="scs-practice-manager-header"><div class="scs-practice-eyebrow">— SCS · PRACTICE</div><div class="scs-practice-manager-title"><div><h1>Practice Manager</h1><p>Manage your activities, sessions and club.</p></div><span class="scs-practice-manager-icon" aria-hidden="true">🏸</span></div><button type="button" class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button></header>
 <!-- Top bar -->
 
@@ -3925,7 +3942,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V481', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V482', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4623,6 +4640,36 @@ window.TournamentNavigation={
 };
 function scsTournamentMenuChoose(handler){window.TournamentNavigation.open(handler);}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamentMenuToggle(false)});
+</script>
+<script>
+/* V482: one Practice navigation controller; existing workspace functions remain authoritative. */
+window.SCSPracticeNavigation={
+ toggle:function(){var m=document.getElementById('scsPracticeSharedMenu');if(m)m.hidden=!m.hidden;},
+ go:function(target){var m=document.getElementById('scsPracticeSharedMenu');if(m)m.hidden=true;
+  if(target==='players'){if(typeof scsPrimaryNavigate==='function')scsPrimaryNavigate('organiser');if(typeof showPage==='function')showPage('playersPage',null);}
+  else if(typeof scsPrimaryNavigate==='function')scsPrimaryNavigate(target);
+  this.refresh();},
+ refresh:function(){
+  var header=document.getElementById('scsPracticeSharedHeader');if(!header)return;
+  var tournament=document.getElementById('scsTournamentPersistentHeader');
+  var tournamentOpen=!!(tournament&&!tournament.hidden&&getComputedStyle(tournament).display!=='none');
+  var activePage=null;
+  ['playersPage','roundsPage','settingsPage','vaultPage'].forEach(function(id){var el=document.getElementById(id);if(el&&getComputedStyle(el).display!=='none')activePage=id;});
+  var home=document.getElementById('homePageOverlay');var homeOpen=!!(home&&getComputedStyle(home).display!=='none');
+  var active=!tournamentOpen&&(!!activePage||homeOpen);
+  header.hidden=!active;document.body.classList.toggle('scs-practice-fullpage',active);
+  var title={playersPage:'Player Manager',roundsPage:'Rounds',settingsPage:'Settings',vaultPage:'Slots'}[activePage];
+  if(!title){var mode=typeof appMode==='string'?appMode:'viewer';title=mode==='vault'?'Slots':mode==='organiser'?'Rounds':'My Hub';}
+  var label=document.getElementById('scsPracticeSharedTitle');if(label)label.textContent=title;
+  ['playersPage','roundsPage','settingsPage','vaultPage'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.toggle('scs-practice-main-page',id===activePage);});
+  if(!active){var menu=document.getElementById('scsPracticeSharedMenu');if(menu)menu.hidden=true;}
+ }
+};
+document.addEventListener('DOMContentLoaded',function(){
+ var pending=false;var observer=new MutationObserver(function(){if(pending)return;pending=true;requestAnimationFrame(function(){pending=false;SCSPracticeNavigation.refresh();});});
+ ['homePageOverlay','playersPage','roundsPage','settingsPage','vaultPage','scsTournamentPersistentHeader'].forEach(function(id){var el=document.getElementById(id);if(el)observer.observe(el,{attributes:true,attributeFilter:['style','hidden','class']});});
+ SCSPracticeNavigation.refresh();
+});
 </script>
 </body>
 </html>
