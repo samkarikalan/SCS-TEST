@@ -755,17 +755,17 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #homePageOverlay > .home-topbar{margin-top:0}
 </style>
 <style id="scs-tournament-persistent-header-v455">
-#scsTournamentPersistentHeader{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:95;display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 18px;box-sizing:border-box;background:#0d1729;color:#f5f7fc;border-bottom:1px solid #334660;box-shadow:0 2px 12px #0003}
+#scsTournamentPersistentHeader{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:2147481000;display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 18px;box-sizing:border-box;background:#0d1729;color:#f5f7fc;border-bottom:1px solid #334660;box-shadow:0 2px 12px #0003}
 #scsTournamentPersistentHeader[hidden]{display:none!important}
 #scsTournamentPersistentHeader button{background:transparent;border:0;color:#e7b95d;font-size:1.6rem;min-width:44px;min-height:44px;cursor:pointer}
 #scsTournamentPersistentHeader strong{font-size:1.12rem;font-weight:750;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #scsTournamentPersistentHeader span{color:#e7b95d;font-size:1.35rem}
 #scsTournamentManager .scs-tmgr-simple{padding-top:76px}
 #scsTournamentManager .scs-tmgr-simple-bar[hidden]{display:none!important}
-#scsTournamentSideMenu{z-index:110}
-body>.scs-tmgr-side-shade:not([hidden]){position:fixed;inset:0;background:rgba(0,0,0,.57);z-index:109;display:block}
+#scsTournamentSideMenu{z-index:2147483000}
+body>.scs-tmgr-side-shade:not([hidden]){position:fixed;inset:0;background:rgba(0,0,0,.57);z-index:2147482000;display:block}
 body>.scs-tmgr-side-shade[hidden]{display:none!important}
-body>.scs-tmgr-side-menu{position:fixed;inset:0 auto 0 0;width:min(82vw,320px);max-width:100%;box-sizing:border-box;background:#111c30;z-index:110;transform:translateX(-105%);transition:transform .2s ease;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom));box-shadow:8px 0 24px #0006;visibility:hidden}
+body>.scs-tmgr-side-menu{position:fixed;inset:0 auto 0 0;width:min(82vw,320px);max-width:100%;box-sizing:border-box;background:#111c30;z-index:2147483000;transform:translateX(-105%);transition:transform .2s ease;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom));box-shadow:8px 0 24px #0006;visibility:hidden}
 body>.scs-tmgr-side-menu.is-open{transform:translateX(0);visibility:visible}
 body>.scs-tmgr-side-menu .scs-tmgr-side-top{display:flex;justify-content:space-between;align-items:center;padding:8px 10px 22px;margin-bottom:14px;border-bottom:1px solid #31415a;color:#e7b95d;font-size:1.45rem}
 body>.scs-tmgr-side-menu .scs-tmgr-side-top button{border:0;background:transparent;color:#a9b8cf;font-size:1.8rem;width:44px;height:44px}
@@ -3794,7 +3794,7 @@ body>.scs-tmgr-side-menu>.scs-tmgr-side-home{margin-top:auto;border-top:1px soli
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V455', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V456', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4376,7 +4376,7 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
 </div>
 
 <script src="tournament-player-level.js"></script>\n<script>
-/* V455: Persistent tournament header and shared left navigation. */
+/* V456: Persistent tournament header and shared left navigation. */
 (function(){
   var titles={scsTournamentManager:'Tournament Manager',scsTournamentContinue:'My Tournaments',scsTournamentTypePicker:'New Tournament',scsTournamentLive:'Live Tournaments',scsTournamentOverlay:'Tournament',scsScoreOverlay:'Conduct a Match'};
   function init(){
