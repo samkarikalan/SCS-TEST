@@ -463,6 +463,7 @@ window.scsTournamentReturnManager=function(){
 };
 function scsCloseTournamentManager(){var e=document.getElementById('scsTournamentManager');if(e)e.hidden=true}
 function scsTournamentManagerPlayers(){
+  ['scsTournamentContinue','scsTournamentLive','scsTournamentTypePicker'].forEach(function(id){var page=document.getElementById(id);if(page)page.hidden=true;});
   window.__scsTournamentRegistration=true;
   window.__scsTournamentRegistrationClub=null;
   window._regNavSource='tournamentManager';
@@ -4442,6 +4443,15 @@ function scsTournamentMenuToggle(open){
 }
 function scsTournamentMenuChoose(handler){
   scsTournamentMenuToggle(false);
+  // A side-menu selection replaces the preceding side-menu page; it must
+  // never leave an earlier full-screen tournament picker above the new page.
+  ['scsTournamentContinue','scsTournamentLive','scsTournamentTypePicker'].forEach(function(id){
+    var page=document.getElementById(id);
+    if(page)page.hidden=true;
+  });
+  if(handler!=='scsTournamentManagerPlayers'){
+    document.body.classList.remove('scs-tournament-register-open');
+  }
   if(typeof window[handler]==='function')window[handler]();
   if(typeof window.scsRefreshTournamentHeader==='function')window.scsRefreshTournamentHeader();
 }
