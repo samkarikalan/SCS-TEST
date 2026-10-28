@@ -754,6 +754,29 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #homePageOverlay:not(:has(#myHubHomeView.is-active)) > .scs-practice-manager-header{display:none}
 #homePageOverlay > .home-topbar{margin-top:0}
 </style>
+<style id="scs-tournament-menu-v454">
+#scsTournamentManager.scs-tmgr-fullpage{background:#0d1729}
+#scsTournamentManager .scs-tmgr-simple{min-height:100%;display:flex;flex-direction:column;padding:16px 18px 26px;box-sizing:border-box;background:transparent}
+#scsTournamentManager .scs-tmgr-simple-bar{display:flex;align-items:center;gap:12px;border-bottom:1px solid #31415a;padding:4px 0 16px}
+#scsTournamentManager .scs-tmgr-menu-toggle{width:44px;height:44px;flex:none;border:0;background:transparent;color:#e7b95d;font-size:1.65rem;cursor:pointer}
+#scsTournamentManager .scs-tmgr-simple-brand{font-size:1.12rem;font-weight:750;flex:1;color:#f5f7fc}
+#scsTournamentManager .scs-tmgr-simple-trophy{font-size:1.5rem}
+#scsTournamentManager .scs-tmgr-simple-intro{padding:36px 8px 28px;border-bottom:1px solid #31415a}
+#scsTournamentManager .scs-tmgr-simple-intro h2{font-size:clamp(1.5rem,6vw,2rem);line-height:1.18;color:#f5f7fc;margin:14px 0;font-weight:800}
+#scsTournamentManager .scs-tmgr-simple-intro p{font-size:.95rem;color:#a9b8cf;line-height:1.5}
+#scsTournamentManager .scs-tmgr-simple-intro .scs-tmgr-simple-hint{margin-top:22px;font-size:.85rem}
+#scsTournamentManager .scs-tmgr-simple-footer{margin-top:auto;text-align:center;color:#8fa1bd;font-size:.78rem;padding:18px}
+#scsTournamentManager .scs-tmgr-side-shade:not([hidden]){position:fixed;inset:0;background:rgba(0,0,0,.57);z-index:100;display:block}
+#scsTournamentManager .scs-tmgr-side-menu{position:fixed;inset:0 auto 0 0;width:min(82vw,320px);max-width:100%;box-sizing:border-box;background:#111c30;z-index:101;transform:translateX(-105%);transition:transform .2s ease;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom));box-shadow:8px 0 24px #0006;visibility:hidden}
+#scsTournamentManager .scs-tmgr-side-menu.is-open{transform:translateX(0);visibility:visible}
+#scsTournamentManager .scs-tmgr-side-top{display:flex;justify-content:space-between;align-items:center;padding:8px 10px 22px;margin-bottom:14px;border-bottom:1px solid #31415a;color:#e7b95d;font-size:1.45rem}
+#scsTournamentManager .scs-tmgr-side-top button{border:0;background:transparent;color:#a9b8cf;font-size:1.8rem;width:44px;height:44px}
+#scsTournamentManager .scs-tmgr-side-menu>button{width:100%;display:flex;align-items:center;gap:18px;text-align:left;border:0;border-radius:12px;background:transparent;color:#f5f7fc;padding:17px 14px;font-size:1rem;font-weight:600;cursor:pointer}
+#scsTournamentManager .scs-tmgr-side-menu>button:active,#scsTournamentManager .scs-tmgr-side-menu>button:focus-visible{background:#263955}
+#scsTournamentManager .scs-tmgr-side-menu>button span{display:inline-flex;justify-content:center;width:28px;color:#e7b95d;font-size:1.35rem}
+#scsTournamentManager .scs-tmgr-side-menu>.scs-tmgr-side-home{margin-top:auto;border-top:1px solid #31415a;border-radius:0;color:#b4c4dc}
+@media(prefers-reduced-motion:reduce){#scsTournamentManager .scs-tmgr-side-menu{transition:none}}
+</style>
 </head>
 <body>
 
@@ -3752,7 +3775,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V453', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V454', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4253,16 +4276,29 @@ window.scsActivityChoose=function(mode){var e=document.getElementById('scsActivi
 window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];window.scsTournamentReturnPage=null;['scsTournamentManager','scsTournamentContinue','scsTournamentLive','scsTournamentTypePicker'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=true});window.scsActivityMode=null;scsActivityShowHome();};
 </script>
 <div id="scsTournamentManager" class="scs-tmgr-overlay scs-tmgr-fullpage" hidden>
-  <section class="scs-tmgr-card" role="main" aria-labelledby="scsTmManagerTitle">
-    <header class="scs-tmgr-head"><div class="scs-tmgr-head-copy"><div class="scs-tmgr-kicker">SCS · TOURNAMENT</div><h2 id="scsTmManagerTitle">Tournament Manager</h2><p>Create, manage and follow every competition.</p></div><span class="scs-tmgr-hero-mark" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="M20 9h24v15c0 10-5 18-12 18S20 34 20 24V9Z" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/><path d="M20 15H9v6c0 9 5 13 14 14M44 15h11v6c0 9-5 13-14 14M32 42v9m-11 5h22" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="m32 16 2.6 5.2 5.7.8-4.1 4 1 5.7-5.2-2.8-5.2 2.8 1-5.7-4.1-4 5.7-.8L32 16Z" fill="currentColor"/></svg></span></header>
-    <button class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button><div class="scs-tmgr-actions">
-      <button class="scs-tmgr-action" onclick="scsTournamentManagerMyTournaments()"><span class="scs-tmgr-icon">🏆</span><span class="scs-tmgr-copy"><strong>My Tournaments</strong><small>Continue, view live and browse completed</small></span><span class="scs-tmgr-go">›</span></button>
-      <button class="scs-tmgr-action start" onclick="scsTournamentManagerStart()"><span class="scs-tmgr-icon">＋</span><span class="scs-tmgr-copy"><strong>New Tournament</strong><small>Team, Group or Knockout</small></span><span class="scs-tmgr-go">›</span></button>
-      <button class="scs-tmgr-action" onclick="scsTournamentManagerPlayers()"><span class="scs-tmgr-icon">♙</span><span class="scs-tmgr-copy"><strong>Players Manager</strong><small>Register players and manage levels</small></span><span class="scs-tmgr-go">›</span></button>
-      <button class="scs-tmgr-action conduct" onclick="scsTournamentManagerConduct()"><span class="scs-tmgr-icon">▣</span><span class="scs-tmgr-copy"><strong>Conduct a Match</strong><small>Standalone scoring and Court Center</small></span><span class="scs-tmgr-go">›</span></button>
+  <section class="scs-tmgr-card scs-tmgr-simple" role="main" aria-labelledby="scsTmManagerTitle">
+    <div class="scs-tmgr-simple-bar">
+      <button type="button" class="scs-tmgr-menu-toggle" onclick="scsTournamentMenuToggle(true)" aria-label="Open tournament menu" aria-controls="scsTournamentSideMenu" aria-expanded="false">☰</button>
+      <span class="scs-tmgr-simple-brand">Tournament Manager</span>
+      <span class="scs-tmgr-simple-trophy" aria-hidden="true">🏆</span>
     </div>
+    <div class="scs-tmgr-simple-intro">
+      <div class="scs-tmgr-kicker">SCS · TOURNAMENT</div>
+      <h2 id="scsTmManagerTitle">Welcome to Tournament Manager</h2>
+      <p>Create, manage and follow your competitions.</p>
+      <p class="scs-tmgr-simple-hint">☰ &nbsp; Open the menu to get started</p>
+    </div>
+    <div class="scs-tmgr-simple-footer">Sports Club Scheduler</div>
   </section>
-
+  <div class="scs-tmgr-side-shade" onclick="scsTournamentMenuToggle(false)" hidden></div>
+  <nav id="scsTournamentSideMenu" class="scs-tmgr-side-menu" aria-label="Tournament navigation" aria-hidden="true">
+    <div class="scs-tmgr-side-top"><strong>SCS</strong><button type="button" onclick="scsTournamentMenuToggle(false)" aria-label="Close tournament menu">×</button></div>
+    <button type="button" onclick="scsTournamentMenuChoose('scsTournamentManagerMyTournaments')"><span>🏆</span>My Tournaments</button>
+    <button type="button" onclick="scsTournamentMenuChoose('scsTournamentManagerStart')"><span>＋</span>New Tournament</button>
+    <button type="button" onclick="scsTournamentMenuChoose('scsTournamentManagerPlayers')"><span>♙</span>Players Manager</button>
+    <button type="button" onclick="scsTournamentMenuChoose('scsTournamentManagerConduct')"><span>▣</span>Conduct a Match</button>
+    <button type="button" class="scs-tmgr-side-home" onclick="scsTournamentMenuToggle(false);scsActivityReturnHome()"><span>⌂</span>SCS Home</button>
+  </nav>
 </div>
 
 <div id="scsTournamentContinue" class="scs-tmgr-overlay" hidden onclick="if(event.target===this)scsCloseTournamentContinue()"><section class="scs-tmgr-card" role="dialog" aria-modal="true"><header class="scs-tmgr-head"><div><div class="scs-tmgr-kicker">SCS · TOURNAMENT</div><h2>My Tournaments</h2><p>All your tournaments in one place.</p></div><button class="scs-tmgr-close" onclick="scsCloseTournamentContinue()" aria-label="Close">×</button></header><div class="scs-tmgr-filters" role="group" aria-label="Filter tournaments"><button type="button" data-tm-filter="all" class="is-active" onclick="scsSetMyTournamentFilter('all')">All</button><button type="button" data-tm-filter="live" onclick="scsSetMyTournamentFilter('live')">Live</button><button type="button" data-tm-filter="completed" onclick="scsSetMyTournamentFilter('completed')">Completed</button></div><div id="scsTournamentContinueList" class="scs-tmgr-tournament-list"></div><button class="scs-tmgr-back" onclick="scsCloseTournamentContinue()">‹ Tournament Manager</button></section></div>
@@ -4320,5 +4356,27 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
   </section>
 </div>
 
-<script src="tournament-player-level.js"></script>\n</body>
+<script src="tournament-player-level.js"></script>\n<script>
+/* V454: Tournament Manager navigation presentation only; reuse original handlers. */
+function scsTournamentMenuToggle(open){
+  var host=document.getElementById('scsTournamentManager');
+  if(!host)return;
+  var panel=host.querySelector('#scsTournamentSideMenu');
+  var shade=host.querySelector('.scs-tmgr-side-shade');
+  var toggle=host.querySelector('.scs-tmgr-menu-toggle');
+  if(!panel||!shade)return;
+  panel.classList.toggle('is-open',!!open);
+  panel.setAttribute('aria-hidden',String(!open));
+  shade.hidden=!open;
+  if(toggle)toggle.setAttribute('aria-expanded',String(!!open));
+}
+function scsTournamentMenuChoose(handler){
+  scsTournamentMenuToggle(false);
+  if(typeof window[handler]==='function')window[handler]();
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')scsTournamentMenuToggle(false);
+});
+</script>
+</body>
 </html>
