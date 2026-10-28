@@ -134,6 +134,8 @@ function localTournamentClear(){try{if(koMain&&koActiveId)localStorage.removeIte
 function koMainStart(){koMain=koReadMain();if(!koMain){var legacy=null;try{legacy=JSON.parse(localStorage.getItem(LOCAL_TOURNAMENT_KEY)||'null')}catch(_){}koMain={id:koId(),title:legacy&&legacy.title||'Knockout Tournament',events:[],activeEventId:null};if(legacy&&legacy.matches&&legacy.matches.length){var id=koId();koMain.events.push({id:id,title:legacy.title||'Knockout Event',matches:legacy.matches.length,completed:Object.keys(legacy.results||{}).length,teams:(legacy.entries||[]).length});koMain.activeEventId=id;localStorage.setItem(koEventKey(id),JSON.stringify(legacy))}koSaveMain()}if(!Array.isArray(koMain.events))koMain.events=[];koActiveId=koMain.events.some(function(e){return e.id===koMain.activeEventId})?koMain.activeEventId:(koMain.events[0]&&koMain.events[0].id)||null;koMain.activeEventId=koActiveId;koSaveMain()}
 function koHomeRender(){
  if(!root)return;
+ // The previous event may have been opened read-only. The parent status owns home permissions.
+ readonly=!!(koMain&&koMain.status==='completed');
  koHome=true;tournamentActiveTab='main';
  var events=(koMain.events||[]).map(function(e){var saved=koEventLoad(e.id),finished=koCompletion(saved);return Object.assign({},e,{status:saved&&saved.status==='completed'?'completed':'active',champion:finished?finished.winner:e.champion,clubs:e.clubs||Array.from({length:Number(e.teams)||0},function(_,i){return 'Team '+(i+1)})})});
  window.ScsApi.events.mountHome(root,{title:koMain.title||'Knockout Tournament',events:events,activeEventId:koActiveId,viewOnly:readonly,navAttribute:'data-ko-nav',ariaLabel:'Knockout tournament sections'});
