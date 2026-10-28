@@ -523,16 +523,28 @@ r.querySelector('[data-add]')?.addEventListener('click',()=>clubEditor(state.clu
  });r.querySelector('[data-cancel]')?.addEventListener('click',()=>{assigning=null;render()});r.querySelectorAll('[data-choose]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===assigning),n=Number(x.dataset.choose);if(!m||m.status!=='pending')return;let occupying=allMatches().find(y=>y.court===n&&y.status!=='approved');if(occupying){alert('Court is occupied. Select a free court.');return}m.court=n;m.status='assigned';assigning=null;save();render()});r.querySelectorAll('[data-start]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===x.dataset.start);m.status='playing';save();render()});r.querySelectorAll('.scs-team-match-shell[data-match-id]').forEach(x=>{
  const m=allMatches().find(y=>y.id===x.dataset.matchId);
  if(!m||!['approved','score_ready'].includes(m.status)||!m.score?.finished)return;
- const openSaved=()=>{if(!window.SCSScoring||!SCSScoring.openTeamCompleted){alert('Scoreboard is unavailable.');return;}const overlay=root();if(overlay)overlay.hidden=true;try{if(tab==='match'||viewOnly)SCSScoring.openCompleted(m.score);else if(!SCSScoring.openTeamCompleted(m.id,m.score)&&overlay)overlay.hidden=false;}catch(err){if(overlay)overlay.hidden=false;console.error(err);alert('Could not open saved scoreboard.');}};
+ const openSaved=()=>{if(!window.SCSScoring||!SCSScoring.openTeamCompleted){alert('Scoreboard is unavailable.');return;}const overlay=root();if(overlay)overlay.hidden=true;try{if(viewOnly||m.status==='approved')SCSScoring.openCompleted(m.score);else if(!SCSScoring.openTeamCompleted(m.id,m.score)&&overlay)overlay.hidden=false;}catch(err){if(overlay)overlay.hidden=false;console.error(err);alert('Could not open saved scoreboard.');}};
  x.addEventListener('click',e=>{if(e.target.closest('button,a,select,input'))return;openSaved()});
  x.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openSaved()}});
- });r.querySelectorAll('[data-team-approval-score],[data-team-completed-score]').forEach(x=>x.onclick=()=>{const m=allMatches().find(y=>String(y.id)===String(x.dataset.teamApprovalScore||x.dataset.teamCompletedScore));if(!m?.score||!window.SCSScoring)return;const overlay=root();if(overlay)overlay.hidden=true;try{const ok=x.hasAttribute('data-team-completed-score')?SCSScoring.openCompleted(m.score):SCSScoring.openTeamCompleted(m.id,m.score);if(ok===false&&overlay)overlay.hidden=false}catch(err){if(overlay)overlay.hidden=false;console.error(err)}});r.querySelectorAll('[data-score]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===x.dataset.score);if(!m||m.status!=='playing'||!m.court)return;if(!window.SCSScoring||!SCSScoring.openGroupMatch){alert('Scoreboard is unavailable.');return;}const overlay=root();if(overlay)overlay.hidden=true;try{SCSScoring.openGroupMatch({sessionId:'local-team-'+m.id,round:1,court:m.court,pair1:m.pairs[0],pair2:m.pairs[1],courtCenter:true,groupId:m.id})}catch(error){if(overlay)overlay.hidden=false;console.error('Team match scoring:',error);alert('Could not open the scoreboard.')}});r.querySelectorAll('[data-approve]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===x.dataset.approve);if(m.status!=='score_ready'||!m.score?.finished)return;m.status='approved';m.court=null;save();render()});}
+ });r.querySelectorAll('[data-team-approval-score],[data-team-completed-score]').forEach(x=>x.onclick=()=>{const m=allMatches().find(y=>String(y.id)===String(x.dataset.teamApprovalScore||x.dataset.teamCompletedScore));if(!m?.score||!window.SCSScoring)return;const overlay=root();if(overlay)overlay.hidden=true;try{const ok=(viewOnly||m.status==='approved')?SCSScoring.openCompleted(m.score):SCSScoring.openTeamCompleted(m.id,m.score);if(ok===false&&overlay)overlay.hidden=false}catch(err){if(overlay)overlay.hidden=false;console.error(err)}});r.querySelectorAll('[data-score]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===x.dataset.score);if(!m||m.status!=='playing'||!m.court)return;if(!window.SCSScoring||!SCSScoring.openGroupMatch){alert('Scoreboard is unavailable.');return;}const overlay=root();if(overlay)overlay.hidden=true;try{SCSScoring.openGroupMatch({sessionId:'local-team-'+m.id,round:1,court:m.court,pair1:m.pairs[0],pair2:m.pairs[1],courtCenter:true,groupId:m.id})}catch(error){if(overlay)overlay.hidden=false;console.error('Team match scoring:',error);alert('Could not open the scoreboard.')}});r.querySelectorAll('[data-approve]').forEach(x=>x.onclick=()=>{let m=allMatches().find(y=>y.id===x.dataset.approve);if(m.status!=='score_ready'||!m.score?.finished)return;m.status='approved';m.court=null;save();render()});}
 function scoreUpdate(id,score,winner){let m=allMatches().find(x=>x.id===id);if(!m||!['playing','score_ready'].includes(m.status))return false;m.score=score;if(winner){m.winner=winner;m.status='score_ready'}save();render();return true}
-function updateCompletedScore(id,score,winner){
+async function updateCompletedScore(id,score,winner){
  const m=allMatches().find(x=>x.id===id);
- if(!m||!['approved','score_ready'].includes(m.status)||viewOnly||!score?.finished||!['L','R'].includes(winner))return false;
- const wasApproved=m.status==='approved';m.score=score;m.winner=winner;m.status=wasApproved?'approved':'score_ready';if(wasApproved)m.court=null;
- save();render();return true;
+ if(!m||m.status!=='score_ready'||viewOnly||!score?.finished||!['L','R'].includes(winner))return false;
+ if(!window.SCSTournamentStore||typeof window.SCSTournamentStore.save!=='function')return false;
+ const previousScore=m.score,previousWinner=m.winner;
+ m.score=score;m.winner=winner;
+ try{
+  // A successful cloud write is required before the scoreboard reports success.
+  const cloudId=await window.SCSTournamentStore.save('team',state);
+  if(!cloudId)throw new Error('Tournament score was not saved to Supabase');
+  state._scsCloudTournamentId=cloudId;
+  save();render();return true;
+ }catch(error){
+  m.score=previousScore;m.winner=previousWinner;
+  console.error('Team scoreboard cloud save failed:',error);
+  return false;
+ }
 }
 function conductMatches(){return allMatches().filter(m=>m.court&&['playing','score_ready'].includes(m.status)).map(m=>({id:m.id,court:m.court,status:m.status,pair1:m.pairs[0],pair2:m.pairs[1],score:m.score,winner:m.winner,label:matchName(m)}));}
 function finishConductMatch(id){const m=allMatches().find(x=>x.id===id);if(!m||m.status!=='score_ready'||!m.score?.finished||!['L','R'].includes(m.winner))return false;m.status='approved';m.court=null;save();render();return true;}
