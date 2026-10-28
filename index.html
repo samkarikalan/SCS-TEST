@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V367" defer></script>
-  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V450" defer></script>
+  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V465" defer></script>
   <script src="court-center.js?v=V425" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -888,6 +888,18 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 }
 /* Shared menu replaces the obsolete My Tournaments return button. */
 #scsTournamentContinue > .scs-tmgr-card > .scs-tmgr-back {display:none!important}
+</style>
+
+<style id="scs-ko-assist-fullpage-v465">
+/* Assist index: common tournament header is the sole navigation header. */
+#scsKoPersistentHeader:has(+ .scs-tm-assist) .scs-ko-header-close,
+.scs-ko-assist-index-active #scsKoPersistentHeader .scs-ko-header-close{display:none!important}
+.scs-ko-assist-index-active #scsKoPersistentHeader .scs-ko-header-title-row{display:none!important}
+/* Steps retain their original X, save behavior, and existing step controls. */
+.scs-ko-assist-step-active #scsKoPersistentHeader .scs-ko-header-close{display:inline-flex!important}
+/* No underlying tournament screen visible through the full-screen assist. */
+.scs-ko-assist-index-active,.scs-ko-assist-step-active{background:#0e192d!important;min-height:100dvh;box-sizing:border-box}
+.scs-ko-assist-index-active .scs-tm-assist{background:transparent!important;box-shadow:none!important;border:0!important}
 </style>
 </head>
 <body>
@@ -3887,7 +3899,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V464', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V465', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
