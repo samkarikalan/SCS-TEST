@@ -4526,6 +4526,9 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
         var el=document.getElementById(id);
         if(el&&!el.hidden&&getComputedStyle(el).display!=='none')active=id;
       });
+      // An open tournament event takes precedence over stale parent screens.
+      var eventPage=document.getElementById('scsTournamentOverlay');
+      if(eventPage&&!eventPage.hidden&&getComputedStyle(eventPage).display!=='none')active='scsTournamentOverlay';
       var reg=document.getElementById('vaultRegisterPage');
       if(document.body.classList.contains('scs-tournament-register-open')&&reg&&getComputedStyle(reg).display!=='none')active='registration';
       // Conduct-a-Match can be rendered by the existing scoring module.
