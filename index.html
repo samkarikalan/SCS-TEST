@@ -4553,17 +4553,12 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 function scsSaveKoEventFromHeader(){
-  var button=document.getElementById('scsKoEventHeaderSave');
-  if(!window.SCSTournament)return;
   var overlay=document.getElementById('scsTournamentOverlay');
-  var live=overlay&&overlay.querySelector('[data-live-tournament="true"]');
-  var save=live&&typeof SCSTournament.saveProgressNow==='function'
-    ?SCSTournament.saveProgressNow:SCSTournament.assistSaveDraft;
-  if(typeof save!=='function')return;
-  if(button)button.disabled=true;
-  try{
-    Promise.resolve(save.call(SCSTournament)).then(function(){if(button)button.disabled=false;},function(error){if(button)button.disabled=false;console.error('Tournament save:',error);});
-  }catch(error){if(button)button.disabled=false;console.error('Tournament save:',error);}
+  if(!overlay)return;
+  var original=overlay.querySelector('[data-ko-save-progress]') || overlay.querySelector('.scs-ko-save-button');
+  if(original){original.click();return;}
+  // The existing page rerenders its save control; never substitute another save path.
+  console.warn('Original tournament Save control is not present on this page');
 }
 function scsTournamentMenuToggle(open){
   var panel=document.getElementById('scsTournamentSideMenu');
