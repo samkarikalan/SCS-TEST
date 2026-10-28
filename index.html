@@ -821,6 +821,40 @@ body>#scsTournamentSideMenu{z-index:2147483601!important}
 body>#scsTournamentSideMenu.is-open{visibility:visible;transform:translateX(0)}
 body>#scsTournamentSideMenu:not(.is-open){visibility:hidden;transform:translateX(-105%)}
 </style>
+<style id="scs-tournament-screen-height-v460">
+/* Tournament pages: respect the fixed app header and iOS safe areas. */
+:root{--scs-tournament-header-bottom:calc(env(safe-area-inset-top,0px) + 72px)}
+#scsTournamentManager.scs-tmgr-overlay,
+#scsTournamentContinue.scs-tmgr-overlay,
+#scsTournamentLive.scs-tmgr-overlay,
+#scsTournamentTypePicker.scs-tournament-type-overlay{
+  top:var(--scs-tournament-header-bottom)!important;
+  bottom:0!important;
+  height:auto!important;
+  max-height:none!important;
+  min-height:0!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  padding-top:0!important;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 20px)!important;
+}
+#scsTournamentManager .scs-tmgr-simple{padding-top:16px!important}
+#scsTournamentOverlay.scs-tm-overlay:not([hidden]){
+  top:var(--scs-tournament-header-bottom)!important;
+  bottom:0!important;
+  height:auto!important;
+  max-height:none!important;
+  min-height:0!important;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  box-sizing:border-box;
+}
+/* Full-page screens use hamburger navigation, not a second X. */
+#scsTournamentContinue>.scs-tmgr-card>.scs-tmgr-head>.scs-tmgr-close,
+#scsTournamentLive>.scs-tmgr-card>.scs-tmgr-head>.scs-tmgr-close{display:none!important}
+</style>
 </head>
 <body>
 
@@ -3819,7 +3853,7 @@ body>#scsTournamentSideMenu:not(.is-open){visibility:hidden;transform:translateX
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V459', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V460', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
