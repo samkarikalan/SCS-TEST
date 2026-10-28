@@ -855,6 +855,18 @@ body>#scsTournamentSideMenu:not(.is-open){visibility:hidden;transform:translateX
 #scsTournamentContinue>.scs-tmgr-card>.scs-tmgr-head>.scs-tmgr-close,
 #scsTournamentLive>.scs-tmgr-card>.scs-tmgr-head>.scs-tmgr-close{display:none!important}
 </style>
+
+<style id="scs-tournament-fullpage-polish-v461">
+/* Only the tournament home shell is flattened; event cards remain intact. */
+.scs-team-overlay .scs-team-main-sheet:has(.scs-team-event-home),
+.scs-gt-overlay .scs-team-main-sheet:has(.scs-team-event-home){background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;max-width:none!important;width:100%!important;padding:16px!important}
+.scs-team-overlay .scs-team-main-sheet:has(.scs-team-event-home)>header button[aria-label="Close"],
+.scs-team-overlay .scs-team-main-sheet:has(.scs-team-event-home)>header button[data-close],
+.scs-gt-overlay .scs-team-main-sheet:has(.scs-team-event-home)>header button[aria-label="Close"]{display:none!important}
+/* Conduct is a full page, but the active score sheet still needs its Close button. */
+#scsScoringOverlay:has(#scsScoreMatchPicker:not([hidden])) .scs-scoring-header{display:none!important}
+#scsScoringOverlay:has(#scsScoreMatchPicker:not([hidden])){top:var(--scs-tournament-header-bottom,calc(env(safe-area-inset-top,0px) + 72px))!important;height:auto!important;bottom:0!important;min-height:0!important;padding-top:10px!important;overflow-y:auto!important}
+</style>
 </head>
 <body>
 
@@ -3853,7 +3865,7 @@ body>#scsTournamentSideMenu:not(.is-open){visibility:hidden;transform:translateX
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V460', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V461', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4437,7 +4449,7 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
 <script src="tournament-player-level.js"></script>\n<script>
 /* V456: Persistent tournament header and shared left navigation. */
 (function(){
-  var titles={scsTournamentManager:'Tournament Manager',scsTournamentContinue:'My Tournaments',scsTournamentTypePicker:'New Tournament',scsTournamentLive:'Live Tournaments',scsTournamentOverlay:'Tournament',scsScoreOverlay:'Conduct a Match'};
+  var titles={scsTournamentManager:'Tournament Manager',scsTournamentContinue:'My Tournaments',scsTournamentTypePicker:'New Tournament',scsTournamentLive:'Live Tournaments',scsTournamentOverlay:'Tournament',scsScoringOverlay:'Conduct a Match'};
   function init(){
     var host=document.getElementById('scsTournamentManager');if(!host)return;
     var panel=host.querySelector('#scsTournamentSideMenu'),shade=host.querySelector('.scs-tmgr-side-shade');
@@ -4457,8 +4469,8 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
       var reg=document.getElementById('vaultRegisterPage');
       if(document.body.classList.contains('scs-tournament-register-open')&&reg&&getComputedStyle(reg).display!=='none')active='registration';
       // Conduct-a-Match can be rendered by the existing scoring module.
-      var score=document.querySelector('.scs-score-overlay:not([hidden]), #scsScoreOverlay:not([hidden])');
-      if(score&&getComputedStyle(score).display!=='none')active='scsScoreOverlay';
+      var score=document.getElementById('scsScoringOverlay');
+      if(score&&!score.hidden&&getComputedStyle(score).display!=='none'&&document.getElementById('scsScoreMatchPicker')&&!document.getElementById('scsScoreMatchPicker').hidden)active='scsScoringOverlay';
       header.hidden=!active;
       if(active){
         document.getElementById('scsTournamentDynamicTitle').textContent=titles[active]||(active==='registration'?'Players Manager':'Tournament');
@@ -4491,7 +4503,7 @@ window.TournamentNavigation={
    document.body.classList.remove('scs-tournament-register-open');
    var reg=document.getElementById('vaultRegisterPage');if(reg)reg.hidden=true;
   }
-  var score=document.getElementById('scsScoreOverlay');if(score)score.hidden=true;
+  var score=document.getElementById('scsScoringOverlay');if(score)score.hidden=true;
  },
  open:function(handler){
   var allowed=['scsTournamentManagerMyTournaments','scsTournamentManagerStart','scsTournamentManagerPlayers','scsTournamentManagerConduct','scsOpenTournamentManager'];
