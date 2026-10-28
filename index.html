@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V367" defer></script>
-  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V465" defer></script>
+  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V466" defer></script>
   <script src="court-center.js?v=V425" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -900,6 +900,24 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 /* No underlying tournament screen visible through the full-screen assist. */
 .scs-ko-assist-index-active,.scs-ko-assist-step-active{background:#0e192d!important;min-height:100dvh;box-sizing:border-box}
 .scs-ko-assist-index-active .scs-tm-assist{background:transparent!important;box-shadow:none!important;border:0!important}
+</style>
+<style id="scs-ko-assist-v466">
+/* The assist and each step occupy a solid full-page surface. */
+#scsTournamentOverlay.scs-ko-assist-index-active,
+#scsTournamentOverlay.scs-ko-assist-step-active {
+ background:#0e192d!important;opacity:1!important;
+ isolation:isolate;overflow-y:auto!important;overscroll-behavior:contain;
+ padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))!important;
+}
+/* The shared Tournament header owns the Assist title. */
+#scsTournamentOverlay.scs-ko-assist-index-active #scsKoPersistentHeader .scs-ko-header-title-row {display:none!important}
+#scsTournamentOverlay.scs-ko-assist-index-active #scsKoPersistentHeader .scs-ko-header-close {display:none!important}
+/* Steps retain their X and return to Assist through assistCloseStep(). */
+#scsTournamentOverlay.scs-ko-assist-step-active #scsKoPersistentHeader .scs-ko-header-close {display:inline-flex!important}
+#scsTournamentOverlay.scs-ko-assist-step-active #scsKoPersistentHeader {background:#0e192d!important}
+/* Do not reveal previous module behind the step while scrolling. */
+#scsTournamentOverlay.scs-ko-assist-index-active > section,
+#scsTournamentOverlay.scs-ko-assist-step-active > section {position:relative;z-index:1}
 </style>
 </head>
 <body>
@@ -3899,7 +3917,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V465', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V466', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
