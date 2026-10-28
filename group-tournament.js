@@ -137,7 +137,7 @@ function card(title,body){return '<section class="scs-gt-card"><h3>'+title+'</h3
 function setup(){
 let fields=[['groups','Number of groups',config.groups],['per','Teams per group',config.per],['knockouts','Number of knockouts (1 or 2)',config.knockouts],['top',config.knockouts===1?'Qualifiers per group':'Top knockout qualifiers per group',config.top]];
 if(config.knockouts===2)fields.push(['bottom','Bottom knockout qualifiers per group',config.bottom]);
-return card('Create Group Tournament','<label class="scs-gt-title-field">Tournament name<input type="text" maxlength="120" data-title required value="'+escapeHTML(title)+'" placeholder="e.g. Autumn Club Championship"></label><div class="scs-gt-fields">'+fields.map(([key,label,val])=>'<label>'+label+'<input type="number" min="1" '+(key==='knockouts'?'max="2"':'')+' data-config="'+key+'" value="'+val+'"></label>').join('')+'</div><p>Give every tournament a clear name so players can identify it in Continue and Live lists.</p><p>Top knockout selects the highest-ranked teams in each group. Bottom knockout selects the next positions, without duplicates.</p><button class="scs-gt-primary" data-action="create">Create Groups</button>');
+return card('Create Group Tournament','<label class="scs-gt-title-field">Tournament name<input type="text" maxlength="120" data-title required value="'+escapeHTML(title)+'" placeholder="e.g. Autumn Club Championship"></label><div class="scs-gt-fields">'+fields.map(([key,label,val])=>'<label>'+label+'<input type="number" min="1" '+(key==='knockouts'?'max="2"':'')+' data-config="'+key+'" value="'+val+'"></label>').join('')+'</div><button class="scs-gt-primary" data-action="create">Create Groups</button>');
 }
 function registry(){
  const names=[];function add(items){(Array.isArray(items)?items:[]).forEach(p=>{let n=typeof p==='string'?p:p&&p.name;if(n&&String(n).trim())names.push(String(n).trim())})}
@@ -458,7 +458,7 @@ function assistView(){
 }
 function assistDone(step){
  if(step===1&&!assistComplete(1)){alert('Select players using Players Manager first.');return}
- if(step===2){if(config.per<2||config.groups<1||config.knockouts<1||config.knockouts>2||config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Check the group and qualifier settings.');return}if(teamDrafts.length!==config.groups*config.per){alert('Team count must equal Groups × Teams per group ('+(config.groups*config.per)+').');return}assistPatternReady=true;assignments={};teamDrafts.forEach((team,index)=>{const g=Math.floor(index/config.per),t=index%config.per;assignments[g+':'+t]=team.slice()});}
+ if(step===2){if(config.per<2||config.groups<1||config.knockouts<1||config.knockouts>2||config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Check the group and qualifier settings.');return}assistPatternReady=true;if(teamDrafts.length===config.groups*config.per){assignments={};teamDrafts.forEach((team,index)=>{const g=Math.floor(index/config.per),t=index%config.per;assignments[g+':'+t]=team.slice()});}}
  if(step===3&&!assistComplete(3)){alert('Assign two players to every team position first.');return}
  if(step===4){if(!assistComplete(3)){alert('Complete team assignments first.');return}created=true;tab='main'}
  save();assistStep=0;render();
