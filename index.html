@@ -123,7 +123,7 @@ html,body{overscroll-behavior:none;}
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
   <script src="scoring.js?v=V367" defer></script>
-  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V449" defer></script>
+  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V450" defer></script>
   <script src="court-center.js?v=V425" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -418,7 +418,7 @@ body.light-mode .myhub-home-section-title{color:var(--text,#151821)}
 <style id="scs-score-v1248">
 .scs-score-live-top{display:none!important}.scs-score-role-head,.scs-score-role-cell{width:52px!important;min-width:52px!important}.scs-score-role-cell{cursor:pointer;position:sticky;left:104px;z-index:3;font-weight:900}.scs-score-role-cell span{display:inline-flex;width:34px;height:34px;border-radius:50%;align-items:center;justify-content:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24)}.scs-score-role-cell.is-server span{background:#2563eb}.scs-score-role-cell.is-receiver span{background:#e11d48}.scs-score-role-cell.is-locked{cursor:default}.scs-score-role-note{text-align:center;font-size:.72rem;opacity:.7;margin:6px 0 0}@media(max-width:420px){.scs-score-role-cell{left:86px}}
 </style>
-<link rel="stylesheet" href="tournament-bracket.css?v=V449">
+<link rel="stylesheet" href="tournament-bracket.css?v=V450">
 
 <style id="scs-tournament-home-v91">
 .scs-home-access-card.scs-tournament-access{background:#213a42;border-color:rgba(91,221,192,.28)}
@@ -695,7 +695,33 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 .scs-practice-return-header .scs-activity-home-back{margin:0;padding:9px 14px;font-size:.85rem;white-space:nowrap;}
 @media(max-width:370px){.scs-practice-return-header{padding-left:12px;padding-right:12px;}}
 </style>
-<style>#vaultRegisterPage.scs-tournament-level-mode .scs-tournament-rating-field{display:none!important}.scs-tournament-level-ring{position:relative}.scs-tournament-level-number{display:none!important;position:absolute;right:-5px;bottom:-5px;background:#182b47;color:#fff;border:1px solid #8da8cd;border-radius:8px;min-width:12px;height:13px;line-height:12px;text-align:center;font-size:10px;font-weight:800}</style><style>#vmEditModal.scs-tournament-level-mode .scs-tournament-rating-field{display:none!important}#vmEditModal.scs-tournament-level-mode .scs-tournament-level-field{display:block!important}</style><style>.scs-tmgr-filters{display:flex;gap:8px;margin:12px 0 18px}.scs-tmgr-filters button{flex:1;min-height:43px;padding:8px;border:1px solid #557096;border-radius:12px;background:#1b2d48;color:#c8d7ee;font-weight:700;font-size:.88rem}.scs-tmgr-filters button.is-active{background:#416ab3;border-color:#86aaff;color:#fff}</style></head>
+<style>#vaultRegisterPage.scs-tournament-level-mode .scs-tournament-rating-field{display:none!important}.scs-tournament-level-ring{position:relative}.scs-tournament-level-number{display:none!important;position:absolute;right:-5px;bottom:-5px;background:#182b47;color:#fff;border:1px solid #8da8cd;border-radius:8px;min-width:12px;height:13px;line-height:12px;text-align:center;font-size:10px;font-weight:800}</style><style>#vmEditModal.scs-tournament-level-mode .scs-tournament-rating-field{display:none!important}#vmEditModal.scs-tournament-level-mode .scs-tournament-level-field{display:block!important}</style><style>.scs-tmgr-filters{display:flex;gap:8px;margin:12px 0 18px}.scs-tmgr-filters button{flex:1;min-height:43px;padding:8px;border:1px solid #557096;border-radius:12px;background:#1b2d48;color:#c8d7ee;font-weight:700;font-size:.88rem}.scs-tmgr-filters button.is-active{background:#416ab3;border-color:#86aaff;color:#fff}</style><style>
+/* V450: visual-only Practice Manager alignment with Tournament Manager. */
+#myHubHomeView .scs-practice-manager-header{padding:22px 18px 14px;margin-bottom:18px;color:var(--text,#f7f8fc)}
+#myHubHomeView .scs-practice-eyebrow{color:#5bc4f1;font-size:.78rem;letter-spacing:.17em;font-weight:800;margin-bottom:12px}
+#myHubHomeView .scs-practice-manager-title{display:flex;justify-content:space-between;align-items:center;gap:14px;border-bottom:1px solid rgba(91,196,241,.36);padding-bottom:18px;margin-bottom:18px}
+#myHubHomeView .scs-practice-manager-title h1{font-size:clamp(1.5rem,6vw,2rem);line-height:1.15;margin:0 0 8px;font-weight:800;letter-spacing:-.025em}
+#myHubHomeView .scs-practice-manager-title p{font-size:.9rem;line-height:1.4;color:#b2c6e0;margin:0}
+#myHubHomeView .scs-practice-manager-icon{font-size:2rem;flex-shrink:0}
+#myHubHomeView .scs-practice-manager-header .scs-activity-home-back{margin:0;padding:11px 17px;border-radius:12px;background:#233d60;color:#f6faff;border:1px solid #7199c9;font-weight:700}
+#myHubHomeView .myhub-home-sections{padding-left:16px;padding-right:16px}
+#myHubHomeView .myhub-home-section-title{font-size:1.12rem;margin:18px 2px 20px}
+#myHubHomeView .myhub-home-group,#myHubHomeView .scs-home-access-card{border-radius:20px;border:1px solid rgba(102,156,218,.43);box-shadow:none}
+#myHubHomeView .myhub-home-group{margin-bottom:14px;overflow:hidden}
+#myHubHomeView .myhub-home-card{min-height:88px;grid-template-columns:52px minmax(0,1fr) 22px;gap:14px;padding:17px 16px}
+#myHubHomeView .myhub-home-card strong{font-size:1rem;line-height:1.3}
+#myHubHomeView .myhub-home-card small{font-size:.79rem;line-height:1.35;margin-top:5px}
+#myHubHomeView .myhub-home-icon{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:14px;background:rgba(91,196,241,.13);font-size:1.35rem}
+#myHubHomeView #myHubNewSlotsGroup{background:#173b43}
+#myHubHomeView #myHubTodaySlotsGroup{background:#263d5d}
+#myHubHomeView #myHubLiveGroup{background:#4b4029}
+#myHubHomeView .myhub-home-chevron{font-size:1.5rem;color:#a7bfdc}
+#myHubHomeView .scs-home-access-card{min-height:84px;margin-bottom:14px;background:#1a2d49}
+#myHubHomeView .myhub-club-card-copy strong{font-size:1rem}
+#myHubHomeView .myhub-club-card-copy small{font-size:.79rem}
+@media(max-width:380px){#myHubHomeView .myhub-home-sections{padding-left:12px;padding-right:12px}#myHubHomeView .myhub-home-card{padding:14px 12px;gap:10px}}
+</style>
+</head>
 <body>
 
   <!-- ============================= -->
@@ -1893,7 +1919,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 
   <!-- ── My Hub Home: independent tab view ── -->
   <section id="myHubHomeView" class="myhub-tab-view is-active" data-myhub-view="home">
-  <div class="scs-practice-return-header"><button type="button" class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button><span>My Hub</span></div>
+  <header class="scs-practice-manager-header"><div class="scs-practice-eyebrow">— SCS · PRACTICE</div><div class="scs-practice-manager-title"><div><h1>Practice Manager</h1><p>Manage your activities, sessions and club.</p></div><span class="scs-practice-manager-icon" aria-hidden="true">🏸</span></div><button type="button" class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button></header>
 
   <!-- ── My Card content inline (no tile, no navigation) ── -->
 
@@ -3692,7 +3718,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V449', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V450', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
