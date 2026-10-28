@@ -658,3 +658,22 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 
 /* V434: event results and explicit completion confirmation */
 .scs-ko-event-results{padding:12px 16px;margin:12px 0}.scs-ko-event-results h3{margin:0 0 10px}.scs-ko-result-row{padding:12px;margin:8px 0;border:1px solid var(--border,#7b8790);border-radius:12px}.scs-ko-result-row span{display:block;font-size:.85rem;opacity:.85}.scs-ko-result-row p{margin:6px 0 0;overflow-wrap:anywhere}.scs-ko-champion button{margin-top:12px;padding:12px 16px;border-radius:10px;cursor:pointer}
+/* V445: compact tournament event home, neutral cards with one identifying strip */
+.scs-api-home-host .scs-ko-home-event{position:relative;background:var(--card-bg,#1b293d);border:0;border-left:4px solid var(--scs-event-accent);border-radius:9px;margin:10px 0;padding:8px 12px 9px;min-width:0}
+.scs-api-home-host .scs-ko-home-event .scs-team-event-row,.scs-api-home-host .scs-ko-home-event .scs-team-event-row.is-active{border:0!important;box-shadow:none!important;background:transparent!important;border-radius:0!important;margin:0!important;padding:5px 0!important;min-height:58px;display:flex;flex-wrap:wrap;gap:8px}
+.scs-api-home-host .scs-ko-home-event .scs-team-event-code{background:transparent!important;color:inherit!important;border:0!important;padding:0!important;min-width:0!important;font-weight:750}
+.scs-api-home-host .scs-ko-home-event .scs-team-event-details{flex:1;min-width:100px}
+.scs-api-home-host .scs-ko-home-event .scs-team-event-details strong{overflow-wrap:anywhere}
+.scs-api-home-host .scs-ko-home-status{font-size:.75rem;color:var(--text-secondary,#b7c6d8);white-space:nowrap;margin-left:auto}
+.scs-ko-home-standings{padding:3px 0 6px;display:grid;gap:10px}
+.scs-ko-home-place{padding-top:8px;border-top:1px solid rgba(150,170,200,.18);min-width:0}
+.scs-ko-home-place>span{display:block;font-weight:650;font-size:.88rem;margin-bottom:6px}
+.scs-ko-home-player{display:grid;grid-template-columns:20px minmax(0,1fr) 38px minmax(45px,auto);align-items:center;gap:6px;padding:4px 0;font-size:.83rem;min-width:0}
+.scs-ko-home-player strong{font-weight:600;overflow-wrap:anywhere}
+.scs-ko-home-player small{font-size:.78rem;color:var(--text-secondary,#b7c6d8);overflow-wrap:anywhere}
+.scs-ko-home-gender{color:#78baff;font-size:1.15rem}
+.scs-ko-home-level{background:#3b526d;border-radius:12px;text-align:center;font-size:.74rem;padding:3px 0}
+.scs-api-home-host .scs-ko-home-event .scs-ko-event-actions{padding:4px 0 0;justify-content:flex-end}
+.scs-api-home-host .scs-ko-main-complete{display:block;width:100%;margin:22px 0 4px;border-radius:9px;border:1px solid #557bb0;background:#315d9d;color:white;padding:13px;font:inherit;font-weight:700}
+.scs-api-home-host .scs-ko-main-complete:disabled{opacity:.42}
+@media(max-width:390px){.scs-ko-home-player{grid-template-columns:17px minmax(0,1fr) 34px minmax(35px,auto);gap:4px;font-size:.77rem}.scs-api-home-host .scs-ko-home-event{padding:7px 9px}}

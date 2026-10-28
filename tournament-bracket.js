@@ -50,10 +50,28 @@ function koMarkTournamentCompleted(){
  draw.status='completed';draw.completed=true;draw.champion=f.winner;draw.runnerUp=f.runner;draw.completedAt=new Date().toISOString();
  localTournamentSave(draw).then(function(){render()}).catch(function(e){alert(e&&e.message||'Unable to save completion');});
 }
-function koEventResultsSummary(events){return '<section class="scs-ko-event-results"><h3>Event Results</h3>'+(events||[]).map(function(e){
- var d=koEventLoad(e.id),f=koFinalStanding(d);
- return '<div class="scs-ko-result-row"><strong>'+esc(e.title||'Event')+'</strong><span>'+(d&&d.status==='completed'?'✓ Completed':f?'Final played · Awaiting completion':'Result pending')+'</span><p>🏆 Winner: '+esc(f?f.winner:'Pending')+'</p><p>🥈 Runner-up: '+esc(f?f.runner:'Pending')+'</p></div>';
-}).join('')+'</section>';}
+// Event home uses the saved roster, never guessed player details.
+function koEventPlayerRows(state,team){
+ var names=String(team||'').split(/\s*[\/／・·]\s*/).filter(Boolean);
+ var roster=Array.isArray(state&&state.selectedPlayerDetails)?state.selectedPlayerDetails:[];
+ return names.map(function(name){
+  var rec=roster.find(function(p){return String(p.player||p.name||'').trim()===name.trim()})||{};
+  var gender=String(rec.gender||'').toLowerCase(),female=/female|woman|lady|women|^f$/.test(gender);
+  var level=Number(rec.level),levelText=level>=1&&level<=5?(female?'L':'M')+level:'—';
+  return '<div class="scs-ko-home-player"><span class="scs-ko-home-gender">'+(female?'♀':'♂')+'</span><strong>'+esc(name)+'</strong><span class="scs-ko-home-level">'+esc(levelText)+'</span><small>'+esc(rec.subClub||'')+'</small></div>';
+ }).join('');
+}
+function koEventHomeDetails(state){
+ var standing=koFinalStanding(state),complete=state&&state.status==='completed';
+ if(!complete||!standing)return '';
+ return '<div class="scs-ko-home-standings"><div class="scs-ko-home-place"><span>🏆 Winner</span>'+koEventPlayerRows(state,standing.winner)+'</div><div class="scs-ko-home-place"><span>🥈 Runner-up</span>'+koEventPlayerRows(state,standing.runner)+'</div></div>';
+}
+function koCompleteMainTournament(){
+ if(readonly||!koMain||koMain.status==='completed')return;
+ if(!koMain.events.length||!koMain.events.every(function(e){var d=koEventLoad(e.id);return d&&d.status==='completed'&&!!koFinalStanding(d)}))return;
+ if(!confirm('Mark the entire tournament as completed?'))return;
+ koMain.status='completed';koMain.completedAt=new Date().toISOString();koSaveMain();koHomeRender();
+}
 
 function localTournamentSave(d){try{koUpdateCompletion(d);preserveTeamPlayerDetails(d);if(d&&d._scsGroupEventId!=null&&d._scsGroupKnockoutStage!=null){localStorage.setItem('scs_group_knockout_'+d._scsGroupEventId+'_'+d._scsGroupKnockoutStage,JSON.stringify(d));return Promise.resolve(d)}if(readonly)return Promise.resolve(d);koSyncEvent(d);if(koMain){d._scsKoMainId=koMain.id;d._scsKoMainTitle=koMain.title;d._scsKoEventId=koActiveId;d._scsParentTournamentId=koMain._scsClientTournamentId||koMain.id;d._scsParentTournamentTitle=koMain.title;}if(!koMain)localStorage.setItem(LOCAL_TOURNAMENT_KEY,JSON.stringify(d));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('knockout',d);return Promise.resolve(d)}catch(e){return Promise.reject(e)}}
 async function koSaveCloudNow(d){
@@ -113,8 +131,22 @@ function koHomeRender(){
  var events=(koMain.events||[]).map(function(e){var saved=koEventLoad(e.id),finished=koCompletion(saved);return Object.assign({},e,{status:saved&&saved.status==='completed'?'completed':'active',champion:finished?finished.winner:e.champion,clubs:e.clubs||Array.from({length:Number(e.teams)||0},function(_,i){return 'Team '+(i+1)})})});
  window.ScsApi.events.mountHome(root,{title:koMain.title||'Knockout Tournament',events:events,activeEventId:koActiveId,viewOnly:readonly,navAttribute:'data-ko-nav',ariaLabel:'Knockout tournament sections'});
  root.querySelector('[data-close]').onclick=close;
- root.insertAdjacentHTML('beforeend',koEventResultsSummary(koMain.events));
- root.querySelectorAll('[data-open-event]').forEach(function(b){b.onclick=function(){koOpenEvent(b.dataset.openEvent,'flowchart')}});root.querySelectorAll('[data-open-event]').forEach(function(b){var state=koEventLoad(b.dataset.openEvent),finished=koCompletion(state);if(!finished)return;var detail=b.querySelector('.scs-ko-event-detail')||b;var mark=document.createElement('div');mark.className='scs-ko-completed-event-mark';mark.textContent=(state&&state.status==='completed'?'🏆 Tournament Completed ✓':'Final played · Awaiting completion')+' · Winner: '+finished.winner+' · Runner-up: '+koFinalStanding(state).runner;detail.appendChild(mark)});
+ 
+ root.querySelectorAll('[data-open-event]').forEach(function(b,i){
+  b.onclick=function(){koOpenEvent(b.dataset.openEvent,'flowchart')};
+  var state=koEventLoad(b.dataset.openEvent),item=koMain.events.find(function(e){return e.id===b.dataset.openEvent})||{};
+  var color=['#42bda6','#60a5fa','#a78bfa','#f59e7b','#e6b75d','#ee8fc3'][i%6];
+  var holder=document.createElement('div');holder.className='scs-ko-home-event';holder.style.setProperty('--scs-event-accent',color);
+  b.parentNode.insertBefore(holder,b);holder.appendChild(b);
+  var detail=b.querySelector('.scs-team-event-details');if(detail){
+   var heading=detail.querySelector('strong');if(heading)heading.textContent=item.title||'Event';
+   var summary=detail.querySelector('small');if(summary)summary.textContent=Number(item.teams||state&&state.entries&&state.entries.length||0)+' teams · '+Number(item.completed||0)+'/'+Number(item.matches||0)+' matches';
+   var active=detail.querySelector('.scs-team-event-active-label');if(active)active.remove();
+  }
+  var status=document.createElement('span');status.className='scs-ko-home-status';status.textContent=state&&state.status==='completed'?'Completed':koFinalStanding(state)?'Result pending':'In progress';
+  b.appendChild(status);
+  holder.insertAdjacentHTML('beforeend',koEventHomeDetails(state));
+ });
  var add=root.querySelector('[data-add-event]');if(add)add.onclick=koAddEvent;
  var rename=root.querySelector('[data-ko-rename]');if(rename)rename.onclick=koRename;
  if(!readonly){
@@ -122,8 +154,7 @@ function koHomeRender(){
    var id=b.dataset.openEvent, item=koMain.events.find(function(e){return e.id===id});
    if(!item)return;
    // Per-event actions: do not append to a shared section containing multiple events.
-   var card=document.createElement('div');card.className='scs-ko-event-item';
-   b.parentNode.insertBefore(card,b);card.appendChild(b);
+   var card=b.closest('.scs-ko-home-event');if(!card)return;
    var actions=document.createElement('div');actions.className='scs-ko-event-actions';
    var savedEvent=koEventLoad(id);
    var showAssist=!koAssistHasStarted(savedEvent);
@@ -138,6 +169,9 @@ function koHomeRender(){
    if(showAssist)actions.appendChild(assist);actions.appendChild(del);card.appendChild(actions);
   });
  }
+ var allDone=!!koMain.events.length&&koMain.events.every(function(e){var d=koEventLoad(e.id);return d&&d.status==='completed'&&!!koFinalStanding(d)});
+ var complete=document.createElement('button');complete.type='button';complete.className='scs-ko-main-complete';complete.textContent=koMain.status==='completed'?'✓ Tournament Completed':'Complete Tournament';complete.disabled=readonly||!allDone||koMain.status==='completed';complete.onclick=koCompleteMainTournament;
+ var home=root.querySelector('.scs-team-event-home');if(home)home.appendChild(complete);
  root.querySelectorAll('[data-ko-nav]').forEach(function(b){if(b.dataset.koNav==='clubs'){var label=b.querySelector('.scs-tm-nav-label');if(label)label.textContent='Teams';}b.onclick=function(){var t=b.dataset.koNav;if(t==='home')koHomeRender();else if(koActiveId)koOpenEvent(koActiveId,t==='clubs'?'players':t==='match'?'match':'flowchart');else alert('Add an event first.')}});
 }
 // Assist is available only until this event starts; completed bracket setup is not a start.
