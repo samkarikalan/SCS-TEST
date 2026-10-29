@@ -4318,7 +4318,12 @@ function scsOpenGuidedFunctions(role){
       '><span class="scs-guide-step-num">'+(done?'✓':(i+1))+'</span><span><div class="scs-guide-step-title">'+step.title+'</div><div class="scs-guide-step-desc">'+description+'</div></span><span class="scs-guide-step-arrow">›</span></button>';
   });
   var stepsHost=document.getElementById('scsGuideSteps');
+  // Async roster/club refreshes can rebuild Assist while the user is reading.
+  // Preserve its current scroll offset instead of jumping back to the top.
+  var guideScrollHost=document.getElementById('scsGuidedFunctions');
+  var previousGuideScroll=guideScrollHost ? guideScrollHost.scrollTop : 0;
   stepsHost.innerHTML=html;
+  if(guideScrollHost && previousGuideScroll>0) guideScrollHost.scrollTop=previousGuideScroll;
   stepsHost.querySelectorAll('[data-guide-step]').forEach(function(button){
     button.addEventListener('click',function(){
       if(button.disabled)return;
