@@ -3964,7 +3964,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V491', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V492', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4664,7 +4664,7 @@ function scsTournamentMenuChoose(handler){window.TournamentNavigation.open(handl
 document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamentMenuToggle(false)});
 </script>
 <script>
-/* V491: one presentation controller for Practice and both Round states.
+/* V492: one presentation controller for Practice and both Round states.
    Existing Assist, Live, player, history and settings handlers remain unchanged. */
 (function(){
  const ids=['homePageOverlay','playersPage','fixedPairsPage','roundsPage','settingsPage','vaultPage','roundHistoryOverlay','roundSettingsOverlay','scsGuidedFunctions','scsTournamentPersistentHeader'];
@@ -4718,18 +4718,27 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
    }schedule();},refresh:refresh
  };
  window.SCSRoundNavigation={
-  go:function(tab){state.roundWorkspace=true;
-   if(document.body.classList.contains('scs-round-assist-page')&&typeof scsCloseGuidedFunctions==='function')scsCloseGuidedFunctions(false,true);
-   document.body.classList.remove('scs-round-assist-page');
+  go:function(tab){
+   if(!['players','fixed','history','settings'].includes(tab))return;
+   state.roundWorkspace=true;
+   // Keep the Round workspace selected. Do not navigate through the primary
+   // Practice controller: it can replace Assist with another workspace.
    if(typeof closeRoundHistory==='function')closeRoundHistory();
    if(typeof closeRoundSettings==='function')closeRoundSettings();
    if(tab==='players'||tab==='fixed'){
+    const assistPage=el('scsGuidedFunctions');
+    if(assistPage&&!assistPage.hidden){
+     assistPage.hidden=true;assistPage.setAttribute('aria-hidden','true');
+     document.body.classList.remove('scs-guide-open');
+    }
+    document.body.classList.remove('scs-round-assist-page');
     if(typeof showPage==='function')showPage(tab==='players'?'playersPage':'fixedPairsPage',null);
-   }else{
-    if(typeof scsPrimaryNavigate==='function')scsPrimaryNavigate('organiser');
-    if(tab==='history'&&typeof showRoundHistory==='function')showRoundHistory();
-    if(tab==='settings'&&typeof toggleRoundSettings==='function')toggleRoundSettings();
-   }state.roundTab=tab;schedule();
+   }else if(tab==='history'){
+    if(typeof showRoundHistory==='function')showRoundHistory();
+   }else if(tab==='settings'){
+    if(typeof toggleRoundSettings==='function')toggleRoundSettings();
+   }
+   state.roundTab=tab;schedule();
   },refresh:refresh
  };
  document.addEventListener('DOMContentLoaded',function(){
