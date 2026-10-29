@@ -97,6 +97,7 @@ html,body{overscroll-behavior:none;}
 #scsPracticeSharedHeader button{border:0;background:none;color:#e7b95d;font-size:1.6rem;min-width:44px;min-height:44px}
 #scsPracticeSharedHeader strong{font-size:1.12rem;font-weight:750}
 #scsPracticeSharedMenu{position:fixed;top:calc(env(safe-area-inset-top,0px) + 56px);left:0;z-index:2147480901;background:#14243c;min-width:min(85vw,300px);padding:12px;box-shadow:0 8px 24px #0008;border:1px solid #425b78;border-radius:0 0 12px 0}
+#scsPracticeSharedMenu button:disabled{opacity:.6;cursor:default}
 #scsPracticeSharedMenu button{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid #354965;padding:14px;color:#f5f7fc;font-size:1rem}
 body.scs-practice-fullpage #homePageOverlay>.scs-practice-manager-header{display:none!important}
 body.scs-practice-fullpage #homePageOverlay{padding-top:calc(env(safe-area-inset-top,0px) + 56px)!important}
@@ -125,6 +126,8 @@ body.scs-round-workspace #roundsPage .rtb-live{min-height:52px!important}
 #scsRoundBottomNav button span:first-child{font-size:1.35rem}
 #scsRoundBottomNav button[aria-current="page"]{color:#9171ff;font-weight:700}
 body.scs-round-workspace #scsRoundBottomNav{display:grid}
+body.scs-round-workspace #scsRoundBottomNav{pointer-events:auto;touch-action:manipulation}
+body.scs-round-assist-page #scsGuidedFunctions{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 body.scs-round-workspace #roundsPage,body.scs-round-workspace #playersPage,body.scs-round-workspace #fixedPairsPage{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))!important}
 body.scs-round-workspace #fixedPairsPage>.sheet-header,body.scs-round-workspace #playersPage>.sheet-header{display:none!important}
 body.scs-round-workspace #roundSettingsOverlay,body.scs-round-workspace #roundHistoryOverlay{position:fixed!important;inset:calc(env(safe-area-inset-top,0px) + 56px) 0 0!important;z-index:2147480700!important;background:#11111b!important;backdrop-filter:none!important;align-items:stretch!important;justify-content:stretch!important}
@@ -132,7 +135,7 @@ body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-panel,body.scs-roun
 body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-title-bar,body.scs-round-workspace #roundHistoryOverlay .bottom-sheet-title-bar,body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-handle,body.scs-round-workspace #roundHistoryOverlay .bottom-sheet-handle{display:none!important}
 
 /* V487: existing organiser Assist is a full-page Round workspace, not a modal. */
-body.scs-round-assist-page #scsGuidedFunctions:not([hidden]){position:fixed!important;inset:calc(env(safe-area-inset-top,0px) + 56px) 0 0!important;z-index:2147480700!important;background:#111018!important;backdrop-filter:none!important;overflow-y:auto!important;padding:0 0 calc(110px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important}
+body.scs-round-assist-page #scsGuidedFunctions:not([hidden]){position:fixed!important;inset:calc(env(safe-area-inset-top,0px) + 56px) 0 calc(94px + env(safe-area-inset-bottom,0px))!important;z-index:2147480700!important;background:#111018!important;backdrop-filter:none!important;overflow-y:auto!important;padding:0 0 calc(110px + env(safe-area-inset-bottom,0px))!important;box-sizing:border-box!important}
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-page{position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;min-height:100%!important;height:auto!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;overflow:visible!important;padding-bottom:25px!important}
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-header,body.scs-round-assist-page #scsGuidedFunctions .scs-guide-close{display:none!important}
 </style>
@@ -1535,7 +1538,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   </div>
 </div>
 
-<div id="scsPracticeSharedHeader" hidden><button type="button" aria-label="Open practice navigation" onclick="SCSPracticeNavigation.toggle()">☰</button><strong id="scsPracticeSharedTitle">My Hub</strong></div><nav id="scsPracticeSharedMenu" hidden aria-label="Practice modules"><button type="button" onclick="SCSPracticeNavigation.go('viewer')">My Hub</button><button type="button" onclick="SCSPracticeNavigation.go('players')">Player Manager</button><button type="button" onclick="SCSPracticeNavigation.go('organiser')">Rounds</button><button type="button" onclick="SCSPracticeNavigation.go('vault')">Slots</button><button type="button" onclick="SCSPracticeNavigation.go('settings')">Settings</button></nav>
+<div id="scsPracticeSharedHeader" hidden><button type="button" aria-label="Open practice navigation" onclick="SCSPracticeNavigation.toggle()">☰</button><strong id="scsPracticeSharedTitle">My Hub</strong></div><nav id="scsPracticeSharedMenu" hidden aria-label="Practice modules"><button type="button" disabled aria-disabled="true" title="Home page not yet configured">Home</button><button type="button" onclick="SCSPracticeNavigation.go('viewer')">My Hub</button><button type="button" onclick="SCSPracticeNavigation.go('players')">Player Manager</button><button type="button" onclick="SCSPracticeNavigation.go('organiser')">Rounds</button><button type="button" onclick="SCSPracticeNavigation.go('vault')">Slots</button><button type="button" onclick="SCSPracticeNavigation.go('settings')">Settings</button></nav>
 <header class="scs-practice-manager-header"><div class="scs-practice-eyebrow">— SCS · PRACTICE</div><div class="scs-practice-manager-title"><div><h1>Practice Manager</h1><p>Manage your activities, sessions and club.</p></div><span class="scs-practice-manager-icon" aria-hidden="true">🏸</span></div><button type="button" class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button></header>
 <!-- Top bar -->
 
@@ -3964,7 +3967,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V492', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V493', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4545,7 +4548,8 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
   </section>
 </div>
 
-<script src="tournament-player-level.js"></script>\n<script>
+<script src="tournament-player-level.js"></script>
+<script>
 /* V456: Persistent tournament header and shared left navigation. */
 (function(){
   var titles={scsTournamentManager:'Tournament Manager',scsTournamentContinue:'My Tournaments',scsTournamentTypePicker:'New Tournament',scsTournamentLive:'Live Tournaments',scsTournamentOverlay:'Tournament',scsScoringOverlay:'Conduct a Match'};
@@ -4664,7 +4668,7 @@ function scsTournamentMenuChoose(handler){window.TournamentNavigation.open(handl
 document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamentMenuToggle(false)});
 </script>
 <script>
-/* V492: one presentation controller for Practice and both Round states.
+/* V493: one presentation controller for Practice and both Round states.
    Existing Assist, Live, player, history and settings handlers remain unchanged. */
 (function(){
  const ids=['homePageOverlay','playersPage','fixedPairsPage','roundsPage','settingsPage','vaultPage','roundHistoryOverlay','roundSettingsOverlay','scsGuidedFunctions','scsTournamentPersistentHeader'];
