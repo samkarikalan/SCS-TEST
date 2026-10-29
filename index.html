@@ -108,7 +108,7 @@ body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-title{border:0
 body.scs-practice-fullpage #homePageOverlay>.scs-practice-manager-header,body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-header{box-shadow:none}
 
 
-/* V501: minimal Practice Home surface; independent of the Round Assist scroller. */
+/* V502: minimal Practice Home surface; independent of the Round Assist scroller. */
 #scsPracticeWelcome:not([hidden]){position:fixed;inset:calc(env(safe-area-inset-top,0px) + 56px) 0 0;z-index:2147480700;background:#101724;color:#f5f7fc;display:flex;align-items:flex-start;justify-content:center;padding:50px 18px;box-sizing:border-box;text-align:center}
 #scsPracticeWelcome h1{font-size:clamp(1.35rem,5vw,2rem);margin:0}
 
@@ -146,15 +146,21 @@ body.scs-round-assist-page #scsGuidedFunctions:not([hidden]){position:fixed!impo
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-page{position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;min-height:100%!important;height:auto!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;overflow:visible!important;padding-bottom:25px!important}
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-header,body.scs-round-assist-page #scsGuidedFunctions .scs-guide-close{display:none!important}
 
-/* V501: Round Assist starts directly with the existing checklist. */
+/* V502: Round Assist starts directly with the existing checklist. */
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-hero{display:none!important}
 
-/* V501: shared header and compact bottom navigation frame every Round view. */
+/* V502: shared header and compact bottom navigation frame every Round view. */
 body.scs-round-workspace #playersPage,body.scs-round-workspace #fixedPairsPage,body.scs-round-workspace #roundsPage{position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 56px)!important;bottom:calc(env(safe-area-inset-bottom,0px) + 73px)!important;left:0!important;right:0!important;width:100%!important;height:auto!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain!important;z-index:2147480700!important;padding-bottom:16px!important;box-sizing:border-box!important}
 body.scs-round-workspace #roundHistoryOverlay,body.scs-round-workspace #roundSettingsOverlay{top:calc(env(safe-area-inset-top,0px) + 56px)!important;bottom:calc(env(safe-area-inset-bottom,0px) + 73px)!important;left:0!important;right:0!important;height:auto!important;max-height:none!important;z-index:2147480700!important;overflow-y:auto!important}
 body.scs-round-workspace #roundHistoryOverlay .bottom-sheet-panel,body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-panel{height:100%!important;max-height:100%!important;overflow-y:auto!important;padding-bottom:20px!important}
 body.scs-round-workspace #roundHistoryOverlay .bottom-sheet-close,body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-close,body.scs-round-workspace #roundHistoryOverlay .close-btn,body.scs-round-workspace #roundSettingsOverlay .close-btn{display:none!important}
 body.scs-round-workspace #scsRoundBottomNav{z-index:2147483645!important}
+
+/* V502: round content always sits between the shared chrome. */
+[hidden]{display:none!important}
+body.scs-round-workspace #scsPracticeWelcome,body.scs-round-workspace #homePageOverlay{display:none!important}
+body.scs-round-workspace #playersPage:not([hidden]),body.scs-round-workspace #fixedPairsPage:not([hidden]),body.scs-round-workspace #roundsPage:not([hidden]),body.scs-round-workspace #roundHistoryOverlay:not([hidden]),body.scs-round-workspace #roundSettingsOverlay:not([hidden]){overflow-y:auto!important}
+body.scs-round-workspace #playersPage .sheet-header button[aria-label="Close"],body.scs-round-workspace #fixedPairsPage .sheet-header button[aria-label="Close"]{display:none!important}
 </style>
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png?v=V149">
   <link rel="manifest" href="/manifest.json?v=V209">
@@ -186,7 +192,7 @@ body.scs-round-workspace #scsRoundBottomNav{z-index:2147483645!important}
   <script src="engjap.js?v=V149" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
-  <script src="main.js?v=V501" defer></script>
+  <script src="main.js?v=V502" defer></script>
   <script src="scoring.js?v=V367" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V467" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -3985,7 +3991,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V501', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V502', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4686,111 +4692,188 @@ function scsTournamentMenuChoose(handler){window.TournamentNavigation.open(handl
 document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamentMenuToggle(false)});
 </script>
 <script>
-/* V501: original presentation controller retained; Live route added. */
-/* V493: one presentation controller for Practice and both Round states.
-   Existing Assist, Live, player, history and settings handlers remain unchanged. */
-(function(){
- const ids=['homePageOverlay','playersPage','fixedPairsPage','roundsPage','settingsPage','vaultPage','roundHistoryOverlay','roundSettingsOverlay','scsGuidedFunctions','scsPracticeWelcome','scsTournamentPersistentHeader'];
- const el=id=>document.getElementById(id);
- const shown=id=>{const e=el(id);return !!(e&&!e.hidden&&getComputedStyle(e).display!=='none');};
- const state={roundWorkspace:false,roundTab:'assist'};
- function refresh(){
-  const tournament=shown('scsTournamentPersistentHeader');
-  const welcome=shown('scsPracticeWelcome');
-  const assist=shown('scsGuidedFunctions')&&(state.roundWorkspace||(typeof appMode==='string'&&appMode==='organiser'));
-  const live=shown('roundsPage');
-  const players=shown('playersPage'),fixed=shown('fixedPairsPage');
-  const history=shown('roundHistoryOverlay'),settings=shown('roundSettingsOverlay');
-  const roundActive=!tournament&&state.roundWorkspace&&(assist||live||players||fixed||history||settings);
-  if(roundActive)state.roundWorkspace=true;
-  if(tournament||shown('scsPracticeWelcome')||shown('homePageOverlay'))state.roundWorkspace=false;
-  const activeRound=roundActive;
-  document.body.classList.toggle('scs-round-workspace',activeRound);
-  document.body.classList.toggle('scs-round-assist-page',assist&&activeRound);
-  const activePractice=!tournament&&(welcome||activeRound||shown('homePageOverlay')||players||fixed||shown('settingsPage')||shown('vaultPage'));
-  const header=el('scsPracticeSharedHeader');if(header)header.hidden=!activePractice;
-  document.body.classList.toggle('scs-practice-fullpage',activePractice);
-  let title=welcome?'Home':'My Hub';
-  if(activeRound){
-   title='Rounds';
-   const tab=state.roundTab;
-   state.roundTab=tab;
-   document.querySelectorAll('#scsRoundBottomNav button').forEach(b=>{if(b.dataset.roundTab===tab)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
-  }else if(shown('playersPage'))title='Player Manager';
-  else if(shown('settingsPage'))title='Settings';
-  else if(shown('vaultPage'))title='Slots';
-  else if(typeof appMode==='string'&&appMode==='vault')title='Slots';
-  const label=el('scsPracticeSharedTitle');if(label)label.textContent=title;
-  ['playersPage','fixedPairsPage','roundsPage','settingsPage','vaultPage'].forEach(id=>{const e=el(id);if(e)e.classList.toggle('scs-practice-main-page',shown(id));});
-  if(!activePractice&&el('scsPracticeSharedMenu'))el('scsPracticeSharedMenu').hidden=true;
- }
- function schedule(){if(schedule.pending)return;schedule.pending=true;requestAnimationFrame(()=>{schedule.pending=false;refresh();});}
- window.SCSPracticeNavigation={
-  toggle:function(){const m=el('scsPracticeSharedMenu');if(m)m.hidden=!m.hidden;},
-  go:function(target){const m=el('scsPracticeSharedMenu');if(m)m.hidden=true;
-   const welcomePage=el('scsPracticeWelcome');
-   if(target==='home'){
-    state.roundWorkspace=false;
-    document.body.classList.remove('scs-round-assist-page','scs-round-workspace');
-    const assistPage=el('scsGuidedFunctions');
-    if(assistPage){assistPage.hidden=true;assistPage.setAttribute('aria-hidden','true');}
-    document.body.classList.remove('scs-guide-open');
-    ['homePageOverlay','playersPage','fixedPairsPage','roundsPage','settingsPage','vaultPage','roundHistoryOverlay','roundSettingsOverlay'].forEach(id=>{const page=el(id);if(page)page.hidden=true;});
-    if(welcomePage)welcomePage.hidden=false;
-    schedule();return;
-   }
-   if(welcomePage)welcomePage.hidden=true;
-   if(target==='organiser'){
-    state.roundWorkspace=true;
-    if(typeof scsOpenGuidedFunctions==='function')scsOpenGuidedFunctions('organiser');
-    document.body.classList.add('scs-round-assist-page');
-   }else{
-    state.roundWorkspace=false;
-    document.body.classList.remove('scs-round-assist-page');
-    if(target==='players'){
-     if(typeof scsPrimaryNavigate==='function')scsPrimaryNavigate('organiser');
-     if(typeof showPage==='function')showPage('playersPage',null);
-    }else if(typeof scsPrimaryNavigate==='function')scsPrimaryNavigate(target);
-   }schedule();},refresh:refresh
- };
- window.SCSRoundNavigation={
-  go:function(tab){
-   if(!['players','fixed','live','history','settings'].includes(tab))return;
-   state.roundWorkspace=true;
-   // One visible Round content page at a time; keep shared chrome mounted.
-   const assist=el('scsGuidedFunctions');
-   if(assist){assist.hidden=true;assist.setAttribute('aria-hidden','true');}
-   document.body.classList.remove('scs-guide-open','scs-round-assist-page');
-   const pages=['playersPage','fixedPairsPage','roundsPage'];
-   pages.forEach(id=>{const p=el(id);if(p){p.style.display='none';p.hidden=true;}});
-   ['roundHistoryOverlay','roundSettingsOverlay'].forEach(id=>{const p=el(id);if(p){p.style.display='none';p.hidden=true;}});
-   document.body.classList.remove('round-settings-open');
-   if(tab==='players'||tab==='fixed'||tab==='live'){
-    const id=tab==='players'?'playersPage':tab==='fixed'?'fixedPairsPage':'roundsPage';
-    const p=el(id);if(p){p.hidden=false;p.style.display='block';}
-    // Do not use showPage: it resets live rounds and hides other workspace chrome.
-    if(tab==='players'&&typeof updatePlayerList==='function')updatePlayerList();
-    if(tab==='fixed'){
-     if(typeof updateFixedPairSelectors==='function')updateFixedPairSelectors();
-     if(typeof renderFixedPairs==='function')renderFixedPairs();
+/* SCS Navigation Helper V1
+ * Standalone opt-in helper. Does not modify or replace existing SCS navigation.
+ * Register content pages before calling navigate(). Headers and bottom bars are
+ * separate chrome elements and must not be registered as pages.
+ */
+(function (global) {
+  'use strict';
+  if (global.SCSNavigationHelper) return;
+
+  const pages = new Map();
+  const modules = new Map();
+  let activeId = null;
+  let transitioning = false;
+
+  function element(id) {
+    return typeof id === 'string' ? document.getElementById(id) : null;
+  }
+  function shown(node) {
+    if (!node || node.hidden) return false;
+    const style = global.getComputedStyle(node);
+    if (style.display === 'none' || style.visibility === 'hidden') return false;
+    return node.getClientRects().length > 0;
+  }
+  function registerPage(id, options) {
+    if (!id || typeof id !== 'string') throw new Error('Page ID required');
+    options = options || {};
+    if (options.module && !modules.has(options.module)) modules.set(options.module, {});
+    pages.set(id, {
+      module: options.module || null,
+      display: options.display || '',
+      beforeShow: options.beforeShow || null,
+      afterShow: options.afterShow || null,
+      beforeHide: options.beforeHide || null
+    });
+    return api;
+  }
+  function registerModule(name, config) {
+    modules.set(name, config || {});
+    return api;
+  }
+  function visiblePages() {
+    return [...pages.keys()].filter(id => shown(element(id)));
+  }
+  function hide(node) {
+    node.hidden = true;
+    node.style.setProperty('display', 'none');
+    node.setAttribute('aria-hidden', 'true');
+  }
+  function show(node, display) {
+    node.hidden = false;
+    node.style.removeProperty('display');
+    if (display) node.style.setProperty('display', display);
+    node.removeAttribute('aria-hidden');
+  }
+  function navigate(id) {
+    if (transitioning) return false;
+    const target = element(id);
+    const cfg = pages.get(id);
+    if (!cfg || !target) {
+      console.error('[SCS Navigation] Unregistered or missing page:', id);
+      return false;
     }
-   }else if(tab==='history'){
-    if(typeof renderRoundHistory==='function')renderRoundHistory();
-    const p=el('roundHistoryOverlay');if(p){p.hidden=false;p.style.display='flex';}
-   }else if(tab==='settings'){
-    // Existing settings initializer retains current Round Manager values.
-    if(typeof toggleRoundSettings==='function')toggleRoundSettings();
-    const p=el('roundSettingsOverlay');if(p){p.hidden=false;p.style.display='flex';}
+    transitioning = true;
+    const snapshot = [...pages.keys()].map(key => {
+      const node = element(key);
+      return node ? {node, hidden: node.hidden, display: node.style.display,
+        aria: node.getAttribute('aria-hidden')} : null;
+    }).filter(Boolean);
+    const oldId = activeId;
+    try {
+      if (cfg.beforeShow && cfg.beforeShow(target, oldId) === false) return false;
+      // Detect and hide ALL visible registered pages, not just the last page.
+      for (const [key, item] of pages) {
+        const node = element(key);
+        if (!node || key === id) continue;
+        if (shown(node) && item.beforeHide) item.beforeHide(node, id);
+        hide(node);
+      }
+      show(target, cfg.display);
+      if (!shown(target)) throw new Error('Target page did not become visible: ' + id);
+      activeId = id;
+      const moduleConfig = modules.get(cfg.module) || {};
+      if (typeof moduleConfig.onNavigate === 'function')
+        moduleConfig.onNavigate(id, oldId, target);
+      if (cfg.afterShow) cfg.afterShow(target, oldId);
+      global.dispatchEvent(new CustomEvent('scs:navigated',
+        {detail: {pageId:id, previousPageId:oldId, module:cfg.module}}));
+      return true;
+    } catch (err) {
+      for (const saved of snapshot) {
+        saved.node.hidden = saved.hidden;
+        saved.node.style.display = saved.display;
+        if (saved.aria === null) saved.node.removeAttribute('aria-hidden');
+        else saved.node.setAttribute('aria-hidden', saved.aria);
+      }
+      activeId = oldId;
+      console.error('[SCS Navigation] Transition rolled back:', err);
+      return false;
+    } finally {
+      transitioning = false;
+    }
+  }
+  const api = Object.freeze({
+    registerPage, registerModule, navigate, visiblePages,
+    currentPage: () => activeId,
+    isRegistered: id => pages.has(id)
+  });
+  global.SCSNavigationHelper = api;
+})(window);
+
+/* V502: Practice and Round navigation are routed through SCSNavigationHelper.
+   Tournament navigation is unchanged. */
+(function(){
+ const H=window.SCSNavigationHelper;
+ const el=id=>document.getElementById(id);
+ const state={module:'practice',round:false,tab:'assist'};
+ const content=['scsPracticeWelcome','homePageOverlay','playersPage','fixedPairsPage','roundsPage','settingsPage','vaultPage','scsGuidedFunctions','roundHistoryOverlay','roundSettingsOverlay'];
+ content.forEach(id=>H.registerPage(id,{module:'practice',display:(id==='roundHistoryOverlay'||id==='roundSettingsOverlay')?'flex':id==='scsGuidedFunctions'?'flex':'block'}));
+ H.registerModule('practice',{onNavigate:function(id){
+   const round=state.round;
+   document.body.classList.toggle('scs-round-workspace',round);
+   document.body.classList.toggle('scs-round-assist-page',round&&id==='scsGuidedFunctions');
+   document.body.classList.toggle('scs-practice-fullpage',true);
+   document.body.classList.toggle('scs-guide-open',round&&id==='scsGuidedFunctions');
+   const header=el('scsPracticeSharedHeader');if(header)header.hidden=false;
+   const titles={scsPracticeWelcome:'Home',homePageOverlay:'Home',playersPage:round?'Rounds':'Player Manager',fixedPairsPage:'Rounds',roundsPage:'Rounds',settingsPage:'Settings',vaultPage:'Slots',scsGuidedFunctions:'Rounds',roundHistoryOverlay:'Rounds',roundSettingsOverlay:'Rounds'};
+   const title=el('scsPracticeSharedTitle');if(title)title.textContent=titles[id]||'My Hub';
+   document.querySelectorAll('#scsRoundBottomNav button').forEach(btn=>{
+    if(round&&btn.dataset.roundTab===state.tab)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current');
+   });
+ }});
+ function hideLauncher(){
+  const launcher=el('modeSelectOverlay');if(launcher)launcher.style.display='none';
+  const menu=el('scsPracticeSharedMenu');if(menu)menu.hidden=true;
+ }
+ function navigate(id,round,tab){
+  // Tournament pages are intentionally excluded from the Practice page registry.
+  hideLauncher();
+  const prev={...state};state.round=round;state.tab=tab||'assist';
+  if(!H.navigate(id)){state.round=prev.round;state.tab=prev.tab;return false;}
+  return true;
+ }
+ function openRound(tab){
+  const dest={assist:'scsGuidedFunctions',players:'playersPage',fixed:'fixedPairsPage',live:'roundsPage',history:'roundHistoryOverlay',settings:'roundSettingsOverlay'};
+  const id=dest[tab];if(!id)return false;
+  // Call the existing page's preparation logic, not its competing navigation.
+  if(tab==='assist'&&typeof scsOpenGuidedFunctions==='function')scsOpenGuidedFunctions('organiser');
+  if(tab==='players'&&typeof updatePlayerList==='function')updatePlayerList();
+  if(tab==='fixed'){
+   if(typeof updateFixedPairSelectors==='function')updateFixedPairSelectors();
+   if(typeof renderFixedPairs==='function')renderFixedPairs();
+  }
+  if(tab==='history'&&typeof renderRoundHistory==='function')renderRoundHistory();
+  // Settings values are already held by Round Manager; no toggle/open popup call.
+  return navigate(id,true,tab);
+ }
+ window.SCSRoundNavigation={go:openRound,refresh:function(){const id=H.currentPage();if(id)H.navigate(id);}};
+ window.SCSPracticeNavigation={
+  toggle:function(){const menu=el('scsPracticeSharedMenu');if(menu)menu.hidden=!menu.hidden;},
+  go:function(target){
+   if(target==='organiser')return openRound('assist');
+   if(target==='home')return navigate('scsPracticeWelcome',false);
+   if(target==='players'){
+    if(typeof updatePlayerList==='function')updatePlayerList();
+    return navigate('playersPage',false);
    }
-   state.roundTab=tab;
-   document.body.classList.add('scs-round-workspace');
-   refresh();
-  },refresh:refresh
+   if(target==='settings')return navigate('settingsPage',false);
+   if(target==='vault')return navigate('vaultPage',false);
+   // Keep any other existing primary navigation behavior.
+   if(typeof scsPrimaryNavigate==='function')scsPrimaryNavigate(target);
+  },
+  refresh:function(){const id=H.currentPage();if(id)H.navigate(id);}
  };
  document.addEventListener('DOMContentLoaded',function(){
-  const obs=new MutationObserver(schedule);
-  ids.forEach(id=>{const e=el(id);if(e)obs.observe(e,{attributes:true,attributeFilter:['style','hidden','class']});});
-  refresh();
+  // Register initial visible page without altering Tournament ownership.
+  const tournament=el('scsTournamentPersistentHeader');
+  if(tournament&&!tournament.hidden&&getComputedStyle(tournament).display!=='none')return;
+  const visible=H.visiblePages();
+  if(visible.length){
+   const first=visible.includes('scsPracticeWelcome')?'scsPracticeWelcome':visible[0];
+   navigate(first,false);
+  }
  });
 })();
 </script>
