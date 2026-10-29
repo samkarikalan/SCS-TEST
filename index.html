@@ -108,7 +108,20 @@ body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-title{border:0
 body.scs-practice-fullpage #homePageOverlay>.scs-practice-manager-header,body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-header{box-shadow:none}
 
 
-/* V502: minimal Practice Home surface; independent of the Round Assist scroller. */
+/* V503: Practice Home is an actual standalone destination; legacy My Hub stays hidden. */
+body.scs-practice-home .scs-practice-manager-header,
+body.scs-practice-home .home-topbar,
+body.scs-practice-home #homePageOverlay{display:none!important}
+body.scs-practice-home #scsPracticeWelcome:not([hidden]){display:block!important;overflow-y:auto;overflow-x:hidden;padding:26px 18px 36px;text-align:left}
+.scs-practice-home-content{max-width:640px;margin:auto}
+.scs-practice-home-content h1{font-size:clamp(24px,6vw,32px);margin:0 0 8px}
+.scs-practice-home-content p{color:#aebbd2;margin:0 0 26px}
+.scs-practice-home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.scs-practice-home-grid button{aspect-ratio:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;border:1px solid #4a77c5;border-radius:22px;background:#174c91;color:white;font:inherit;font-size:1.2rem}
+.scs-practice-home-grid button:nth-child(2){background:#196c6d;border-color:#43a9a5}
+.scs-practice-home-grid button span{font-size:2.5rem}
+.scs-practice-home-secondary{display:block;width:100%;margin:12px 0;padding:17px;border:1px solid #46566f;border-radius:14px;background:#1b2639;color:white;text-align:left;font:inherit;font-weight:650}
+/* V503: minimal Practice Home surface; independent of the Round Assist scroller. */
 #scsPracticeWelcome:not([hidden]){position:fixed;inset:calc(env(safe-area-inset-top,0px) + 56px) 0 0;z-index:2147480700;background:#101724;color:#f5f7fc;display:flex;align-items:flex-start;justify-content:center;padding:50px 18px;box-sizing:border-box;text-align:center}
 #scsPracticeWelcome h1{font-size:clamp(1.35rem,5vw,2rem);margin:0}
 
@@ -146,17 +159,17 @@ body.scs-round-assist-page #scsGuidedFunctions:not([hidden]){position:fixed!impo
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-page{position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;min-height:100%!important;height:auto!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;overflow:visible!important;padding-bottom:25px!important}
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-header,body.scs-round-assist-page #scsGuidedFunctions .scs-guide-close{display:none!important}
 
-/* V502: Round Assist starts directly with the existing checklist. */
+/* V503: Round Assist starts directly with the existing checklist. */
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-hero{display:none!important}
 
-/* V502: shared header and compact bottom navigation frame every Round view. */
+/* V503: shared header and compact bottom navigation frame every Round view. */
 body.scs-round-workspace #playersPage,body.scs-round-workspace #fixedPairsPage,body.scs-round-workspace #roundsPage{position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 56px)!important;bottom:calc(env(safe-area-inset-bottom,0px) + 73px)!important;left:0!important;right:0!important;width:100%!important;height:auto!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain!important;z-index:2147480700!important;padding-bottom:16px!important;box-sizing:border-box!important}
 body.scs-round-workspace #roundHistoryOverlay,body.scs-round-workspace #roundSettingsOverlay{top:calc(env(safe-area-inset-top,0px) + 56px)!important;bottom:calc(env(safe-area-inset-bottom,0px) + 73px)!important;left:0!important;right:0!important;height:auto!important;max-height:none!important;z-index:2147480700!important;overflow-y:auto!important}
 body.scs-round-workspace #roundHistoryOverlay .bottom-sheet-panel,body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-panel{height:100%!important;max-height:100%!important;overflow-y:auto!important;padding-bottom:20px!important}
 body.scs-round-workspace #roundHistoryOverlay .bottom-sheet-close,body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-close,body.scs-round-workspace #roundHistoryOverlay .close-btn,body.scs-round-workspace #roundSettingsOverlay .close-btn{display:none!important}
 body.scs-round-workspace #scsRoundBottomNav{z-index:2147483645!important}
 
-/* V502: round content always sits between the shared chrome. */
+/* V503: round content always sits between the shared chrome. */
 [hidden]{display:none!important}
 body.scs-round-workspace #scsPracticeWelcome,body.scs-round-workspace #homePageOverlay{display:none!important}
 body.scs-round-workspace #playersPage:not([hidden]),body.scs-round-workspace #fixedPairsPage:not([hidden]),body.scs-round-workspace #roundsPage:not([hidden]),body.scs-round-workspace #roundHistoryOverlay:not([hidden]),body.scs-round-workspace #roundSettingsOverlay:not([hidden]){overflow-y:auto!important}
@@ -192,7 +205,7 @@ body.scs-round-workspace #playersPage .sheet-header button[aria-label="Close"],b
   <script src="engjap.js?v=V149" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
-  <script src="main.js?v=V502" defer></script>
+  <script src="main.js?v=V503" defer></script>
   <script src="scoring.js?v=V367" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V467" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -1561,7 +1574,18 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   </div>
 </div>
 
-<section id="scsPracticeWelcome" hidden aria-label="Practice Manager Home"><h1>Welcome to Practice Manager</h1></section>
+<section id="scsPracticeWelcome" hidden aria-label="Practice Manager Home">
+  <div class="scs-practice-home-content">
+    <h1>Practice Manager</h1><p>Select a module</p>
+    <div class="scs-practice-home-grid">
+      <button type="button" onclick="SCSPracticeNavigation.go('organiser')"><span aria-hidden="true">🏸</span><strong>Rounds</strong></button>
+      <button type="button" onclick="SCSPracticeNavigation.go('vault')"><span aria-hidden="true">📅</span><strong>Slots</strong></button>
+    </div>
+    <button class="scs-practice-home-secondary" type="button" onclick="SCSPracticeNavigation.go('players')">👥 Player Manager</button>
+    <button class="scs-practice-home-secondary" type="button" onclick="SCSPracticeNavigation.go('settings')">⚙ Settings</button>
+    <button class="scs-practice-home-secondary" type="button" onclick="scsActivityReturnHome()">← SCS Home</button>
+  </div>
+</section>
 <div id="scsPracticeSharedHeader" hidden><button type="button" aria-label="Open practice navigation" onclick="SCSPracticeNavigation.toggle()">☰</button><strong id="scsPracticeSharedTitle">My Hub</strong></div><nav id="scsPracticeSharedMenu" hidden aria-label="Practice modules"><button type="button" onclick="SCSPracticeNavigation.go('home')">Home</button><button type="button" onclick="SCSPracticeNavigation.go('viewer')">My Hub</button><button type="button" onclick="SCSPracticeNavigation.go('players')">Player Manager</button><button type="button" onclick="SCSPracticeNavigation.go('organiser')">Rounds</button><button type="button" onclick="SCSPracticeNavigation.go('vault')">Slots</button><button type="button" onclick="SCSPracticeNavigation.go('settings')">Settings</button></nav>
 <header class="scs-practice-manager-header"><div class="scs-practice-eyebrow">— SCS · PRACTICE</div><div class="scs-practice-manager-title"><div><h1>Practice Manager</h1><p>Manage your activities, sessions and club.</p></div><span class="scs-practice-manager-icon" aria-hidden="true">🏸</span></div><button type="button" class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button></header>
 <!-- Top bar -->
@@ -3991,7 +4015,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V502', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V503', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4488,8 +4512,8 @@ window.scsActivityCompleteClubAction=function(){
 window.scsActivityShowHome=function(){var e=document.getElementById('scsActivityHome');if(e)e.hidden=false;scsActivityRefreshClub();};
 window.addEventListener('storage',function(e){if(!e.key||e.key==='appLanguage'||/^kbrr_my_club_(id|name)$/.test(e.key))scsActivityRefreshClub();});
 
-window.scsActivityChoose=function(mode){var e=document.getElementById('scsActivityHome');if(e)e.hidden=true;window.scsActivityMode=mode;if(mode==='tournament'){if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();}else{if(typeof showHomeScreen==='function')showHomeScreen();if(window.SCSPracticeNavigation&&typeof window.SCSPracticeNavigation.go==='function')window.SCSPracticeNavigation.go('home');}};
-window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];window.scsTournamentReturnPage=null;['scsTournamentManager','scsTournamentContinue','scsTournamentLive','scsTournamentTypePicker'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=true});window.scsActivityMode=null;scsActivityShowHome();};
+window.scsActivityChoose=function(mode){var e=document.getElementById('scsActivityHome');if(e)e.hidden=true;window.scsActivityMode=mode;if(mode==='tournament'){if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();}else{if(window.SCSPracticeNavigation&&typeof window.SCSPracticeNavigation.go==='function')window.SCSPracticeNavigation.go('home');}};
+window.scsActivityReturnHome=function(){document.body.classList.remove('scs-practice-home','scs-practice-fullpage','scs-round-workspace');var ph=document.getElementById('scsPracticeSharedHeader');if(ph)ph.hidden=true;var pw=document.getElementById('scsPracticeWelcome');if(pw)pw.hidden=true;window.scsTournamentParentStack=[];window.scsTournamentReturnPage=null;['scsTournamentManager','scsTournamentContinue','scsTournamentLive','scsTournamentTypePicker'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=true});window.scsActivityMode=null;scsActivityShowHome();};
 </script>
 <div id="scsTournamentManager" class="scs-tmgr-overlay scs-tmgr-fullpage" hidden>
   <section class="scs-tmgr-card scs-tmgr-simple" role="main" aria-labelledby="scsTmManagerTitle">
@@ -4802,7 +4826,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
   global.SCSNavigationHelper = api;
 })(window);
 
-/* V502: Practice and Round navigation are routed through SCSNavigationHelper.
+/* V503: Practice and Round navigation are routed through SCSNavigationHelper.
    Tournament navigation is unchanged. */
 (function(){
  const H=window.SCSNavigationHelper;
@@ -4815,6 +4839,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
    document.body.classList.toggle('scs-round-workspace',round);
    document.body.classList.toggle('scs-round-assist-page',round&&id==='scsGuidedFunctions');
    document.body.classList.toggle('scs-practice-fullpage',true);
+   document.body.classList.toggle('scs-practice-home',id==='scsPracticeWelcome');
    document.body.classList.toggle('scs-guide-open',round&&id==='scsGuidedFunctions');
    const header=el('scsPracticeSharedHeader');if(header)header.hidden=false;
    const titles={scsPracticeWelcome:'Home',homePageOverlay:'Home',playersPage:round?'Rounds':'Player Manager',fixedPairsPage:'Rounds',roundsPage:'Rounds',settingsPage:'Settings',vaultPage:'Slots',scsGuidedFunctions:'Rounds',roundHistoryOverlay:'Rounds',roundSettingsOverlay:'Rounds'};
