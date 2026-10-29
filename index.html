@@ -107,7 +107,7 @@ body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-title{border:0
 body.scs-practice-fullpage #homePageOverlay>.scs-practice-manager-header,body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-header{box-shadow:none}
 
 
-/* V483: Round-specific navigation. Reuse existing pages and round sheets. */
+/* V484: Round-specific navigation. Reuse existing pages and round sheets. */
 #scsRoundBottomNav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:2147480800;background:#101018;border-top:1px solid #343545;padding:12px 6px calc(12px + env(safe-area-inset-bottom,0px));grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
 #scsRoundBottomNav button{background:none;border:0;color:#b5b4c3;font:inherit;font-size:.77rem;min-height:55px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:3px 0}
 #scsRoundBottomNav button span:first-child{font-size:1.35rem}
@@ -2344,7 +2344,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 </nav>
 <nav id="scsPrimaryBottomNav" class="scs-primary-bottom-nav" aria-label="Main navigation">
     <button id="scsNavHome" type="button" onclick="scsPrimaryNavigate('viewer')"><span class="scs-primary-nav-icon" aria-hidden="true">⌂</span><span>My Hub</span></button>
-    <button id="scsNavRound" type="button" onclick="scsPrimaryNavigate('organiser')"><span class="scs-primary-nav-icon" aria-hidden="true">🏸</span><span>Round</span></button>
+    <button id="scsNavRound" type="button" onclick="SCSPracticeNavigation.go('organiser')"><span class="scs-primary-nav-icon" aria-hidden="true">🏸</span><span>Round</span></button>
     <button id="scsNavSlot" type="button" onclick="scsPrimaryNavigate('vault')"><span class="scs-primary-nav-icon" aria-hidden="true">▣</span><span>Manage</span></button>
     <button id="scsNavSettings" type="button" onclick="scsPrimaryNavigate('settings')"><span class="scs-primary-nav-icon" aria-hidden="true">⚙</span><span>Settings</span></button>
   </nav>
@@ -3961,7 +3961,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V483', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V484', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4666,6 +4666,7 @@ window.SCSPracticeNavigation={
  toggle:function(){var m=document.getElementById('scsPracticeSharedMenu');if(m)m.hidden=!m.hidden;},
  go:function(target){var m=document.getElementById('scsPracticeSharedMenu');if(m)m.hidden=true;
   if(target==='players'){if(typeof scsPrimaryNavigate==='function')scsPrimaryNavigate('organiser');if(typeof showPage==='function')showPage('playersPage',null);}
+  else if(target==='organiser'&&typeof scsOpenGuidedFunctions==='function'){scsOpenGuidedFunctions('organiser');}
   else if(typeof scsPrimaryNavigate==='function')scsPrimaryNavigate(target);
   this.refresh();},
  refresh:function(){
@@ -4691,7 +4692,7 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
 <script>
-/* V483: Round navigation delegates to the original Round Manager functions. */
+/* V484: Round navigation delegates to the original Round Manager functions. */
 window.SCSRoundNavigation={
  current:'settings',
  go:function(tab){
