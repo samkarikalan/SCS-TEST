@@ -118,6 +118,10 @@ body.scs-round-workspace #roundsPage .rtb-live{min-height:52px!important}
 /* Round history and settings are accessible through the bottom navigation.
    Keep dashboard reporting and pairing history intact. */
 
+/* V488: Retire the old four-item Practice Manager bottom bar.
+   Keep the existing Round-specific bar and its handlers untouched. */
+#scsPrimaryBottomNav{display:none!important}
+
 /* V487: Round-specific navigation. Reuse existing pages and round sheets. */
 #scsRoundBottomNav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:2147483645;background:#101018;border-top:1px solid #343545;padding:12px 6px calc(12px + env(safe-area-inset-bottom,0px));grid-template-columns:repeat(4,minmax(0,1fr));gap:3px}
 #scsRoundBottomNav button{background:none;border:0;color:#b5b4c3;font:inherit;font-size:.77rem;min-height:55px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:3px 0}
@@ -3978,7 +3982,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V487', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V488', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
