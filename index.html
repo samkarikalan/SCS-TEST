@@ -989,6 +989,12 @@ body.scs-practice-shared-active #playersPage .sheet-title,body.scs-practice-shar
 #homePageOverlay .scs-practice-welcome{inset:80px 0 0}
 
 
+/* V532: suppress duplicate player-page headings; retain original functional close buttons. */
+body.scs-practice-shared-active #vaultModifyPage > .sheet-header,
+body.scs-practice-shared-active #vaultRegisterPage > .sheet-header .sheet-title,
+body.scs-practice-shared-active #vaultRegisterPage > .sheet-header .sheet-header-spacer {display:none!important}
+body.scs-practice-shared-active #vaultRegisterPage > .sheet-header {height:auto;min-height:0;padding:8px 16px 0;justify-content:flex-end;background:transparent;border:0}
+body.scs-practice-shared-active #vaultModifyPage > .vault-wrap {padding-top:16px}
 /* V528: one shared Practice header on every Practice module; no Tournament selectors. */
 body.scs-practice-shared-active #playersPage .sheet-header,
 body.scs-practice-shared-active #fixedPairsPage .sheet-header,
