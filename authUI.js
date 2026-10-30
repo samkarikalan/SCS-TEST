@@ -1260,6 +1260,13 @@ async function authShowModeLauncher() {
   if (typeof syncExperienceModeUI === 'function') syncExperienceModeUI();
   if (typeof _refreshWelcomeSubtitle === 'function') _refreshWelcomeSubtitle();
 
+  // Account login opened from the shared SCS Home club control is complete.
+  // Club is global to both activities, so return to SCS Home rather than
+  // allowing the legacy viewer launcher to drop the user into Practice.
+  if (typeof scsActivityCompleteClubAction === 'function' && scsActivityCompleteClubAction()) {
+    return;
+  }
+
   // When login was opened from Organiser or Club Manager on Welcome, continue
   // to that same protected workspace after successful account login. Its own
   // club/password verification still runs inside switchMode().
