@@ -911,10 +911,10 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 #homePageOverlay .scs-phase1-ref-drawer>summary::-webkit-details-marker{display:none}
 #homePageOverlay .scs-phase1-ref-shade{display:none}
 #homePageOverlay .scs-phase1-ref-drawer[open] .scs-phase1-ref-shade{display:block;position:fixed;inset:0;background:#0009;z-index:2147482000}
-#homePageOverlay .scs-phase1-ref-panel{display:none;position:fixed;inset:env(safe-area-inset-top,0px) auto 0 0;width:min(82vw,340px);max-width:340px;box-sizing:border-box;background:#111e33;color:#f1f4fa;z-index:2147482001;padding:30px 16px 22px;box-shadow:8px 0 32px #0009;flex-direction:column}
+#homePageOverlay .scs-phase1-ref-panel{display:none;position:fixed;inset:env(safe-area-inset-top,0px) auto 90px 0;width:min(82vw,340px);max-width:340px;box-sizing:border-box;background:#111e33;color:#f1f4fa;z-index:2147482001;padding:30px 16px 22px;box-shadow:8px 0 32px #0009;flex-direction:column}
 #homePageOverlay .scs-phase1-ref-drawer[open] .scs-phase1-ref-panel{display:flex}
 #homePageOverlay .scs-phase1-ref-panel-title{display:flex;justify-content:space-between;align-items:center;color:#eab851;font-size:1.6rem;padding:4px 12px 22px;margin-bottom:18px;border-bottom:1px solid #334660}
-#homePageOverlay .scs-phase1-ref-panel-title span{color:#b6c5dc}
+#homePageOverlay .scs-phase1-ref-panel-title button{width:auto;padding:0 8px;border:0;background:transparent;color:#b6c5dc;font-size:1.8rem;cursor:pointer;flex:none}
 #homePageOverlay .scs-phase1-ref-panel button{display:flex;align-items:center;gap:22px;width:100%;border:0;background:transparent;color:#f2f5fb;padding:17px 12px;text-align:left;font:inherit;font-size:1.08rem;font-weight:650;cursor:pointer}
 #homePageOverlay .scs-phase1-ref-panel button span{color:#eab851;min-width:28px;font-size:1.25rem}
 #homePageOverlay .scs-phase1-ref-panel .scs-phase1-ref-home{margin-top:auto;border-top:1px solid #334660;color:#b9c8de}
@@ -932,8 +932,24 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 #homePageOverlay .scs-phase1-ref-panel .scs-phase1-menu-entry span{color:#eab851;min-width:28px;font-size:1.25rem}
 #homePageOverlay .scs-phase1-ref-panel .scs-phase1-menu-placeholder:disabled{opacity:1;cursor:default}
 #homePageOverlay .scs-phase1-ref-panel .scs-phase1-menu-placeholder:disabled span{color:#eab851}
-#homePageOverlay .scs-phase1-ref-panel{min-height:100dvh}
-#homePageOverlay .scs-phase1-ref-panel .scs-phase1-ref-home{margin-top:auto}
+#homePageOverlay .scs-phase1-ref-panel{min-height:0;overflow-y:auto;overscroll-behavior:contain}
+#homePageOverlay .scs-phase1-ref-panel .scs-phase1-ref-home{margin-top:auto;flex-shrink:0;min-height:66px}
+/* V524: Keep the Practice drawer above the welcome screen and bottom navigation.
+   Previously the welcome sibling covered the drawer hit targets. */
+#homePageOverlay > .scs-phase1-ref-header {position:relative!important;z-index:10000!important;isolation:isolate}
+#homePageOverlay .scs-phase1-ref-drawer[open] {position:relative;z-index:10001}
+#homePageOverlay .scs-phase1-ref-drawer[open] .scs-phase1-ref-shade {position:fixed;inset:0;z-index:10002;pointer-events:auto}
+#homePageOverlay .scs-phase1-ref-drawer[open] .scs-phase1-ref-panel {
+ position:fixed;top:env(safe-area-inset-top,0px);bottom:0;left:0;
+ height:calc(100dvh - env(safe-area-inset-top,0px));max-height:none;
+ width:min(82vw,340px);z-index:10003;display:flex;flex-direction:column;
+ padding:26px 16px max(26px,env(safe-area-inset-bottom,0px));
+ overflow-y:auto;pointer-events:auto;
+}
+#homePageOverlay .scs-phase1-ref-panel-title {flex-shrink:0}
+#homePageOverlay .scs-phase1-ref-panel-title button {width:44px!important;min-width:44px!important;justify-content:center;padding:4px!important;touch-action:manipulation}
+#homePageOverlay .scs-phase1-ref-panel .scs-phase1-ref-home {display:flex!important;margin-top:auto!important;min-height:64px;flex-shrink:0;visibility:visible!important}
+#homePageOverlay .scs-practice-welcome {z-index:1}
 </style>
 </head>
 <body>
@@ -1503,15 +1519,15 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   <div class="scs-phase1-ref-titlebar">
     <details class="scs-phase1-ref-drawer">
       <summary aria-label="Open Practice Manager menu">☰</summary>
-      <div class="scs-phase1-ref-shade"></div>
+      <div class="scs-phase1-ref-shade" onclick="this.closest('details').removeAttribute('open')"></div>
       <nav class="scs-phase1-ref-panel" aria-label="Practice Manager navigation">
-        <div class="scs-phase1-ref-panel-title"><strong>SCS</strong><span aria-hidden="true">×</span></div>
-        <label for="scsPracticeShowHub" class="scs-phase1-menu-entry"><span>⌂</span> My Hub</label>
+        <div class="scs-phase1-ref-panel-title"><strong>SCS</strong><button type="button" aria-label="Close Practice Manager menu" onclick="event.stopPropagation();this.closest('details').open=false">×</button></div>
+        <label for="scsPracticeShowHub" onclick="this.closest('details').removeAttribute('open')" class="scs-phase1-menu-entry"><span>⌂</span> My Hub</label>
         <button type="button" class="scs-phase1-menu-placeholder" disabled><span>♙</span> Player Manager</button>
         <button type="button" class="scs-phase1-menu-placeholder" disabled><span>🏸</span> Round Manager</button>
         <button type="button" class="scs-phase1-menu-placeholder" disabled><span>▣</span> Slot Manager</button>
         <button type="button" class="scs-phase1-menu-placeholder" disabled><span>▥</span> Dashboard</button>
-        <button type="button" onclick="scsActivityReturnHome()" class="scs-phase1-ref-home"><span>⌂</span> SCS Home</button>
+        <button type="button" onclick="this.closest('details').removeAttribute('open');scsActivityReturnHome()" class="scs-phase1-ref-home"><span>⌂</span> SCS Home</button>
       </nav>
     </details>
     <strong>Practice Manager</strong><span class="scs-phase1-ref-icon" aria-hidden="true">🏸</span>
