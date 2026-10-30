@@ -36576,3 +36576,40 @@ body.scs-tournament-register-open #vaultRegisterPage{padding-bottom:24px!importa
 #vaultUpcomingSlots .scs-simple-slot-detail .mc-slot-card{margin:0!important}
 body.app-light #vaultUpcomingSlots .scs-simple-slot-copy strong{color:#8a5b10}
 @media(max-width:390px){#vaultUpcomingSlots #vaultManagerAddSlotBtn{padding:9px 12px!important;font-size:.8rem!important}#vaultUpcomingSlots .scs-simple-slot-copy strong{font-size:.83rem}}
+
+/* V544 — My Slots: plain page surface, no green canvas or outer card. */
+#homeVaultGrid,
+#homeVaultGrid #vaultTileGrid {
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+html body #homeVaultGrid #vaultUpcomingSlots.vault-home-slots-card.vault-slot-overview {
+  background:transparent!important;
+  background-color:transparent!important;
+  background-image:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  outline:0!important;
+  margin:0!important;
+  padding:16px 14px!important;
+}
+html body #homeVaultGrid #vaultUpcomingSlots .vault-slot-overview-title,
+html body #homeVaultGrid #vaultUpcomingSlots .vault-slot-tabs,
+html body #homeVaultGrid #vaultUpcomingSlots .vault-slot-expanded-panel,
+html body #homeVaultGrid #vaultUpcomingSlots .mc-slots-results-panel,
+html body #homeVaultGrid #vaultUpcomingSlots .mc-slots-list {
+  background:transparent!important;
+  background-image:none!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+html body #homeVaultGrid #vaultUpcomingSlots .scs-simple-slot-row,
+html body #homeVaultGrid #vaultUpcomingSlots .scs-simple-slot-toggle {
+  background:transparent!important;
+  background-image:none!important;
+  box-shadow:none!important;
+}
