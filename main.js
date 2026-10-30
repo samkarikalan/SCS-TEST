@@ -4550,7 +4550,6 @@ function scsGuideReturnFromJoinClub(){
   if(!fromAssist){
     var standaloneClubPage=document.getElementById('joinClubPage');
     if(standaloneClubPage)standaloneClubPage.style.display='none';
-    if(typeof scsActivityCompleteClubAction==='function'&&scsActivityCompleteClubAction())return;
     if(typeof scsActivityReturnHome==='function'){scsActivityReturnHome();return;}
     if(typeof showHomeScreen==='function')showHomeScreen();
     return;
