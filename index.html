@@ -1008,7 +1008,7 @@ body.scs-practice-shared-active #roundsPage .rounds-top-bar {margin-top:0!import
       <nav class="scs-phase1-ref-panel" aria-label="Practice Manager navigation">
         <div class="scs-phase1-ref-panel-title"><strong>SCS</strong><button type="button" aria-label="Close Practice Manager menu" onclick="event.stopPropagation();this.closest('details').open=false">×</button></div>
         <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('viewer')" class="scs-phase1-menu-entry"><span>⌂</span> My Hub</button>
-        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>♙</span> Player Manager</button>
+        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('vault');homeGo('vaultModifyPage',null);if(typeof vaultRenderModify==='function')vaultRenderModify()"><span>♙</span> Player Manager</button>
         <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('organiser')"><span>🏸</span> Round Manager</button>
         <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('vault')"><span>▣</span> Slot Manager</button>
         <button type="button" class="scs-phase1-menu-placeholder" disabled><span>▥</span> Dashboard</button>
@@ -4674,14 +4674,14 @@ function scsTournamentMenuChoose(handler){window.TournamentNavigation.open(handl
 document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamentMenuToggle(false)});
 </script>
 
-<script id="scs-practice-shared-header-v528">
+<script id="scs-practice-shared-header-v529">
 /* Shared UI chrome. Original navigation, scoring, scheduling and storage are not modified. */
 (function(){
  var header=document.getElementById('scsPracticeSharedHeader');
  var title=document.getElementById('scsPracticeSharedTitle');
  if(!header||!title)return;
- var ids=['settingsPage','playersPage','fixedPairsPage','roundsPage','roundHistoryOverlay','roundSettingsOverlay','vaultPage','vaultSlotsPage','vaultPlayingPage','vaultRegisterPage','vaultModifyPage','vaultRequestsPage','dashboardPage','homePageOverlay'];
- var labels={settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Slot Manager',vaultModifyPage:'Slot Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
+ var ids=['settingsPage','playersPage','fixedPairsPage','roundsPage','roundHistoryOverlay','roundSettingsOverlay','vaultModifyPage','vaultPage','vaultSlotsPage','vaultPlayingPage','vaultRegisterPage','vaultRequestsPage','dashboardPage','homePageOverlay'];
+ var labels={settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Slot Manager',vaultModifyPage:'Player Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
  function visible(el){if(!el||el.hidden)return false;var st=getComputedStyle(el);return st.display!=='none'&&st.visibility!=='hidden';}
  function refresh(){
   var tour=document.getElementById('scsTournamentPersistentHeader');
