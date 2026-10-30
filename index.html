@@ -959,6 +959,8 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 /* Practice Manager uses its side menu for navigation; keep existing nav nodes for compatibility. */
 
 /* V527: Shared Practice-only header, independent of the active module's DOM. */
+#vaultModifyPage .scs-existing-register-entry{display:block;width:100%;min-height:52px;margin:0 0 18px;padding:12px 18px;border:1px solid #918aff;border-radius:14px;background:#6256e8;color:#fff;font:inherit;font-weight:700;text-align:center;cursor:pointer}
+#vaultModifyPage .scs-existing-register-entry:active{filter:brightness(.9)}
 #scsPracticeSharedHeader[hidden]{display:none!important}
 #scsPracticeSharedHeader{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:100050;background:#0d192d;border-bottom:1px solid #34445f}
 #scsPracticeSharedHeader .scs-phase1-ref-header{display:block!important;margin:0!important;padding:0!important;background:#0d192d!important}
@@ -3132,6 +3134,8 @@ body.scs-practice-shared-active #roundsPage .rounds-top-bar {margin-top:0!import
       <button class="sheet-close-btn" onclick="showHomeScreen()">✕</button>
     </div>
     <div class="vault-wrap">
+      <!-- Existing registration module; no new player registration implementation. -->
+      <button type="button" class="scs-existing-register-entry" onclick="homeGo('vaultRegisterPage',null)">＋ Register Player</button>
       <!-- Filter row -->
       <div class="vm-filter-row">
         <select id="vmFilterGender" class="vm-filter-select" onchange="vaultModifyFilter()">
@@ -4674,14 +4678,14 @@ function scsTournamentMenuChoose(handler){window.TournamentNavigation.open(handl
 document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamentMenuToggle(false)});
 </script>
 
-<script id="scs-practice-shared-header-v529">
+<script id="scs-practice-shared-header-v530">
 /* Shared UI chrome. Original navigation, scoring, scheduling and storage are not modified. */
 (function(){
  var header=document.getElementById('scsPracticeSharedHeader');
  var title=document.getElementById('scsPracticeSharedTitle');
  if(!header||!title)return;
  var ids=['settingsPage','playersPage','fixedPairsPage','roundsPage','roundHistoryOverlay','roundSettingsOverlay','vaultModifyPage','vaultPage','vaultSlotsPage','vaultPlayingPage','vaultRegisterPage','vaultRequestsPage','dashboardPage','homePageOverlay'];
- var labels={settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Slot Manager',vaultModifyPage:'Player Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
+ var labels={settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Player Manager',vaultModifyPage:'Player Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
  function visible(el){if(!el||el.hidden)return false;var st=getComputedStyle(el);return st.display!=='none'&&st.visibility!=='hidden';}
  function refresh(){
   var tour=document.getElementById('scsTournamentPersistentHeader');
