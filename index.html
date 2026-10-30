@@ -901,6 +901,21 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 .scs-ko-assist-index-active,.scs-ko-assist-step-active{background:#0e192d!important;min-height:100dvh;box-sizing:border-box}
 .scs-ko-assist-index-active .scs-tm-assist{background:transparent!important;box-shadow:none!important;border:0!important}
 </style>
+<style id="scs-practice-phase1-title-menu">
+/* Phase 1: visual header and native side menu only; no existing functions changed. */
+#homePageOverlay .scs-phase1-header{padding:12px 16px 10px;margin-bottom:8px}
+#homePageOverlay .scs-phase1-header .scs-practice-eyebrow{margin:0 0 8px;font-size:.72rem}
+#homePageOverlay .scs-phase1-title-row{display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(91,196,241,.36);padding-bottom:12px}
+#homePageOverlay .scs-phase1-title-row h1{margin:0;flex:1;font-size:clamp(1.3rem,5vw,1.75rem);line-height:1.2;color:var(--text,#fff)}
+#homePageOverlay .scs-phase1-title-row>span{font-size:1.45rem}
+#homePageOverlay .scs-phase1-menu{position:relative;flex-shrink:0}
+#homePageOverlay .scs-phase1-menu>summary{list-style:none;cursor:pointer;width:42px;height:42px;display:grid;place-items:center;border:1px solid #7199c9;border-radius:11px;background:#233d60;color:#fff;font-size:1.4rem}
+#homePageOverlay .scs-phase1-menu>summary::-webkit-details-marker{display:none}
+#homePageOverlay .scs-phase1-menu-panel{position:absolute;top:48px;left:0;z-index:1000;width:min(78vw,280px);padding:14px;border:1px solid #435e83;border-radius:14px;background:#111c30;box-shadow:0 12px 30px #0007;display:flex;flex-direction:column;gap:5px}
+#homePageOverlay .scs-phase1-menu-panel strong{color:#e7b95d;padding:8px 10px 12px;border-bottom:1px solid #31415a}
+#homePageOverlay .scs-phase1-menu-panel button{border:0;background:transparent;color:#fff;text-align:left;padding:13px 10px;border-radius:9px;font:inherit;cursor:pointer}
+#homePageOverlay .scs-phase1-menu-panel button:focus-visible,#homePageOverlay .scs-phase1-menu-panel button:hover{background:#263955}
+</style>
 </head>
 <body>
 
@@ -1464,7 +1479,21 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   </div>
 </div>
 
-<header class="scs-practice-manager-header"><div class="scs-practice-eyebrow">— SCS · PRACTICE</div><div class="scs-practice-manager-title"><div><h1>Practice Manager</h1><p>Manage your activities, sessions and club.</p></div><span class="scs-practice-manager-icon" aria-hidden="true">🏸</span></div><button type="button" class="scs-activity-home-back" onclick="scsActivityReturnHome()">‹ SCS Home</button></header>
+<header class="scs-practice-manager-header scs-phase1-header">
+  <div class="scs-practice-eyebrow">SCS · PRACTICE</div>
+  <div class="scs-phase1-title-row">
+    <details class="scs-phase1-menu">
+      <summary aria-label="Open Practice menu" title="Practice menu">☰</summary>
+      <nav class="scs-phase1-menu-panel" aria-label="Practice navigation">
+        <strong>Practice Manager</strong>
+        <button type="button" onclick="scsHomeQuickAction('round')">🏸 &nbsp; Round Manager</button>
+        <button type="button" onclick="scsHomeQuickAction('slot')">📅 &nbsp; Slot Manager</button>
+        <button type="button" onclick="scsActivityReturnHome()">⌂ &nbsp; SCS Home</button>
+      </nav>
+    </details>
+    <h1>Practice Manager</h1><span aria-hidden="true">🏸</span>
+  </div>
+</header>
 <!-- Top bar -->
 
 <div class="home-topbar home-app-header" aria-label="User home">
