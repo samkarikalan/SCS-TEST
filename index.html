@@ -21,7 +21,7 @@
     })();
   </script>
 
-  <script>window.SCS_APP_VERSION = "V541"; window.SCS_BUILD = "V541"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
+  <script>window.SCS_APP_VERSION = "V542"; window.SCS_BUILD = "V542"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
   <script>
     window.scsInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function(event) {
@@ -149,7 +149,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="subscription.js?v=V149" defer></script>
 
-  <script src="HomeScreen.js?v=V541" defer></script>
+  <script src="HomeScreen.js?v=V542" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
@@ -179,7 +179,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="profile.js?v=V149" defer></script>
 
   <script src="dashboard.js?v=V149" defer></script>
-  <script src="slots.js?v=V541" defer></script>
+  <script src="slots.js?v=V542" defer></script>
   <script src="notifications.js?v=V149" defer></script>
 
   <script src="viewer.js?v=V149" defer></script>
@@ -755,7 +755,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #myHubHomeView .myhub-club-card-copy small{font-size:.79rem}
 @media(max-width:380px){#myHubHomeView .myhub-home-sections{padding-left:12px;padding-right:12px}#myHubHomeView .myhub-home-card{padding:14px 12px;gap:10px}}
 
-/* V541: My Hub uses plain hamburger-style rows; retain existing content/actions. */
+/* V542: My Hub uses plain hamburger-style rows; retain existing content/actions. */
 #myHubHomeView .myhub-plain-menu{display:block;padding:0 18px;margin:12px 0 28px}
 #myHubHomeView .myhub-plain-menu .myhub-home-section-title{margin:24px 0 8px;font-size:1.05rem}
 #myHubHomeView .myhub-plain-menu .myhub-simple-link,
@@ -768,6 +768,13 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #myHubHomeView .myhub-plain-menu .myhub-home-group{border:0;border-radius:0;background:transparent;box-shadow:none;margin:0;overflow:visible}
 #myHubHomeView .myhub-plain-menu .myhub-home-list{padding:6px 0 12px}
 #myHubHomeView .myhub-plain-menu [hidden]{display:none!important}
+/* V542: match Activity rows to the plain My SCS menu, overriding older ID styles. */
+#myHubHomeView .myhub-plain-menu #myHubNewSlotsGroup,
+#myHubHomeView .myhub-plain-menu #myHubTodaySlotsGroup,
+#myHubHomeView .myhub-plain-menu #myHubLiveGroup,
+#myHubHomeView .myhub-plain-menu #myHubApprovePlayersGroup{background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;margin:0!important;padding:0!important}
+#myHubHomeView .myhub-plain-menu .myhub-home-group>.myhub-home-card{background:transparent!important;border:0!important;border-bottom:1px solid rgba(150,160,190,.24)!important;border-radius:0!important;box-shadow:none!important;min-height:58px!important;padding:9px 7px!important;display:flex!important;align-items:center!important;gap:14px!important}
+#myHubHomeView .myhub-plain-menu .myhub-home-group>.myhub-home-card .myhub-home-icon{width:30px!important;height:auto!important;flex:0 0 30px!important;background:transparent!important;border:0!important;border-radius:0!important}
 </style>
 
 <style id="scs-tournament-v452-theme">
@@ -4136,7 +4143,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V541', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V542', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
