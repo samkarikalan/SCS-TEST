@@ -1020,6 +1020,25 @@ body.scs-practice-shared-active #newImportModal .newImport-container {
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
 }
+/* V535: iOS keyboard-safe Add Players Type editor; isolated to Practice import. */
+body.scs-practice-shared-active #newImportModal {
+  bottom: var(--scs-import-keyboard-bottom, 0px) !important;
+  overscroll-behavior: contain;
+}
+body.scs-practice-shared-active #newImportModal .newImport-container {
+  overscroll-behavior-y: contain;
+  overflow-anchor: none;
+}
+body.scs-practice-shared-active #addPlayersTypePanel #players-names {
+  display: block;
+  box-sizing: border-box;
+  height: min(34dvh, 280px);
+  min-height: 150px;
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
 </style>
 </head>
 <body>
@@ -4756,6 +4775,29 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
   }
   new MutationObserver(sync).observe(modal,{attributes:true,attributeFilter:['style','class','hidden']});
   sync();
+})();
+</script>
+<script id="scs-practice-import-keyboard-v535">
+(function(){
+  var modal=document.getElementById('newImportModal');
+  var editor=document.getElementById('players-names');
+  if(!modal||!editor)return;
+  var viewport=window.visualViewport;
+  var focused=false;
+  function adjust(){
+    if(!focused||!document.body.classList.contains('scs-practice-shared-active')){
+      modal.style.removeProperty('--scs-import-keyboard-bottom');return;
+    }
+    /* The visible viewport shrinks when iOS opens its keyboard. Keep the
+       modal's scrolling region above the keyboard, without moving the page. */
+    var bottom=viewport ? Math.max(0,window.innerHeight-viewport.height-viewport.offsetTop) : 0;
+    modal.style.setProperty('--scs-import-keyboard-bottom',Math.round(bottom)+'px');
+  }
+  editor.addEventListener('focus',function(){focused=true;adjust();});
+  editor.addEventListener('blur',function(){focused=false;adjust();});
+  if(viewport){viewport.addEventListener('resize',adjust);viewport.addEventListener('scroll',adjust);}
+  window.addEventListener('resize',adjust);
+  new MutationObserver(adjust).observe(modal,{attributes:true,attributeFilter:['style','class','hidden']});
 })();
 </script>
 </body>
