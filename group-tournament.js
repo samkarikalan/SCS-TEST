@@ -127,7 +127,7 @@ function open(mode,viewState){
  if(!el()){let d=document.createElement('div');d.id='scsGroupTournament';d.className='scs-gt-overlay';document.body.appendChild(d)}
  render();
 }
-function close(){el()?.remove();if(typeof window.scsRefreshTournamentHeader==='function')window.scsRefreshTournamentHeader();if(window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
+function close(){el()?.remove();if(window.scsTournamentReturnPage&&typeof window.scsReturnToTournamentParent==='function')window.scsReturnToTournamentParent()}
 function updateCompletedScore(id,score,winner){
  const m=matches.find(v=>String(v.id)===String(id));
  if(!m||viewOnly||!m.score||!score?.finished)return false;
@@ -137,7 +137,7 @@ function card(title,body){return '<section class="scs-gt-card"><h3>'+title+'</h3
 function setup(){
 let fields=[['groups','Number of groups',config.groups],['per','Teams per group',config.per],['knockouts','Number of knockouts (1 or 2)',config.knockouts],['top',config.knockouts===1?'Qualifiers per group':'Top knockout qualifiers per group',config.top]];
 if(config.knockouts===2)fields.push(['bottom','Bottom knockout qualifiers per group',config.bottom]);
-return card('Create Group Tournament','<label class="scs-gt-title-field">Tournament name<input type="text" maxlength="120" data-title required value="'+escapeHTML(title)+'" placeholder="e.g. Autumn Club Championship"></label><div class="scs-gt-fields">'+fields.map(([key,label,val])=>'<label>'+label+'<input type="number" min="1" '+(key==='knockouts'?'max="2"':'')+' data-config="'+key+'" value="'+val+'"></label>').join('')+'</div><button class="scs-gt-primary" data-action="create">Create Groups</button>');
+return card('Create Group Tournament','<label class="scs-gt-title-field">Tournament name<input type="text" maxlength="120" data-title required value="'+escapeHTML(title)+'" placeholder="e.g. Autumn Club Championship"></label><div class="scs-gt-fields">'+fields.map(([key,label,val])=>'<label>'+label+'<input type="number" min="1" '+(key==='knockouts'?'max="2"':'')+' data-config="'+key+'" value="'+val+'"></label>').join('')+'</div><p>Give every tournament a clear name so players can identify it in Continue and Live lists.</p><p>Top knockout selects the highest-ranked teams in each group. Bottom knockout selects the next positions, without duplicates.</p><button class="scs-gt-primary" data-action="create">Create Groups</button>');
 }
 function registry(){
  const names=[];function add(items){(Array.isArray(items)?items:[]).forEach(p=>{let n=typeof p==='string'?p:p&&p.name;if(n&&String(n).trim())names.push(String(n).trim())})}
@@ -226,10 +226,10 @@ function players(){
  return '<section class="scs-tm-pool scs-tm-player-pool"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT PLAYERS</small><h3>Players ('+names.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-toggle-pool aria-expanded="'+poolExpanded+'">'+(poolExpanded?'Hide ▲':'Show ▼')+'</button><button type="button" data-open-manager>+ Players Manager</button></div></div>'+(poolExpanded?(names.length?'<div class="scs-tm-pool-chips">'+names.map(playerRow).join('')+'</div>':'<p>Select players using Players Manager.</p>'):'')+'</section>';
 }
 function teamsCard(){
- return '<section class="scs-tm-pool scs-tm-teams-flat" style="margin-top:14px;border-color:#0f766e"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT TEAMS</small><h3>Teams ('+teamDrafts.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-add-team aria-label="Add team" title="Add team">+</button></div></div>'+(teamDrafts.length?'<div class="scs-gt-assist-team-list">'+teamDrafts.map((team,i)=>{
+ return '<section class="scs-tm-pool scs-tm-teams-flat"><div class="scs-tm-pool-heading"><div><small>TOURNAMENT TEAMS</small><h3>Teams ('+teamDrafts.length+')</h3></div><div class="scs-tm-pool-actions"><button type="button" data-add-team aria-label="Add team" title="Add team">+</button></div></div>'+(teamDrafts.length?'<div class="scs-gt-assist-team-list">'+teamDrafts.map((team,i)=>{
  const actions='<details class="scs-tm-compact-actions"><summary aria-label="Team '+(i+1)+' actions" title="Team actions">⋮</summary><div class="scs-tm-compact-action-menu"><button type="button" data-edit-team="'+i+'">✎ Edit team</button><button type="button" data-remove-team="'+i+'">− Remove team</button></div></details>';
  return window.SCSTeamPicker&&SCSTeamPicker.compactTeamCard?SCSTeamPicker.compactTeamCard(i,team,groupSelectedPlayerDetails,actions):'<article class="scs-tm-compact-team"><div class="scs-tm-compact-team-head"><span>Team '+(i+1)+'</span>'+actions+'</div><div class="scs-tm-compact-players">'+team.map(playerRow).join('')+'</div></article>';
- }).join('')+'</div>':'<p class="scs-gt-empty">Create teams, then select players using the existing assignment popup.</p>')+'</section>';
+ }).join('')+'</div>':'<p class="scs-gt-empty">Add a team and choose two players using the shared team picker.</p>')+'</section>';
 }
 function groupMatchPlayer(name){
  const d=groupSelectedPlayerDetails.find(p=>String(p.player||p.name||'').trim().toLocaleLowerCase()===String(name||'').trim().toLocaleLowerCase());
@@ -258,7 +258,7 @@ function editor(id){
   const used=new Set(teamDrafts.filter((_,i)=>i!==draftIndex).flat().map(n=>String(n).toLowerCase()));
   const names=pool.filter(n=>!used.has(n.toLowerCase()));
   const modal=document.createElement('section');modal.className='scs-tm-entry-modal';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
-  modal.innerHTML='<div class="scs-tm-entry-editor scs-tm-mobile-picker"><button type="button" class="scs-tm-entry-close" data-cancel aria-label="Close player assignment">×</button><h3>Entry '+(draftIndex+1)+' · Select Players</h3><p>Tap two players to form a team.</p>'+[1,2].map(num=>'<input type="hidden" data-input="'+num+'" value="'+escapeHTML(old[num-1]||'')+'">').join('')+'<div class="scs-tm-entry-player-preview">'+old.map(playerRow).join('')+'</div><div class="scs-tm-import-actions"><button type="button" data-add-next-team>+ Add Team</button><button type="button" class="scs-tm-primary" data-done>Done</button></div><p class="scs-tm-entry-status" role="status"></p></div>';
+  modal.innerHTML='<div class="scs-tm-entry-editor"><button type="button" class="scs-tm-entry-close" data-cancel aria-label="Close player assignment">×</button><h3>Entry '+(draftIndex+1)+' · Assign Players</h3><p>Select two players using the shared player cards.</p>'+[1,2].map(num=>'<input type="hidden" data-input="'+num+'" value="'+escapeHTML(old[num-1]||'')+'">').join('')+'<div class="scs-tm-entry-player-preview">'+old.map(playerRow).join('')+'</div><div class="scs-tm-import-actions"><button type="button" data-add-next-team>+ Add Team</button><button type="button" class="scs-tm-primary" data-done>Done</button></div><p class="scs-tm-entry-status" role="status"></p></div>';
   if(!window.SCSTeamPicker){console.error('Shared team picker unavailable');return}el().appendChild(modal);if(window.SCSTeamPicker){const picker=document.createElement('div');picker.className='scs-gt-shared-picker';modal.querySelector('.scs-tm-entry-editor p').after(picker);SCSTeamPicker.render(picker,{names,selected:old,max:2,row:playerRow,onChange:a=>{[1,2].forEach((n,i)=>modal.querySelector('[data-input="'+n+'"]').value=a[i]||'')}})}modal.querySelector('[data-cancel]').onclick=()=>modal.remove();
   const saveDraft=()=>{const picked=[1,2].map(n=>modal.querySelector('[data-input="'+n+'"]').value.trim()),error=modal.querySelector('.scs-tm-entry-status');if(picked.some(n=>!n)){error.textContent='Enter both player names to save this team.';return false}if(picked[0].toLowerCase()===picked[1].toLowerCase()){error.textContent='Choose two different players.';return false}if(picked.some(n=>used.has(n.toLowerCase()))){error.textContent='Player already assigned to another tournament team. Choose an available player.';return false}teamDrafts[draftIndex]=picked;save();return true};
   modal.querySelector('[data-add-next-team]').onclick=()=>{if(!saveDraft())return;if(teamDrafts.length>=64){modal.querySelector('.scs-tm-entry-status').textContent='Maximum 64 teams.';return}teamDrafts.push(['','']);save();modal.remove();render();editor('draft:'+(teamDrafts.length-1))};
@@ -446,7 +446,7 @@ function assistComplete(step){
 function assistIndex(){
  const names=['Players and Teams','Setup Groups','Assign Teams to Groups','Confirm and Save','Start'];
  const colors=['#0f766e','#47258b','#9a4e1a','#2145a0','#125b39'];
- return '<div class="scs-gt-assist">'+names.map((name,i)=>{const available=i===0||assistComplete(i);const done=assistComplete(i+1);return '<button type="button" class="scs-gt-assist-step" style="background:'+colors[i]+';opacity:'+(available?1:.45)+'" data-assist-step="'+(i+1)+'" '+(available?'':'disabled')+'><b>'+(i+1)+'</b><span><strong>'+name+'</strong><small>'+(done?'Completed':available?'Open step':'Locked until previous step is complete')+'</small></span><span>'+(available?'›':'🔒')+'</span></button>'}).join('')+'</div>';
+ return '<div class="scs-gt-assist"><header><h2>Group Tournament Assist</h2><button data-action="close">Close</button></header><p>Complete each step to unlock the next.</p>'+names.map((name,i)=>{const available=i===0||assistComplete(i);const done=assistComplete(i+1);return '<button type="button" class="scs-gt-assist-step" style="background:'+colors[i]+';opacity:'+(available?1:.45)+'" data-assist-step="'+(i+1)+'" '+(available?'':'disabled')+'><b>'+(i+1)+'</b><span><strong>'+name+'</strong><small>'+(done?'Completed':available?'Open step':'Locked until previous step is complete')+'</small></span><span>'+(available?'›':'🔒')+'</span></button>'}).join('')+'</div>';
 }
 function assistView(){
  const top='<div class="scs-gt-assist-top"><button type="button" data-assist-home>‹ Assist Home</button><small>GROUP TOURNAMENT · STEP '+assistStep+' OF 5</small></div>';
@@ -458,7 +458,7 @@ function assistView(){
 }
 function assistDone(step){
  if(step===1&&!assistComplete(1)){alert('Select players using Players Manager first.');return}
- if(step===2){if(config.per<2||config.groups<1||config.knockouts<1||config.knockouts>2||config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Check the group and qualifier settings.');return}assistPatternReady=true;if(teamDrafts.length===config.groups*config.per){assignments={};teamDrafts.forEach((team,index)=>{const g=Math.floor(index/config.per),t=index%config.per;assignments[g+':'+t]=team.slice()});}}
+ if(step===2){if(config.per<2||config.groups<1||config.knockouts<1||config.knockouts>2||config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Check the group and qualifier settings.');return}if(teamDrafts.length!==config.groups*config.per){alert('Team count must equal Groups × Teams per group ('+(config.groups*config.per)+').');return}assistPatternReady=true;assignments={};teamDrafts.forEach((team,index)=>{const g=Math.floor(index/config.per),t=index%config.per;assignments[g+':'+t]=team.slice()});}
  if(step===3&&!assistComplete(3)){alert('Assign two players to every team position first.');return}
  if(step===4){if(!assistComplete(3)){alert('Complete team assignments first.');return}created=true;tab='main'}
  save();assistStep=0;render();
@@ -484,15 +484,10 @@ function render(){
 if(!el())return;
 if(groupHome){groupHomeRender();return;}
 const assisting=assistMode&&!started;
-el().classList.toggle('scs-gt-assist-index-active',assisting&&assistStep===0);
-el().classList.toggle('scs-gt-assist-step-active',assisting&&assistStep>0);
-el().dataset.scsGroupEventTitle=title||'Group Tournament';
-el().dataset.scsGtAssistStep=assisting?String(assistStep):'';
 let body;
 if(assisting)body=assistStep===0?assistIndex():assistView();
 else body='<header><strong>'+escapeHTML(title)+'</strong><div class="scs-team-save-actions"><button type="button" data-group-save-now '+(viewOnly?'disabled':'')+'>Save Tournament</button><button data-action="close" aria-label="Close">✕</button></div></header><div data-group-save-status role="status" aria-live="polite"></div>'+(tab==='main'?'<nav class="scs-tm-live-tabs"><button data-tournament-view="all" class="'+(tournamentView==='all'?'active':'')+'">All</button><button data-tournament-view="ranking" class="'+(tournamentView==='ranking'?'active':'')+'">Ranking</button><button data-tournament-view="matrix" class="'+(tournamentView==='matrix'?'active':'')+'">Matrix</button><button data-tournament-view="matches" class="'+(tournamentView==='matches'?'active':'')+'">Matches</button></nav>':'')+((tab==='groups'||tab==='knockouts')?'<nav class="scs-gt-context-tabs" aria-label="Group tournament views"><button type="button" data-tab="groups" class="'+(tab!=='knockouts'?'active':'')+'">Groups</button><button type="button" data-tab="knockouts" class="'+(tab==='knockouts'?'active':'')+'">Knockouts</button></nav>':'')+view();
-el().innerHTML='<div class="scs-gt-sheet'+(!assisting&&tab==='main'&&tournamentView==='matches'?' scs-ko-generated-fixtures scs-gt-matches-page':'')+'">'+body+'</div>'+tournamentBottomNav(assisting);
-if(typeof window.scsRefreshTournamentHeader==='function')window.scsRefreshTournamentHeader();
+el().innerHTML='<div class="scs-gt-sheet'+(!assisting&&tab==='main'&&tournamentView==='matches'?' scs-ko-generated-fixtures scs-gt-matches-page':'')+'" role="dialog" aria-modal="true">'+body+'</div>'+tournamentBottomNav(assisting);
 el().querySelector('[data-group-save-now]')?.addEventListener('click',saveGroupTournamentNow);
 const closeButton=el().querySelector('[data-action="close"]');if(closeButton)closeButton.onclick=close;
 el().querySelectorAll('[data-assist-step]').forEach(x=>x.onclick=()=>{assistStep=Number(x.dataset.assistStep);render()});
@@ -533,5 +528,5 @@ el().querySelectorAll('[data-match-tab]').forEach(x=>x.onclick=()=>{matchTab=x.d
  });
 let create=el().querySelector('[data-action="create"]');if(create)create.onclick=()=>{const input=el().querySelector('[data-title]');title=String(input?input.value:title).trim().slice(0,120);if(!title){alert('Enter a tournament name before creating the groups.');if(input)input.focus();return}if(config.top+(config.knockouts===2?config.bottom:0)>config.per){alert('Qualifiers cannot exceed teams per group.');return}created=true;tab='main';save();render()};
 }
-window.SCSGroupTournament={open,openLive:function(state){open('view',state)},close,saveProgressNow:saveGroupTournamentNow,playersManagerReturned,scoreUpdate,updateCompletedScore,openSection:function(section){tab=section==='teams'?'players':section==='match'?'match':'main';save();render()},returnFromScore:function(){if(el())el().hidden=false}};
+window.SCSGroupTournament={open,openLive:function(state){open('view',state)},close,playersManagerReturned,scoreUpdate,updateCompletedScore,openSection:function(section){tab=section==='teams'?'players':section==='match'?'match':'main';save();render()},returnFromScore:function(){if(el())el().hidden=false}};
 })();

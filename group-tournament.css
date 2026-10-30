@@ -58,26 +58,6 @@
 /* Group Assist index: follows the existing Knockout Assist five-step interface. */
 .scs-gt-assist{max-width:720px;margin:auto;padding:12px 4px}.scs-gt-assist header{margin-bottom:28px!important}.scs-gt-assist h2{margin:0}.scs-gt-assist>p{margin:24px 0}.scs-gt-assist-step{display:flex;align-items:center;gap:15px;width:100%;text-align:left;color:white;border:0;border-radius:16px;padding:22px 18px;margin:12px 0;min-height:90px}.scs-gt-assist-step>b{font-size:28px}.scs-gt-assist-step>span:nth-child(2){flex:1;display:grid;gap:3px}.scs-gt-assist-step small{font-size:12px}.scs-gt-assist-step:disabled{cursor:not-allowed}.scs-gt-assist-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.scs-gt-assist-top button{padding:10px;border-radius:20px;background:#263c5d;color:white;border:1px solid #55749f}.scs-gt-assist-top small{color:#aec8f3;font-weight:700}.scs-gt-sheet>[data-assist-done],.scs-gt-sheet>.scs-gt-primary{padding:12px 22px;border-radius:12px;color:#fff;border:1px solid #7293c0;min-height:48px}
 
-/* V474: Group Assist uses the same full-page shell and compact step cards as Knockout Assist. */
-#scsGroupTournament.scs-gt-assist-index-active,
-#scsGroupTournament.scs-gt-assist-step-active{background:#0e192d!important;opacity:1!important;isolation:isolate;overflow-y:auto!important;overscroll-behavior:contain}
-#scsGroupTournament.scs-gt-assist-index-active>.scs-gt-sheet,
-#scsGroupTournament.scs-gt-assist-step-active>.scs-gt-sheet{max-width:none!important;width:100%!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
-#scsGroupTournament.scs-gt-assist-index-active .scs-gt-assist{max-width:720px;padding:34px 18px 18px}
-#scsGroupTournament.scs-gt-assist-index-active .scs-gt-assist-step{gap:14px;min-height:67px;margin:12px 0;padding:14px 18px;border-radius:14px}
-#scsGroupTournament.scs-gt-assist-index-active .scs-gt-assist-step>b{font-size:24px}
-@media(max-width:420px){#scsGroupTournament.scs-gt-assist-index-active .scs-gt-assist{padding:34px 18px 18px}}
-
-/* V475: Group Players and Teams mirrors Knockout Step 1. */
-#scsGroupTournament.scs-gt-assist-step-active[data-scs-gt-assist-step="1"]>.scs-gt-sheet{max-width:720px!important;width:100%!important;margin:0 auto!important;padding:14px 29px!important;box-sizing:border-box}
-#scsGroupTournament.scs-gt-assist-step-active[data-scs-gt-assist-step="1"] .scs-gt-assist-top{display:none!important}
-#scsGroupTournament.scs-gt-assist-step-active[data-scs-gt-assist-step="1"] .scs-tm-player-pool,
-#scsGroupTournament.scs-gt-assist-step-active[data-scs-gt-assist-step="1"] .scs-tm-teams-flat{width:100%;box-sizing:border-box}
-#scsGroupTournament.scs-gt-assist-step-active[data-scs-gt-assist-step="1"] .scs-gt-assist-team-list{display:grid;gap:10px;padding:12px 8px}
-#scsGroupTournament .scs-tm-entry-modal .scs-tm-mobile-picker{width:100%;max-width:none;max-height:96dvh;padding:18px 12px;border-radius:12px}
-#scsGroupTournament:has(.scs-tm-entry-modal) .scs-gt-bottom-nav{display:none!important}
-@media(max-width:480px){#scsGroupTournament.scs-gt-assist-step-active[data-scs-gt-assist-step="1"]>.scs-gt-sheet{padding:14px 29px!important}}
-
 /* V195: Team Tournament uses existing Group Tournament player rows.
    Override the older generic tournament editor label/input rules only here. */
 .scs-tm-entry-modal .scs-tm-pool[data-player-list]{
@@ -198,23 +178,3 @@ body.light-mode .scs-tm-unified-match-center .scs-tm-completed-title{background:
 
 /* V414: Knockout launch button in the matrix */
 .scs-gt-sheet .scs-gt-matrix-knockout-empty .scs-gt-knockout-launch{display:block;width:100%;min-height:52px;margin-top:22px;padding:12px 18px;border:1px solid #86b8ff;border-radius:12px;background:#3167b6!important;color:#fff!important;font:inherit;font-size:1rem;font-weight:750;text-align:center;cursor:pointer;touch-action:manipulation}
-
-/* V472: Group Tournament is a full page, not a translucent modal.
-   Preserve existing cards, tabs, controls and their handlers. */
-#scsGroupTournament.scs-gt-overlay{
-  position:fixed;inset:0;box-sizing:border-box;
-  width:100%;height:100dvh;max-width:none;
-  margin:0;padding:env(safe-area-inset-top) 0 calc(104px + env(safe-area-inset-bottom));
-  background:#101725;opacity:1;border:0;border-radius:0;
-  overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;
-}
-#scsGroupTournament.scs-gt-overlay[hidden]{display:none!important}
-#scsGroupTournament > .scs-gt-sheet{
-  box-sizing:border-box;width:100%;max-width:none;min-height:100%;
-  margin:0;padding:16px clamp(12px,3vw,24px);
-  border:0;border-radius:0;box-shadow:none;background:#17253c;
-}
-@media(max-width:420px){#scsGroupTournament > .scs-gt-sheet{padding:12px}}
-
-/* V473: Shared tournament helper owns the header; Group content starts beneath it. */
-#scsGroupTournament.scs-gt-overlay{padding-top:var(--scs-tournament-header-bottom,calc(env(safe-area-inset-top) + 72px));}
