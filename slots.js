@@ -5295,7 +5295,7 @@ function _vhsRenderSlotCard(slot) {
   var fillPct = _vsSlotFillPercent(slot);
   var fillColor = _vsSlotFillColor(slot);
 
-  return '<div class="mc-slot-card' + (isOpen ? ' is-expanded' : '') + compactClass + statusClass + (genderClass ? ' ' + genderClass : '') + '" data-slot-id="' + sid + '" style="--mc-club-color:' + _vsEscape(statusColor) + ';--slot-fill:' + fillPct + '%;--slot-status-color:' + _vsEscape(fillColor) + '">' +
+  var legacyCard = '<div class="mc-slot-card' + (isOpen ? ' is-expanded' : '') + compactClass + statusClass + (genderClass ? ' ' + genderClass : '') + '" data-slot-id="' + sid + '" style="--mc-club-color:' + _vsEscape(statusColor) + ';--slot-fill:' + fillPct + '%;--slot-status-color:' + _vsEscape(fillColor) + '">' +
     '<div class="mc-slot-titlebar"><span>' + _vsEscape(club.name || 'Club') + '</span><strong>' + _vsEscape(_vsSlotGenderLabel(slot)) + '</strong></div>' +
     '<div class="mc-slot-card-head" onclick="vaultHomeSlotsToggleDetails(\'' + sid + '\')">' +
       '<div class="mc-slot-time-row">' +
@@ -5318,6 +5318,20 @@ function _vhsRenderSlotCard(slot) {
     '</div>' +
     (isOpen ? _mcsRenderClaimList(slot, true) : '') +
   '</div>';
+  var timeLabel = _vsEscape(_mcsFormatDateTitle(slot.slot_date)) + ' · ' + _vsFormatTime(slot.start_time) + ' – ' + _vsFormatTime(slot.end_time);
+  var venueLabel = _vsEscape(slot.venue_name || slot.venue || slot.location_name || slot.location || '');
+  var metaLabel = _vsEscape((slot.num_courts || slot.courts || '—') + ' courts') + ' · ' + _vsEscape(slot.algorithm || slot.mode || 'Balanced') + ' · ' + countText;
+  var simpleRow = '<div class="scs-simple-slot-row" data-slot-id="' + sid + '">' +
+    '<button type="button" class="scs-simple-slot-toggle" aria-expanded="' + (isOpen ? 'true' : 'false') + '" onclick="vaultHomeSlotsToggleDetails(\'' + sid + '\')">' +
+      '<span class="scs-simple-slot-calendar" aria-hidden="true">📅</span>' +
+      '<span class="scs-simple-slot-copy"><strong>' + timeLabel + '</strong>' +
+      (venueLabel ? '<span>' + venueLabel + '</span>' : '') +
+      '<small>' + metaLabel + '</small></span>' +
+      '<span class="scs-simple-slot-chevron" aria-hidden="true">' + (isOpen ? '⌄' : '›') + '</span>' +
+    '</button>' +
+    (isOpen ? '<div class="scs-simple-slot-detail">' + legacyCard + '</div>' : '') +
+    '</div>';
+  return simpleRow;
 }
 
 function _vhsRenderNext30SlotsSection(selectedDateStr) {

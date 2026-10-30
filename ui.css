@@ -36554,3 +36554,25 @@ body.scs-tournament-register-open #vaultRegisterPage{padding-bottom:24px!importa
 .scs-score-live-match .scs-conduct-start::after{content:'→';display:grid;place-items:center;width:25px;height:25px;margin-left:12px;border-radius:50%;background:rgba(255,255,255,.16);font-size:1rem;line-height:1}
 .scs-score-live-match .scs-conduct-start:hover{filter:brightness(1.07)}
 .scs-score-live-match .scs-conduct-start:focus-visible{outline:3px solid rgba(91,221,183,.35);outline-offset:2px}
+
+/* V543 — approved compact Slot Manager layout; scoped to the existing overview. */
+#vaultUpcomingSlots.vault-slot-overview{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;padding:16px 14px!important;gap:14px!important}
+#vaultUpcomingSlots .vault-slot-overview-title{background:transparent!important;border:0!important;box-shadow:none!important;margin:0!important;padding:0!important;font-size:1.12rem!important}
+#vaultUpcomingSlots #vaultManagerAddSlotBtn{width:auto!important;align-self:flex-end!important;margin:-48px 0 10px!important;padding:10px 16px!important;border-radius:12px!important;background:#6455ee!important;color:#fff!important;min-height:44px}
+#vaultUpcomingSlots .vault-slot-tabs{background:transparent!important;border:0!important;box-shadow:none!important;gap:0!important}
+#vaultUpcomingSlots .vault-slot-tab{background:transparent!important;box-shadow:none!important;border:0!important;border-bottom:2px solid rgba(150,160,190,.25)!important;border-radius:0!important;min-height:52px!important;padding:10px 6px!important}
+#vaultUpcomingSlots .vault-slot-tab.is-active{border-bottom:3px solid #35cfc5!important;color:#35cfc5!important}
+#vaultUpcomingSlots .vault-slot-tab-summary{display:none!important}
+#vaultUpcomingSlots .mc-slots-results-panel,#vaultUpcomingSlots .mc-slots-list,#vaultUpcomingSlots .vault-slot-expanded-panel{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
+#vaultUpcomingSlots .scs-simple-slot-row{background:transparent;border:0;border-bottom:1px solid rgba(150,160,190,.28);margin:0;padding:0}
+#vaultUpcomingSlots .scs-simple-slot-toggle{width:100%;min-height:92px;display:flex;align-items:center;gap:13px;padding:13px 4px;border:0;background:transparent;color:inherit;text-align:left;font:inherit;cursor:pointer}
+#vaultUpcomingSlots .scs-simple-slot-calendar{flex:0 0 37px;font-size:1.6rem}
+#vaultUpcomingSlots .scs-simple-slot-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+#vaultUpcomingSlots .scs-simple-slot-copy strong{font-size:.91rem;font-weight:750;color:#e8bc68;line-height:1.25}
+#vaultUpcomingSlots .scs-simple-slot-copy span{font-size:.88rem;font-weight:650;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#vaultUpcomingSlots .scs-simple-slot-copy small{font-size:.78rem;color:var(--muted,#a9b3c7)}
+#vaultUpcomingSlots .scs-simple-slot-chevron{flex:0 0 20px;font-size:1.5rem;color:var(--muted,#a9b3c7)}
+#vaultUpcomingSlots .scs-simple-slot-detail{padding:6px 0 16px}
+#vaultUpcomingSlots .scs-simple-slot-detail .mc-slot-card{margin:0!important}
+body.app-light #vaultUpcomingSlots .scs-simple-slot-copy strong{color:#8a5b10}
+@media(max-width:390px){#vaultUpcomingSlots #vaultManagerAddSlotBtn{padding:9px 12px!important;font-size:.8rem!important}#vaultUpcomingSlots .scs-simple-slot-copy strong{font-size:.83rem}}
