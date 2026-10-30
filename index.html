@@ -955,7 +955,8 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 #homePageOverlay .scs-phase1-ref-panel .scs-phase1-ref-home{position:sticky!important;bottom:0!important;margin-top:auto!important;background:#111e33!important;border-top:1px solid #40516a!important;z-index:2!important;min-height:72px!important}
 #homePageOverlay .scs-phase1-ref-panel .scs-phase1-menu-entry{width:100%;border:0;background:transparent;text-align:left;font:inherit;font-size:1.08rem;font-weight:650}
 /* Side menu replaces the four-item Practice navigation. */
-#homePageOverlay #scsPrimaryBottomNav{display:none!important}
+#scsPrimaryBottomNav{display:none!important;visibility:hidden!important;pointer-events:none!important}
+/* Practice Manager uses its side menu for navigation; keep existing nav nodes for compatibility. */
 </style>
 </head>
 <body>
