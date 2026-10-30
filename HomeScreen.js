@@ -3131,8 +3131,7 @@ function vaultRegisterClose() {
     document.body.classList.remove('scs-tournament-register-open');
     var page=document.getElementById('vaultRegisterPage');
     if(page)page.style.display='none';
-    if(typeof showPage==='function')showPage('scsTournamentPlayersListPage',null);
-    if(typeof scsTournamentPlayersListOpen==='function')scsTournamentPlayersListOpen();
+    if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();
     return;
   }
   var src = window._regNavSource || null;

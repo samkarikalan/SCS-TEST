@@ -982,7 +982,6 @@ document.querySelectorAll('#vmEditModal .vm-gender-btn').forEach(btn => {
 }
 
 function vmOpenEditModal(playerId) {
-const clubGroup=document.getElementById('scsTournamentEditClubGroup');if(clubGroup)clubGroup.style.display='none';
 const p = _vmAllPlayers.find(x => x.id === playerId);
 if (!p) return;
 document.getElementById('vmEditPlayerId').value    = p.id;
@@ -1069,22 +1068,12 @@ setFb(t('saving'), true);
 try {
 const club = (typeof getMyClub === 'function') ? getMyClub() : null;
 const _vm  = _vmAllPlayers.find(x => x.id === playerId);
-const editClubGroup=document.getElementById('scsTournamentEditClubGroup');
-const editClubSelect=document.getElementById('scsTournamentEditClub');
-const rosterEdit=tournamentEdit&&editClubGroup?.style.display!=='none'&&_scsTournamentRoster.some(p=>String(p.id)===String(playerId));
-const destinationClub=rosterEdit?editClubSelect?.value:null;
-if(rosterEdit&&(!destinationClub||![_scsTournamentMainClub,..._scsTournamentClubs].some(c=>String(c?.id)===String(destinationClub))))throw new Error('Select a valid club.');
-if(rosterEdit&&String(destinationClub)!==String(_vm.clubId)){
-  const existing=await sbGet('memberships','club_id=eq.'+encodeURIComponent(destinationClub)+'&player_id=eq.'+encodeURIComponent(_vm.playerId)+'&select=id');
-  if(existing?.length)throw new Error('This player already belongs to the selected club.');
-}
 
 // 1. Update membership (nickname + club_rating)
 if (club?.id) {
   await sbPatch('memberships', `id=eq.${playerId}`, {
-    nickname: name,
-    club_rating: Math.round(rating * 10) / 10,
-    ...(rosterEdit?{club_id:destinationClub}:{})
+    nickname:    name,
+    club_rating: Math.round(rating * 10) / 10
   });
 }
 
@@ -1112,10 +1101,7 @@ setFb(t('saved'), true);
 setTimeout(() => {
   document.getElementById('vmEditModal').classList.remove('open');
   _vmUnlockEditScroll();
-  if(rosterEdit){
-    if(typeof showPage==='function')showPage('scsTournamentPlayersListPage',null);
-    scsTournamentPlayersListOpen();
-  }else vaultRenderModify();
+  vaultRenderModify();
 }, 600);
 
 } catch(e) {
@@ -1598,9 +1584,6 @@ document.getElementById('vregLevel').value = '5';
 // Invalidate player cache
 localStorage.removeItem('kbrr_cache_players');
 localStorage.removeItem('kbrr_cache_ts');
-if(window.__scsTournamentRegistration && window._regNavSource==='tournamentManager'){
-  if(typeof vaultRegisterClose==='function')vaultRegisterClose();
-}
 
 } catch(e) {
 setFb('❌ ' + e.message, false);
@@ -2082,142 +2065,4 @@ async function scsCreateSubClub(){
   if(out)out.textContent='Creating…';
   try{const child=await dbAddSubClub(parentId,name);if(out)out.textContent='Created '+child.name;document.getElementById('scsSubClubName').value='';await scsRefreshSubClubs();}
   catch(e){if(out)out.textContent=e.message||String(e);}
-}
-
-/* V550: Tournament roster lists main-club and sub-club memberships.
-   The registration form and Practice player manager remain unchanged. */
-var _scsTournamentRoster=[],_scsTournamentClubs=[],_scsTournamentMainClub=null;
-function scsTournamentPlayersFilterSelect(id){
-  const choice=document.getElementById('scsTPlayersSubclub');
-  if(!choice)return;
-  choice.value=id;
-  scsTournamentPlayersRenderFilters();
-  scsTournamentPlayersListLoad();
-}
-function scsTournamentClubTint(id){
-  const colors=['#8276d9','#5d9fc7','#65a58d','#c38d68','#b782b5','#8da66a','#c48c9d','#7e9cb4'];
-  const key=String(id||'');let hash=0;
-  for(let i=0;i<key.length;i++)hash=((hash*31)+key.charCodeAt(i))>>>0;
-  return colors[hash%colors.length];
-}
-function scsTournamentPlayersRenderFilters(){
-  const host=document.getElementById('scsTPlayersFilterPills');
-  const choice=document.getElementById('scsTPlayersSubclub');
-  if(!host||!choice)return;
-  host.replaceChildren();
-  Array.from(choice.options).filter(o=>!o.hidden).forEach(o=>{
-    const b=document.createElement('button');
-    b.type='button';b.className='scs-tplayer-filter-pill';
-    b.textContent=o.textContent;
-    if(o.value&&String(o.value)!==String(_scsTournamentMainClub?.id))b.style.setProperty('--scs-subclub-color',scsTournamentClubTint(o.value));
-    b.setAttribute('aria-pressed',String(o.value===choice.value));
-    b.onclick=()=>scsTournamentPlayersFilterSelect(o.value);
-    host.appendChild(b);
-  });
-}
-async function scsTournamentPlayersListOpen(refresh){
-  const choice=document.getElementById('scsTPlayersSubclub');
-  const list=document.getElementById('scsTPlayersList');
-  if(!choice||!list)return;
-  list.textContent='Loading players…';
-  try{
-    const parent=await scsResolveOrganizerClub();
-    if(!parent?.id)throw new Error('Select a main club first.');
-    _scsTournamentMainClub={id:parent.id,name:parent.name};
-    _scsTournamentClubs=await dbGetSubClubs(parent.id);
-    const previous=refresh?'':choice.value||'';
-    choice.replaceChildren();
-    const all=document.createElement('option');all.value='';all.textContent='All';choice.appendChild(all);
-    // The parent is included in All, but is not itself a sub-club filter.
-    const main=document.createElement('option');main.value=String(parent.id);main.textContent=parent.name;main.hidden=true;choice.appendChild(main);
-    _scsTournamentClubs.forEach(c=>{const o=document.createElement('option');o.value=String(c.id);o.textContent=c.name;choice.appendChild(o)});
-    if(Array.from(choice.options).some(o=>o.value===previous))choice.value=previous;
-    scsTournamentPlayersRenderFilters();
-    await scsTournamentPlayersListLoad();
-  }catch(e){list.textContent='Could not load tournament players: '+(e.message||e)}
-}
-async function scsTournamentPlayersListLoad(){
-  const list=document.getElementById('scsTPlayersList');if(!list)return;
-  list.textContent='Loading players…';
-  const selected=document.getElementById('scsTPlayersSubclub')?.value||'';
-  const allClubs=[_scsTournamentMainClub,..._scsTournamentClubs].filter(c=>c?.id);
-  const clubs=selected?allClubs.filter(c=>String(c.id)===String(selected)):allClubs;
-  try{
-    const batches=await Promise.all(clubs.map(async c=>{
-      const rows=await sbGet('memberships','club_id=eq.'+encodeURIComponent(c.id)+'&order=nickname.asc&select=id,nickname,club_rating,user_account_id,player_id,players(id,gender,level,global_rating,wins,losses)');
-      return (rows||[]).map(m=>({id:m.id,playerId:m.player_id,displayName:m.nickname||'',gender:m.players?.gender||'Male',level:m.players?.level||5,rating:Number(m.club_rating)||1,wins:m.players?.wins||0,losses:m.players?.losses||0,userId:m.user_account_id||null,userAccountId:m.user_account_id||null,clubName:c.name,clubId:c.id}));
-    }));
-    _scsTournamentRoster=batches.flat().sort((a,b)=>{
-      const aMain=String(a.clubId)===String(_scsTournamentMainClub?.id);
-      const bMain=String(b.clubId)===String(_scsTournamentMainClub?.id);
-      if(aMain!==bMain)return aMain?1:-1;
-      return a.clubName.localeCompare(b.clubName,undefined,{sensitivity:'base'})||a.displayName.localeCompare(b.displayName,undefined,{sensitivity:'base'});
-    });
-    scsTournamentPlayersListFilter();
-  }catch(e){list.textContent='Could not load tournament players: '+(e.message||e)}
-}
-function scsTournamentPlayersListFilter(){
-  const list=document.getElementById('scsTPlayersList');if(!list)return;
-  const q=(document.getElementById('scsTPlayersSearch')?.value||'').trim().toLowerCase();
-  const rows=_scsTournamentRoster.filter(p=>p.displayName.toLowerCase().includes(q));
-  const count=document.getElementById('scsTPlayersCount');if(count)count.textContent=rows.length+' players';
-  if(!rows.length){list.innerHTML='<p class="player-mgmt-empty">No tournament players found.</p>';return}
-  list.innerHTML=rows.map(p=>{
-    const g=p.gender==='Female'?'female':'male';
-    const initial=String(p.displayName).match(/[\p{L}\p{N}]/u)?.[0]?.toUpperCase()||'?';
-    const id=scsTournamentRegEsc(p.id);
-    const tint=String(p.clubId)===String(_scsTournamentMainClub?.id)?'':scsTournamentClubTint(p.clubId);
-    return '<div class="vm-player-row '+g+' scs-tplayer-row"'+(tint?' style="--scs-subclub-color:'+tint+'"':'')+'><div class="vm-avatar '+g+'">'+scsTournamentRegEsc(initial)+'</div><div class="vm-player-info"><div class="vm-player-name-row"><span class="vm-player-name">'+scsTournamentRegEsc(p.displayName)+'</span></div><div class="vm-player-meta">'+scsTournamentRegEsc(p.gender)+' · Level '+Number(p.level)+' · '+scsTournamentRegEsc(p.clubName)+'</div></div><div class="vm-row-actions"><button class="vm-edit-btn" title="Edit" onclick="scsTournamentPlayersListEdit(\''+id+'\')">✎</button><button class="vm-delete-btn" title="Delete" onclick="scsTournamentPlayersListDelete(\''+id+'\')">✕</button></div></div>';
-  }).join('');
-}
-function scsTournamentPlayersListAdd(){
-  const selected=document.getElementById('scsTPlayersSubclub')?.value||'';
-  window.__scsTournamentPreferredSubclub=selected||null;
-  window.__scsTournamentRegistration=true;
-  window.__scsTournamentRegistrationClub=null;
-  window._regNavSource='tournamentManager';
-  if(typeof showPage==='function')showPage('vaultRegisterPage',null);
-  document.body.classList.add('scs-tournament-register-open');
-  if(typeof vaultRenderRegister==='function')vaultRenderRegister();
-}
-function scsTournamentPlayersListClose(){
-  window.__scsTournamentRegistration=false;
-  window.__scsTournamentRegistrationClub=null;
-  document.body.classList.remove('scs-tournament-register-open');
-  if(typeof showPage==='function')showPage('homePage',null);
-  if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();
-}
-function scsTournamentPlayersListEdit(id){
-  const p=_scsTournamentRoster.find(x=>String(x.id)===String(id));if(!p)return;
-  _vmAllPlayers=_scsTournamentRoster;
-  window.__scsTournamentRegistration=true;
-  vmOpenEditModal(p.id);
-  scsTournamentEditShowClub(p);
-}
-
-function scsTournamentEditShowClub(p){
-  const modal=document.getElementById('vmEditModal');
-  const name=document.getElementById('vmEditName');
-  if(!modal||!name)return;
-  let group=document.getElementById('scsTournamentEditClubGroup');
-  if(!group){
-    group=document.createElement('div');group.id='scsTournamentEditClubGroup';group.className='vm-field-group';
-    const label=document.createElement('label');label.className='vm-field-label';label.textContent='Club';
-    const select=document.createElement('select');select.id='scsTournamentEditClub';select.className='vm-field-input';
-    group.append(label,select);name.closest('.vm-field-group')?.after(group);
-  }
-  const select=group.querySelector('select');select.replaceChildren();
-  [_scsTournamentMainClub,..._scsTournamentClubs].filter(c=>c?.id).forEach(c=>{
-    const option=document.createElement('option');option.value=String(c.id);option.textContent=c.name;select.appendChild(option);
-  });
-  select.value=String(p.clubId);
-  group.style.display='';
-  group.style.setProperty('--scs-subclub-color',scsTournamentClubTint(p.clubId));
-  select.onchange=()=>group.style.setProperty('--scs-subclub-color',scsTournamentClubTint(select.value));
-}
-
-async function scsTournamentPlayersListDelete(id){
-  const p=_scsTournamentRoster.find(x=>String(x.id)===String(id));if(!p)return;
-  if(!confirm('Delete '+p.displayName+' from '+p.clubName+'?'))return;
-  try{await sbDelete('memberships','id=eq.'+encodeURIComponent(p.id));await scsTournamentPlayersListLoad()}catch(e){alert(e.message||String(e))}
 }
