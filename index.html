@@ -21,7 +21,7 @@
     })();
   </script>
 
-  <script>window.SCS_APP_VERSION = "V313"; window.SCS_BUILD = "V313"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
+  <script>window.SCS_APP_VERSION = "V541"; window.SCS_BUILD = "V541"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
   <script>
     window.scsInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function(event) {
@@ -149,7 +149,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="subscription.js?v=V149" defer></script>
 
-  <script src="HomeScreen.js?v=V269" defer></script>
+  <script src="HomeScreen.js?v=V541" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
@@ -179,7 +179,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="profile.js?v=V149" defer></script>
 
   <script src="dashboard.js?v=V149" defer></script>
-  <script src="slots.js?v=V149" defer></script>
+  <script src="slots.js?v=V541" defer></script>
   <script src="notifications.js?v=V149" defer></script>
 
   <script src="viewer.js?v=V149" defer></script>
@@ -754,6 +754,20 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #myHubHomeView .myhub-club-card-copy strong{font-size:1rem}
 #myHubHomeView .myhub-club-card-copy small{font-size:.79rem}
 @media(max-width:380px){#myHubHomeView .myhub-home-sections{padding-left:12px;padding-right:12px}#myHubHomeView .myhub-home-card{padding:14px 12px;gap:10px}}
+
+/* V541: My Hub uses plain hamburger-style rows; retain existing content/actions. */
+#myHubHomeView .myhub-plain-menu{display:block;padding:0 18px;margin:12px 0 28px}
+#myHubHomeView .myhub-plain-menu .myhub-home-section-title{margin:24px 0 8px;font-size:1.05rem}
+#myHubHomeView .myhub-plain-menu .myhub-simple-link,
+#myHubHomeView .myhub-plain-menu .myhub-home-card{box-sizing:border-box;width:100%;min-height:58px;display:flex;align-items:center;gap:14px;text-align:left;padding:9px 7px;background:transparent;border:0;border-bottom:1px solid rgba(150,160,190,.24);border-radius:0;box-shadow:none;color:var(--text,#fff);font:inherit;cursor:pointer}
+#myHubHomeView .myhub-plain-menu .myhub-simple-link strong,
+#myHubHomeView .myhub-plain-menu .myhub-home-card strong{font-size:.97rem;font-weight:600;flex:1}
+#myHubHomeView .myhub-plain-menu .myhub-home-icon{width:30px;height:auto;flex:0 0 30px;background:transparent;border-radius:0;font-size:1.22rem}
+#myHubHomeView .myhub-plain-menu .myhub-home-chevron{margin-left:auto;color:var(--text-dim,#a4a9b8);font-size:1.5rem}
+#myHubHomeView .myhub-plain-menu .myhub-home-count{margin-left:auto}
+#myHubHomeView .myhub-plain-menu .myhub-home-group{border:0;border-radius:0;background:transparent;box-shadow:none;margin:0;overflow:visible}
+#myHubHomeView .myhub-plain-menu .myhub-home-list{padding:6px 0 12px}
+#myHubHomeView .myhub-plain-menu [hidden]{display:none!important}
 </style>
 
 <style id="scs-tournament-v452-theme">
@@ -2425,38 +2439,26 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   </div><!-- end myCardContent -->
 
   <!-- ── My Hub Home quick sections ── -->
-  <section class="myhub-home-sections" aria-label="Home">
+  <section class="myhub-home-sections myhub-plain-menu" aria-label="My Hub">
+    <h2 class="myhub-home-section-title">My SCS</h2>
+    <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('slots')"><span class="myhub-home-icon">📅</span><strong>My Slots</strong><span class="myhub-home-chevron">›</span></button>
+    <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('clubs')"><span class="myhub-home-icon">👥</span><strong>Joined Clubs</strong><span class="myhub-home-chevron">›</span></button>
+    <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('report')"><span class="myhub-home-icon">📊</span><strong>Reports</strong><span class="myhub-home-chevron">›</span></button>
     <h2 class="myhub-home-section-title">My Activity</h2>
     <div class="myhub-home-group" id="myHubNewSlotsGroup">
-      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('new')"><span class="myhub-home-icon">🔔</span><span><strong>New Posted Slot <span class="myhub-home-count" id="myHubNewSlotsCount">0</span></strong><small>New slots you have not joined</small></span><span class="myhub-home-chevron">›</span></button>
+      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('new')"><span class="myhub-home-icon">🔔</span><strong>New Posted Slots</strong><span class="myhub-home-count" id="myHubNewSlotsCount">0</span><span class="myhub-home-chevron">›</span></button>
       <div class="myhub-home-list" id="myHubNewSlotsList"></div>
     </div>
-    <div class="myhub-home-group" id="myHubTodaySlotsGroup">
-      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('today')"><span class="myhub-home-icon">📅</span><span><strong>Today Slot <span class="myhub-home-count" id="myHubTodaySlotsCount">0</span></strong><small>Your slots for today</small></span><span class="myhub-home-chevron">›</span></button>
+    <div class="myhub-home-group" id="myHubTodaySlotsGroup" hidden>
+      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('today')"><span class="myhub-home-icon">📅</span><strong>Today Slots</strong><span class="myhub-home-count" id="myHubTodaySlotsCount">0</span><span class="myhub-home-chevron">›</span></button>
       <div class="myhub-home-list" id="myHubTodaySlotsList"></div>
     </div>
-    <div class="myhub-home-group" id="myHubLiveGroup">
-      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('live')"><span class="myhub-home-icon">📡</span><span><strong>Live <span class="myhub-home-count" id="myHubLiveCount">0</span></strong><small>Live sessions</small></span><span class="myhub-home-chevron">›</span></button>
+    <div class="myhub-home-group" id="myHubLiveGroup" hidden>
+      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('live')"><span class="myhub-home-icon">📡</span><strong>Live</strong><span class="myhub-home-count" id="myHubLiveCount">0</span><span class="myhub-home-chevron">›</span></button>
       <div class="myhub-home-list" id="myHubLiveList"></div>
     </div>
-    <h2 class="myhub-home-section-title myhub-club-section-title">Quick access</h2>
-    <div class="scs-home-access-card scs-personal-access">
-      <span class="myhub-club-card-icon" aria-hidden="true">👤</span>
-      <span class="myhub-club-card-copy"><strong>My Profile</strong><small>Personal activities</small></span>
-      <button type="button" class="myhub-club-add" aria-label="Open My Profile menu" aria-haspopup="dialog" aria-controls="scsProfileQuickMenu" onclick="scsOpenProfileQuickMenu()">+</button>
-    </div>
-    <div class="scs-home-access-card scs-club-access" id="myHubClubCard">
-      <span class="myhub-club-card-icon" aria-hidden="true">👥</span>
-      <span class="myhub-club-card-copy"><strong>My Club</strong><small id="myHubHomeClubName">Club</small></span>
-      <button type="button" class="myhub-club-add" aria-label="Open My Club menu" aria-haspopup="dialog" aria-controls="scsHomeQuickMenu" onclick="scsOpenClubQuickMenu(event)">+</button>
-    </div>
-    <div class="scs-home-access-card scs-tournament-access" id="myHubTournamentCard">
-      <span class="myhub-club-card-icon" aria-hidden="true">🏆</span>
-      <span class="myhub-club-card-copy"><strong>My Tournament Club</strong><small id="myHubTournamentClubName">Login</small></span>
-      <button type="button" class="myhub-club-add" aria-label="Open Tournament Manager" onclick="scsOpenTournamentManager()">+</button>
-    </div>
     <div class="myhub-home-group" id="myHubApprovePlayersGroup" hidden>
-      <button type="button" class="myhub-home-card" onclick="scsHomeQuickAction('approve')"><span class="myhub-home-icon">✓</span><span><strong>Approve Players <span class="myhub-home-count" id="myHubApprovePlayersCount">0</span></strong><small id="myHubApprovePlayersClub"></small></span><span class="myhub-home-chevron">›</span></button>
+      <button type="button" class="myhub-home-card" onclick="scsHomeQuickAction('approve')"><span class="myhub-home-icon">✓</span><strong>Approve Players</strong><span class="myhub-home-count" id="myHubApprovePlayersCount">0</span><span class="myhub-home-chevron">›</span></button>
     </div>
   </section>
 
@@ -4134,7 +4136,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V465', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V541', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when

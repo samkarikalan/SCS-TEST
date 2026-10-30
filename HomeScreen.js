@@ -3267,6 +3267,8 @@ function myHubRenderLiveCards() {
   var sessions = _myHubLiveSessionsCache || [];
   var countEl = document.getElementById('myHubLiveCount');
   if (countEl) countEl.textContent = sessions.length;
+  var liveGroup = document.getElementById('myHubLiveGroup');
+  if (liveGroup) { liveGroup.hidden = !sessions.length; if (!sessions.length) liveGroup.classList.remove('is-open'); }
   if (!sessions.length) {
     list.innerHTML = '<div class="myhub-home-empty">No live sessions right now</div>';
     return;
