@@ -21,7 +21,7 @@
     })();
   </script>
 
-  <script>window.SCS_APP_VERSION = "V547"; window.SCS_BUILD = "V547"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
+  <script>window.SCS_APP_VERSION = "V548"; window.SCS_BUILD = "V548"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
   <script>
     window.scsInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function(event) {
@@ -149,7 +149,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="subscription.js?v=V149" defer></script>
 
-  <script src="HomeScreen.js?v=V547" defer></script>
+  <script src="HomeScreen.js?v=V548" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
@@ -170,7 +170,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="importPlayers.js?v=V281" defer></script>
 
-  <script src="settings.js?v=V281" defer></script>
+  <script src="settings.js?v=V548" defer></script>
 
   <script src="summary.js?v=V149" defer></script>
 
@@ -179,14 +179,14 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="profile.js?v=V149" defer></script>
 
   <script src="dashboard.js?v=V149" defer></script>
-  <script src="slots.js?v=V547" defer></script>
+  <script src="slots.js?v=V548" defer></script>
   <script src="notifications.js?v=V149" defer></script>
 
   <script src="viewer.js?v=V149" defer></script>
 
   <script src="report.js?v=V149" defer></script>
 
-  <link rel="stylesheet" href="ui.css?v=V547">
+  <link rel="stylesheet" href="ui.css?v=V548">
   <style id="simpleAppBottomBarStyles">
     /* Flat, theme-aware navigation shared by all three app hubs. */
     body #homeMoreSectionV#homeMoreSectionV .viewer-action-bar,
@@ -497,14 +497,13 @@ window.scsTournamentReturnManager=function(){
 function scsCloseTournamentManager(){var e=document.getElementById('scsTournamentManager');if(e)e.hidden=true}
 function scsTournamentManagerPlayers(){
   ['scsTournamentContinue','scsTournamentLive','scsTournamentTypePicker'].forEach(function(id){var page=document.getElementById(id);if(page)page.hidden=true;});
-  window.__scsTournamentRegistration=true;
+  window.__scsTournamentRegistration=false;
   window.__scsTournamentRegistrationClub=null;
   window._regNavSource='tournamentManager';
   scsCloseTournamentManager();
   if(typeof homeHideScreen==='function')homeHideScreen();
-  if(typeof showPage==='function')showPage('vaultRegisterPage',null);
-  document.body.classList.add('scs-tournament-register-open');
-  if(typeof vaultRenderRegister==='function')vaultRenderRegister();
+  if(typeof showPage==='function')showPage('scsTournamentPlayersListPage',null);
+  if(typeof scsTournamentPlayersListOpen==='function')scsTournamentPlayersListOpen();
 }
 
 function scsTournamentManagerStart(){scsTournamentRememberParent('scsTournamentManager');scsCloseTournamentManager();scsOpenTournamentTypePicker()}
@@ -755,7 +754,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #myHubHomeView .myhub-club-card-copy small{font-size:.79rem}
 @media(max-width:380px){#myHubHomeView .myhub-home-sections{padding-left:12px;padding-right:12px}#myHubHomeView .myhub-home-card{padding:14px 12px;gap:10px}}
 
-/* V547: My Hub uses plain hamburger-style rows; retain existing content/actions. */
+/* V548: My Hub uses plain hamburger-style rows; retain existing content/actions. */
 #myHubHomeView .myhub-plain-menu{display:block;padding:0 18px;margin:12px 0 28px}
 #myHubHomeView .myhub-plain-menu .myhub-home-section-title{margin:24px 0 8px;font-size:1.05rem}
 #myHubHomeView .myhub-plain-menu .myhub-simple-link,
@@ -768,7 +767,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #myHubHomeView .myhub-plain-menu .myhub-home-group{border:0;border-radius:0;background:transparent;box-shadow:none;margin:0;overflow:visible}
 #myHubHomeView .myhub-plain-menu .myhub-home-list{padding:6px 0 12px}
 #myHubHomeView .myhub-plain-menu [hidden]{display:none!important}
-/* V547: match Activity rows to the plain My SCS menu, overriding older ID styles. */
+/* V548: match Activity rows to the plain My SCS menu, overriding older ID styles. */
 #myHubHomeView .myhub-plain-menu #myHubNewSlotsGroup,
 #myHubHomeView .myhub-plain-menu #myHubTodaySlotsGroup,
 #myHubHomeView .myhub-plain-menu #myHubLiveGroup,
@@ -1013,8 +1012,8 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 /* Practice Manager uses its side menu for navigation; keep existing nav nodes for compatibility. */
 
 /* V527: Shared Practice-only header, independent of the active module's DOM. */
-#vaultModifyPage .scs-existing-register-entry{position:fixed;right:clamp(18px,5vw,30px);bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:10020;display:flex;align-items:center;justify-content:center;width:64px;height:64px;min-height:64px;margin:0;padding:0;border:1px solid #918aff;border-radius:50%;background:#6256e8;color:#fff;font:inherit;font-size:2.25rem;font-weight:700;box-shadow:0 8px 26px #0009;cursor:pointer;touch-action:manipulation}
-#vaultModifyPage .scs-existing-register-entry:active{filter:brightness(.9)}
+#vaultModifyPage .scs-existing-register-entry, #scsTournamentPlayersListPage .scs-existing-register-entry{position:fixed;right:clamp(18px,5vw,30px);bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:10020;display:flex;align-items:center;justify-content:center;width:64px;height:64px;min-height:64px;margin:0;padding:0;border:1px solid #918aff;border-radius:50%;background:#6256e8;color:#fff;font:inherit;font-size:2.25rem;font-weight:700;box-shadow:0 8px 26px #0009;cursor:pointer;touch-action:manipulation}
+#vaultModifyPage .scs-existing-register-entry, #scsTournamentPlayersListPage .scs-existing-register-entry:active{filter:brightness(.9)}
 #scsPracticeSharedHeader[hidden]{display:none!important}
 #scsPracticeSharedHeader{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:100050;background:#0d192d;border-bottom:1px solid #34445f}
 #scsPracticeSharedHeader .scs-phase1-ref-header{display:block!important;margin:0!important;padding:0!important;background:#0d192d!important}
@@ -3241,6 +3240,16 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
 
   <!-- ================================ -->
 
+  <div id="scsTournamentPlayersListPage" class="page" style="display:none;">
+    <div class="sheet-header"><div class="sheet-header-spacer"></div><span class="sheet-title">Players Manager</span><button class="sheet-close-btn" onclick="scsTournamentPlayersListClose()">✕</button></div>
+    <div class="vault-wrap">
+      <button type="button" class="scs-existing-register-entry" aria-label="Add tournament player" onclick="scsTournamentPlayersListAdd()">+</button>
+      <div class="vm-filter-row"><select id="scsTPlayersSubclub" class="vm-filter-select" onchange="scsTournamentPlayersListLoad()"><option value="">All sub-clubs</option></select><button class="vault-sync-btn" onclick="scsTournamentPlayersListOpen(true)">↻</button></div>
+      <div class="vm-search-wrap"><span class="vm-search-icon">🔍</span><input id="scsTPlayersSearch" class="vm-search-input" placeholder="Search players…" oninput="scsTournamentPlayersListFilter()"></div>
+      <div class="vm-count-row"><span id="scsTPlayersCount" class="vm-count-badge"></span></div>
+      <div id="scsTPlayersList" class="vm-player-list"></div>
+    </div>
+  </div>
   <div id="vaultModifyPage" class="page" style="display:none;">
     <div class="sheet-header">
       <div class="sheet-header-spacer"></div>
@@ -4143,7 +4152,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V547', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V548', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4569,7 +4578,7 @@ body.app-light #scsActivityHome .scs-art-live-copy,body.light-mode #scsActivityH
 #scsActivityHome .scs-activity-settings:active{transform:scale(.96)}
 body.app-light #scsActivityHome .scs-activity-settings,body.light-mode #scsActivityHome .scs-activity-settings,html.app-light #scsActivityHome .scs-activity-settings{background:#fff;color:#1459a6;border-color:#9dc8f1}
 
-/* V547: approved compact Sports Club Manager landing screen; existing actions retained. */
+/* V548: approved compact Sports Club Manager landing screen; existing actions retained. */
 #scsActivityHome{background:#07182e!important;color:#f8fbff!important;padding:calc(env(safe-area-inset-top,0px) + 54px) 20px 32px!important;align-items:flex-start!important;justify-content:center!important}
 #scsActivityHome .scs-home-simple{width:min(100%,520px)!important;margin:0 auto!important;max-width:520px!important}
 #scsActivityHome .scs-home-brand{display:flex;align-items:center;justify-content:center;gap:17px;margin:0 0 46px;padding:0 5px}

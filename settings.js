@@ -1584,6 +1584,9 @@ document.getElementById('vregLevel').value = '5';
 // Invalidate player cache
 localStorage.removeItem('kbrr_cache_players');
 localStorage.removeItem('kbrr_cache_ts');
+if(window.__scsTournamentRegistration && window._regNavSource==='tournamentManager'){
+  if(typeof vaultRegisterClose==='function')vaultRegisterClose();
+}
 
 } catch(e) {
 setFb('❌ ' + e.message, false);
@@ -2065,4 +2068,78 @@ async function scsCreateSubClub(){
   if(out)out.textContent='Creating…';
   try{const child=await dbAddSubClub(parentId,name);if(out)out.textContent='Created '+child.name;document.getElementById('scsSubClubName').value='';await scsRefreshSubClubs();}
   catch(e){if(out)out.textContent=e.message||String(e);}
+}
+
+/* V548: Tournament roster list, using the proven Practice player-card styles.
+   Tournament registration form is intentionally unchanged. */
+var _scsTournamentRoster=[],_scsTournamentClubs=[];
+async function scsTournamentPlayersListOpen(refresh){
+  const choice=document.getElementById('scsTPlayersSubclub');
+  const list=document.getElementById('scsTPlayersList');
+  if(!choice||!list)return;
+  list.textContent='Loading players…';
+  try{
+    const parent=await scsResolveOrganizerClub();
+    _scsTournamentClubs=await dbGetSubClubs(parent.id);
+    const previous=choice.value||window.__scsTournamentPreferredSubclub||'';
+    choice.innerHTML='<option value="">All sub-clubs</option>';
+    _scsTournamentClubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;choice.appendChild(o)});
+    if(_scsTournamentClubs.some(c=>String(c.id)===String(previous)))choice.value=previous;
+    await scsTournamentPlayersListLoad();
+  }catch(e){list.textContent='Could not load tournament players: '+(e.message||e)}
+}
+async function scsTournamentPlayersListLoad(){
+  const list=document.getElementById('scsTPlayersList');if(!list)return;
+  list.textContent='Loading players…';
+  const selected=document.getElementById('scsTPlayersSubclub')?.value||'';
+  const clubs=selected?_scsTournamentClubs.filter(c=>String(c.id)===String(selected)):_scsTournamentClubs;
+  try{
+    const batches=await Promise.all(clubs.map(async c=>{
+      const rows=await sbGet('memberships','club_id=eq.'+encodeURIComponent(c.id)+'&order=nickname.asc&select=id,nickname,club_rating,user_account_id,player_id,players(id,gender,level,global_rating,wins,losses)');
+      return (rows||[]).map(m=>({id:m.id,playerId:m.player_id,displayName:m.nickname||'',gender:m.players?.gender||'Male',level:m.players?.level||5,rating:Number(m.club_rating)||1,wins:m.players?.wins||0,losses:m.players?.losses||0,userId:m.user_account_id||null,clubName:c.name,clubId:c.id}));
+    }));
+    _scsTournamentRoster=batches.flat().sort((a,b)=>a.displayName.localeCompare(b.displayName));
+    scsTournamentPlayersListFilter();
+  }catch(e){list.textContent='Could not load tournament players: '+(e.message||e)}
+}
+function scsTournamentPlayersListFilter(){
+  const list=document.getElementById('scsTPlayersList');if(!list)return;
+  const q=(document.getElementById('scsTPlayersSearch')?.value||'').trim().toLowerCase();
+  const rows=_scsTournamentRoster.filter(p=>p.displayName.toLowerCase().includes(q));
+  const count=document.getElementById('scsTPlayersCount');if(count)count.textContent=rows.length+' players';
+  if(!rows.length){list.innerHTML='<p class="player-mgmt-empty">No tournament players found.</p>';return}
+  list.innerHTML=rows.map(p=>{
+    const g=p.gender==='Female'?'female':'male';
+    const initial=String(p.displayName).match(/[\p{L}\p{N}]/u)?.[0]?.toUpperCase()||'?';
+    const id=scsTournamentRegEsc(p.id);
+    return '<div class="vm-player-row '+g+'"><div class="vm-avatar '+g+'">'+scsTournamentRegEsc(initial)+'</div><div class="vm-player-info"><div class="vm-player-name-row"><span class="vm-player-name">'+scsTournamentRegEsc(p.displayName)+'</span></div><div class="vm-player-meta">'+scsTournamentRegEsc(p.gender)+' · Level '+Number(p.level)+' · '+scsTournamentRegEsc(p.clubName)+'</div></div><div class="vm-row-actions"><button class="vm-edit-btn" title="Edit" onclick="scsTournamentPlayersListEdit(\''+id+'\')">✎</button><button class="vm-delete-btn" title="Delete" onclick="scsTournamentPlayersListDelete(\''+id+'\')">✕</button></div></div>';
+  }).join('');
+}
+function scsTournamentPlayersListAdd(){
+  const selected=document.getElementById('scsTPlayersSubclub')?.value||'';
+  window.__scsTournamentPreferredSubclub=selected||null;
+  window.__scsTournamentRegistration=true;
+  window.__scsTournamentRegistrationClub=null;
+  window._regNavSource='tournamentManager';
+  if(typeof showPage==='function')showPage('vaultRegisterPage',null);
+  document.body.classList.add('scs-tournament-register-open');
+  if(typeof vaultRenderRegister==='function')vaultRenderRegister();
+}
+function scsTournamentPlayersListClose(){
+  window.__scsTournamentRegistration=false;
+  window.__scsTournamentRegistrationClub=null;
+  document.body.classList.remove('scs-tournament-register-open');
+  if(typeof showPage==='function')showPage('homePage',null);
+  if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();
+}
+function scsTournamentPlayersListEdit(id){
+  const p=_scsTournamentRoster.find(x=>String(x.id)===String(id));if(!p)return;
+  _vmAllPlayers=_scsTournamentRoster;
+  window.__scsTournamentRegistration=true;
+  vmOpenEditModal(p.id);
+}
+async function scsTournamentPlayersListDelete(id){
+  const p=_scsTournamentRoster.find(x=>String(x.id)===String(id));if(!p)return;
+  if(!confirm('Delete '+p.displayName+' from '+p.clubName+'?'))return;
+  try{await sbDelete('memberships','id=eq.'+encodeURIComponent(p.id));await scsTournamentPlayersListLoad()}catch(e){alert(e.message||String(e))}
 }
