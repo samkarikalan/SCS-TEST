@@ -957,9 +957,57 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 /* Side menu replaces the four-item Practice navigation. */
 #scsPrimaryBottomNav{display:none!important;visibility:hidden!important;pointer-events:none!important}
 /* Practice Manager uses its side menu for navigation; keep existing nav nodes for compatibility. */
+
+/* V527: Shared Practice-only header, independent of the active module's DOM. */
+#scsPracticeSharedHeader[hidden]{display:none!important}
+#scsPracticeSharedHeader{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:100050;background:#0d192d;border-bottom:1px solid #34445f}
+#scsPracticeSharedHeader .scs-phase1-ref-header{display:block!important;margin:0!important;padding:0!important;background:#0d192d!important}
+#scsPracticeSharedHeader .scs-phase1-ref-titlebar{display:flex;align-items:center;gap:16px;min-height:72px;padding:8px 20px;color:#f4f6fb}
+#scsPracticeSharedHeader .scs-phase1-ref-titlebar>strong{font-size:clamp(1.15rem,4.5vw,1.55rem);font-weight:750;flex:1;white-space:nowrap}
+#scsPracticeSharedHeader .scs-phase1-ref-icon{font-size:1.55rem}
+#scsPracticeSharedHeader .scs-phase1-ref-drawer>summary{display:flex;align-items:center;justify-content:center;width:40px;height:48px;color:#eab851;font-size:1.65rem;cursor:pointer;list-style:none}
+#scsPracticeSharedHeader .scs-phase1-ref-drawer>summary::-webkit-details-marker{display:none}
+#scsPracticeSharedHeader .scs-phase1-ref-shade{display:none}
+#scsPracticeSharedHeader .scs-phase1-ref-drawer[open] .scs-phase1-ref-shade{display:block;position:fixed;inset:0;background:#0009;z-index:100051}
+#scsPracticeSharedHeader .scs-phase1-ref-panel{display:none;position:fixed;top:env(safe-area-inset-top,0px);bottom:0;left:0;width:min(82vw,340px);box-sizing:border-box;background:#111e33;color:#f1f4fa;z-index:100052;padding:26px 16px max(26px,env(safe-area-inset-bottom,0px));box-shadow:8px 0 32px #0009;flex-direction:column;overflow-y:auto;overscroll-behavior:contain}
+#scsPracticeSharedHeader .scs-phase1-ref-drawer[open] .scs-phase1-ref-panel{display:flex}
+#scsPracticeSharedHeader .scs-phase1-ref-panel-title{display:flex;justify-content:space-between;align-items:center;color:#eab851;font-size:1.6rem;padding:4px 12px 22px;margin-bottom:18px;border-bottom:1px solid #334660;flex-shrink:0}
+#scsPracticeSharedHeader .scs-phase1-ref-panel-title button{width:44px;min-width:44px;justify-content:center;border:0;background:transparent;color:#b6c5dc;font-size:1.8rem;cursor:pointer}
+#scsPracticeSharedHeader .scs-phase1-ref-panel>button{display:flex;align-items:center;gap:22px;width:100%;border:0;background:transparent;color:#f2f5fb;padding:17px 12px;text-align:left;font:inherit;font-size:1.08rem;font-weight:650;cursor:pointer;flex-shrink:0}
+#scsPracticeSharedHeader .scs-phase1-ref-panel>button span{color:#eab851;min-width:28px;font-size:1.25rem}
+#scsPracticeSharedHeader .scs-phase1-ref-panel .scs-phase1-ref-home{margin-top:auto;border-top:1px solid #40516a;min-height:72px;color:#b9c8de;background:#111e33}
+#scsPracticeSharedHeader .scs-phase1-menu-placeholder:disabled{opacity:1;cursor:default}
+body.scs-practice-shared-active #homePageOverlay{padding-top:80px!important}
+body.scs-practice-shared-active .page.scs-practice-current-page{padding-top:82px!important;box-sizing:border-box}
+body.scs-practice-shared-active #settingsPage .settings-heading{display:none!important}
+body.scs-practice-shared-active #settingsPage .sheet-header{padding-top:0!important}
+body.scs-practice-shared-active #playersPage .sheet-title,body.scs-practice-shared-active #fixedPairsPage .sheet-title{visibility:hidden}
+/* The welcome is a home-only view and must not cover other modules. */
+#homePageOverlay .scs-practice-hub-state:not(:checked)~.scs-practice-welcome{display:flex}
+#homePageOverlay .scs-practice-welcome{inset:80px 0 0}
+
 </style>
 </head>
 <body>
+<div id="scsPracticeSharedHeader" hidden><header class="scs-practice-manager-header scs-phase1-ref-header">
+  <div class="scs-phase1-ref-titlebar">
+    <details class="scs-phase1-ref-drawer">
+      <summary aria-label="Open Practice Manager menu">☰</summary>
+      <div class="scs-phase1-ref-shade" onclick="this.closest('details').removeAttribute('open')"></div>
+      <nav class="scs-phase1-ref-panel" aria-label="Practice Manager navigation">
+        <div class="scs-phase1-ref-panel-title"><strong>SCS</strong><button type="button" aria-label="Close Practice Manager menu" onclick="event.stopPropagation();this.closest('details').open=false">×</button></div>
+        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('viewer')" class="scs-phase1-menu-entry"><span>⌂</span> My Hub</button>
+        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>♙</span> Player Manager</button>
+        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('organiser')"><span>🏸</span> Round Manager</button>
+        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('vault')"><span>▣</span> Slot Manager</button>
+        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>▥</span> Dashboard</button>
+        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('settings')"><span>⚙</span> Settings</button>
+        <button type="button" onclick="this.closest('details').removeAttribute('open');scsActivityReturnHome()" class="scs-phase1-ref-home"><span>⌂</span> SCS Home</button>
+      </nav>
+    </details>
+    <strong id="scsPracticeSharedTitle">Practice Manager</strong><span class="scs-phase1-ref-icon" aria-hidden="true">🏸</span>
+  </div>
+</header></div>
 
   <!-- ============================= -->
 
@@ -1522,25 +1570,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 </div>
 
 <input id="scsPracticeShowHub" class="scs-practice-hub-state" type="checkbox" hidden>
-<header class="scs-practice-manager-header scs-phase1-ref-header">
-  <div class="scs-phase1-ref-titlebar">
-    <details class="scs-phase1-ref-drawer">
-      <summary aria-label="Open Practice Manager menu">☰</summary>
-      <div class="scs-phase1-ref-shade" onclick="this.closest('details').removeAttribute('open')"></div>
-      <nav class="scs-phase1-ref-panel" aria-label="Practice Manager navigation">
-        <div class="scs-phase1-ref-panel-title"><strong>SCS</strong><button type="button" aria-label="Close Practice Manager menu" onclick="event.stopPropagation();this.closest('details').open=false">×</button></div>
-        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('viewer')" class="scs-phase1-menu-entry"><span>⌂</span> My Hub</button>
-        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>♙</span> Player Manager</button>
-        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('organiser')"><span>🏸</span> Round Manager</button>
-        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('vault')"><span>▣</span> Slot Manager</button>
-        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>▥</span> Dashboard</button>
-        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('settings')"><span>⚙</span> Settings</button>
-        <button type="button" onclick="this.closest('details').removeAttribute('open');scsActivityReturnHome()" class="scs-phase1-ref-home"><span>⌂</span> SCS Home</button>
-      </nav>
-    </details>
-    <strong>Practice Manager</strong><span class="scs-phase1-ref-icon" aria-hidden="true">🏸</span>
-  </div>
-</header>
+
 <section class="scs-practice-welcome" aria-label="Practice Manager welcome">
   <div class="scs-practice-welcome-kicker">— SCS · PRACTICE</div>
   <h2>Welcome to Practice Manager</h2>
@@ -4631,6 +4661,35 @@ window.TournamentNavigation={
 };
 function scsTournamentMenuChoose(handler){window.TournamentNavigation.open(handler);}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamentMenuToggle(false)});
+</script>
+
+<script id="scs-practice-shared-header-v527">
+/* Presentation-only glue: original module navigation and scheduling functions are untouched. */
+(function(){
+ var header=document.getElementById('scsPracticeSharedHeader');
+ var title=document.getElementById('scsPracticeSharedTitle');
+ if(!header||!title)return;
+ var pages=[['settingsPage','Settings'],['playersPage','Player Manager'],['fixedPairsPage','Round Manager'],['roundsPage','Round Manager'],['roundHistoryOverlay','Round Manager'],['roundSettingsOverlay','Round Manager'],['vaultPage','Slot Manager'],['vaultSlotsPage','Slot Manager'],['vaultPlayingPage','Slot Manager'],['vaultRegisterPage','Slot Manager'],['vaultModifyPage','Slot Manager'],['vaultRequestsPage','Slot Manager'],['dashboardPage','Dashboard'],['homePageOverlay','Practice Manager']];
+ function shown(el){if(!el||el.hidden)return false;var cs=getComputedStyle(el);return cs.display!=='none'&&cs.visibility!=='hidden';}
+ function refresh(){
+  var tournament=document.getElementById('scsTournamentManager');
+  var tournamentHeader=document.getElementById('scsTournamentPersistentHeader');
+  if((tournament&&shown(tournament))||(tournamentHeader&&shown(tournamentHeader))){header.hidden=true;document.body.classList.remove('scs-practice-shared-active');return;}
+  var active=null;
+  for(var i=0;i<pages.length;i++){var el=document.getElementById(pages[i][0]);if(shown(el)){active=pages[i];break;}}
+  header.hidden=!active;document.body.classList.toggle('scs-practice-shared-active',!!active);
+  var target=active?document.getElementById(active[0]):null;
+  document.querySelectorAll('.scs-practice-current-page').forEach(function(el){if(el!==target)el.classList.remove('scs-practice-current-page')});
+  if(active){if(title.textContent!==active[1])title.textContent=active[1];if(target&&target.classList.contains('page')&&!target.classList.contains('scs-practice-current-page'))target.classList.add('scs-practice-current-page');}
+  if(!active){var drawer=header.querySelector('details');if(drawer)drawer.open=false;}
+ }
+ var observer=new MutationObserver(function(){requestAnimationFrame(refresh)});
+ pages.forEach(function(entry){var el=document.getElementById(entry[0]);if(el)observer.observe(el,{attributes:true,attributeFilter:['style','hidden','class']});});
+ ['scsTournamentManager','scsTournamentPersistentHeader'].forEach(function(id){var el=document.getElementById(id);if(el)observer.observe(el,{attributes:true,attributeFilter:['style','hidden','class']});});
+ document.addEventListener('click',function(){requestAnimationFrame(refresh)},true);
+ document.addEventListener('keydown',function(e){if(e.key==='Escape'){var drawer=header.querySelector('details');if(drawer)drawer.open=false;}});
+ refresh();
+})();
 </script>
 </body>
 </html>
