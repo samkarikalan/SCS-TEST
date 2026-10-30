@@ -901,20 +901,23 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 .scs-ko-assist-index-active,.scs-ko-assist-step-active{background:#0e192d!important;min-height:100dvh;box-sizing:border-box}
 .scs-ko-assist-index-active .scs-tm-assist{background:transparent!important;box-shadow:none!important;border:0!important}
 </style>
-<style id="scs-practice-phase1-title-menu">
-/* Phase 1: visual header and native side menu only; no existing functions changed. */
-#homePageOverlay .scs-phase1-header{padding:12px 16px 10px;margin-bottom:8px}
-#homePageOverlay .scs-phase1-header .scs-practice-eyebrow{margin:0 0 8px;font-size:.72rem}
-#homePageOverlay .scs-phase1-title-row{display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(91,196,241,.36);padding-bottom:12px}
-#homePageOverlay .scs-phase1-title-row h1{margin:0;flex:1;font-size:clamp(1.3rem,5vw,1.75rem);line-height:1.2;color:var(--text,#fff)}
-#homePageOverlay .scs-phase1-title-row>span{font-size:1.45rem}
-#homePageOverlay .scs-phase1-menu{position:relative;flex-shrink:0}
-#homePageOverlay .scs-phase1-menu>summary{list-style:none;cursor:pointer;width:42px;height:42px;display:grid;place-items:center;border:1px solid #7199c9;border-radius:11px;background:#233d60;color:#fff;font-size:1.4rem}
-#homePageOverlay .scs-phase1-menu>summary::-webkit-details-marker{display:none}
-#homePageOverlay .scs-phase1-menu-panel{position:absolute;top:48px;left:0;z-index:1000;width:min(78vw,280px);padding:14px;border:1px solid #435e83;border-radius:14px;background:#111c30;box-shadow:0 12px 30px #0007;display:flex;flex-direction:column;gap:5px}
-#homePageOverlay .scs-phase1-menu-panel strong{color:#e7b95d;padding:8px 10px 12px;border-bottom:1px solid #31415a}
-#homePageOverlay .scs-phase1-menu-panel button{border:0;background:transparent;color:#fff;text-align:left;padding:13px 10px;border-radius:9px;font:inherit;cursor:pointer}
-#homePageOverlay .scs-phase1-menu-panel button:focus-visible,#homePageOverlay .scs-phase1-menu-panel button:hover{background:#263955}
+<style>
+/* Phase 1: Practice title and side-menu presentation only. No function overrides. */
+#homePageOverlay>.scs-phase1-ref-header{padding:0!important;margin:0 0 18px!important;background:#0d192d!important;border-bottom:1px solid #34445f!important}
+#homePageOverlay .scs-phase1-ref-titlebar{display:flex;align-items:center;gap:16px;min-height:72px;padding:8px 20px;color:#f4f6fb}
+#homePageOverlay .scs-phase1-ref-titlebar>strong{font-size:clamp(1.15rem,4.5vw,1.55rem);font-weight:750;flex:1;white-space:nowrap}
+#homePageOverlay .scs-phase1-ref-icon{font-size:1.55rem}
+#homePageOverlay .scs-phase1-ref-drawer>summary{display:flex;align-items:center;justify-content:center;width:40px;height:48px;color:#eab851;font-size:1.65rem;cursor:pointer;list-style:none}
+#homePageOverlay .scs-phase1-ref-drawer>summary::-webkit-details-marker{display:none}
+#homePageOverlay .scs-phase1-ref-shade{display:none}
+#homePageOverlay .scs-phase1-ref-drawer[open] .scs-phase1-ref-shade{display:block;position:fixed;inset:0;background:#0009;z-index:2147482000}
+#homePageOverlay .scs-phase1-ref-panel{display:none;position:fixed;inset:env(safe-area-inset-top,0px) auto 0 0;width:min(82vw,340px);max-width:340px;box-sizing:border-box;background:#111e33;color:#f1f4fa;z-index:2147482001;padding:30px 16px 22px;box-shadow:8px 0 32px #0009;flex-direction:column}
+#homePageOverlay .scs-phase1-ref-drawer[open] .scs-phase1-ref-panel{display:flex}
+#homePageOverlay .scs-phase1-ref-panel-title{display:flex;justify-content:space-between;align-items:center;color:#eab851;font-size:1.6rem;padding:4px 12px 22px;margin-bottom:18px;border-bottom:1px solid #334660}
+#homePageOverlay .scs-phase1-ref-panel-title span{color:#b6c5dc}
+#homePageOverlay .scs-phase1-ref-panel button{display:flex;align-items:center;gap:22px;width:100%;border:0;background:transparent;color:#f2f5fb;padding:17px 12px;text-align:left;font:inherit;font-size:1.08rem;font-weight:650;cursor:pointer}
+#homePageOverlay .scs-phase1-ref-panel button span{color:#eab851;min-width:28px;font-size:1.25rem}
+#homePageOverlay .scs-phase1-ref-panel .scs-phase1-ref-home{margin-top:auto;border-top:1px solid #334660;color:#b9c8de}
 </style>
 </head>
 <body>
@@ -1479,19 +1482,20 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   </div>
 </div>
 
-<header class="scs-practice-manager-header scs-phase1-header">
-  <div class="scs-practice-eyebrow">SCS · PRACTICE</div>
-  <div class="scs-phase1-title-row">
-    <details class="scs-phase1-menu">
-      <summary aria-label="Open Practice menu" title="Practice menu">☰</summary>
-      <nav class="scs-phase1-menu-panel" aria-label="Practice navigation">
-        <strong>Practice Manager</strong>
-        <button type="button" onclick="scsHomeQuickAction('round')">🏸 &nbsp; Round Manager</button>
-        <button type="button" onclick="scsHomeQuickAction('slot')">📅 &nbsp; Slot Manager</button>
-        <button type="button" onclick="scsActivityReturnHome()">⌂ &nbsp; SCS Home</button>
+<header class="scs-practice-manager-header scs-phase1-ref-header">
+  <div class="scs-phase1-ref-titlebar">
+    <details class="scs-phase1-ref-drawer">
+      <summary aria-label="Open Practice Manager menu">☰</summary>
+      <div class="scs-phase1-ref-shade"></div>
+      <nav class="scs-phase1-ref-panel" aria-label="Practice Manager navigation">
+        <div class="scs-phase1-ref-panel-title"><strong>SCS</strong><span aria-hidden="true">×</span></div>
+        <button type="button" onclick="switchMode('viewer')"><span>◉</span> My Hub</button>
+        <button type="button" onclick="scsHomeQuickAction('round')"><span>🏸</span> Rounds</button>
+        <button type="button" onclick="scsHomeQuickAction('slot')"><span>▣</span> Slots</button>
+        <button type="button" onclick="scsActivityReturnHome()" class="scs-phase1-ref-home"><span>⌂</span> SCS Home</button>
       </nav>
     </details>
-    <h1>Practice Manager</h1><span aria-hidden="true">🏸</span>
+    <strong>Practice Manager</strong><span class="scs-phase1-ref-icon" aria-hidden="true">🏸</span>
   </div>
 </header>
 <!-- Top bar -->
