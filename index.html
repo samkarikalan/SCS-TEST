@@ -1024,6 +1024,12 @@ body.scs-practice-shared-active #fixedPairsPage .sheet-title,
 body.scs-practice-shared-active #vaultPage>.sheet-header .sheet-title,
 body.scs-practice-shared-active #settingsPage .settings-heading {display:none!important}
 body.scs-practice-shared-active #roundsPage .rounds-top-bar {margin-top:0!important}
+/* V537: Reserve space below the fixed shared header for the original Round page. */
+body.scs-practice-shared-active #roundsPage.scs-practice-current-page {
+  padding-top:calc(96px + env(safe-area-inset-top, 0px))!important;
+  scroll-padding-top:calc(96px + env(safe-area-inset-top, 0px));
+}
+
 
 /* V534: keep the original Add Players selection sheet below the shared Practice header.
    Its own scroll container remains independently scrollable. */
@@ -4749,6 +4755,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
  var ids=['settingsPage','playersPage','fixedPairsPage','roundsPage','roundHistoryOverlay','roundSettingsOverlay','vaultModifyPage','vaultPage','vaultSlotsPage','vaultPlayingPage','vaultRegisterPage','vaultRequestsPage','dashboardPage','homePageOverlay'];
  var labels={settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Player Manager',vaultModifyPage:'Player Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
  function visible(el){if(!el||el.hidden)return false;var st=getComputedStyle(el);return st.display!=='none'&&st.visibility!=='hidden';}
+ var previousActive=null;
  function refresh(){
   var tour=document.getElementById('scsTournamentPersistentHeader');
   var tournament=document.getElementById('scsTournamentManager');
@@ -4767,7 +4774,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
    }
    title.textContent=label;
    if(target&&target.classList.contains('page'))target.classList.add('scs-practice-current-page');
+   /* V537: A newly opened Round page starts at its top, not the previous editor scroll. */
+   if(active==='roundsPage' && previousActive!==active){
+    target.scrollTop=0;
+    var roundScroll=target.querySelector('.rounds-scroll-container');
+    if(roundScroll)roundScroll.scrollTop=0;
+   }
   }else{var drawer=header.querySelector('details');if(drawer)drawer.open=false;}
+  previousActive=active;
  }
  var scheduled=false;
  function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(function(){scheduled=false;refresh();});}
