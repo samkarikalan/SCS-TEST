@@ -21,7 +21,7 @@
     })();
   </script>
 
-  <script>window.SCS_APP_VERSION = "V545"; window.SCS_BUILD = "V545"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
+  <script>window.SCS_APP_VERSION = "V544"; window.SCS_BUILD = "V544"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
   <script>
     window.scsInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function(event) {
@@ -149,7 +149,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="subscription.js?v=V149" defer></script>
 
-  <script src="HomeScreen.js?v=V545" defer></script>
+  <script src="HomeScreen.js?v=V544" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
@@ -179,14 +179,14 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="profile.js?v=V149" defer></script>
 
   <script src="dashboard.js?v=V149" defer></script>
-  <script src="slots.js?v=V545" defer></script>
+  <script src="slots.js?v=V544" defer></script>
   <script src="notifications.js?v=V149" defer></script>
 
   <script src="viewer.js?v=V149" defer></script>
 
   <script src="report.js?v=V149" defer></script>
 
-  <link rel="stylesheet" href="ui.css?v=V545">
+  <link rel="stylesheet" href="ui.css?v=V544">
   <style id="simpleAppBottomBarStyles">
     /* Flat, theme-aware navigation shared by all three app hubs. */
     body #homeMoreSectionV#homeMoreSectionV .viewer-action-bar,
@@ -755,7 +755,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #myHubHomeView .myhub-club-card-copy small{font-size:.79rem}
 @media(max-width:380px){#myHubHomeView .myhub-home-sections{padding-left:12px;padding-right:12px}#myHubHomeView .myhub-home-card{padding:14px 12px;gap:10px}}
 
-/* V545: My Hub uses plain hamburger-style rows; retain existing content/actions. */
+/* V544: My Hub uses plain hamburger-style rows; retain existing content/actions. */
 #myHubHomeView .myhub-plain-menu{display:block;padding:0 18px;margin:12px 0 28px}
 #myHubHomeView .myhub-plain-menu .myhub-home-section-title{margin:24px 0 8px;font-size:1.05rem}
 #myHubHomeView .myhub-plain-menu .myhub-simple-link,
@@ -768,7 +768,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #myHubHomeView .myhub-plain-menu .myhub-home-group{border:0;border-radius:0;background:transparent;box-shadow:none;margin:0;overflow:visible}
 #myHubHomeView .myhub-plain-menu .myhub-home-list{padding:6px 0 12px}
 #myHubHomeView .myhub-plain-menu [hidden]{display:none!important}
-/* V545: match Activity rows to the plain My SCS menu, overriding older ID styles. */
+/* V544: match Activity rows to the plain My SCS menu, overriding older ID styles. */
 #myHubHomeView .myhub-plain-menu #myHubNewSlotsGroup,
 #myHubHomeView .myhub-plain-menu #myHubTodaySlotsGroup,
 #myHubHomeView .myhub-plain-menu #myHubLiveGroup,
@@ -4143,7 +4143,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V545', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V544', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4568,39 +4568,21 @@ body.app-light #scsActivityHome .scs-art-live-copy,body.light-mode #scsActivityH
 #scsActivityHome .scs-activity-settings:focus-visible{outline:3px solid #4bd5ff;outline-offset:3px}
 #scsActivityHome .scs-activity-settings:active{transform:scale(.96)}
 body.app-light #scsActivityHome .scs-activity-settings,body.light-mode #scsActivityHome .scs-activity-settings,html.app-light #scsActivityHome .scs-activity-settings{background:#fff;color:#1459a6;border-color:#9dc8f1}
-
-/* V545: approved compact Sports Club Manager landing screen; existing actions retained. */
-#scsActivityHome{background:#07182e!important;color:#f8fbff!important;padding:calc(env(safe-area-inset-top,0px) + 54px) 20px 32px!important;align-items:flex-start!important;justify-content:center!important}
-#scsActivityHome .scs-home-simple{width:min(100%,520px)!important;margin:0 auto!important;max-width:520px!important}
-#scsActivityHome .scs-home-brand{display:flex;align-items:center;justify-content:center;gap:17px;margin:0 0 46px;padding:0 5px}
-#scsActivityHome .scs-home-logo{width:clamp(100px,31vw,142px);height:clamp(100px,31vw,142px);object-fit:contain;flex-shrink:0;border-radius:24px}
-#scsActivityHome .scs-home-brand-name{border-left:1px solid #a6b4ce;padding-left:17px;display:flex;flex-direction:column;gap:1px;min-width:0;line-height:1.14;font-size:clamp(22px,5.7vw,33px);letter-spacing:-.025em}
-#scsActivityHome .scs-home-brand-name strong{white-space:nowrap;color:#fff;font-weight:750}
-#scsActivityHome .scs-home-brand-name strong:last-child{color:#7bdf39}
-#scsActivityHome .scs-home-menu{display:flex;flex-direction:column;width:100%}
-#scsActivityHome .scs-home-menu-row{display:flex;align-items:center;gap:16px;text-align:left;min-height:94px;padding:12px 2px;border:0;border-bottom:1px solid #344158;border-radius:0;background:transparent!important;color:#fff;box-shadow:none!important;width:100%;cursor:pointer;font:inherit}
-#scsActivityHome .scs-home-menu-row:last-child{border-bottom:0}
-#scsActivityHome .scs-home-menu-icon{display:grid;place-items:center;flex:0 0 57px;width:57px;height:57px;border-radius:50%;font-size:29px;color:white}
-#scsActivityHome .scs-home-login{background:#137cf1;font-size:40px}
-#scsActivityHome .scs-home-practice{background:#05b96a}
-#scsActivityHome .scs-home-tournament{background:#f5a000}
-#scsActivityHome .scs-home-menu-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
-#scsActivityHome .scs-home-menu-copy strong{font-size:calc(clamp(18px,4.6vw,23px) * var(--app-font-scale,1));line-height:1.2;font-weight:700;color:#fff}
-#scsActivityHome .scs-home-menu-copy small{font-size:calc(clamp(12px,3.3vw,15px) * var(--app-font-scale,1));line-height:1.35;color:#bfccdc}
-#scsActivityHome .scs-home-chevron{font-size:35px;font-weight:300;color:#b9c6d8;line-height:1;padding:0 4px}
-#scsActivityHome .scs-home-menu-row:focus-visible{outline:2px solid #76c6ff;outline-offset:2px}
-#scsActivityHome .scs-home-menu-row:active{background:#ffffff12!important}
-@media(max-width:360px){#scsActivityHome .scs-home-brand{gap:10px}#scsActivityHome .scs-home-brand-name{padding-left:10px;font-size:21px}#scsActivityHome .scs-home-logo{width:95px;height:95px}#scsActivityHome .scs-home-menu-row{gap:11px}#scsActivityHome .scs-home-menu-icon{flex-basis:48px;width:48px;height:48px}}
 </style>
-<div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="Sports Club Manager Home">
- <div class="scs-activity-panel scs-home-simple">
-  <header class="scs-home-brand"><img src="clubs-brand.png" alt="CLUBS badminton logo" class="scs-home-logo"><div class="scs-home-brand-name"><strong>Sports Club</strong><strong>Manager</strong></div></header>
-  <nav class="scs-home-menu" aria-label="Main navigation">
-   <button type="button" id="scsSharedClubAction" class="scs-home-menu-row" onclick="scsActivityClubAction()" aria-label="Login or switch club"><span class="scs-home-menu-icon scs-home-login" aria-hidden="true">♙</span><span class="scs-home-menu-copy"><strong>Login</strong><small id="scsHomeLoginSubtitle">Sign in to your account</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
-   <button type="button" class="scs-home-menu-row" onclick="scsActivityChoose('practice')"><span class="scs-home-menu-icon scs-home-practice" aria-hidden="true">🏸</span><span class="scs-home-menu-copy"><strong>Practice Manager</strong><small>Rounds, players, slots and practice</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
-   <button type="button" class="scs-home-menu-row" onclick="scsActivityChoose('tournament')"><span class="scs-home-menu-icon scs-home-tournament" aria-hidden="true">🏆</span><span class="scs-home-menu-copy"><strong>Tournament Manager</strong><small>Create, manage and follow tournaments</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
-  </nav>
-  <span id="scsSharedClubName" hidden></span><span id="scsSharedClubStatus" hidden></span>
+<div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="SCS Home">
+ <div class="scs-activity-panel scs-shared-club-card">
+  <div class="scs-v237-brand"><div class="scs-v237-brand-identity"><div class="scs-v237-logo" aria-label="SCS">S<span>C</span>S</div><div class="scs-v237-brand-sub">Sports Club Scheduler</div></div><button type="button" class="scs-activity-settings" onclick="scsActivityOpenSettings()" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06-1.91 1.91-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.52V20h-2.7v-.08a1.65 1.65 0 0 0-1-1.52 1.65 1.65 0 0 0-1.82.33l-.06.06-1.91-1.91.06-.06A1.65 1.65 0 0 0 7.9 15a1.65 1.65 0 0 0-1.52-1H6.3v-2.7h.08a1.65 1.65 0 0 0 1.52-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06 1.91-1.91.06.06a1.65 1.65 0 0 0 1.82.33 1.65 1.65 0 0 0 1-1.52V5.3H15v.08a1.65 1.65 0 0 0 1 1.52 1.65 1.65 0 0 0 1.82-.33l.06-.06 1.91 1.91-.06.06A1.65 1.65 0 0 0 19.4 10.3a1.65 1.65 0 0 0 1.52 1H21v2.7h-.08A1.65 1.65 0 0 0 19.4 15Z"/></svg></button></div>
+  <div class="scs-v237-hero"><div class="scs-v237-hero-text"><strong data-scs-home-text="welcome">Welcome back!</strong><span data-scs-home-text="tagline">Play · Connect · Enjoy</span></div></div>
+  <header class="scs-shared-club-head">
+   <span class="scs-shared-club-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><circle cx="18" cy="17" r="7" stroke="currentColor" stroke-width="3"/><circle cx="32" cy="19" r="6" stroke="currentColor" stroke-width="3" opacity=".72"/><path d="M6.5 39c.8-9 5-13 11.5-13s10.7 4 11.5 13H6.5Z" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="M27 28c7-2 12.2 2 13 10H30" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".72"/></svg></span>
+   <div class="scs-shared-club-identity"><span>Active club</span><strong id="scsSharedClubName">No club selected</strong><span id="scsSharedClubStatus" class="scs-shared-club-status">Not logged in</span></div>
+   <button type="button" id="scsSharedClubAction" class="scs-shared-club-action" onclick="scsActivityClubAction()">Login</button>
+  </header>
+  <div class="scs-shared-club-divider"></div>
+  <div class="scs-v237-card-grid">
+   <button type="button" class="scs-activity-choice scs-art-card" aria-label="Practice" onclick="scsActivityChoose('practice')"><span class="scs-art-live-copy"><strong data-scs-home-text="practice">Practice</strong><small data-scs-home-text="practiceSub">Quick games, sessions &amp; training</small></span></button>
+   <button type="button" class="scs-activity-choice scs-art-card scs-shared-tournament" aria-label="Tournament" onclick="scsActivityChoose('tournament')"><span class="scs-art-live-copy"><strong data-scs-home-text="tournament">Tournament</strong><small data-scs-home-text="tournamentSub">Create, manage &amp; follow tournaments</small></span></button>
+  </div>
  </div>
 </div>
 <script>
@@ -4636,7 +4618,7 @@ window.scsActivityRefreshClub=function(){
  if(label)label.textContent=name||(localStorage.getItem('appLanguage')==='jp'?'クラブ未選択':'No club selected');
  if(status)status.textContent=localStorage.getItem('appLanguage')==='jp'?(id?'ログイン中':'未ログイン'):(id?'Logged in':'Not logged in');
  if(head)head.classList.toggle('is-logged-in',!!id);
- if(button){button.setAttribute('aria-label',id?'Switch club or account from '+(name||'current club'):'Log in to a club');var sub=document.getElementById('scsHomeLoginSubtitle');if(sub)sub.textContent=id?('Signed in · '+(name||'Club')):'Sign in to your account';}
+ if(button){button.textContent=localStorage.getItem('appLanguage')==='jp'?(id?'クラブ切替':'クラブログイン'):(id?'Switch Club':'Club Login');button.setAttribute('aria-label',id?'Switch from '+(name||'current club'):'Log in to a club');}
 };
 window.scsActivityClubAction=function(){
  var home=document.getElementById('scsActivityHome');if(home)home.hidden=true;
