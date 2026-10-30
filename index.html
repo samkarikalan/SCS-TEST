@@ -986,6 +986,17 @@ body.scs-practice-shared-active #playersPage .sheet-title,body.scs-practice-shar
 #homePageOverlay .scs-practice-hub-state:not(:checked)~.scs-practice-welcome{display:flex}
 #homePageOverlay .scs-practice-welcome{inset:80px 0 0}
 
+
+/* V528: one shared Practice header on every Practice module; no Tournament selectors. */
+body.scs-practice-shared-active #playersPage .sheet-header,
+body.scs-practice-shared-active #fixedPairsPage .sheet-header,
+body.scs-practice-shared-active #vaultPage>.sheet-header,
+body.scs-practice-shared-active #settingsPage>.sheet-header {padding-top:0!important}
+body.scs-practice-shared-active #playersPage .sheet-title,
+body.scs-practice-shared-active #fixedPairsPage .sheet-title,
+body.scs-practice-shared-active #vaultPage>.sheet-header .sheet-title,
+body.scs-practice-shared-active #settingsPage .settings-heading {display:none!important}
+body.scs-practice-shared-active #roundsPage .rounds-top-bar {margin-top:0!important}
 </style>
 </head>
 <body>
@@ -4663,31 +4674,42 @@ function scsTournamentMenuChoose(handler){window.TournamentNavigation.open(handl
 document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamentMenuToggle(false)});
 </script>
 
-<script id="scs-practice-shared-header-v527">
-/* Presentation-only glue: original module navigation and scheduling functions are untouched. */
+<script id="scs-practice-shared-header-v528">
+/* Shared UI chrome. Original navigation, scoring, scheduling and storage are not modified. */
 (function(){
  var header=document.getElementById('scsPracticeSharedHeader');
  var title=document.getElementById('scsPracticeSharedTitle');
  if(!header||!title)return;
- var pages=[['settingsPage','Settings'],['playersPage','Player Manager'],['fixedPairsPage','Round Manager'],['roundsPage','Round Manager'],['roundHistoryOverlay','Round Manager'],['roundSettingsOverlay','Round Manager'],['vaultPage','Slot Manager'],['vaultSlotsPage','Slot Manager'],['vaultPlayingPage','Slot Manager'],['vaultRegisterPage','Slot Manager'],['vaultModifyPage','Slot Manager'],['vaultRequestsPage','Slot Manager'],['dashboardPage','Dashboard'],['homePageOverlay','Practice Manager']];
- function shown(el){if(!el||el.hidden)return false;var cs=getComputedStyle(el);return cs.display!=='none'&&cs.visibility!=='hidden';}
+ var ids=['settingsPage','playersPage','fixedPairsPage','roundsPage','roundHistoryOverlay','roundSettingsOverlay','vaultPage','vaultSlotsPage','vaultPlayingPage','vaultRegisterPage','vaultModifyPage','vaultRequestsPage','dashboardPage','homePageOverlay'];
+ var labels={settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Slot Manager',vaultModifyPage:'Slot Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
+ function visible(el){if(!el||el.hidden)return false;var st=getComputedStyle(el);return st.display!=='none'&&st.visibility!=='hidden';}
  function refresh(){
+  var tour=document.getElementById('scsTournamentPersistentHeader');
   var tournament=document.getElementById('scsTournamentManager');
-  var tournamentHeader=document.getElementById('scsTournamentPersistentHeader');
-  if((tournament&&shown(tournament))||(tournamentHeader&&shown(tournamentHeader))){header.hidden=true;document.body.classList.remove('scs-practice-shared-active');return;}
+  if((tour&&visible(tour))||(tournament&&visible(tournament))){header.hidden=true;document.body.classList.remove('scs-practice-shared-active');return;}
   var active=null;
-  for(var i=0;i<pages.length;i++){var el=document.getElementById(pages[i][0]);if(shown(el)){active=pages[i];break;}}
-  header.hidden=!active;document.body.classList.toggle('scs-practice-shared-active',!!active);
-  var target=active?document.getElementById(active[0]):null;
-  document.querySelectorAll('.scs-practice-current-page').forEach(function(el){if(el!==target)el.classList.remove('scs-practice-current-page')});
-  if(active){if(title.textContent!==active[1])title.textContent=active[1];if(target&&target.classList.contains('page')&&!target.classList.contains('scs-practice-current-page'))target.classList.add('scs-practice-current-page');}
-  if(!active){var drawer=header.querySelector('details');if(drawer)drawer.open=false;}
+  for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(visible(el)){active=ids[i];break;}}
+  header.hidden=!active;
+  document.body.classList.toggle('scs-practice-shared-active',!!active);
+  var target=active&&document.getElementById(active);
+  document.querySelectorAll('.scs-practice-current-page').forEach(function(el){if(el!==target)el.classList.remove('scs-practice-current-page');});
+  if(active){
+   var label=labels[active];
+   if(active==='homePageOverlay'){
+    var hub=document.getElementById('scsPracticeShowHub');
+    if(hub&&hub.checked)label='My Hub';
+   }
+   title.textContent=label;
+   if(target&&target.classList.contains('page'))target.classList.add('scs-practice-current-page');
+  }else{var drawer=header.querySelector('details');if(drawer)drawer.open=false;}
  }
- var observer=new MutationObserver(function(){requestAnimationFrame(refresh)});
- pages.forEach(function(entry){var el=document.getElementById(entry[0]);if(el)observer.observe(el,{attributes:true,attributeFilter:['style','hidden','class']});});
- ['scsTournamentManager','scsTournamentPersistentHeader'].forEach(function(id){var el=document.getElementById(id);if(el)observer.observe(el,{attributes:true,attributeFilter:['style','hidden','class']});});
- document.addEventListener('click',function(){requestAnimationFrame(refresh)},true);
- document.addEventListener('keydown',function(e){if(e.key==='Escape'){var drawer=header.querySelector('details');if(drawer)drawer.open=false;}});
+ var scheduled=false;
+ function schedule(){if(scheduled)return;scheduled=true;requestAnimationFrame(function(){scheduled=false;refresh();});}
+ var obs=new MutationObserver(schedule);
+ ids.concat(['scsTournamentManager','scsTournamentPersistentHeader']).forEach(function(id){var el=document.getElementById(id);if(el)obs.observe(el,{attributes:true,attributeFilter:['style','hidden','class']});});
+ var hub=document.getElementById('scsPracticeShowHub');if(hub)hub.addEventListener('change',schedule);
+ document.addEventListener('click',schedule,true);
+ document.addEventListener('keydown',function(e){if(e.key==='Escape'){var d=header.querySelector('details');if(d)d.open=false;}});
  refresh();
 })();
 </script>
