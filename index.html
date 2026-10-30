@@ -21,7 +21,7 @@
     })();
   </script>
 
-  <script>window.SCS_APP_VERSION = "V548"; window.SCS_BUILD = "V548"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
+  <script>window.SCS_APP_VERSION = "V549"; window.SCS_BUILD = "V549"; window.SCS_ROUNDS_TEMPLATE_CLUB_ID = "3cd43bd7-089f-4893-9f7a-8c2ce6fa408d";</script>
   <script>
     window.scsInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function(event) {
@@ -123,6 +123,9 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   outline: 2px solid #fff;
   outline-offset: 2px;
 }
+#scsTournamentPlayersListPage .scs-tplayer-filter-pills{display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:0}
+#scsTournamentPlayersListPage .scs-tplayer-filter-pill{border:1px solid #5b6082;border-radius:999px;background:#222431;color:#b9b5df;padding:9px 16px;font:inherit;cursor:pointer}
+#scsTournamentPlayersListPage .scs-tplayer-filter-pill[aria-pressed="true"]{background:#6157ee;border-color:#6157ee;color:#fff}
 </style>
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png?v=V149">
   <link rel="manifest" href="/manifest.json?v=V209">
@@ -149,7 +152,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="subscription.js?v=V149" defer></script>
 
-  <script src="HomeScreen.js?v=V548" defer></script>
+  <script src="HomeScreen.js?v=V549" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
@@ -170,7 +173,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="importPlayers.js?v=V281" defer></script>
 
-  <script src="settings.js?v=V548" defer></script>
+  <script src="settings.js?v=V549" defer></script>
 
   <script src="summary.js?v=V149" defer></script>
 
@@ -179,14 +182,14 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="profile.js?v=V149" defer></script>
 
   <script src="dashboard.js?v=V149" defer></script>
-  <script src="slots.js?v=V548" defer></script>
+  <script src="slots.js?v=V549" defer></script>
   <script src="notifications.js?v=V149" defer></script>
 
   <script src="viewer.js?v=V149" defer></script>
 
   <script src="report.js?v=V149" defer></script>
 
-  <link rel="stylesheet" href="ui.css?v=V548">
+  <link rel="stylesheet" href="ui.css?v=V549">
   <style id="simpleAppBottomBarStyles">
     /* Flat, theme-aware navigation shared by all three app hubs. */
     body #homeMoreSectionV#homeMoreSectionV .viewer-action-bar,
@@ -754,7 +757,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #myHubHomeView .myhub-club-card-copy small{font-size:.79rem}
 @media(max-width:380px){#myHubHomeView .myhub-home-sections{padding-left:12px;padding-right:12px}#myHubHomeView .myhub-home-card{padding:14px 12px;gap:10px}}
 
-/* V548: My Hub uses plain hamburger-style rows; retain existing content/actions. */
+/* V549: My Hub uses plain hamburger-style rows; retain existing content/actions. */
 #myHubHomeView .myhub-plain-menu{display:block;padding:0 18px;margin:12px 0 28px}
 #myHubHomeView .myhub-plain-menu .myhub-home-section-title{margin:24px 0 8px;font-size:1.05rem}
 #myHubHomeView .myhub-plain-menu .myhub-simple-link,
@@ -767,7 +770,7 @@ body.light-mode .scs-tmgr-card,html.app-light .scs-tmgr-card{background:#f7f9fd;
 #myHubHomeView .myhub-plain-menu .myhub-home-group{border:0;border-radius:0;background:transparent;box-shadow:none;margin:0;overflow:visible}
 #myHubHomeView .myhub-plain-menu .myhub-home-list{padding:6px 0 12px}
 #myHubHomeView .myhub-plain-menu [hidden]{display:none!important}
-/* V548: match Activity rows to the plain My SCS menu, overriding older ID styles. */
+/* V549: match Activity rows to the plain My SCS menu, overriding older ID styles. */
 #myHubHomeView .myhub-plain-menu #myHubNewSlotsGroup,
 #myHubHomeView .myhub-plain-menu #myHubTodaySlotsGroup,
 #myHubHomeView .myhub-plain-menu #myHubLiveGroup,
@@ -3244,7 +3247,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
     <div class="sheet-header"><div class="sheet-header-spacer"></div><span class="sheet-title">Players Manager</span><button class="sheet-close-btn" onclick="scsTournamentPlayersListClose()">✕</button></div>
     <div class="vault-wrap">
       <button type="button" class="scs-existing-register-entry" aria-label="Add tournament player" onclick="scsTournamentPlayersListAdd()">+</button>
-      <div class="vm-filter-row"><select id="scsTPlayersSubclub" class="vm-filter-select" onchange="scsTournamentPlayersListLoad()"><option value="">All sub-clubs</option></select><button class="vault-sync-btn" onclick="scsTournamentPlayersListOpen(true)">↻</button></div>
+      <div class="vm-filter-row"><div id="scsTPlayersFilterPills" class="scs-tplayer-filter-pills" aria-label="Filter tournament players by club"></div><select id="scsTPlayersSubclub" hidden aria-label="Selected club"><option value="">All</option></select><button class="vault-sync-btn" onclick="scsTournamentPlayersListOpen(true)">↻</button></div>
       <div class="vm-search-wrap"><span class="vm-search-icon">🔍</span><input id="scsTPlayersSearch" class="vm-search-input" placeholder="Search players…" oninput="scsTournamentPlayersListFilter()"></div>
       <div class="vm-count-row"><span id="scsTPlayersCount" class="vm-count-badge"></span></div>
       <div id="scsTPlayersList" class="vm-player-list"></div>
@@ -4152,7 +4155,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V548', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V549', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4578,7 +4581,7 @@ body.app-light #scsActivityHome .scs-art-live-copy,body.light-mode #scsActivityH
 #scsActivityHome .scs-activity-settings:active{transform:scale(.96)}
 body.app-light #scsActivityHome .scs-activity-settings,body.light-mode #scsActivityHome .scs-activity-settings,html.app-light #scsActivityHome .scs-activity-settings{background:#fff;color:#1459a6;border-color:#9dc8f1}
 
-/* V548: approved compact Sports Club Manager landing screen; existing actions retained. */
+/* V549: approved compact Sports Club Manager landing screen; existing actions retained. */
 #scsActivityHome{background:#07182e!important;color:#f8fbff!important;padding:calc(env(safe-area-inset-top,0px) + 54px) 20px 32px!important;align-items:flex-start!important;justify-content:center!important}
 #scsActivityHome .scs-home-simple{width:min(100%,520px)!important;margin:0 auto!important;max-width:520px!important}
 #scsActivityHome .scs-home-brand{display:flex;align-items:center;justify-content:center;gap:17px;margin:0 0 46px;padding:0 5px}

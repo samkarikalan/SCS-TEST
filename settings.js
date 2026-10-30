@@ -2070,9 +2070,30 @@ async function scsCreateSubClub(){
   catch(e){if(out)out.textContent=e.message||String(e);}
 }
 
-/* V548: Tournament roster list, using the proven Practice player-card styles.
-   Tournament registration form is intentionally unchanged. */
-var _scsTournamentRoster=[],_scsTournamentClubs=[];
+/* V549: Tournament roster lists main-club and sub-club memberships.
+   The registration form and Practice player manager remain unchanged. */
+var _scsTournamentRoster=[],_scsTournamentClubs=[],_scsTournamentMainClub=null;
+function scsTournamentPlayersFilterSelect(id){
+  const choice=document.getElementById('scsTPlayersSubclub');
+  if(!choice)return;
+  choice.value=id;
+  scsTournamentPlayersRenderFilters();
+  scsTournamentPlayersListLoad();
+}
+function scsTournamentPlayersRenderFilters(){
+  const host=document.getElementById('scsTPlayersFilterPills');
+  const choice=document.getElementById('scsTPlayersSubclub');
+  if(!host||!choice)return;
+  host.replaceChildren();
+  Array.from(choice.options).forEach(o=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='scs-tplayer-filter-pill';
+    b.textContent=o.textContent;
+    b.setAttribute('aria-pressed',String(o.value===choice.value));
+    b.onclick=()=>scsTournamentPlayersFilterSelect(o.value);
+    host.appendChild(b);
+  });
+}
 async function scsTournamentPlayersListOpen(refresh){
   const choice=document.getElementById('scsTPlayersSubclub');
   const list=document.getElementById('scsTPlayersList');
@@ -2080,11 +2101,16 @@ async function scsTournamentPlayersListOpen(refresh){
   list.textContent='Loading players…';
   try{
     const parent=await scsResolveOrganizerClub();
+    if(!parent?.id)throw new Error('Select a main club first.');
+    _scsTournamentMainClub={id:parent.id,name:parent.name};
     _scsTournamentClubs=await dbGetSubClubs(parent.id);
-    const previous=choice.value||window.__scsTournamentPreferredSubclub||'';
-    choice.innerHTML='<option value="">All sub-clubs</option>';
-    _scsTournamentClubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;choice.appendChild(o)});
-    if(_scsTournamentClubs.some(c=>String(c.id)===String(previous)))choice.value=previous;
+    const previous=refresh?'':choice.value||'';
+    choice.replaceChildren();
+    const all=document.createElement('option');all.value='';all.textContent='All';choice.appendChild(all);
+    const main=document.createElement('option');main.value=String(parent.id);main.textContent=parent.name;choice.appendChild(main);
+    _scsTournamentClubs.forEach(c=>{const o=document.createElement('option');o.value=String(c.id);o.textContent=c.name;choice.appendChild(o)});
+    if(Array.from(choice.options).some(o=>o.value===previous))choice.value=previous;
+    scsTournamentPlayersRenderFilters();
     await scsTournamentPlayersListLoad();
   }catch(e){list.textContent='Could not load tournament players: '+(e.message||e)}
 }
@@ -2092,7 +2118,8 @@ async function scsTournamentPlayersListLoad(){
   const list=document.getElementById('scsTPlayersList');if(!list)return;
   list.textContent='Loading players…';
   const selected=document.getElementById('scsTPlayersSubclub')?.value||'';
-  const clubs=selected?_scsTournamentClubs.filter(c=>String(c.id)===String(selected)):_scsTournamentClubs;
+  const allClubs=[_scsTournamentMainClub,..._scsTournamentClubs].filter(c=>c?.id);
+  const clubs=selected?allClubs.filter(c=>String(c.id)===String(selected)):allClubs;
   try{
     const batches=await Promise.all(clubs.map(async c=>{
       const rows=await sbGet('memberships','club_id=eq.'+encodeURIComponent(c.id)+'&order=nickname.asc&select=id,nickname,club_rating,user_account_id,player_id,players(id,gender,level,global_rating,wins,losses)');
