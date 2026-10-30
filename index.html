@@ -90,6 +90,25 @@ html,body{overscroll-behavior:none;}
   width:100%;
   min-height:100dvh;
 }
+/* V536: Round Player selection completion control; no player logic changes. */
+body.scs-practice-shared-active #playersPage #scsRoundPlayersDone {
+  position: fixed;
+  right: max(22px, env(safe-area-inset-right, 0px));
+  bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  z-index: 100040;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 2px solid #a7a1ff;
+  background: #6258f5;
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px #0007;
+  cursor: pointer;
+}
+#playersPage #scsRoundPlayersDone {display:none}
+body.scs-practice-shared-active #playersPage #scsRoundPlayersDone {display:block}
 </style>
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png?v=V149">
   <link rel="manifest" href="/manifest.json?v=V209">
@@ -3497,6 +3516,8 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
       <span class="players-action-arrow" aria-hidden="true">›</span>
     </button>
   </div>
+
+  <button type="button" id="scsRoundPlayersDone" aria-label="Done selecting players; return to Round Manager" onclick="scsPrimaryNavigate('organiser')">✓</button>
 
   <div class="card" id="playerListCard">
     <div id="playerList" class="player-list"></div>
