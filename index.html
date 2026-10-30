@@ -959,7 +959,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 /* Practice Manager uses its side menu for navigation; keep existing nav nodes for compatibility. */
 
 /* V527: Shared Practice-only header, independent of the active module's DOM. */
-#vaultModifyPage .scs-existing-register-entry{display:block;width:100%;min-height:52px;margin:0 0 18px;padding:12px 18px;border:1px solid #918aff;border-radius:14px;background:#6256e8;color:#fff;font:inherit;font-weight:700;text-align:center;cursor:pointer}
+#vaultModifyPage .scs-existing-register-entry{position:fixed;right:clamp(18px,5vw,30px);bottom:calc(22px + env(safe-area-inset-bottom,0px));z-index:10020;display:flex;align-items:center;justify-content:center;width:64px;height:64px;min-height:64px;margin:0;padding:0;border:1px solid #918aff;border-radius:50%;background:#6256e8;color:#fff;font:inherit;font-size:2.25rem;font-weight:700;box-shadow:0 8px 26px #0009;cursor:pointer;touch-action:manipulation}
 #vaultModifyPage .scs-existing-register-entry:active{filter:brightness(.9)}
 #scsPracticeSharedHeader[hidden]{display:none!important}
 #scsPracticeSharedHeader{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:100050;background:#0d192d;border-bottom:1px solid #34445f}
@@ -3135,7 +3135,7 @@ body.scs-practice-shared-active #roundsPage .rounds-top-bar {margin-top:0!import
     </div>
     <div class="vault-wrap">
       <!-- Existing registration module; no new player registration implementation. -->
-      <button type="button" class="scs-existing-register-entry" onclick="homeGo('vaultRegisterPage',null)">＋ Register Player</button>
+      <button type="button" class="scs-existing-register-entry" aria-label="Register Player" title="Register Player" onclick="homeGo('vaultRegisterPage',null)">+</button>
       <!-- Filter row -->
       <div class="vm-filter-row">
         <select id="vmFilterGender" class="vm-filter-select" onchange="vaultModifyFilter()">
@@ -4608,7 +4608,8 @@ window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];windo
   </section>
 </div>
 
-<script src="tournament-player-level.js"></script>\n<script>
+<script src="tournament-player-level.js"></script>
+<script>
 /* V456: Persistent tournament header and shared left navigation. */
 (function(){
   var titles={scsTournamentManager:'Tournament Manager',scsTournamentContinue:'My Tournaments',scsTournamentTypePicker:'New Tournament',scsTournamentLive:'Live Tournaments',scsTournamentOverlay:'Tournament',scsScoringOverlay:'Conduct a Match'};
