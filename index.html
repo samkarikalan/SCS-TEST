@@ -90,7 +90,7 @@ html,body{overscroll-behavior:none;}
   width:100%;
   min-height:100dvh;
 }
-/* V539: Compact Round Player Done control; preserve existing navigation. */
+/* V540: Show Done only on the main Round Add Players page. */
 #playersPage #scsRoundPlayersDone { display: none; }
 body.scs-practice-shared-active #playersPage #scsRoundPlayersDone {
   display: inline-flex;
@@ -116,6 +116,9 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone {
   cursor: pointer;
   touch-action: manipulation;
 }
+/* Selection modal is a separate sibling of playersPage. Hide the floating
+   Done while it is open so it never covers the selection controls. */
+body.scs-round-select-modal-open #playersPage #scsRoundPlayersDone { display: none !important; }
 body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 2px;
@@ -4831,6 +4834,18 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
 })();
 </script>
 
+<script id="scs-round-done-visibility-v540">
+(function(){
+  var modal=document.getElementById('newImportModal');
+  if(!modal)return;
+  function sync(){
+    var open=!modal.hidden && getComputedStyle(modal).display!=='none';
+    document.body.classList.toggle('scs-round-select-modal-open',open);
+  }
+  new MutationObserver(sync).observe(modal,{attributes:true,attributeFilter:['style','class','hidden']});
+  sync();
+})();
+</script>
 <script id="scs-practice-import-scroll-v534">
 (function(){
   var modal=document.getElementById('newImportModal');
