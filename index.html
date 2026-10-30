@@ -108,7 +108,7 @@ body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-title{border:0
 body.scs-practice-fullpage #homePageOverlay>.scs-practice-manager-header,body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-header{box-shadow:none}
 
 
-/* V517: Practice Home is an actual standalone destination; legacy My Hub stays hidden. */
+/* V518: Practice Home is an actual standalone destination; legacy My Hub stays hidden. */
 body.scs-practice-home .scs-practice-manager-header,
 body.scs-practice-home .home-topbar,
 body.scs-practice-home #homePageOverlay{display:none!important}
@@ -121,7 +121,7 @@ body.scs-practice-home #scsPracticeWelcome:not([hidden]){display:block!important
 .scs-practice-home-grid button:nth-child(2){background:#196c6d;border-color:#43a9a5}
 .scs-practice-home-grid button span{font-size:2.5rem}
 .scs-practice-home-secondary{display:block;width:100%;margin:12px 0;padding:17px;border:1px solid #46566f;border-radius:14px;background:#1b2639;color:white;text-align:left;font:inherit;font-weight:650}
-/* V517: minimal Practice Home surface; independent of the Round Assist scroller. */
+/* V518: minimal Practice Home surface; independent of the Round Assist scroller. */
 #scsPracticeWelcome:not([hidden]){position:fixed;inset:calc(env(safe-area-inset-top,0px) + 56px) 0 0;z-index:2147480700;background:#101724;color:#f5f7fc;display:flex;align-items:flex-start;justify-content:center;padding:50px 18px;box-sizing:border-box;text-align:center}
 #scsPracticeWelcome h1{font-size:clamp(1.35rem,5vw,2rem);margin:0}
 
@@ -159,24 +159,24 @@ body.scs-round-assist-page #scsGuidedFunctions:not([hidden]){position:fixed!impo
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-page{position:relative!important;inset:auto!important;width:100%!important;max-width:none!important;min-height:100%!important;height:auto!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;overflow:visible!important;padding-bottom:25px!important}
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-header,body.scs-round-assist-page #scsGuidedFunctions .scs-guide-close{display:none!important}
 
-/* V517: Round Assist starts directly with the existing checklist. */
+/* V518: Round Assist starts directly with the existing checklist. */
 body.scs-round-assist-page #scsGuidedFunctions .scs-guide-hero{display:none!important}
 
-/* V517: shared header and compact bottom navigation frame every Round view. */
+/* V518: shared header and compact bottom navigation frame every Round view. */
 body.scs-round-workspace #playersPage,body.scs-round-workspace #fixedPairsPage,body.scs-round-workspace #roundsPage{position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 56px)!important;bottom:calc(env(safe-area-inset-bottom,0px) + 73px)!important;left:0!important;right:0!important;width:100%!important;height:auto!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain!important;z-index:2147480700!important;padding-bottom:16px!important;box-sizing:border-box!important}
 body.scs-round-workspace #roundHistoryOverlay,body.scs-round-workspace #roundSettingsOverlay{top:calc(env(safe-area-inset-top,0px) + 56px)!important;bottom:calc(env(safe-area-inset-bottom,0px) + 73px)!important;left:0!important;right:0!important;height:auto!important;max-height:none!important;z-index:2147480700!important;overflow-y:auto!important}
 body.scs-round-workspace #roundHistoryOverlay .bottom-sheet-panel,body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-panel{height:100%!important;max-height:100%!important;overflow-y:auto!important;padding-bottom:20px!important}
 body.scs-round-workspace #roundHistoryOverlay .bottom-sheet-close,body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-close,body.scs-round-workspace #roundHistoryOverlay .close-btn,body.scs-round-workspace #roundSettingsOverlay .close-btn{display:none!important}
 body.scs-round-workspace #scsRoundBottomNav{z-index:2147483645!important}
 
-/* V517: round content always sits between the shared chrome. */
+/* V518: round content always sits between the shared chrome. */
 [hidden]{display:none!important}
 body.scs-round-workspace #scsPracticeWelcome,body.scs-round-workspace #homePageOverlay{display:none!important}
 body.scs-round-workspace #playersPage:not([hidden]),body.scs-round-workspace #fixedPairsPage:not([hidden]),body.scs-round-workspace #roundsPage:not([hidden]),body.scs-round-workspace #roundHistoryOverlay:not([hidden]),body.scs-round-workspace #roundSettingsOverlay:not([hidden]){overflow-y:auto!important}
 body.scs-round-workspace #playersPage .sheet-header button[aria-label="Close"],body.scs-round-workspace #fixedPairsPage .sheet-header button[aria-label="Close"]{display:none!important}
 
 
-/* V517: Keep the existing Edit Player modal above the Practice Players page.
+/* V518: Keep the existing Edit Player modal above the Practice Players page.
    Modal is a sibling of vaultModifyPage; the page's fixed stacking layer
    must never cover its backdrop or controls. */
 body.scs-practice-fullpage:not(.scs-round-workspace) #vmEditModal {
@@ -184,7 +184,7 @@ body.scs-practice-fullpage:not(.scs-round-workspace) #vmEditModal {
   z-index:2147483647!important;
 }
 
-/* V517: existing Modify Players page hosted by Practice Manager navigation. */
+/* V518: existing Modify Players page hosted by Practice Manager navigation. */
 body.scs-practice-fullpage:not(.scs-round-workspace) #vaultModifyPage:not([hidden]){
  position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 56px)!important;
  bottom:0!important;left:0!important;right:0!important;width:100%!important;
@@ -196,7 +196,7 @@ body.scs-practice-fullpage:not(.scs-round-workspace) #vaultModifyPage:not([hidde
 body.scs-practice-fullpage #vaultModifyPage .sheet-close-btn{display:none!important}
 body.scs-practice-fullpage #vaultModifyPage .sheet-header{display:none!important}
 
-/* V517: Rounds uses the existing Slot/Assist player selector, not a blank page. */
+/* V518: Rounds uses the existing Slot/Assist player selector, not a blank page. */
 body.scs-round-workspace #newImportModal{z-index:2147483647!important;position:fixed!important;inset:0!important;}
 </style>
   <link rel="apple-touch-icon" sizes="192x192" href="/icon-192.png?v=V149">
@@ -229,7 +229,7 @@ body.scs-round-workspace #newImportModal{z-index:2147483647!important;position:f
   <script src="engjap.js?v=V149" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
-  <script src="main.js?v=V517" defer></script>
+  <script src="main.js?v=V518" defer></script>
   <script src="scoring.js?v=V367" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V467" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -1036,15 +1036,6 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 #scsTournamentOverlay[data-scs-ko-event-title] .scs-tm-tournament-title>h2{display:none!important}
 </style>
 
-<style id="scsRoundOriginalSettingsV517">
-body.scs-round-workspace #roundSettingsOverlay #scsOriginalRoundSettingsHost{display:block;width:100%;max-width:900px;margin:0 auto;padding:12px 14px 125px;box-sizing:border-box}
-body.scs-round-workspace #scsOriginalRoundSettingsHost .org-mode-panel-round{display:flex!important;flex-direction:column!important;position:static!important;transform:none!important;opacity:1!important;visibility:visible!important;width:100%!important;min-width:0!important;max-width:none!important;height:auto!important;overflow:visible!important;margin:0!important;padding:0!important;background:transparent!important;box-shadow:none!important}
-body.scs-round-workspace #scsOriginalRoundSettingsHost .org-mode-intro,body.scs-round-workspace #scsOriginalRoundSettingsHost #sampleStartRound{display:none!important}
-body.scs-round-workspace #scsOriginalRoundSettingsHost .org-round-setup-card{display:block!important;height:auto!important;max-height:none!important;overflow:visible!important}
-body.scs-round-workspace #scsOriginalRoundSettingsHost .org-mode-options{display:block!important}
-body.scs-round-workspace #scsOriginalRoundSettingsHost #roundModeSummary{display:none!important}
-body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-panel{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important}
-</style>
 </head>
 <body>
 
@@ -4050,7 +4041,7 @@ body.scs-round-workspace #roundSettingsOverlay .bottom-sheet-panel{overflow-y:au
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V517', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V518', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4861,7 +4852,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
   global.SCSNavigationHelper = api;
 })(window);
 
-/* V517: Preserve the original player import function completely.
+/* V518: Preserve the original player import function completely.
    Its legacy showPage call must use the shared router while Rounds is active.
    Other modules continue using the original showPage implementation. */
 (function(){
@@ -4876,29 +4867,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
   };
 })();
 
-/* V517: Practice and Round navigation are routed through SCSNavigationHelper.
+/* V518: Practice and Round navigation are routed through SCSNavigationHelper.
    Tournament navigation is unchanged. */
 (function(){
  const H=window.SCSNavigationHelper;
  const el=id=>document.getElementById(id);
- // Round Settings was nested inside Round Live; make it a sibling page.
- // Otherwise hiding Live also hides Settings, regardless of the router.
- const settingsPage=el('roundSettingsOverlay');
- if(settingsPage&&settingsPage.parentElement&&settingsPage.parentElement.id==='roundsPage')document.body.appendChild(settingsPage);
- // V517: Place the existing Round Mode settings controls on the Rounds Settings page.
- // Move the actual elements: their IDs, event handlers and state remain unchanged.
- const originalRoundSettings=el('orgModeCarousel')?.querySelector('.org-mode-panel-round:not(.org-mode-panel-offline)');
- const roundSettingsBody=el('roundSettingsBody');
- if(originalRoundSettings&&roundSettingsBody){
-   const settingsHost=document.createElement('div');
-   settingsHost.id='scsOriginalRoundSettingsHost';
-   roundSettingsBody.parentNode.insertBefore(settingsHost,roundSettingsBody);
-   settingsHost.appendChild(originalRoundSettings);
-   // Keep legacy modeToggle and its listeners in the DOM, but do not show a second UI.
-   roundSettingsBody.style.display='none';
- }
+ // Keep the original Round Settings sheet inside its original Round page.
  const state={module:'practice',round:false,tab:'assist'};
- const content=['scsPracticeWelcome','homePageOverlay','playersPage','vaultModifyPage','fixedPairsPage','roundsPage','settingsPage','vaultPage','scsGuidedFunctions','roundHistoryOverlay','roundSettingsOverlay'];
+ const content=['scsPracticeWelcome','homePageOverlay','playersPage','vaultModifyPage','fixedPairsPage','roundsPage','settingsPage','vaultPage','scsGuidedFunctions','roundHistoryOverlay'];
  content.forEach(id=>H.registerPage(id,{module:'practice',display:(id==='roundHistoryOverlay'||id==='roundSettingsOverlay')?'flex':id==='scsGuidedFunctions'?'flex':'block'}));
  H.registerModule('practice',{onNavigate:function(id){
    const round=state.round;
@@ -4929,6 +4905,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
   return true;
  }
  function openRound(tab){
+  if(tab!=='settings'){
+   const sheet=el('roundSettingsOverlay');
+   if(sheet){sheet.style.display='none';sheet.hidden=false;}
+  }
   const dest={assist:'scsGuidedFunctions',players:'playersPage',fixed:'fixedPairsPage',live:'roundsPage',history:'roundHistoryOverlay',settings:'roundSettingsOverlay'};
   const id=dest[tab];if(!id)return false;
   if(tab==='fixed'){
@@ -4946,6 +4926,14 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
    if(typeof updatePlayerList==='function')updatePlayerList();
   }
   if(tab==='history'&&typeof renderRoundHistory==='function')renderRoundHistory();
+  if(tab==='settings'){
+   // Original Settings is owned by the original Live page, not a separate page.
+   if(!navigate('roundsPage',true,'settings'))return false;
+   const sheet=el('roundSettingsOverlay');
+   if(sheet){sheet.hidden=false;sheet.style.display='none';}
+   if(typeof toggleRoundSettings==='function')toggleRoundSettings();
+   return true;
+  }
   if(!navigate(id,true,tab))return false;
 
   return true;
