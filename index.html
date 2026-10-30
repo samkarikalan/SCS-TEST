@@ -108,8 +108,9 @@ body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-title{border:0
 body.scs-practice-fullpage #homePageOverlay>.scs-practice-manager-header,body.scs-practice-fullpage #homePageOverlay .scs-practice-manager-header{box-shadow:none}
 
 
-/* V519: Present the unchanged original Round iMode before its original Start action. */
+/* V520: Present the unchanged original Round iMode before its original Start action. */
 body.scs-round-workspace.scs-round-imode #homePageOverlay{display:block!important;position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 56px)!important;bottom:calc(env(safe-area-inset-bottom,0px) + 73px)!important;left:0!important;right:0!important;z-index:2147480700!important;overflow-y:auto!important;padding:16px 12px 24px!important;box-sizing:border-box!important}
+body.scs-round-imode #homeOrgGrid{display:block!important}
 body.scs-round-imode #homePageOverlay > :not(#homeOrgGrid){display:none!important}
 body.scs-round-imode #homeOrgGrid > :not(.org-scheduling-tile){display:none!important}
 body.scs-round-imode #homeOrgGrid .org-scheduling-tile > :not(#orgSchedulingScreen){display:none!important}
@@ -117,7 +118,7 @@ body.scs-round-imode #orgSchedulingScreen .org-carousel-arrow,body.scs-round-imo
 body.scs-round-imode #orgModeCarousel .org-mode-track{transform:translateX(-33.333333%)!important}
 body.scs-round-imode #orgModeCarousel .org-mode-panel:not(.org-mode-panel-offline){visibility:hidden!important}
 
-/* V519: Practice Home is an actual standalone destination; legacy My Hub stays hidden. */
+/* V520: Practice Home is an actual standalone destination; legacy My Hub stays hidden. */
 body.scs-practice-home .scs-practice-manager-header,
 body.scs-practice-home .home-topbar,
 body.scs-practice-home #homePageOverlay{display:none!important}
