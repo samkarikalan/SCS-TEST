@@ -918,6 +918,22 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
 #homePageOverlay .scs-phase1-ref-panel button{display:flex;align-items:center;gap:22px;width:100%;border:0;background:transparent;color:#f2f5fb;padding:17px 12px;text-align:left;font:inherit;font-size:1.08rem;font-weight:650;cursor:pointer}
 #homePageOverlay .scs-phase1-ref-panel button span{color:#eab851;min-width:28px;font-size:1.25rem}
 #homePageOverlay .scs-phase1-ref-panel .scs-phase1-ref-home{margin-top:auto;border-top:1px solid #334660;color:#b9c8de}
+
+/* Phase 1: Tournament-style welcome; My Hub remains intact beneath it. */
+#homePageOverlay{position:relative}
+#homePageOverlay .scs-practice-hub-state:not(:checked)~.scs-practice-welcome{display:flex}
+#homePageOverlay .scs-practice-welcome{display:none;position:absolute;inset:91px 0 0;z-index:15;min-height:calc(100dvh - 91px);background:#0d192d;color:#f3f6ff;flex-direction:column;padding:54px 28px 32px;box-sizing:border-box}
+#homePageOverlay .scs-practice-welcome .scs-practice-welcome-kicker{color:#eab851;letter-spacing:.2em;font-weight:750;font-size:.85rem;margin:0 0 18px}
+#homePageOverlay .scs-practice-welcome h2{font-size:clamp(1.65rem,6vw,2.25rem);line-height:1.22;margin:0 0 18px}
+#homePageOverlay .scs-practice-welcome p{color:#adbbd1;font-size:1.05rem;line-height:1.55}
+#homePageOverlay .scs-practice-welcome .scs-practice-welcome-hint{margin-top:16px;border-bottom:1px solid #34445f;padding-bottom:35px}
+#homePageOverlay .scs-practice-welcome footer{margin-top:auto;text-align:center;color:#91a4bf;padding:70px 0 12px}
+#homePageOverlay .scs-phase1-ref-panel .scs-phase1-menu-entry{display:flex;align-items:center;gap:22px;padding:17px 12px;font-size:1.08rem;font-weight:650;cursor:pointer;color:#f2f5fb}
+#homePageOverlay .scs-phase1-ref-panel .scs-phase1-menu-entry span{color:#eab851;min-width:28px;font-size:1.25rem}
+#homePageOverlay .scs-phase1-ref-panel .scs-phase1-menu-placeholder:disabled{opacity:1;cursor:default}
+#homePageOverlay .scs-phase1-ref-panel .scs-phase1-menu-placeholder:disabled span{color:#eab851}
+#homePageOverlay .scs-phase1-ref-panel{min-height:100dvh}
+#homePageOverlay .scs-phase1-ref-panel .scs-phase1-ref-home{margin-top:auto}
 </style>
 </head>
 <body>
@@ -1482,6 +1498,7 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
   </div>
 </div>
 
+<input id="scsPracticeShowHub" class="scs-practice-hub-state" type="checkbox" hidden>
 <header class="scs-practice-manager-header scs-phase1-ref-header">
   <div class="scs-phase1-ref-titlebar">
     <details class="scs-phase1-ref-drawer">
@@ -1489,15 +1506,24 @@ body:has(#scsTournamentPersistentHeader:not([hidden])) #homePageOverlay {
       <div class="scs-phase1-ref-shade"></div>
       <nav class="scs-phase1-ref-panel" aria-label="Practice Manager navigation">
         <div class="scs-phase1-ref-panel-title"><strong>SCS</strong><span aria-hidden="true">×</span></div>
-        <button type="button" onclick="switchMode('viewer')"><span>◉</span> My Hub</button>
-        <button type="button" onclick="scsHomeQuickAction('round')"><span>🏸</span> Rounds</button>
-        <button type="button" onclick="scsHomeQuickAction('slot')"><span>▣</span> Slots</button>
+        <label for="scsPracticeShowHub" class="scs-phase1-menu-entry"><span>⌂</span> My Hub</label>
+        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>♙</span> Player Manager</button>
+        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>🏸</span> Round Manager</button>
+        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>▣</span> Slot Manager</button>
+        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>▥</span> Dashboard</button>
         <button type="button" onclick="scsActivityReturnHome()" class="scs-phase1-ref-home"><span>⌂</span> SCS Home</button>
       </nav>
     </details>
     <strong>Practice Manager</strong><span class="scs-phase1-ref-icon" aria-hidden="true">🏸</span>
   </div>
 </header>
+<section class="scs-practice-welcome" aria-label="Practice Manager welcome">
+  <div class="scs-practice-welcome-kicker">— SCS · PRACTICE</div>
+  <h2>Welcome to Practice Manager</h2>
+  <p>Manage your players, rounds and practice sessions.</p>
+  <p class="scs-practice-welcome-hint">☰ &nbsp; Open the menu to get started</p>
+  <footer>Sports Club Scheduler</footer>
+</section>
 <!-- Top bar -->
 
 <div class="home-topbar home-app-header" aria-label="User home">
