@@ -2551,6 +2551,13 @@ function showPage(pageID, el) {
   }
 
   if (pageID === "vaultRegisterPage") {
+    // Tournament registration is a temporary mode. Do not carry it into
+    // Practice Player Manager when navigating here from another source.
+    if (window._regNavSource !== 'tournamentManager') {
+      window.__scsTournamentRegistration = false;
+      window.__scsTournamentRegistrationClub = null;
+      document.body.classList.remove('scs-tournament-register-open');
+    }
     if (typeof vaultRenderRegister === 'function') vaultRenderRegister();
   }
 
