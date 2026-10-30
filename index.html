@@ -1005,6 +1005,21 @@ body.scs-practice-shared-active #fixedPairsPage .sheet-title,
 body.scs-practice-shared-active #vaultPage>.sheet-header .sheet-title,
 body.scs-practice-shared-active #settingsPage .settings-heading {display:none!important}
 body.scs-practice-shared-active #roundsPage .rounds-top-bar {margin-top:0!important}
+
+/* V534: keep the original Add Players selection sheet below the shared Practice header.
+   Its own scroll container remains independently scrollable. */
+body.scs-practice-shared-active #newImportModal {
+  top: calc(env(safe-area-inset-top, 0px) + 80px) !important;
+  bottom: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+}
+body.scs-practice-shared-active #newImportModal .newImport-container {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
 </style>
 </head>
 <body>
@@ -4722,6 +4737,25 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
  document.addEventListener('click',schedule,true);
  document.addEventListener('keydown',function(e){if(e.key==='Escape'){var d=header.querySelector('details');if(d)d.open=false;}});
  refresh();
+})();
+</script>
+
+<script id="scs-practice-import-scroll-v534">
+(function(){
+  var modal=document.getElementById('newImportModal');
+  if(!modal)return;
+  var wasOpen=false;
+  function sync(){
+    var open=getComputedStyle(modal).display!=='none' && !modal.hidden;
+    if(open&&!wasOpen && document.body.classList.contains('scs-practice-shared-active')){
+      var content=modal.querySelector('.newImport-container');
+      if(content)content.scrollTop=0;
+      modal.scrollTop=0;
+    }
+    wasOpen=open;
+  }
+  new MutationObserver(sync).observe(modal,{attributes:true,attributeFilter:['style','class','hidden']});
+  sync();
 })();
 </script>
 </body>
