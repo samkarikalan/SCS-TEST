@@ -83,10 +83,17 @@ function _dbBusyHide() {
 async function _sbFetch(url, body) {
   _dbBusyShow();
   try {
+    const secureBody = Object.assign({}, body || {});
+    if (secureBody.table) {
+      const user = typeof authGetUser === 'function' ? authGetUser() : null;
+      const token = typeof _getLocalToken === 'function' ? _getLocalToken() : null;
+      if (user && user.id) secureBody.userAccountId = user.id;
+      if (token) secureBody.sessionToken = token;
+    }
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify(secureBody)
     });
     return res;
   } finally {
@@ -94,53 +101,244 @@ async function _sbFetch(url, body) {
   }
 }
 
+const SCS_PRACTICE_MIRROR_TABLES = new Set(['clubs','players','memberships','sessions','matches','slots','slot_claims']);
+const SCS_PRACTICE_OFFLINE_WRITABLE = new Set(['players','memberships','sessions','matches','slot_claims']);
+
+function _scsPracticeCanMirror(table) {
+  return SCS_PRACTICE_MIRROR_TABLES.has(String(table || '')) && window.SCSOfflineDB;
+}
+
+function _scsPracticeCanWriteOffline(table) {
+  return SCS_PRACTICE_OFFLINE_WRITABLE.has(String(table || '')) && window.SCSOfflineDB;
+}
+
+function _scsPracticeUuid() {
+  return (window.crypto && typeof window.crypto.randomUUID === 'function')
+    ? window.crypto.randomUUID() : 'practice-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+}
+
+function _scsPracticeWithIds(data) {
+  const rows = (Array.isArray(data) ? data : [data]).map(function(row) {
+    const next = Object.assign({}, row || {});
+    if (next.id == null) next.id = _scsPracticeUuid();
+    return next;
+  });
+  return Array.isArray(data) ? rows : rows[0];
+}
+
+function _scsPracticeQueryParts(query) {
+  const params = new URLSearchParams(String(query || '').replace(/^\?/, ''));
+  const controls = new Set(['select','order','limit','offset']);
+  const filters = [];
+  params.forEach(function(value, key) {
+    if (!controls.has(key)) filters.push({ key:key, value:value });
+  });
+  return { params:params, filters:filters };
+}
+
+function _scsPracticeRowMatches(row, filters) {
+  return filters.every(function(filter) {
+    const raw = String(filter.value || '');
+    const dot = raw.indexOf('.');
+    const op = dot < 0 ? 'eq' : raw.slice(0, dot);
+    const expected = dot < 0 ? raw : raw.slice(dot + 1);
+    const actual = row && row[filter.key];
+    if (op === 'eq') return String(actual) === expected;
+    if (op === 'neq') return String(actual) !== expected;
+    if (op === 'is') return expected === 'null' ? actual == null : String(actual) === expected;
+    if (op === 'in') return expected.replace(/^\(|\)$/g, '').split(',').map(String).includes(String(actual));
+    if (op === 'ilike') {
+      const needle = expected.replace(/^%|%$/g, '').toLocaleLowerCase();
+      return String(actual == null ? '' : actual).toLocaleLowerCase().includes(needle);
+    }
+    return false;
+  });
+}
+
+async function _scsPracticeLocalRows(table, query) {
+  if (!_scsPracticeCanMirror(table) || typeof SCSOfflineDB.getTableRows !== 'function') return [];
+  const parsed = _scsPracticeQueryParts(query);
+  let rows = await SCSOfflineDB.getTableRows(table);
+  rows = rows.filter(function(row) { return _scsPracticeRowMatches(row, parsed.filters); });
+  const order = parsed.params.get('order');
+  if (order) {
+    const pieces = order.split('.'), field = pieces[0], desc = pieces[1] === 'desc';
+    rows.sort(function(a,b) { const x=a&&a[field], y=b&&b[field]; return (x===y?0:(x>y?1:-1))*(desc?-1:1); });
+  }
+  const limit = Number(parsed.params.get('limit'));
+  if (limit > 0) rows = rows.slice(0, limit);
+  return rows;
+}
+
+async function _scsPracticeMirrorRows(table, rows) {
+  if (!_scsPracticeCanMirror(table) || typeof SCSOfflineDB.saveTableRows !== 'function') return;
+  const list = Array.isArray(rows) ? rows : (rows ? [rows] : []);
+  if (list.length) await SCSOfflineDB.saveTableRows(table, list);
+}
+
+async function _scsPracticeQueue(method, table, query, data, extra) {
+  if (!_scsPracticeCanWriteOffline(table) || typeof SCSOfflineDB.enqueuePracticeOperation !== 'function') return null;
+  const operation = await SCSOfflineDB.enqueuePracticeOperation(Object.assign({
+    method:method, table:table, query:query || '', data:data || null,
+    club_id:(data && !Array.isArray(data) && data.club_id) || null
+  }, extra || {}));
+  window.dispatchEvent(new CustomEvent('scs:practice-sync-pending', { detail:{ operationId:operation.operation_id } }));
+  return operation;
+}
+
+async function _scsPracticeApplyLocalPatch(table, query, data) {
+  const rows = await _scsPracticeLocalRows(table, query);
+  const changed = rows.map(function(row) { return Object.assign({}, row, data || {}); });
+  await _scsPracticeMirrorRows(table, changed);
+  return changed;
+}
+
+async function _scsPracticeApplyLocalDelete(table, query) {
+  const rows = await _scsPracticeLocalRows(table, query);
+  if (typeof SCSOfflineDB.deleteTableRow === 'function') {
+    await Promise.all(rows.map(function(row) { return SCSOfflineDB.deleteTableRow(table, row.id); }));
+  }
+  return rows;
+}
+
+async function _scsPracticeRemoteMutation(operation) {
+  const method = operation.method;
+  const endpoint = method === 'post' ? 'upsert' : method;
+  const body = { table:operation.table, query:operation.query || '', data:operation.data };
+  if (method === 'post') body.onConflict = 'id';
+  if (operation.prefer) body.prefer = operation.prefer;
+  if (operation.onConflict) body.onConflict = operation.onConflict;
+  const res = await _sbFetch(WORKER_URL + '/db/' + endpoint, body);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || (method.toUpperCase() + ' ' + operation.table + ' failed'));
+  }
+  return res.json();
+}
+
+async function scsFlushPracticeOutbox() {
+  if (navigator.onLine === false || !window.SCSOfflineDB || typeof SCSOfflineDB.getPracticeOperations !== 'function') return false;
+  const operations = await SCSOfflineDB.getPracticeOperations('pending');
+  for (const operation of operations.sort(function(a,b) { return String(a.created_at).localeCompare(String(b.created_at)); })) {
+    try {
+      const result = await _scsPracticeRemoteMutation(operation);
+      await _scsPracticeMirrorRows(operation.table, result);
+      await SCSOfflineDB.completePracticeOperation(operation.operation_id);
+    } catch (error) {
+      await SCSOfflineDB.updatePracticeOperation(operation.operation_id, {
+        attempts:Number(operation.attempts || 0) + 1,
+        last_error:error && error.message ? error.message : String(error)
+      });
+      return false;
+    }
+  }
+  if (operations.length) window.dispatchEvent(new CustomEvent('scs:practice-synced', { detail:{ count:operations.length } }));
+  return true;
+}
+window.scsFlushPracticeOutbox = scsFlushPracticeOutbox;
+
 // Share identical reads that are requested at the same time. Several screens use
 // the same account, membership and slot data; without this guard one UI event can
 // fan out into many identical Worker/Supabase reads.
 async function sbGet(table, query = '') {
-  const res = await _sbFetch(WORKER_URL + '/db/get', { table, query });
+  if (navigator.onLine === false && _scsPracticeCanMirror(table)) return _scsPracticeLocalRows(table, query);
+  let res;
+  try { res = await _sbFetch(WORKER_URL + '/db/get', { table, query }); }
+  catch (error) { if (_scsPracticeCanMirror(table)) return _scsPracticeLocalRows(table, query); throw error; }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || `GET ${table} failed: ${res.status}`);
   }
-  return res.json();
+  const rows = await res.json();
+  await _scsPracticeMirrorRows(table, rows);
+  return rows;
 }
 
 async function sbPost(table, data, prefer = 'return=representation') {
-  const res = await _sbFetch(WORKER_URL + '/db/post', { table, data, prefer });
+  const localData = _scsPracticeCanMirror(table) ? _scsPracticeWithIds(data) : data;
+  if (navigator.onLine === false && _scsPracticeCanWriteOffline(table)) {
+    await _scsPracticeMirrorRows(table, localData);
+    await _scsPracticeQueue('post', table, '', localData, { prefer:prefer });
+    return Array.isArray(localData) ? localData : [localData];
+  }
+  let res;
+  try { res = await _sbFetch(WORKER_URL + '/db/post', { table, data:localData, prefer }); }
+  catch (error) {
+    if (!_scsPracticeCanWriteOffline(table)) throw error;
+    await _scsPracticeMirrorRows(table, localData); await _scsPracticeQueue('post', table, '', localData, { prefer:prefer });
+    return Array.isArray(localData) ? localData : [localData];
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || `POST ${table} failed`);
   }
-  return res.json();
+  const rows = await res.json(); await _scsPracticeMirrorRows(table, rows); return rows;
 }
 
 async function sbPatch(table, query, data, prefer) {
-  const res = await _sbFetch(WORKER_URL + '/db/patch', { table, query, data, prefer });
+  if (navigator.onLine === false && _scsPracticeCanWriteOffline(table)) {
+    const rows = await _scsPracticeApplyLocalPatch(table, query, data);
+    await _scsPracticeQueue('patch', table, query, data, { prefer:prefer }); return rows;
+  }
+  let res;
+  try { res = await _sbFetch(WORKER_URL + '/db/patch', { table, query, data, prefer }); }
+  catch (error) {
+    if (!_scsPracticeCanWriteOffline(table)) throw error;
+    const rows = await _scsPracticeApplyLocalPatch(table, query, data);
+    await _scsPracticeQueue('patch', table, query, data, { prefer:prefer }); return rows;
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || `PATCH ${table} failed`);
   }
-  return res.json();
+  const rows = await res.json();
+  if (Array.isArray(rows) && rows.length) await _scsPracticeMirrorRows(table, rows); else await _scsPracticeApplyLocalPatch(table, query, data);
+  return rows;
 }
 
 async function sbDelete(table, query) {
-  const res = await _sbFetch(WORKER_URL + '/db/delete', { table, query });
+  if (navigator.onLine === false && _scsPracticeCanWriteOffline(table)) {
+    const rows = await _scsPracticeApplyLocalDelete(table, query);
+    await _scsPracticeQueue('delete', table, query, null); return rows;
+  }
+  let res;
+  try { res = await _sbFetch(WORKER_URL + '/db/delete', { table, query }); }
+  catch (error) {
+    if (!_scsPracticeCanWriteOffline(table)) throw error;
+    const rows = await _scsPracticeApplyLocalDelete(table, query);
+    await _scsPracticeQueue('delete', table, query, null); return rows;
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || `DELETE ${table} failed: ${res.status}`);
   }
-  return res.json();
+  const rows = await res.json(); await _scsPracticeApplyLocalDelete(table, query); return rows;
 }
 
 async function sbUpsert(table, data, onConflict) {
-  const res = await _sbFetch(WORKER_URL + '/db/upsert', { table, data, onConflict });
+  const localData = _scsPracticeCanMirror(table) ? _scsPracticeWithIds(data) : data;
+  if (navigator.onLine === false && _scsPracticeCanWriteOffline(table)) {
+    await _scsPracticeMirrorRows(table, localData);
+    await _scsPracticeQueue('upsert', table, '', localData, { onConflict:onConflict });
+    return Array.isArray(localData) ? localData : [localData];
+  }
+  let res;
+  try { res = await _sbFetch(WORKER_URL + '/db/upsert', { table, data:localData, onConflict }); }
+  catch (error) {
+    if (!_scsPracticeCanWriteOffline(table)) throw error;
+    await _scsPracticeMirrorRows(table, localData);
+    await _scsPracticeQueue('upsert', table, '', localData, { onConflict:onConflict });
+    return Array.isArray(localData) ? localData : [localData];
+  }
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || `UPSERT ${table} failed`);
   }
-  return res.json();
+  const rows = await res.json(); await _scsPracticeMirrorRows(table, rows); return rows;
 }
+
+window.addEventListener('online', function() { scsFlushPracticeOutbox().catch(function() {}); });
+setTimeout(function() { if (navigator.onLine !== false) scsFlushPracticeOutbox().catch(function() {}); }, 1500);
 
 // ─────────────────────────────────────────────────────────────
 //  TOURNAMENTS — local-first snapshots, shared through the club
@@ -587,7 +785,7 @@ async function scsDownloadClubSnapshot(clubId) {
   }
 
   await Promise.all([
-    load('club', 'clubs', `id=eq.${id}&select=*`),
+    load('club', 'clubs', `id=eq.${id}&select=id,name,parent_club_id,created_by,created_at`),
     load('memberships', 'memberships', `club_id=eq.${id}&select=*`),
     load('slots', 'slots', `club_id=eq.${id}&select=*`),
     load('sessions', 'sessions', `club_id=eq.${id}&select=*`),
@@ -613,6 +811,20 @@ async function scsDownloadClubSnapshot(clubId) {
 
   snapshot.syncedAt = Date.now();
   await SCSOfflineDB.saveClubSnapshot(id, snapshot);
+  // Keep the normalized IndexedDB mirror in the same row shape as Supabase.
+  // Snapshot storage remains for backward compatibility while Practice code
+  // moves incrementally to table-oriented local reads.
+  if (typeof SCSOfflineDB.saveTableRows === 'function') {
+    await Promise.all([
+      SCSOfflineDB.saveTableRows('clubs', snapshot.club || []).catch(() => 0),
+      SCSOfflineDB.saveTableRows('memberships', snapshot.memberships || []).catch(() => 0),
+      SCSOfflineDB.saveTableRows('slots', snapshot.slots || []).catch(() => 0),
+      SCSOfflineDB.saveTableRows('sessions', snapshot.sessions || []).catch(() => 0),
+      SCSOfflineDB.saveTableRows('players', snapshot.players || []).catch(() => 0),
+      SCSOfflineDB.saveTableRows('slot_claims', snapshot.slotClaims || []).catch(() => 0),
+      SCSOfflineDB.saveTableRows('matches', snapshot.matches || []).catch(() => 0)
+    ]);
+  }
   if (Array.isArray(snapshot.slots) && typeof SCSOfflineDB.saveVaultSlotsCache === 'function') {
     await SCSOfflineDB.saveVaultSlotsCache(id, snapshot.slots).catch(() => {});
   }
@@ -920,9 +1132,8 @@ async function dbOverrideRating(playerId, newRating) {
 async function dbEditPlayer(playerId, updates, clubAdminPassword) {
   const club = getMyClub();
   if (!club.id) throw new Error(t('noClubSelectedJoin'));
-  const clubs = await sbGet('clubs', `id=eq.${club.id}&select=admin_password`);
-  if (!clubs.length || clubs[0].admin_password !== clubAdminPassword)
-    throw new Error(t('wrongAdminPassword'));
+  const verified = await dbVerifyClubPassword(club.id, clubAdminPassword, 'admin');
+  if (!verified.valid) throw new Error(t('wrongAdminPassword'));
   const { nickname, club_rating, ...playerUpdates } = updates;
   if (nickname || club_rating) {
     const mPatch = {};
@@ -940,9 +1151,8 @@ async function dbEditPlayer(playerId, updates, clubAdminPassword) {
 async function dbDeletePlayer(playerId, clubAdminPassword) {
   const club = getMyClub();
   if (!club.id) throw new Error(t('noClubSelectedJoin'));
-  const clubs = await sbGet('clubs', `id=eq.${club.id}&select=admin_password`);
-  if (!clubs.length || clubs[0].admin_password !== clubAdminPassword)
-    throw new Error(t('wrongAdminPassword'));
+  const verified = await dbVerifyClubPassword(club.id, clubAdminPassword, 'admin');
+  if (!verified.valid) throw new Error(t('wrongAdminPassword'));
   const memberships = await sbGet('memberships',
     `player_id=eq.${playerId}&club_id=eq.${club.id}&select=user_account_id`);
   const accountIds = Array.from(new Set((memberships || []).map(function(row) {
@@ -1070,12 +1280,13 @@ async function dbAddSubClub(parentId, name, adminPassword) {
   const clean = String(name || '').trim();
   if (!parentId || !clean) throw new Error('Select a main club and enter a sub-club name.');
   if (!adminPassword) throw new Error('Main club administrator password required.');
-  const parents = await sbGet('clubs','id=eq.' + encodeURIComponent(parentId) + '&select=id,name,parent_club_id,admin_password,select_password,created_by');
+  const parents = await sbGet('clubs','id=eq.' + encodeURIComponent(parentId) + '&select=id,name,parent_club_id,created_by');
   const parent = parents && parents[0];
   if (!parent || parent.parent_club_id) throw new Error('Sub-clubs can only be created under a main club.');
   // Reuse the existing club administration password verification, rather than
   // relying on Practice-only kbrr_club_mode or the original creator's user ID.
-  if (String(parent.admin_password) !== String(adminPassword)) throw new Error('Incorrect main club administrator password.');
+  const verified = await dbVerifyClubPassword(parentId, adminPassword, 'admin');
+  if (!verified.valid) throw new Error('Incorrect main club administrator password.');
   const existing = await dbGetSubClubs(parentId);
   if (existing.some(c => c.name.trim().toLowerCase() === clean.toLowerCase())) throw new Error('Sub-club already exists.');
   const token = 'membership-only-' + (globalThis.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36));
@@ -1131,11 +1342,17 @@ function maskEmail(email) {
   return masked + '@' + domain;
 }
 
+async function dbVerifyClubPassword(clubId, password, kind = 'select') {
+  const column = kind === 'admin' ? 'admin_password' : 'select_password';
+  const rows = await sbGet('clubs', 'id=eq.' + encodeURIComponent(clubId) + '&' + column + '=eq.' + encodeURIComponent(password) + '&select=id,name');
+  return { valid:!!(rows && rows.length), club:rows && rows[0] || null };
+}
+window.dbVerifyClubPassword = dbVerifyClubPassword;
+
 async function dbVerifyClubAccess(clubId, selectPassword) {
-  const clubs = await sbGet('clubs', `id=eq.${clubId}&select=id,name,select_password`);
-  if (!clubs.length) throw new Error('Club not found.');
-  if (clubs[0].select_password !== selectPassword) throw new Error(t('wrongPasswordHint'));
-  return clubs[0];
+  const result = await dbVerifyClubPassword(clubId, selectPassword, 'select');
+  if (!result || !result.valid) throw new Error(t('wrongPasswordHint'));
+  return result.club;
 }
 
 // ─────────────────────────────────────────────────────────────

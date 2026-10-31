@@ -14,8 +14,9 @@
   'use strict';
 
   const DB_NAME = 'scs_offline_rounds';
-  const DB_VERSION = 5;
+  const DB_VERSION = 6;
   const CURRENT_KEY = 'current';
+  const MIRRORED_TABLES = ['clubs', 'players', 'memberships', 'sessions', 'matches', 'slots', 'slot_claims'];
 
   let _dbPromise = null;
 
@@ -25,6 +26,18 @@
       if (typeof structuredClone === 'function') return structuredClone(value);
     } catch (_) {}
     return JSON.parse(JSON.stringify(value));
+  }
+
+  const PRIVATE_FIELD_PATTERN = /(?:password|secret|token|otp|recovery|registration_email|email)$/i;
+  function sanitizeLocalData(value) {
+    if (Array.isArray(value)) return value.map(sanitizeLocalData);
+    if (!value || typeof value !== 'object') return value;
+    const clean = {};
+    Object.keys(value).forEach(function(key) {
+      if (PRIVATE_FIELD_PATTERN.test(key)) return;
+      clean[key] = sanitizeLocalData(value[key]);
+    });
+    return clean;
   }
 
   function openDb() {
@@ -70,6 +83,22 @@
         // be exported as raw key material. Worker/API behavior is unchanged.
         if (!db.objectStoreNames.contains('cryptoKeys')) {
           db.createObjectStore('cryptoKeys', { keyPath: 'key' });
+        }
+        // Build 1121: Practice Manager uses a local mirror of the existing
+        // Supabase row shapes. Store names and field names intentionally match
+        // the server tables so synchronization does not require a second model.
+        MIRRORED_TABLES.forEach(function(table) {
+          if (db.objectStoreNames.contains(table)) return;
+          const store = db.createObjectStore(table, { keyPath: 'id' });
+          store.createIndex('club_id', 'club_id', { unique: false });
+          if (table === 'matches') store.createIndex('session_id', 'session_id', { unique: false });
+          if (table === 'slot_claims') store.createIndex('slot_id', 'slot_id', { unique: false });
+        });
+        if (!db.objectStoreNames.contains('practiceSyncOutbox')) {
+          const outbox = db.createObjectStore('practiceSyncOutbox', { keyPath: 'operation_id' });
+          outbox.createIndex('status', 'status', { unique: false });
+          outbox.createIndex('club_id', 'club_id', { unique: false });
+          outbox.createIndex('created_at', 'created_at', { unique: false });
         }
       };
 
@@ -118,6 +147,102 @@
       tx.objectStore(storeName).delete(key);
       tx.oncomplete = function () { resolve(true); };
       tx.onerror = function () { reject(tx.error || new Error('Offline DB delete failed')); };
+    });
+  }
+
+  async function getAll(storeName, indexName, indexValue) {
+    const db = await openDb();
+    return new Promise(function(resolve, reject) {
+      const tx = db.transaction(storeName, 'readonly');
+      const store = tx.objectStore(storeName);
+      const source = indexName ? store.index(indexName) : store;
+      const req = indexName ? source.getAll(IDBKeyRange.only(indexValue)) : source.getAll();
+      req.onsuccess = function() { resolve(cloneData(req.result || [])); };
+      req.onerror = function() { reject(req.error || new Error('Offline DB list failed')); };
+    });
+  }
+
+  function assertMirroredTable(table) {
+    const name = String(table || '');
+    if (MIRRORED_TABLES.indexOf(name) < 0) throw new Error('Unsupported offline table: ' + name);
+    return name;
+  }
+
+  async function saveTableRows(table, rows) {
+    const name = assertMirroredTable(table);
+    const list = Array.isArray(rows) ? rows : [rows];
+    const db = await openDb();
+    return new Promise(function(resolve, reject) {
+      const tx = db.transaction(name, 'readwrite');
+      const store = tx.objectStore(name);
+      list.forEach(function(row) {
+        if (!row || row.id == null) return;
+        store.put(sanitizeLocalData(cloneData(row)));
+      });
+      tx.oncomplete = function() { resolve(list.length); };
+      tx.onerror = function() { reject(tx.error || new Error('Offline table write failed')); };
+      tx.onabort = function() { reject(tx.error || new Error('Offline table write aborted')); };
+    });
+  }
+
+  async function getTableRow(table, id) {
+    return cloneData(await get(assertMirroredTable(table), id));
+  }
+
+  async function getTableRows(table, indexName, indexValue) {
+    const name = assertMirroredTable(table);
+    if (indexName && ['club_id', 'session_id', 'slot_id'].indexOf(indexName) < 0) {
+      throw new Error('Unsupported offline index: ' + indexName);
+    }
+    return getAll(name, indexName || null, indexValue);
+  }
+
+  async function deleteTableRow(table, id) {
+    return remove(assertMirroredTable(table), id);
+  }
+
+  function createOperationId() {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+    return 'practice-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+  }
+
+  async function enqueuePracticeOperation(operation) {
+    const item = Object.assign({}, sanitizeLocalData(cloneData(operation || {})));
+    item.operation_id = item.operation_id || createOperationId();
+    item.created_at = item.created_at || new Date().toISOString();
+    item.updated_at = new Date().toISOString();
+    item.status = item.status || 'pending';
+    item.attempts = Number(item.attempts || 0);
+    await put('practiceSyncOutbox', item);
+    return cloneData(item);
+  }
+
+  async function getPracticeOperations(status) {
+    return status ? getAll('practiceSyncOutbox', 'status', String(status)) : getAll('practiceSyncOutbox');
+  }
+
+  async function updatePracticeOperation(operationId, changes) {
+    const current = await get('practiceSyncOutbox', String(operationId));
+    if (!current) return null;
+    const next = Object.assign({}, current, cloneData(changes || {}), { updated_at:new Date().toISOString() });
+    await put('practiceSyncOutbox', next);
+    return cloneData(next);
+  }
+
+  async function completePracticeOperation(operationId) {
+    return remove('practiceSyncOutbox', String(operationId));
+  }
+
+  async function clearPrivateData() {
+    const db = await openDb();
+    const stores = MIRRORED_TABLES.concat(['practiceSyncOutbox','clubSnapshots','vaultSlotsCache','snapshots','roundContexts','tempPreparedRounds']);
+    return new Promise(function(resolve, reject) {
+      const available = stores.filter(function(name) { return db.objectStoreNames.contains(name); });
+      const tx = db.transaction(available, 'readwrite');
+      available.forEach(function(name) { tx.objectStore(name).clear(); });
+      tx.oncomplete = function() { resolve(true); };
+      tx.onerror = function() { reject(tx.error || new Error('Could not clear private offline data')); };
+      tx.onabort = function() { reject(tx.error || new Error('Private offline data clear was aborted')); };
     });
   }
 
@@ -400,6 +525,16 @@
     saveVaultSlotsCache,
     getVaultSlotsCache,
     clearVaultSlotsCache,
+    mirroredTables: MIRRORED_TABLES.slice(),
+    saveTableRows,
+    getTableRow,
+    getTableRows,
+    deleteTableRow,
+    enqueuePracticeOperation,
+    getPracticeOperations,
+    updatePracticeOperation,
+    completePracticeOperation,
+    clearPrivateData,
     saveMeta,
     getMeta
   };

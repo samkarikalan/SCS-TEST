@@ -2122,8 +2122,17 @@ window.addEventListener('beforeunload', () => {
 // ── Sync when back online ──
 window.addEventListener('online', async () => {
   console.log('Back online -- flushing sync queue...');
+  if (typeof scsFlushPracticeOutbox === 'function') await scsFlushPracticeOutbox();
   if (typeof flushSyncQueue === 'function') await flushSyncQueue();
   if (typeof syncToLocal    === 'function') await syncToLocal();
+});
+
+window.addEventListener('scs:practice-sync-pending', function() {
+  if (typeof setSyncIndicator === 'function') setSyncIndicator('Offline — changes saved locally', '#e6a817');
+});
+window.addEventListener('scs:practice-synced', function(event) {
+  var count = event && event.detail ? Number(event.detail.count || 0) : 0;
+  if (typeof setSyncIndicator === 'function') setSyncIndicator(count ? ('✓ ' + count + ' offline change' + (count === 1 ? '' : 's') + ' synced') : '✓ Synced', '#2dce89');
 });
 
 /* =========================

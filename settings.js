@@ -1253,11 +1253,9 @@ if (!pw) { setFb(t('enterAdminPw'), false); return; }
 
 setFb(t('verifyingDot'), true);
 try {
-const clubs = await sbGet('clubs', `id=eq.${myClub.id}&select=id,name,admin_password`);
-if (!clubs || !clubs.length) { setFb(t('clubNotFound'), false); return; }
-if (clubs[0].admin_password !== pw) { setFb(t('wrongAdminPassword'), false); return; }
-
-const clubName = clubs[0].name || '';
+const verification = await dbVerifyClubPassword(myClub.id, pw, 'admin');
+if (!verification || !verification.valid) { setFb(t('wrongAdminPassword'), false); return; }
+const clubName = verification.club && verification.club.name || myClub.name || '';
 
 await dbDeleteClub(myClub.id);
 

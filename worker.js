@@ -19,6 +19,7 @@ var worker_default = {
     const path = url.pathname;
     try {
       if (path.startsWith("/db/")) return cors(await handleDb(request, env, path));
+      if (path === "/club/verify-password") return cors(await handleClubVerifyPassword(request, env));
       if (path === "/auth/send-otp") return cors(await handleSendOtp(request, env));
       if (path === "/auth/verify-otp") return cors(await handleVerifyOtp(request, env));
       if (path === "/auth/supabase-otp") return cors(await handleSupabaseOtp(request, env));
@@ -789,6 +790,45 @@ __name2(isDbRequestAllowed, "isDbRequestAllowed");
 __name22(isDbRequestAllowed, "isDbRequestAllowed");
 __name222(isDbRequestAllowed, "isDbRequestAllowed");
 __name2222(isDbRequestAllowed, "isDbRequestAllowed");
+function redactDbResult(table, value) {
+  if (table !== "clubs") return value;
+  const rows = Array.isArray(value) ? value : [value];
+  const clean = rows.map((row) => {
+    if (!row || typeof row !== "object") return row;
+    const copy = { ...row };
+    delete copy.admin_password;
+    delete copy.select_password;
+    delete copy.registration_email;
+    return copy;
+  });
+  return Array.isArray(value) ? clean : clean[0];
+}
+async function requireDbMutationSession(body, env, action, table) {
+  const bootstrap = table === "user_accounts" && action === "post" ||
+    table === "active_sessions" && ["post", "upsert"].includes(action) ||
+    table === "players" && action === "post" && !body.userAccountId;
+  if (bootstrap) return true;
+  try {
+    await requireOfflineLibrarySession({ accountId:body.userAccountId, sessionToken:body.sessionToken }, env);
+    return true;
+  } catch (_) { return false; }
+}
+async function handleClubVerifyPassword(request, env) {
+  if (request.method !== "POST") return json({ error:"Method not allowed" }, 405);
+  const body = await request.json().catch(() => ({}));
+  const clubId = String(body.clubId || "").trim();
+  const password = String(body.password || "");
+  const kind = body.kind === "admin" ? "admin" : "select";
+  if (!clubId || !password) return json({ valid:false }, 400);
+  if (kind === "admin") {
+    try { await requireOfflineLibrarySession({ accountId:body.userAccountId, sessionToken:body.sessionToken }, env); }
+    catch (_) { return json({ valid:false, error:"Authentication required" }, 401); }
+  }
+  const column = kind === "admin" ? "admin_password" : "select_password";
+  const rows = await sbGet(env, "clubs", "id=eq." + encodeURIComponent(clubId) + "&select=id,name," + column + "&limit=1").catch(() => []);
+  if (!rows.length) return json({ valid:false }, 404);
+  return json({ valid:String(rows[0][column] || "") === password, club:{ id:rows[0].id, name:rows[0].name || "" } });
+}
 async function handleDb(request, env, path) {
   const body = await request.json().catch(() => ({}));
   const { table, query = "", data, onConflict, prefer } = body;
@@ -797,9 +837,12 @@ async function handleDb(request, env, path) {
   if (!isDbRequestAllowed(action, table)) {
     return json({ error: "DB route not allowed for this table/action" }, 403);
   }
+  if (action !== "get" && !await requireDbMutationSession(body, env, action, table)) {
+    return json({ error:"Authenticated device session required" }, 401);
+  }
   switch (action) {
     case "get":
-      return json(await sbGet(env, table, query));
+      return json(redactDbResult(table, await sbGet(env, table, query)));
     case "post": {
       const result = await sbPost(env, table, data, prefer || "return=representation");
       return json(result);

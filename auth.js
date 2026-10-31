@@ -634,6 +634,9 @@ function authLogout() {
   sessionStorage.removeItem('scs_organiser_verified');
   sessionStorage.removeItem('scs_vault_verified');
   if (typeof clearSubscription === 'function') clearSubscription();
+  if (window.SCSOfflineDB && typeof SCSOfflineDB.clearPrivateData === 'function') {
+    SCSOfflineDB.clearPrivateData().catch(function(){});
+  }
 }
 
 /* ── Forgot password -- send OTP ── */
