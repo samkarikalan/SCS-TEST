@@ -1151,6 +1151,20 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
 #scsTournamentPlayersListPage .scs-tplayer-drawer-list .scs-tplayer-filter-pill[hidden]{display:none}
 #scsTournamentEditClubGroup select{border-color:color-mix(in srgb,var(--scs-subclub-color,#6157ee) 45%,#414052)}
 </style>
+<style>
+/* V552: Tournament Players Manager text contrast only; no layout changes. */
+#scsTournamentPlayersListPage .scs-tplayer-row .vm-player-meta { color: #e1e4f2 !important; opacity: 1 !important; }
+#scsTournamentPlayersListPage .scs-tplayer-row .vm-player-name { color: #ffffff !important; opacity: 1 !important; }
+#scsTournamentPlayersListPage #scsTPlayersCount { color: #e0ddff !important; opacity: 1 !important; }
+#scsTournamentPlayersListPage #scsTPlayersSearch::placeholder { color: #c4c5d7 !important; opacity: 1 !important; }
+#scsTournamentPlayersListPage #scsTPlayersFilterPills { color: #f0edff; }
+@media (prefers-color-scheme: light) {
+  body:not(.dark-mode) #scsTournamentPlayersListPage .scs-tplayer-row .vm-player-meta { color: #45445f !important; }
+  body:not(.dark-mode) #scsTournamentPlayersListPage .scs-tplayer-row .vm-player-name { color: #161525 !important; }
+  body:not(.dark-mode) #scsTournamentPlayersListPage #scsTPlayersCount { color: #4e4697 !important; }
+  body:not(.dark-mode) #scsTournamentPlayersListPage #scsTPlayersSearch::placeholder { color: #65647a !important; }
+}
+</style>
 </head>
 <body>
 <div id="scsPracticeSharedHeader" hidden><header class="scs-practice-manager-header scs-phase1-ref-header">
