@@ -36501,6 +36501,15 @@ body.app-light .scs-court-card{background:#fff!important;box-shadow:0 5px 16px r
 .vs-post-date-label { display:block; font-size:0.78rem; opacity:.82; margin:4px 0; }
 .vs-post-date-input { display:block; width:100%; max-width:230px; box-sizing:border-box; color:inherit; background:rgba(127,127,127,.12); border:1px solid rgba(127,127,127,.4); border-radius:10px; padding:7px 10px; font:inherit; color-scheme:light dark; }
 
+/* Release layout: keep the phone/tablet app shell centered on wide displays. */
+@media (min-width: 1025px) {
+  body {
+    width: min(100%, 1024px);
+    margin-inline: auto;
+    box-shadow: 0 0 40px rgba(0,0,0,.22);
+  }
+}
+
 /* Fixed pairs: only the card's top-right switch controls activation. */
 #roundFixedPairsCard { position: relative; }
 #roundFixedPairsCard .scs-fixed-card-switch { position: absolute; top: 14px; right: 14px; z-index: 2; cursor: pointer; }

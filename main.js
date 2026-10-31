@@ -1618,13 +1618,10 @@ async function openOrganiserWorkspaceForMember(selectedClubId) {
     applyMode('organiser');
     updateModePill('organiser');
     welcomeMarkModeUsed('organiser');
-    // Paint Round Manager first, then route a genuinely empty setup to Players.
+    // Always land on Round Manager. An empty setup is represented by its
+    // existing Players count/disabled controls; Player Manager opens only
+    // from the explicit Players action.
     if (typeof showHomeScreen === 'function') showHomeScreen();
-    setTimeout(function() {
-      scsOpenPlayersManagerWhenRoundManagerEmpty(club.id).catch(function(error) {
-        console.warn('Round Manager initial Players page skipped:', error);
-      });
-    }, 0);
     // Offline entry goes straight to the dedicated Round Mode Offline card.
     // Online entry keeps the existing default Round Mode card.
     if (offlineEntry) {
@@ -3184,11 +3181,6 @@ async function _clubSetupJoin() {
         updateModePill('organiser');
         if (!_clubSetupClose(true) && typeof showHomeScreen === 'function') {
           showHomeScreen();
-          setTimeout(function() {
-            scsOpenPlayersManagerWhenRoundManagerEmpty(clubs[0].id).catch(function(error) {
-              console.warn('Round Manager initial Players page skipped:', error);
-            });
-          }, 0);
         }
       }
     }, 700);

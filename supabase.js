@@ -592,11 +592,8 @@ async function scsDownloadClubSnapshot(clubId) {
     load('slots', 'slots', `club_id=eq.${id}&select=*`),
     load('sessions', 'sessions', `club_id=eq.${id}&select=*`),
     load('tournaments', 'tournaments', `club_id=eq.${id}&select=*`),
-    load('activeSessions', 'active_sessions', `club_id=eq.${id}&select=*`),
     load('joinRequests', 'club_join_requests', `club_id=eq.${id}&select=*`),
-    load('roles', 'user_club_roles', `club_id=eq.${id}&select=*`),
-    load('broadcasts', 'club_invite_broadcasts', `club_id=eq.${id}&select=*`),
-    load('venues', 'venues', `club_id=eq.${id}&select=*`)
+    load('roles', 'user_club_roles', `club_id=eq.${id}&select=*`)
   ]);
 
   const playerIds = [...new Set((snapshot.memberships || []).map(r => r && r.player_id).filter(Boolean).map(String))];
@@ -605,12 +602,13 @@ async function scsDownloadClubSnapshot(clubId) {
   const slotIds = [...new Set((snapshot.slots || []).map(r => r && r.id).filter(Boolean).map(String))];
   if (slotIds.length) await load('slotClaims', 'slot_claims', `slot_id=in.(${slotIds.join(',')})&select=*`);
 
-  const sessionIds = [...new Set([...(snapshot.sessions || []), ...(snapshot.activeSessions || [])].map(r => r && r.id).filter(Boolean).map(String))];
+  /* active_sessions is the account login-lock table, not a club session table.
+     Optional broadcasts/venues and the legacy player_sessions table are not
+     part of every deployment's club schema, so the core offline snapshot must
+     not query them unconditionally. */
+  const sessionIds = [...new Set((snapshot.sessions || []).map(r => r && r.id).filter(Boolean).map(String))];
   if (sessionIds.length) {
-    await Promise.all([
-      load('matches', 'matches', `session_id=in.(${sessionIds.join(',')})&select=*`),
-      load('playerSessions', 'player_sessions', `session_id=in.(${sessionIds.join(',')})&select=*`)
-    ]);
+    await load('matches', 'matches', `session_id=in.(${sessionIds.join(',')})&select=*`);
   }
 
   snapshot.syncedAt = Date.now();

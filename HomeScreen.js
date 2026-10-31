@@ -1257,13 +1257,16 @@ function homeGuideOpenPairsFromNav() {
 
 function homeApplyPlayerSetupGates(enoughPlayers) {
   var courtsCard = document.getElementById('organiserCourtsCard');
-  var pairsBtn = document.getElementById('orgNavFixedPairs');
+  var pairsButtons = [document.getElementById('orgNavFixedPairs'), document.getElementById('orgIModeFixedPairs')].filter(Boolean);
 
-  if (pairsBtn) {
+  pairsButtons.forEach(function(pairsBtn) {
     pairsBtn.disabled = !enoughPlayers;
     pairsBtn.setAttribute('aria-disabled', enoughPlayers ? 'false' : 'true');
     pairsBtn.classList.toggle('organiser-step-disabled', !enoughPlayers);
-  }
+    pairsBtn.title = enoughPlayers ? 'Manage fixed pairs' : _homeT('addAtLeast4Step', 'Add at least 4 players first.');
+  });
+  var pairsHint = document.getElementById('orgNavPairsHint');
+  if (pairsHint) pairsHint.textContent = enoughPlayers ? _homeT('managePairs', 'Manage pairs') : _homeT('addAtLeast4Step', 'Add at least 4 players first.');
   if (courtsCard) {
     courtsCard.classList.toggle('organiser-step-disabled', !enoughPlayers);
     courtsCard.setAttribute('aria-disabled', enoughPlayers ? 'false' : 'true');
