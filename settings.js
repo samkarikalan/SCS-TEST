@@ -2212,8 +2212,13 @@ function scsTournamentPlayersListClose(){
   window.__scsTournamentRegistration=false;
   window.__scsTournamentRegistrationClub=null;
   document.body.classList.remove('scs-tournament-register-open');
-  if(typeof showPage==='function')showPage('homePage',null);
-  if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();
+  // Restore the normal underlying app page before returning to the
+  // Tournament Manager overlay; "homePage" is not a valid return target here.
+  if(typeof showHomeScreen==='function')showHomeScreen();
+  if(typeof scsActivityChoose==='function')scsActivityChoose('tournament');
+  else if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();
+  // Players Manager was opened from this menu, so return to the same menu.
+  if(typeof scsTournamentMenuToggle==='function')scsTournamentMenuToggle(true);
 }
 function scsTournamentPlayersListEdit(id){
   const p=_scsTournamentRoster.find(x=>String(x.id)===String(id));if(!p)return;
