@@ -3,6 +3,12 @@
 // Club encounters extend the Group Tournament round-robin pattern and share its Match Center.
 const KEY='scs_team_tournament_v1';
 let state={title:'',clubs:[],encounters:[],courtCount:1,serial:0,matchesPerEncounter:3},tab='fixtures',matchTab='waiting',assigning=null,viewOnly=false,selectedEncounterId=null;
+let workerTeamStandings=null;
+async function refreshWorkerTeamStandings(renderAfter){
+ if(!state.encounters.length||!window.SCSTournamentEngine)return false;
+ try{workerTeamStandings=(await SCSTournamentEngine.run('team-standings',{clubs:state.clubs,encounters:state.encounters})).standings;if(renderAfter)render();return true}
+ catch(error){console.warn('Worker team standings unavailable:',error&&error.message||error);return false}
+}
 const root=()=>document.getElementById('scsTeamTournament');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const save=()=>{if(!viewOnly){if(state._scsTeamMainId&&state._scsClientTournamentId)localStorage.setItem('scs_team_event_'+state._scsClientTournamentId,JSON.stringify(state));localStorage.setItem(KEY,JSON.stringify(state));if(typeof window.scsQueueTournamentCloudSave==='function')window.SCSTournamentStore.queue('team',state);if(state._scsTeamMainId)saveEventIndex()}};
@@ -150,6 +156,7 @@ const encounterFor=m=>state.encounters.find(e=>e.matches.includes(m));
 const clubName=id=>state.clubs[id]?.name||'Club '+(id+1);
 const matchName=m=>{let e=encounterFor(m);return clubName(e.a)+' vs '+clubName(e.b)+' · Doubles '+(m.index+1)};
 function standingsData(){
+ if(Array.isArray(workerTeamStandings))return workerTeamStandings;
  const rows=state.clubs.map((c,i)=>({i,name:c.name,w:0,l:0,points:0,mw:0,ml:0,played:0,setsWon:0,setsLost:0,rallyFor:0,rallyAgainst:0,rank:0}));
  for(const e of state.encounters){
   const done=e.matches.filter(m=>m.status==='approved'&&(m.winner==='L'||m.winner==='R'));
@@ -286,7 +293,7 @@ function clubEditor(i){
  }});
 }
 
-function generate(){let name=(root().querySelector('#team-title')?.value??state.title??'').trim();if(!name||state.clubs.length<2||state.clubs.some(c=>c.players.length<state.matchesPerEncounter*2)){alert('Enter a tournament name and at least two clubs with '+(state.matchesPerEncounter*2)+' players each.');return}state.title=name;state.encounters=[];let n=0;for(let i=0;i<state.clubs.length;i++)for(let j=i+1;j<state.clubs.length;j++){let id='E'+(++n);state.encounters.push({id,a:i,b:j,date:'',time:'',matches:Array.from({length:state.matchesPerEncounter},(_,k)=>({id:id+'-D'+(k+1),index:k,pairs:[[],[]],court:null,status:'pending'}))})}selectedEncounterId=null;save();switchTeamTab('fixtures');render()}
+async function generate(){let name=(root().querySelector('#team-title')?.value??state.title??'').trim();if(!name||state.clubs.length<2||state.clubs.some(c=>c.players.length<state.matchesPerEncounter*2)){alert('Enter a tournament name and at least two clubs with '+(state.matchesPerEncounter*2)+' players each.');return}try{if(!window.SCSTournamentEngine)throw Error('Tournament engine is unavailable.');const generated=await SCSTournamentEngine.run('team-fixtures',{clubs:state.clubs,matchesPerEncounter:state.matchesPerEncounter});state.encounters=generated.encounters||[]}catch(error){if(error&&error.status===404){state.encounters=[];let n=0;for(let i=0;i<state.clubs.length;i++)for(let j=i+1;j<state.clubs.length;j++){let id='E'+(++n);state.encounters.push({id,a:i,b:j,date:'',time:'',matches:Array.from({length:state.matchesPerEncounter},(_,k)=>({id:id+'-D'+(k+1),index:k,pairs:[[],[]],court:null,status:'pending'}))})}}else{alert(error.message||'Could not generate team fixtures.');return}}state.title=name;workerTeamStandings=null;await refreshWorkerTeamStandings(false);selectedEncounterId=null;save();switchTeamTab('fixtures');render()}
 function editEncounter(id){
  const e=state.encounters.find(x=>x.id===id);if(!e)return;
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal scs-team-pair-modal';
@@ -547,7 +554,7 @@ async function updateCompletedScore(id,score,winner){
  }
 }
 function conductMatches(){return allMatches().filter(m=>m.court&&['playing','score_ready'].includes(m.status)).map(m=>({id:m.id,court:m.court,status:m.status,pair1:m.pairs[0],pair2:m.pairs[1],score:m.score,winner:m.winner,label:matchName(m)}));}
-function finishConductMatch(id){const m=allMatches().find(x=>x.id===id);if(!m||m.status!=='score_ready'||!m.score?.finished||!['L','R'].includes(m.winner))return false;m.status='approved';m.court=null;save();render();return true;}
+async function finishConductMatch(id){const m=allMatches().find(x=>x.id===id);if(!m||m.status!=='score_ready'||!m.score?.finished||!['L','R'].includes(m.winner))return false;try{if(!window.SCSTournamentEngine)throw Error('Tournament engine is unavailable.');const approved=await SCSTournamentEngine.run('approve-result',{score:m.score,winner:m.winner});m.status=approved.status}catch(error){if(error&&error.status===404)m.status='approved';else{alert(error.message||'Could not approve this result.');return false}}m.court=null;workerTeamStandings=null;await refreshWorkerTeamStandings(false);save();render();return true}
 // Shared registered-club roster picker for knockout and team tournaments.
 // Team Tournament supplies its registered-club data to the canonical shared picker.
 function pickRegisteredRoster(onDone){

@@ -27,7 +27,7 @@ function groupKnockoutCandidates(data,stage){
  }
  return all;
 }
-function groupKnockoutOpen(stage){
+async function groupKnockoutOpen(stage){
  const id=groupEventId,data=JSON.parse(localStorage.getItem(groupEventKey(id))||'{}');
  if(!groupKnockoutReady(data)){alert('Complete and approve every group match first.');return}
  const key='scs_group_knockout_'+id+'_'+stage;
@@ -35,9 +35,9 @@ function groupKnockoutOpen(stage){
  if(!saved){
   const teams=groupKnockoutCandidates(data,stage);
   if(teams.length<4||teams.length>64){alert('Knockout bracket requires 4 to 64 qualified teams.');return}
-  if(!window.SCSTournament||typeof SCSTournament.generateCustomTwoSided!=='function'){alert('Knockout module is unavailable.');return}
+  if(!window.SCSTournament||typeof SCSTournament.generateCustomTwoSidedFromWorker!=='function'){alert('Knockout module is unavailable.');return}
   const left=Math.ceil(teams.length/2),names=teams.map(t=>t.players.join(' / '));
-  saved=SCSTournament.generateCustomTwoSided(teams.length,left,null,null,(data.title||'Event')+(Number(data.config?.knockouts)===2?(stage===0?' — Top Knockout':' — Bottom Knockout'):' — Knockout'),names);
+  try{saved=await SCSTournament.generateCustomTwoSidedFromWorker(teams.length,left,null,null,(data.title||'Event')+(Number(data.config?.knockouts)===2?(stage===0?' — Top Knockout':' — Bottom Knockout'):' — Knockout'),names)}catch(error){alert(error.message||'Could not generate the knockout bracket.');return}
   saved.entries.forEach((e,i)=>{e.playerDetails=teams[i].details;e.groupSource=teams[i].id;e.groupRank=teams[i].rank});
   saved.selectedPlayerDetails=teams.flatMap(t=>t.details);
   saved._scsGroupEventId=id;saved._scsGroupKnockoutStage=stage;
@@ -82,6 +82,15 @@ function groupAddEvent(){window.ScsApi.events.requestEvent({parentTitle:groupMai
 
  let groupSelectedPlayerDetails=[];
  let cloudTournamentId='',clientTournamentId='',title='',config={groups:4,per:4,knockouts:1,top:2,bottom:1},created=false,assistStep=0,assistPatternReady=false,assistMode=true,tab='main',tournamentView='all',matrixSection='group-0',matchesSection='group-0',matchesStatus='all',pool=[],teamDrafts=[],assignments={},started=false,matches=[],courtCount=2,assignmentSerial=0,matchTab='waiting',assigningMatch=null,viewOnly=false;
+ let workerGroupStandings=Object.create(null);
+ async function refreshWorkerGroupStandings(renderAfter){
+  if(!started||!window.SCSTournamentEngine)return false;
+  try{
+   const next=Object.create(null);
+   for(let g=0;g<Number(config.groups||0);g++)next[g]=(await SCSTournamentEngine.run('group-standings',{config,matches,group:g})).standings;
+   workerGroupStandings=next;if(renderAfter)render();return true;
+  }catch(error){console.warn('Worker group standings unavailable:',error&&error.message||error);return false}
+ }
 const el=()=>document.getElementById('scsGroupTournament');
 const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  function load(){try{let v=JSON.parse(localStorage.getItem(groupEventId?groupEventKey(groupEventId):KEY));if(v){cloudTournamentId=v._scsCloudTournamentId||'';clientTournamentId=v._scsClientTournamentId||'';title=String(v.title||'Group Tournament');config=v.config||config;created=!!v.created;assistMode=typeof v.assistMode==='boolean'?v.assistMode:!created;assistPatternReady=!!v.assistPatternReady;pool=Array.isArray(v.pool)?v.pool:[];groupSelectedPlayerDetails=Array.isArray(v.selectedPlayerDetails)?v.selectedPlayerDetails:[];assignments=v.assignments||{};teamDrafts=Array.isArray(v.teamDrafts)?v.teamDrafts:Object.keys(assignments).sort().map(k=>assignments[k]).filter(x=>Array.isArray(x)&&x.length===2);started=!!v.started;matches=Array.isArray(v.matches)?v.matches:[];courtCount=Number(v.courtCount)||2;assignmentSerial=Number(v.assignmentSerial)||0}}catch(e){}}
@@ -151,6 +160,8 @@ function groupLabel(i){let out='';do{out=String.fromCharCode(65+i%26)+out;i=Math
 // Approved scoreboard results are the single source for both group standings
 // and Match Center Completed. Never use initial slot positions as rankings.
 function groupResults(g){
+ const authoritative=workerGroupStandings[g];
+ if(Array.isArray(authoritative))return authoritative;
  const teams=Array.from({length:config.per},(_,j)=>({id:g+':'+j,w:0,l:0,gw:0,gl:0,pf:0,pa:0,played:0}));
  const byId=new Map(teams.map(t=>[t.id,t]));
  const approved=matches.filter(m=>Number(m.group)===g&&m.status==='approved');
@@ -287,12 +298,19 @@ function editor(id){
  hydratePlayerCards();
  modal.onclick=e=>{if(e.target===modal)modal.remove()};
 }
-function startTournament(){
+async function startTournament(){
  if(started)return;
  for(let g=0;g<config.groups;g++)for(let t=0;t<config.per;t++)if(!Array.isArray(assignments[g+':'+t])||assignments[g+':'+t].length!==2){alert('Assign all teams before starting the tournament.');tab='groups';render();return}
  if(!confirm('Start Group Tournament and create all round-robin matches?'))return;
- matches=[];assignmentSerial=0;let n=1;
- for(let g=0;g<config.groups;g++)for(let i=0;i<config.per;i++)for(let j=i+1;j<config.per;j++)matches.push({id:'G'+(g+1)+'-M'+(n++),group:g,a:g+':'+i,b:g+':'+j,court:null,status:'pending'});
+ try{
+  if(!window.SCSTournamentEngine)throw Error('Tournament engine is unavailable.');
+  const generated=await SCSTournamentEngine.run('group-fixtures',{config,assignments});
+  matches=generated.matches||[];
+ }catch(error){
+  if(error&&error.status===404){matches=[];let n=1;for(let g=0;g<config.groups;g++)for(let i=0;i<config.per;i++)for(let j=i+1;j<config.per;j++)matches.push({id:'G'+(g+1)+'-M'+(n++),group:g,a:g+':'+i,b:g+':'+j,court:null,status:'pending'});}
+  else{alert(error.message||'Could not generate group fixtures.');return}
+ }
+ assignmentSerial=0;workerGroupStandings=Object.create(null);await refreshWorkerGroupStandings(false);
  started=true;assistMode=false;assistStep=0;tab='main';save();render();
 }
 function teamBusy(team){return matches.some(m=>['assigned','playing','score_ready'].includes(m.status)&&(m.a===team||m.b===team))}
@@ -420,7 +438,7 @@ function showGroupMatrixMatch(id){
 function startMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='assigned')return;m.status='playing';m.startedAt=Date.now();save();render()}
 function scoreMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='playing')return;if(!window.SCSScoring||!SCSScoring.openGroupMatch){alert('Scoreboard is unavailable.');return}el().hidden=true;SCSScoring.openGroupMatch({sessionId:'local-group-'+id,round:1,court:m.court,pair1:assignments[m.a],pair2:assignments[m.b],courtCenter:true,groupId:id})}
 function scoreUpdate(id,score,winner){const m=matches.find(x=>x.id===id);if(!m||!['playing','score_ready'].includes(m.status))return false;m.score=score;if(winner){m.winner=winner;m.status='score_ready'}save();render();return true}
-function approveMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='score_ready'||!['L','R'].includes(m.winner)||!m.score||!m.score.finished)return; m.status='approved';m.completedOrder=++assignmentSerial;m.completedCourt=m.court;m.court=null;save();render()}
+async function approveMatch(id){const m=matches.find(x=>x.id===id);if(!m||m.status!=='score_ready'||!['L','R'].includes(m.winner)||!m.score||!m.score.finished)return;try{if(!window.SCSTournamentEngine)throw Error('Tournament engine is unavailable.');const approved=await SCSTournamentEngine.run('approve-result',{score:m.score,winner:m.winner,left:m.a,right:m.b});m.status=approved.status}catch(error){if(error&&error.status===404)m.status='approved';else{alert(error.message||'Could not approve this result.');return}}m.completedOrder=++assignmentSerial;m.completedCourt=m.court;m.court=null;workerGroupStandings=Object.create(null);await refreshWorkerGroupStandings(false);save();render()}
 function assignCourt(id){
  const m=matches.find(x=>x.id===id);
  if(!m||m.court||m.status!=='pending'||viewOnly)return;

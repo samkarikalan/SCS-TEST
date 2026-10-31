@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8"><title>Tournament Worker Smoke Test</title>
+<style>body{font:16px system-ui;background:#09162a;color:#eef4ff;padding:24px}main{max-width:680px;margin:auto}li{margin:10px 0}.pass{color:#55df9a}.fail{color:#ff7888}</style>
+<main><h1>Tournament Worker Smoke Test</h1><ol id="results"><li>Running authenticated tests…</li></ol></main>
+<script>
+(async function(){
+ const results=document.getElementById('results');results.innerHTML='';
+ function row(name,ok,detail){const li=document.createElement('li');li.className=ok?'pass':'fail';li.textContent=(ok?'PASS — ':'FAIL — ')+name+(detail?' · '+detail:'');results.appendChild(li)}
+ let user=null;try{user=JSON.parse(localStorage.getItem('auth_user')||'null')}catch(_){}
+ const token=localStorage.getItem('scs_session_token');
+ if(!user||!user.id||!token){row('Authenticated session',false,'Sign in to the app first');return}
+ const url='https://scs-app.karikalan-indo.workers.dev/tournament/engine';
+ async function run(action,payload){const response=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,payload,userAccountId:user.id,sessionToken:token})});const data=await response.json().catch(()=>({}));if(!response.ok)throw Error(data.error||'HTTP '+response.status);return data}
+ try{
+  const assignments={'0:0':['A','B'],'0:1':['C','D'],'0:2':['E','F'],'0:3':['G','H']};
+  const group=await run('group-fixtures',{config:{groups:1,per:4},assignments});row('Cloudflare group fixtures',group.matches&&group.matches.length===6,(group.matches||[]).length+' matches');
+  const clubs=[{name:'One',players:['A','B','C','D','E','F']},{name:'Two',players:['G','H','I','J','K','L']},{name:'Three',players:['M','N','O','P','Q','R']}];
+  const team=await run('team-fixtures',{clubs,matchesPerEncounter:3});row('Cloudflare team fixtures',team.encounters&&team.encounters.length===3,(team.encounters||[]).length+' encounters');
+  const score={finished:true,completedSets:[{score:[21,18]}]};group.matches[0].status='approved';group.matches[0].winner='L';group.matches[0].score=score;
+  const standings=await run('group-standings',{config:{per:4},group:0,matches:group.matches});row('Cloudflare group standings',standings.standings&&standings.standings[0].id==='0:0','winner ranked first');
+  team.encounters[0].matches.forEach(m=>{m.status='approved';m.winner='L';m.score=score});
+  const teamRank=await run('team-standings',{clubs,encounters:team.encounters});row('Cloudflare team standings',teamRank.standings&&teamRank.standings[0].name==='One','winning club ranked first');
+  const approval=await run('approve-result',{score,winner:'L',left:'0:0',right:'0:1'});row('Cloudflare result approval',approval.status==='approved'&&approval.bracketResult&&approval.bracketResult.winner==='0:0','winner advanced');
+  const bracket=await run('knockout-generate-custom',{count:10,leftCount:5,title:'Cloudflare Bracket Test'});row('Cloudflare knockout bracket',bracket.draw&&bracket.draw.matches.length===9&&bracket.draw.matches.filter(m=>m.final).length===1,'9 matches · final connected');
+  row('Cloudflare knockout BYEs',bracket.draw&&bracket.draw.leftByeIds.length===1&&bracket.draw.rightByeIds.length===1,'left and right BYEs generated');
+  let rejected=false;try{await run('approve-result',{score:{finished:false},winner:'L'})}catch(_){rejected=true}row('Cloudflare invalid-score rejection',rejected,'unfinished result blocked');
+ }catch(error){row('Authenticated Cloudflare execution',false,error.message)}
+})();
+</script>

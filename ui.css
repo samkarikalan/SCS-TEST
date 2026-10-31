@@ -36636,3 +36636,11 @@ html body #homeVaultGrid #vaultUpcomingSlots .scs-simple-slot-toggle {
 body.app-light .scs-account-trigger,body.app-light .scs-account-menu{background:#fff;color:#172033;border-color:#d5dbea;box-shadow:0 6px 20px #1f2a4426}
 body.app-light .scs-account-email,body.app-light .scs-account-club{color:#68738a}
 @media(max-width:520px){.scs-account-trigger{width:44px;padding:4px}.scs-account-trigger-name{display:none}.scs-account-status{right:10px}}
+/* V560 — My Club account and owned/joined club tabs. */
+.clubs-account-card{display:flex;align-items:center;gap:11px;padding:13px;margin-bottom:12px;border:1px solid var(--border);border-radius:14px;background:var(--surface)}
+.clubs-account-avatar{display:flex;align-items:center;justify-content:center;width:42px;height:42px;flex:0 0 42px;border-radius:50%;background:linear-gradient(135deg,#635bff,#228be6);color:#fff;font-weight:800}
+.clubs-account-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:2px}.clubs-account-copy strong,.clubs-account-copy span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.clubs-account-copy span{color:var(--muted);font-size:.78rem}
+.clubs-account-action{border:1px solid #5367d8;border-radius:9px;background:#5367d8;color:#fff;padding:8px 12px;font:inherit;font-size:.8rem;font-weight:750}.clubs-account-action.is-logout{border-color:#c65363;background:transparent;color:#e66f7d}
+.clubs-page-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:4px;margin-bottom:14px;border-radius:12px;background:color-mix(in srgb,var(--surface) 85%,#777 15%)}
+.clubs-page-tabs button{min-height:40px;border:0;border-radius:9px;background:transparent;color:var(--muted);font:inherit;font-weight:750}.clubs-page-tabs button.active{background:var(--card-bg,var(--surface));color:var(--text);box-shadow:0 2px 8px #0002}
+.clubs-tab-panel[hidden]{display:none!important}.clubs-create-button{width:100%;min-height:44px;margin-top:12px;border:1px dashed #6878df;border-radius:11px;background:transparent;color:#7183ef;font:inherit;font-weight:800}

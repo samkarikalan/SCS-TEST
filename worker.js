@@ -56,6 +56,7 @@ var worker_default = {
       if (path === "/sub/admin-clubs") return cors(await handleAdminClubs(request, env));
       if (path === "/sub/admin-subscribers") return cors(await handleAdminSubscribers(request, env));
       if (path === "/generate-round") return cors(await handleGenerateRound(request, env));
+      if (path === "/tournament/engine") return cors(await handleTournamentEngine(request, env));
       if (path === "/offline-library/manifest") return cors(await handleOfflineLibraryManifest(request, env));
       if (path === "/offline-library/all") return cors(await handleOfflineLibraryAll(request, env));
       if (path === "/offline-library/get") return cors(await handleOfflineLibraryGet(request, env));
@@ -92,6 +93,183 @@ function cors(response) {
   r.headers.set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
   r.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
   return r;
+}
+
+function tournamentCompletedSets(score) {
+  return score && Array.isArray(score.completedSets) ? score.completedSets : [];
+}
+function tournamentValidateScore(score, winner) {
+  if (!score || score.finished !== true) throw new Error("A completed scoreboard is required.");
+  if (winner !== "L" && winner !== "R") throw new Error("Winner must be L or R.");
+  const sets = tournamentCompletedSets(score);
+  if (!sets.length) throw new Error("At least one completed set is required.");
+  for (const set of sets) {
+    if (!Array.isArray(set.score) || set.score.length < 2 || !set.score.every(Number.isFinite)) {
+      throw new Error("Every completed set must contain two numeric scores.");
+    }
+  }
+}
+function tournamentGroupFixtures(payload) {
+  const config = payload.config || {};
+  const groups = Number(config.groups), per = Number(config.per);
+  if (!Number.isInteger(groups) || groups < 1 || groups > 64 || !Number.isInteger(per) || per < 2 || per > 64) {
+    throw new Error("Invalid group configuration.");
+  }
+  const assignments = payload.assignments || {};
+  for (let g = 0; g < groups; g++) for (let t = 0; t < per; t++) {
+    const team = assignments[g + ":" + t];
+    if (!Array.isArray(team) || team.length !== 2 || !team[0] || !team[1] || team[0] === team[1]) {
+      throw new Error("Every group team must contain two different players.");
+    }
+  }
+  const matches = []; let serial = 1;
+  for (let g = 0; g < groups; g++) for (let i = 0; i < per; i++) for (let j = i + 1; j < per; j++) {
+    matches.push({ id:"G" + (g + 1) + "-M" + serial++, group:g, a:g + ":" + i, b:g + ":" + j, court:null, status:"pending" });
+  }
+  return matches;
+}
+function tournamentTeamFixtures(payload) {
+  const clubs = Array.isArray(payload.clubs) ? payload.clubs : [];
+  const count = Number(payload.matchesPerEncounter);
+  if (clubs.length < 2 || ![3,5,7,9].includes(count)) throw new Error("Invalid team tournament configuration.");
+  clubs.forEach((club) => {
+    const players = Array.isArray(club && club.players) ? club.players.filter(Boolean) : [];
+    if (players.length < count * 2 || new Set(players.map((name) => String(name).trim().toLocaleLowerCase())).size !== players.length) {
+      throw new Error("Each club needs enough unique players for all doubles matches.");
+    }
+  });
+  const encounters = []; let serial = 0;
+  for (let i = 0; i < clubs.length; i++) for (let j = i + 1; j < clubs.length; j++) {
+    const id = "E" + ++serial;
+    encounters.push({ id, a:i, b:j, date:"", time:"", matches:Array.from({ length:count }, (_, k) => ({ id:id + "-D" + (k + 1), index:k, pairs:[[],[]], court:null, status:"pending" })) });
+  }
+  return encounters;
+}
+function tournamentGroupStandings(payload) {
+  const config = payload.config || {}, group = Number(payload.group), per = Number(config.per);
+  if (!Number.isInteger(group) || !Number.isInteger(per) || per < 2) throw new Error("Invalid group standings request.");
+  const teams = Array.from({ length:per }, (_, j) => ({ id:group + ":" + j, w:0, l:0, gw:0, gl:0, pf:0, pa:0, played:0 }));
+  const byId = new Map(teams.map((team) => [team.id, team]));
+  const approved = (Array.isArray(payload.matches) ? payload.matches : []).filter((match) => Number(match.group) === group && match.status === "approved");
+  for (const match of approved) {
+    const a = byId.get(match.a), b = byId.get(match.b); if (!a || !b) continue;
+    const winner = match.winner === "L" ? a : match.winner === "R" ? b : null; if (!winner) continue;
+    winner.w++; (winner === a ? b : a).l++; a.played++; b.played++;
+    for (const set of tournamentCompletedSets(match.score)) {
+      const x = Number(set.score && set.score[0]), y = Number(set.score && set.score[1]); if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+      a.pf += x; a.pa += y; b.pf += y; b.pa += x;
+      if (x > y) { a.gw++; b.gl++; } else if (y > x) { b.gw++; a.gl++; }
+    }
+  }
+  teams.sort((a,b) => {
+    if (a.w !== b.w) return b.w - a.w;
+    const tied = teams.filter((team) => team.w === a.w);
+    if (tied.length === 2) {
+      const head = approved.find((m) => m.a === a.id && m.b === b.id || m.a === b.id && m.b === a.id);
+      if (head && (head.winner === "L" || head.winner === "R")) return (head.winner === "L" ? head.a : head.b) === a.id ? -1 : 1;
+    }
+    return (b.gw - b.gl) - (a.gw - a.gl) || (b.pf - b.pa) - (a.pf - a.pa);
+  });
+  return teams;
+}
+function tournamentTeamStandings(payload) {
+  const clubs = Array.isArray(payload.clubs) ? payload.clubs : [], encounters = Array.isArray(payload.encounters) ? payload.encounters : [];
+  const rows = clubs.map((club, i) => ({ i, name:String(club && club.name || "Club " + (i + 1)), w:0, l:0, points:0, mw:0, ml:0, played:0, setsWon:0, setsLost:0, rallyFor:0, rallyAgainst:0, rank:0 }));
+  for (const encounter of encounters) {
+    const done = (encounter.matches || []).filter((m) => m.status === "approved" && (m.winner === "L" || m.winner === "R"));
+    for (const match of done) {
+      const a = rows[encounter.a], b = rows[encounter.b]; if (!a || !b) continue;
+      if (match.winner === "L") { a.mw++; b.ml++; a.points += 2; } else { b.mw++; a.ml++; b.points += 2; }
+      for (const set of tournamentCompletedSets(match.score)) {
+        const left = Number(set.score && set.score[0]), right = Number(set.score && set.score[1]); if (!Number.isFinite(left) || !Number.isFinite(right)) continue;
+        a.rallyFor += left; a.rallyAgainst += right; b.rallyFor += right; b.rallyAgainst += left;
+        if (left > right) { a.setsWon++; b.setsLost++; } else if (right > left) { b.setsWon++; a.setsLost++; }
+      }
+    }
+    if ((encounter.matches || []).length && done.length === encounter.matches.length) {
+      const aw = done.filter((m) => m.winner === "L").length, bw = done.length - aw; rows[encounter.a].played++; rows[encounter.b].played++;
+      if (aw > bw) { rows[encounter.a].w++; rows[encounter.b].l++; } else if (bw > aw) { rows[encounter.b].w++; rows[encounter.a].l++; }
+    }
+  }
+  const compare = (a,b) => b.w - a.w || b.setsWon - a.setsWon || b.rallyFor - a.rallyFor;
+  rows.sort((a,b) => compare(a,b) || a.i - b.i);
+  for (let i = 0; i < rows.length;) { let j = i + 1; while (j < rows.length && compare(rows[i], rows[j]) === 0) j++; for (let k = i; k < j; k++) rows[k].rank = i + 1; i = j; }
+  return rows;
+}
+async function handleTournamentEngine(request, env) {
+  if (request.method !== "POST") return json({ error:"Method not allowed" }, 405);
+  const body = await request.json().catch(() => ({}));
+  try { await requireOfflineLibrarySession(body, env); }
+  catch (_) { return json({ error:"Authenticated device session required" }, 401); }
+  const payload = body.payload && typeof body.payload === "object" ? body.payload : {};
+  try {
+    if (body.action === "group-fixtures") return json({ matches:tournamentGroupFixtures(payload) });
+    if (body.action === "team-fixtures") return json({ encounters:tournamentTeamFixtures(payload) });
+    if (body.action === "group-standings") return json({ standings:tournamentGroupStandings(payload) });
+    if (body.action === "team-standings") return json({ standings:tournamentTeamStandings(payload) });
+    if (body.action === "knockout-generate") return json({ draw:tournamentKnockoutGenerate(payload) });
+    if (body.action === "knockout-generate-custom") return json({ draw:tournamentKnockoutGenerateCustom(payload) });
+    if (body.action === "approve-result") {
+      tournamentValidateScore(payload.score, payload.winner);
+      const result = { status:"approved", winner:payload.winner, score:payload.score };
+      if (payload.left != null && payload.right != null) {
+        result.bracketResult = { winner:payload.winner === "L" ? payload.left : payload.right, loser:payload.winner === "L" ? payload.right : payload.left };
+      }
+      return json(result);
+    }
+    return json({ error:"Unknown tournament engine action" }, 400);
+  } catch (error) { return json({ error:error.message || "Tournament computation failed" }, 400); }
+}
+
+function tournamentNextPow2(n) { let p = 1; while (p < n) p *= 2; return p; }
+function tournamentPrevPow2(n) { let p = 1; while (p * 2 <= n) p *= 2; return p; }
+function tournamentByeNeed(n) { n = Number(n) || 0; return n < 2 ? 0 : Math.max(0, Math.min(n - tournamentPrevPow2(n), tournamentNextPow2(n) - n)); }
+function tournamentAutomaticByeIds(entryIds) {
+  const n = entryIds.length, count = tournamentByeNeed(n); if (!count) return [];
+  const pairs = (n - count) / 2; if (!Number.isInteger(pairs)) throw Error("Could not build valid Round 1 for " + n + " teams.");
+  const out = []; let consumed = 0, base = Math.floor(pairs / count), extra = pairs % count;
+  for (let i = 0; i < count; i++) { consumed += (base + (i < extra ? 1 : 0)) * 2; out.push(Number(entryIds[Math.min(n - 1, consumed + i)])); }
+  return out;
+}
+function tournamentBalancedSideSplits(ids, required) {
+  const cuts = [Math.ceil(ids.length / 2)]; if (ids.length % 2) cuts.push(Math.floor(ids.length / 2));
+  return cuts.map((cut) => { const top = ids.slice(0,cut), bottom = ids.slice(cut), topNeed = tournamentByeNeed(top.length), bottomNeed = tournamentByeNeed(bottom.length); return {cut,top,bottom,topNeed,bottomNeed,valid:topNeed+bottomNeed===required}; }).filter((item) => item.valid);
+}
+function tournamentBranchSideMatches(entryIds, byeIds, side, startId) {
+  const byes = new Set((byeIds || []).map(Number)), matches = [], non = [], byeSources = []; let id = startId;
+  entryIds.forEach((entryId,pos) => (byes.has(Number(entryId)) ? byeSources : non).push({src:Number(entryId),pos}));
+  if (non.length % 2) throw Error("BYE positions leave an odd number of Round-1 teams on the " + side + " side.");
+  const winners = [];
+  for (let i=0;i<non.length;i+=2) { const a=non[i],b=non[i+1]; matches.push({id,round:1,side,a:a.src,b:b.src}); winners.push({src:"W"+id,pos:(a.pos+b.pos)/2}); id++; }
+  const sources=[] , available=winners.slice();
+  byeSources.slice().sort((a,b)=>a.pos-b.pos).forEach((bye)=>{ if(!available.length) throw Error("No Round-1 winner is available for a BYE on the "+side+" side."); available.sort((a,b)=>Math.abs(a.pos-bye.pos)-Math.abs(b.pos-bye.pos)||a.pos-b.pos); const opp=available.shift(); matches.push({id,round:2,side,a:bye.pos<opp.pos?bye.src:opp.src,b:bye.pos<opp.pos?opp.src:bye.src}); sources.push({src:"W"+id,pos:(bye.pos+opp.pos)/2}); id++; });
+  available.sort((a,b)=>a.pos-b.pos); if(available.length%2)sources.push(available.shift());
+  for(let i=0;i<available.length;i+=2){const a=available[i],b=available[i+1];matches.push({id,round:2,side,a:a.src,b:b.src});sources.push({src:"W"+id,pos:(a.pos+b.pos)/2});id++;}
+  sources.sort((a,b)=>a.pos-b.pos);let round=3;
+  while(sources.length>1){const next=[];if(sources.length%2){let carryIndex=0;if(sources.length>2)carryIndex=Math.abs(sources[1].pos-sources[2].pos)<=Math.abs(sources[sources.length-3].pos-sources[sources.length-2].pos)?sources.length-1:0;next.push(sources.splice(carryIndex,1)[0]);}for(let i=0;i<sources.length;i+=2){const a=sources[i],b=sources[i+1];matches.push({id,round,side,a:a.src,b:b.src});next.push({src:"W"+id,pos:(a.pos+b.pos)/2});id++;}sources.splice(0,sources.length,...next.sort((a,b)=>a.pos-b.pos));round++;}
+  return {matches,winner:sources[0].src,nextId:id,round:round-1};
+}
+function tournamentCustomSideMatches(entryIds,byeIds,side,startId,preferredCut){
+  if(entryIds.length<4)return tournamentBranchSideMatches(entryIds,byeIds,side,startId);
+  const byeSet=new Set((byeIds||[]).map(Number)),required=byeSet.size;let splits=tournamentBalancedSideSplits(entryIds.map(Number),required),chosen=null;
+  if(preferredCut!=null)splits=splits.slice().sort((a,b)=>(a.cut===Number(preferredCut)?-1:0)-(b.cut===Number(preferredCut)?-1:0));
+  for(const split of splits){const topByes=split.top.filter((id)=>byeSet.has(Number(id))),bottomByes=split.bottom.filter((id)=>byeSet.has(Number(id)));if(topByes.length===split.topNeed&&bottomByes.length===split.bottomNeed){chosen={split,topByes,bottomByes};break;}}
+  if(!chosen)throw Error("Choose a balanced BYE pattern for the "+side+" side.");
+  const top=tournamentBranchSideMatches(chosen.split.top,chosen.topByes,side,startId),bottom=tournamentBranchSideMatches(chosen.split.bottom,chosen.bottomByes,side,top.nextId),round=Math.max(top.round,bottom.round)+1,id=bottom.nextId,matches=top.matches.concat(bottom.matches);matches.push({id,round,side,a:top.winner,b:bottom.winner});return {matches,winner:"W"+id,nextId:id+1,round};
+}
+function tournamentKnockoutGenerateCustom(payload){
+  const count=Number(payload.count),leftCount=Number(payload.leftCount),rightCount=count-leftCount;if(count<4||count>64)throw Error("Enter between 4 and 64 teams.");if(leftCount<1||rightCount<1)throw Error("Both sides need at least one team.");
+  const names=Array.isArray(payload.names)?payload.names:[],entries=Array.from({length:count},(_,i)=>({id:i+1,name:names[i]?String(names[i]):"Entry "+(i+1)})),left=entries.slice(0,leftCount).map((e)=>e.id),right=entries.slice(leftCount).map((e)=>e.id);
+  const leftByeIds=Array.isArray(payload.leftByeIds)?payload.leftByeIds.map(Number):tournamentAutomaticByeIds(left),rightByeIds=Array.isArray(payload.rightByeIds)?payload.rightByeIds.map(Number):tournamentAutomaticByeIds(right),needLeft=tournamentByeNeed(left.length),needRight=tournamentByeNeed(right.length);
+  if(leftByeIds.length!==needLeft||rightByeIds.length!==needRight)throw Error("Select exactly "+needLeft+" left BYE position(s) and "+needRight+" right BYE position(s).");if(leftByeIds.some((id)=>!left.includes(id))||rightByeIds.some((id)=>!right.includes(id)))throw Error("A BYE position is outside its side.");
+  const a=tournamentCustomSideMatches(left,leftByeIds,"left",1,payload.leftCut),b=tournamentCustomSideMatches(right,rightByeIds,"right",a.nextId,payload.rightCut),finalId=b.nextId,matches=a.matches.concat(b.matches);matches.push({id:finalId,round:Math.max(a.round,b.round)+1,side:"center",a:a.winner,b:b.winner,final:true});
+  return {layout:"template-center",templateTeams:count,sideCapacity:null,leftCount,leftByeIds,rightByeIds,leftBranchCut:payload.leftCut||null,rightBranchCut:payload.rightCut||null,title:payload.title||"Tournament",entries,matches,results:{},structureLocked:true};
+}
+function tournamentKnockoutGenerate(payload){
+  const names=(Array.isArray(payload.names)?payload.names:[]).map((name)=>String(name).trim()).filter(Boolean);if(names.length<2)throw Error("Enter at least two teams.");const size=tournamentNextPow2(names.length),slots=names.map((_,i)=>i+1).concat(Array(size-names.length).fill(null)),matches=[];let nextId=1,layer=slots,round=1;
+  while(layer.length>1){const output=[];for(let i=0;i<layer.length;i+=2){const a=layer[i],b=layer[i+1];if(a==null)output.push(b);else if(b==null)output.push(a);else{matches.push({id:nextId,round,a,b});output.push("W"+nextId++);}}layer=output;round++;}
+  if(payload.third){const semis=matches.filter((match)=>match.round===round-2);if(semis.length===2)matches.push({id:nextId++,round:round-1,a:"L"+semis[0].id,b:"L"+semis[1].id,third:true});}
+  return {layout:"ltr",title:payload.title||"Tournament",entries:names.map((name,i)=>({id:i+1,name})),matches,results:{}};
 }
 __name(cors, "cors");
 __name2(cors, "cors");

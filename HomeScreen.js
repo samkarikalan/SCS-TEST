@@ -2091,7 +2091,48 @@ var pwEl = document.getElementById('joinClubPasswordSection');
 if (pwEl) pwEl.style.display = 'none';
 
 // Load all my clubs
+clubsPageRefreshAccount();
 await _renderMyClubsList();
+}
+
+function clubsPageSelectTab(tab) {
+  var owned = tab !== 'joined';
+  var ownedPanel = document.getElementById('clubsOwnedPanel');
+  var joinedPanel = document.getElementById('clubsJoinedPanel');
+  var ownedTab = document.getElementById('clubsOwnedTab');
+  var joinedTab = document.getElementById('clubsJoinedTab');
+  if (ownedPanel) ownedPanel.hidden = !owned;
+  if (joinedPanel) joinedPanel.hidden = owned;
+  if (ownedTab) { ownedTab.classList.toggle('active', owned); ownedTab.setAttribute('aria-selected', owned ? 'true' : 'false'); }
+  if (joinedTab) { joinedTab.classList.toggle('active', !owned); joinedTab.setAttribute('aria-selected', owned ? 'false' : 'true'); }
+}
+
+function clubsPageRefreshAccount() {
+  var user = typeof authGetUser === 'function' ? authGetUser() : null;
+  var name = user && (user.nickname || user.displayName || user.name || user.email) || 'Not signed in';
+  var email = user && user.email || 'Sign in to view your clubs';
+  var avatar = document.getElementById('clubsAccountAvatar');
+  var nameEl = document.getElementById('clubsAccountName');
+  var emailEl = document.getElementById('clubsAccountEmail');
+  var action = document.getElementById('clubsAccountAction');
+  if (avatar) avatar.textContent = String(name).trim().slice(0, 2).toUpperCase() || 'U';
+  if (nameEl) nameEl.textContent = name;
+  if (emailEl) emailEl.textContent = email;
+  if (action) { action.textContent = user ? 'Logout' : 'Login'; action.classList.toggle('is-logout', !!user); }
+}
+
+function clubsAccountAction() {
+  var user = typeof authGetUser === 'function' ? authGetUser() : null;
+  if (user) { if (typeof authDoLogout === 'function') authDoLogout(); else if (typeof authLogout === 'function') authLogout(); }
+  else if (typeof authShowScreen === 'function') authShowScreen('login');
+}
+
+function clubsPageCreateClub() {
+  if (!(typeof authGetUser === 'function' && authGetUser())) { if (typeof authShowScreen === 'function') authShowScreen('login'); return; }
+  if (typeof _showClubSetupSheet === 'function') {
+    _showClubSetupSheet('vault');
+    if (typeof _clubSetupShowTab === 'function') _clubSetupShowTab('create');
+  }
 }
 
 function jcActivateClub(row) {
@@ -2233,12 +2274,15 @@ async function jcCancelJoinRequest(button) {
 
 async function _renderMyClubsList() {
 var inner = document.getElementById('myClubsListInner');
+var ownedInner = document.getElementById('myOwnedClubsListInner');
 if (!inner) return;
 inner.innerHTML = '<div class="jc-empty">Loading...</div>';
+if (ownedInner) ownedInner.innerHTML = '<div class="jc-empty">Loading...</div>';
 
 var user = (typeof authGetUser === 'function') ? authGetUser() : null;
 if (!user) {
 inner.innerHTML = '<div class="jc-empty">' + t('loginToSeeClubs') + '</div>';
+if (ownedInner) ownedInner.innerHTML = '<div class="jc-empty">Login to manage your club.</div>';
 return;
 }
 
@@ -2252,24 +2296,22 @@ var pending = await sbGet('club_join_requests',
   'user_account_id=eq.' + user.id + '&status=eq.pending&select=club_id').catch(function(){ return []; });
 var pendingIds = (pending || []).map(function(p){ return p.club_id; });
 
-if ((!memberships || !memberships.length) && !pendingIds.length) {
-  inner.innerHTML = '<div class="jc-empty">' + t('noClubsYetSearch') + '</div>';
-  return;
-}
-
 // Fetch club names
 var allIds = [...new Set([
   ...(memberships||[]).map(function(m){ return m.club_id; }),
   ...pendingIds
 ])];
 var clubs = allIds.length
-  ? await sbGet('clubs', 'id=in.(' + allIds.join(',') + ')&select=id,name').catch(function(){ return []; })
+  ? await sbGet('clubs', 'id=in.(' + allIds.join(',') + ')&select=id,name,created_by').catch(function(){ return []; })
   : [];
+var directlyOwned = await sbGet('clubs', 'created_by=eq.' + encodeURIComponent(user.id) + '&select=id,name,created_by').catch(function(){ return []; });
+directlyOwned.forEach(function(c){ if(!clubs.some(function(existing){return String(existing.id)===String(c.id)}))clubs.push(c); });
 var clubMap = {};
 clubs.forEach(function(c){ clubMap[c.id] = c.name; });
+var ownedIds = new Set(clubs.filter(function(c){ return String(c.created_by||'')===String(user.id); }).map(function(c){ return String(c.id); }));
 
 var activeClubId2 = (typeof getMyClub === 'function') ? ((getMyClub()||{}).id||null) : null;
-var html = '';
+var html = '', ownedHtml = '';
 
 // Member clubs — tick on active, tap others to activate
 (memberships || []).forEach(function(m) {
@@ -2279,7 +2321,7 @@ var html = '';
   var badge    = isActive
     ? '<span class="jc-club-badge jc-badge-active">' + (t('active')||'Active') + '</span>'
     : '<span class="jc-club-badge jc-badge-member">' + t('badgeMember') + '</span>';
-  html += '<div class="jc-club-row jc-club-item"' +
+  var rowHtml = '<div class="jc-club-row jc-club-item"' +
     (isActive ? '' : ' style="cursor:pointer;" onclick="jcActivateClub(this)"') +
     ' data-cid="' + jcEscapeHtml(m.club_id) + '" data-cname="' + jcEscapeHtml(cname) + '">' +
     '<div class="jc-club-icon">' + icon + '</div>' +
@@ -2291,6 +2333,13 @@ var html = '';
       '<button type="button" class="jc-club-leave-btn" onclick="event.stopPropagation();jcLeaveClub(this)">' + jcEscapeHtml(t('leaveClub') || 'Leave') + '</button>' +
     '</div>' +
   '</div>';
+  if (ownedIds.has(String(m.club_id))) {
+    ownedHtml += '<div class="jc-club-row jc-club-item"'+(isActive?'':' style="cursor:pointer" onclick="jcActivateClub(this)"')+' data-cid="'+jcEscapeHtml(m.club_id)+'" data-cname="'+jcEscapeHtml(cname)+'"><div class="jc-club-icon">'+icon+'</div><div class="jc-club-info"><div class="jc-club-name">'+jcEscapeHtml(cname)+'</div><div class="jc-club-nick">Club owner · '+jcEscapeHtml(t('asNick'))+' '+jcEscapeHtml(m.nickname)+'</div></div><div class="jc-club-actions"><span class="jc-club-badge jc-badge-active">Owner</span></div></div>';
+  } else html += rowHtml;
+});
+
+clubs.filter(function(c){return ownedIds.has(String(c.id)) && !(memberships||[]).some(function(m){return String(m.club_id)===String(c.id)})}).forEach(function(c){
+  ownedHtml += '<div class="jc-club-row jc-club-item" data-cid="'+jcEscapeHtml(c.id)+'" data-cname="'+jcEscapeHtml(c.name)+'"><div class="jc-club-icon">🏢</div><div class="jc-club-info"><div class="jc-club-name">'+jcEscapeHtml(c.name)+'</div><div class="jc-club-nick">Club owner</div></div><div class="jc-club-actions"><span class="jc-club-badge jc-badge-active">Owner</span></div></div>';
 });
 
 // Pending clubs
@@ -2311,9 +2360,11 @@ pendingIds.forEach(function(cid) {
 });
 
 inner.innerHTML = html || '<div class="jc-empty">' + t('noClubsYet') + '</div>';
+if (ownedInner) ownedInner.innerHTML = ownedHtml || '<div class="jc-empty">You have not created a club yet.</div>';
 
 } catch(e) {
 inner.innerHTML = '<div class="jc-empty">' + t('couldNotLoadClubs') + '</div>';
+if (ownedInner) ownedInner.innerHTML = '<div class="jc-empty">Could not load managed clubs.</div>';
 }
 }
 

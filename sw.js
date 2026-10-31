@@ -1,18 +1,18 @@
 // SCS_BUILD_50_MYHUB_EMBEDDED_CLUBS_REPORT
 /* Sports Club Scheduler service worker — complete installed-app updates. */
-const CACHE_NAME = 'scs-cache-V554';
-const APP_SHELL = './index.html?v=V554';
+const CACHE_NAME = 'scs-cache-V560';
+const APP_SHELL = './index.html?v=V560';
 
 const ASSETS = [
   APP_SHELL,
   './scs-practice-card-pro.png', './scs-tournament-card-pro.png', './scs-practice-card-textfree.png', './scs-tournament-card-textfree.png',
-  './ui.css?v=V552', './rounds.css?v=V149',
-  './shared-court-popup.js?v=V398', './shared-court-popup.css?v=V398', './scs-api.js?v=V434', './team-tournament.js?v=V411', './team-tournament.css?v=V321', './shared-match-card.css?v=V395', './shared-match-center.js?v=V395', './group-tournament.js?v=V415', './group-tournament.css?v=V414', './tournament-team-picker.js?v=V402', './tournament-players-page.js?v=V403', './tournament-bracket.js?v=V454', './tournament-bracket.css?v=V454', './scoring.js?v=V367', './court-center.js?v=V406', './offline-db.js?v=V149', './offline-rounds.js?v=V149', './full-schedule.js?v=V149', './snapshot.js?v=V149', './supabase.js?v=V411', './auth.js?v=V149',
-  './authUI.js?v=V552', './subscription.js?v=V149', './HomeScreen.js?v=V552',
+  './ui.css?v=V560', './rounds.css?v=V149',
+  './shared-court-popup.js?v=V398', './shared-court-popup.css?v=V398', './scs-api.js?v=V434', './tournament-engine.js?v=V559', './team-tournament.js?v=V558', './team-tournament.css?v=V321', './shared-match-card.css?v=V395', './shared-match-center.js?v=V395', './group-tournament.js?v=V559', './group-tournament.css?v=V414', './tournament-team-picker.js?v=V402', './tournament-players-page.js?v=V403', './tournament-bracket.js?v=V559', './tournament-bracket.css?v=V454', './scoring.js?v=V558', './court-center.js?v=V406', './offline-db.js?v=V149', './offline-rounds.js?v=V149', './full-schedule.js?v=V149', './snapshot.js?v=V149', './supabase.js?v=V411', './auth.js?v=V149',
+  './authUI.js?v=V552', './subscription.js?v=V149', './HomeScreen.js?v=V560',
   './engjap.js?v=V149', './main.js?v=V552', './games.js?v=V149',
   './rounds.js?v=V149', './mbm.js?v=V149', './players.js?v=V149',
   './importPlayers.js?v=V149', './settings.js?v=V553', './summary.js?v=V149',
-  './help.js?v=V149', './profile.js?v=V149', './dashboard.js?v=V149',
+  './help.js?v=V149', './profile.js?v=V149', './account-status.js?v=V557', './dashboard.js?v=V149',
   './slots.js?v=V552', './notifications.js?v=V149', './viewer.js?v=V149',
   './report.js?v=V149', './manifest.json?v=V209',
   './male.png?v=V149', './female.png?v=V149', './win-cup.png?v=V149',
@@ -56,7 +56,7 @@ self.addEventListener('activate', function(event) {
 function isApiRequest(url) {
   return url.includes('supabase.co') || url.includes('workers.dev') ||
     url.includes('/db/') || url.includes('/auth/') || url.includes('/sub/') ||
-    url.includes('/generate-round');
+    url.includes('/generate-round') || url.includes('/tournament/');
 }
 
 self.addEventListener('fetch', function(event) {

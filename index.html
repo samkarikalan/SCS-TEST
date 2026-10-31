@@ -163,17 +163,18 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="auth.js?v=V149" defer></script>
 
   <script src="authUI.js?v=V149" defer></script>
+  <script src="tournament-engine.js?v=V559" defer></script>
 
   <script src="subscription.js?v=V149" defer></script>
 
-  <script src="HomeScreen.js?v=V551" defer></script>
+  <script src="HomeScreen.js?v=V560" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V149" defer></script>
-  <script src="scoring.js?v=V367" defer></script>
-  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V465" defer></script>
+  <script src="scoring.js?v=V558" defer></script>
+  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V559" defer></script>
   <script src="court-center.js?v=V425" defer></script>
 
   <script src="games.js?v=V149" defer></script>
@@ -204,7 +205,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="report.js?v=V149" defer></script>
 
-  <link rel="stylesheet" href="ui.css?v=V551">
+  <link rel="stylesheet" href="ui.css?v=V560">
   <style id="simpleAppBottomBarStyles">
     /* Flat, theme-aware navigation shared by all three app hubs. */
     body #homeMoreSectionV#homeMoreSectionV .viewer-action-bar,
@@ -712,7 +713,7 @@ function scsStartKnockoutTournament(){
   alert('Tournament is still loading. Please try again.');
 }
 </script>
-<link rel="stylesheet" href="./group-tournament.css?v=V414"><script src="./shared-match-center.js?v=V395" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V321"><link rel="stylesheet" href="./shared-match-card.css?v=V395"><script src="./scs-api.js?v=V463" defer></script><script src="./group-tournament.js?v=V419" defer></script><script src="./team-tournament.js?v=V411" defer></script>
+<link rel="stylesheet" href="./group-tournament.css?v=V414"><script src="./shared-match-center.js?v=V395" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V321"><link rel="stylesheet" href="./shared-match-card.css?v=V395"><script src="./scs-api.js?v=V463" defer></script><script src="./group-tournament.js?v=V559" defer></script><script src="./team-tournament.js?v=V558" defer></script>
 
 <style id="scs-tournament-manager-v1">
 .scs-tmgr-overlay{position:fixed;inset:0;z-index:10038;background:rgba(3,8,18,.78);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;padding:16px}
@@ -2667,6 +2668,25 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
 
 <div class="clubs-page-shell" style="padding:14px;">
 
+  <section id="clubsAccountCard" class="clubs-account-card" aria-label="Account">
+    <div class="clubs-account-avatar" id="clubsAccountAvatar">U</div>
+    <div class="clubs-account-copy"><strong id="clubsAccountName">Not signed in</strong><span id="clubsAccountEmail">Sign in to view your clubs</span></div>
+    <button type="button" id="clubsAccountAction" class="clubs-account-action" onclick="clubsAccountAction()">Login</button>
+  </section>
+
+  <div class="clubs-page-tabs" role="tablist" aria-label="Club lists">
+    <button type="button" id="clubsOwnedTab" class="active" role="tab" aria-selected="true" aria-controls="clubsOwnedPanel" onclick="clubsPageSelectTab('owned')">My Clubs</button>
+    <button type="button" id="clubsJoinedTab" role="tab" aria-selected="false" aria-controls="clubsJoinedPanel" onclick="clubsPageSelectTab('joined')">Joined Clubs</button>
+  </div>
+
+  <section id="clubsOwnedPanel" class="clubs-tab-panel" role="tabpanel" aria-labelledby="clubsOwnedTab">
+    <div class="jc-section-title">Clubs I manage</div>
+    <div id="myOwnedClubsListInner"><div class="jc-empty">Loading...</div></div>
+    <button type="button" class="clubs-create-button" onclick="clubsPageCreateClub()">＋ Create a Club</button>
+  </section>
+
+  <section id="clubsJoinedPanel" class="clubs-tab-panel" role="tabpanel" aria-labelledby="clubsJoinedTab" hidden>
+
   <!-- My Clubs list -->
 
   <div id="myClubsList" style="margin-bottom:14px;">
@@ -2743,6 +2763,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
 
   <div id="joinClubStatusCard" style="display:none;"></div>
   <div id="joinClubSearchSection" style="display:none;"></div>
+  </section>
 </div>
 
   </div>
