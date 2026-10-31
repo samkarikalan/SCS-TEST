@@ -4198,7 +4198,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V551', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V554', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4702,7 +4702,20 @@ window.scsActivityClubAction=function(){
 window.scsActivityShowHome=function(){var e=document.getElementById('scsActivityHome');if(e)e.hidden=false;scsActivityRefreshClub();};
 window.addEventListener('storage',function(e){if(!e.key||e.key==='appLanguage'||/^kbrr_my_club_(id|name)$/.test(e.key))scsActivityRefreshClub();});
 
-window.scsActivityChoose=function(mode){var e=document.getElementById('scsActivityHome');if(e)e.hidden=true;window.scsActivityMode=mode;if(mode==='tournament'){if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();}else if(typeof showHomeScreen==='function'){showHomeScreen();}};
+window.scsActivityChoose=function(mode){
+ var e=document.getElementById('scsActivityHome');if(e)e.hidden=true;
+ window.scsActivityMode=mode;
+ if(mode==='tournament'){
+  if(typeof scsOpenTournamentManager==='function')scsOpenTournamentManager();
+ }else if(mode==='practice'){
+  // Practice Manager has its own home inside homePageOverlay. Enter that home
+  // explicitly; the generic showHomeScreen() otherwise restores the previous
+  // My Hub state (scsPracticeShowHub remains checked after a prior visit).
+  var hub=document.getElementById('scsPracticeShowHub');
+  if(hub){hub.checked=false;hub.dispatchEvent(new Event('change',{bubbles:true}));}
+  if(typeof showHomeScreen==='function')showHomeScreen();
+ }
+};
 window.scsActivityReturnHome=function(){window.scsTournamentParentStack=[];window.scsTournamentReturnPage=null;['scsTournamentManager','scsTournamentContinue','scsTournamentLive','scsTournamentTypePicker'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=true});window.scsActivityMode=null;scsActivityShowHome();};
 </script>
 <div id="scsTournamentManager" class="scs-tmgr-overlay scs-tmgr-fullpage" hidden>
