@@ -2084,7 +2084,7 @@ async function scsCreateSubClub(){
   catch(e){if(out)out.textContent=e.message||String(e);}
 }
 
-/* V550: Tournament roster lists main-club and sub-club memberships.
+/* V551: Tournament roster lists main-club and sub-club memberships.
    The registration form and Practice player manager remain unchanged. */
 var _scsTournamentRoster=[],_scsTournamentClubs=[],_scsTournamentMainClub=null;
 function scsTournamentPlayersFilterSelect(id){
@@ -2100,20 +2100,47 @@ function scsTournamentClubTint(id){
   for(let i=0;i<key.length;i++)hash=((hash*31)+key.charCodeAt(i))>>>0;
   return colors[hash%colors.length];
 }
+function scsTournamentPlayersMenuOpen(){
+  const drawer=document.getElementById('scsTPlayersClubDrawer');
+  const overlay=document.getElementById('scsTPlayersDrawerOverlay');
+  if(!drawer||!overlay)return;
+  drawer.hidden=false;overlay.hidden=false;
+  document.querySelector('#scsTournamentPlayersListPage .scs-tplayer-menu-toggle')?.setAttribute('aria-expanded','true');
+  const search=document.getElementById('scsTPlayersClubSearch');if(search)search.value='';
+  scsTournamentPlayersMenuFilter();
+}
+function scsTournamentPlayersMenuClose(){
+  const drawer=document.getElementById('scsTPlayersClubDrawer');
+  const overlay=document.getElementById('scsTPlayersDrawerOverlay');
+  if(drawer)drawer.hidden=true;if(overlay)overlay.hidden=true;
+  document.querySelector('#scsTournamentPlayersListPage .scs-tplayer-menu-toggle')?.setAttribute('aria-expanded','false');
+}
+function scsTournamentPlayersMenuFilter(){
+  const q=(document.getElementById('scsTPlayersClubSearch')?.value||'').trim().toLocaleLowerCase();
+  document.querySelectorAll('#scsTPlayersFilterPills .scs-tplayer-filter-pill').forEach(b=>{
+    b.hidden=!b.dataset.clubName.toLocaleLowerCase().includes(q);
+  });
+}
 function scsTournamentPlayersRenderFilters(){
   const host=document.getElementById('scsTPlayersFilterPills');
   const choice=document.getElementById('scsTPlayersSubclub');
   if(!host||!choice)return;
+  const selected=document.getElementById('scsTPlayersSelectedName');
+  if(selected)selected.textContent=choice.selectedOptions[0]?.textContent||'All';
   host.replaceChildren();
   Array.from(choice.options).filter(o=>!o.hidden).forEach(o=>{
     const b=document.createElement('button');
     b.type='button';b.className='scs-tplayer-filter-pill';
-    b.textContent=o.textContent;
-    if(o.value&&String(o.value)!==String(_scsTournamentMainClub?.id))b.style.setProperty('--scs-subclub-color',scsTournamentClubTint(o.value));
+    b.dataset.clubName=o.textContent;
+    const dot=document.createElement('span');dot.className='scs-tplayer-club-dot';
+    dot.style.setProperty('--scs-subclub-color',o.value?scsTournamentClubTint(o.value):'#8276d9');
+    const name=document.createElement('span');name.textContent=o.textContent;
+    b.append(dot,name);
     b.setAttribute('aria-pressed',String(o.value===choice.value));
-    b.onclick=()=>scsTournamentPlayersFilterSelect(o.value);
+    b.onclick=()=>{scsTournamentPlayersFilterSelect(o.value);scsTournamentPlayersMenuClose()};
     host.appendChild(b);
   });
+  scsTournamentPlayersMenuFilter();
 }
 async function scsTournamentPlayersListOpen(refresh){
   const choice=document.getElementById('scsTPlayersSubclub');
@@ -2181,6 +2208,7 @@ function scsTournamentPlayersListAdd(){
   if(typeof vaultRenderRegister==='function')vaultRenderRegister();
 }
 function scsTournamentPlayersListClose(){
+  scsTournamentPlayersMenuClose();
   window.__scsTournamentRegistration=false;
   window.__scsTournamentRegistrationClub=null;
   document.body.classList.remove('scs-tournament-register-open');
