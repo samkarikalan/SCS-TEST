@@ -10,6 +10,8 @@ var __defProp222 = Object.defineProperty;
 var __name222 = /* @__PURE__ */ __name22((target, value) => __defProp222(target, "name", { value, configurable: true }), "__name");
 var __defProp2222 = Object.defineProperty;
 var __name2222 = /* @__PURE__ */ __name222((target, value) => __defProp2222(target, "name", { value, configurable: true }), "__name");
+var __defProp22222 = Object.defineProperty;
+var __name22222 = /* @__PURE__ */ __name2222((target, value) => __defProp22222(target, "name", { value, configurable: true }), "__name");
 var worker_default = {
   async fetch(request, env) {
     if (request.method === "OPTIONS") {
@@ -18,57 +20,108 @@ var worker_default = {
     const url = new URL(request.url);
     const path = url.pathname;
     try {
-      if (path.startsWith("/db/")) return cors(await handleDb(request, env, path));
-      if (path === "/club/verify-password") return cors(await handleClubVerifyPassword(request, env));
-      if (path === "/auth/send-otp") return cors(await handleSendOtp(request, env));
-      if (path === "/auth/verify-otp") return cors(await handleVerifyOtp(request, env));
-      if (path === "/auth/supabase-otp") return cors(await handleSupabaseOtp(request, env));
-      if (path === "/auth/supabase-verify") return cors(await handleSupabaseVerify(request, env));
-      if (path === "/auth/line/start") return cors(await handleLineStart(request, env));
-      if (path === "/auth/line/callback") return cors(await handleLineCallback(request, env));
-      if (path === "/auth/line/complete") return cors(await handleLineComplete(request, env));
-      if (path === "/auth/line/nickname") return cors(await handleLineNickname(request, env));
-      if (path === "/auth/nickname") return cors(await handleNicknameUpdate(request, env));
-      if (path === "/auth/line/handoff/create") return cors(await handleLineHandoffCreate(request, env));
-      if (path === "/auth/line/handoff/status") return cors(await handleLineHandoffStatus(request, env));
-      if (path === "/auth/line/device") return cors(await handleLineDevice(request, env));
-      if (path === "/auth/google/start") return cors(await handleGoogleStart(request, env));
-      if (path === "/auth/google/callback") return cors(await handleGoogleCallback(request, env));
-      if (path === "/auth/google/complete") return cors(await handleGoogleComplete(request, env));
-      if (path === "/auth/google/nickname") return cors(await handleGoogleNickname(request, env));
-      if (path === "/auth/google/handoff/create") return cors(await handleLineHandoffCreate(request, env));
-      if (path === "/auth/google/handoff/status") return cors(await handleLineHandoffStatus(request, env));
-      if (path === "/auth/google/device") return cors(await handleGoogleDevice(request, env));
-      if (path === "/sub/verify") return cors(await handleSubVerify(request, env));
-      if (path === "/sub/check") return cors(await handleSubCheck(request, env));
-      if (path === "/sub/activate") return cors(await handleSubActivate(request, env));
-      if (path === "/sub/restore") return cors(await handleSubRestore(request, env));
-      if (path === "/sub/register-session") return cors(await handleSubRegisterSession(request, env));
-      if (path === "/sub/validate-session") return cors(await handleSubValidateSession(request, env));
-      if (path === "/sub/purchase-request") return cors(await handlePurchaseRequest(request, env));
-      if (path === "/sub/purchase-status") return cors(await handlePurchaseStatus(request, env));
-      if (path === "/sub/purchase-cancel") return cors(await handlePurchaseCancel(request, env));
-      if (path === "/sub/app-config") return cors(await handleAppConfig(request, env));
-      if (path === "/sub/admin-requests") return cors(await handleAdminRequests(request, env));
-      if (path === "/sub/admin-activate") return cors(await handleAdminActivate(request, env));
-      if (path === "/sub/purchase-cancel-by-id") return cors(await handlePurchaseCancelById(request, env));
-      if (path === "/sub/register-trial") return cors(await handleRegisterTrial(request, env));
-      if (path === "/sub/admin-clubs") return cors(await handleAdminClubs(request, env));
-      if (path === "/sub/admin-subscribers") return cors(await handleAdminSubscribers(request, env));
-      if (path === "/generate-round") return cors(await handleGenerateRound(request, env));
-      if (path === "/tournament/engine") return cors(await handleTournamentEngine(request, env));
-      if (path === "/offline-library/manifest") return cors(await handleOfflineLibraryManifest(request, env));
-      if (path === "/offline-library/all") return cors(await handleOfflineLibraryAll(request, env));
-      if (path === "/offline-library/get") return cors(await handleOfflineLibraryGet(request, env));
-      if (path === "/offline-library/put") return cors(await handleOfflineLibraryPut(request, env));
-      if (path === "/offline-library/delete") return cors(await handleOfflineLibraryDelete(request, env));
-      if (path === "/club/create") return cors(await handleClubCreate(request, env));
-      if (path === "/club/my-clubs") return cors(await handleClubMyClubs(request, env));
-      if (path === "/club/organizers") return cors(await handleClubOrganizers(request, env));
-      if (path === "/club/grant-organizer") return cors(await handleClubGrantOrganizer(request, env));
-      if (path === "/club/revoke-organizer") return cors(await handleClubRevokeOrganizer(request, env));
-      if (path === "/club/search-members") return cors(await handleClubSearchMembers(request, env));
-      if (path === "/health") return cors(json({ status: "ok" }));
+      if (path.startsWith("/db/"))
+        return cors(await handleDb(request, env, path));
+      if (path === "/club/verify-password")
+        return cors(await handleClubVerifyPassword(request, env));
+      if (path === "/auth/send-otp")
+        return cors(await handleSendOtp(request, env));
+      if (path === "/auth/verify-otp")
+        return cors(await handleVerifyOtp(request, env));
+      if (path === "/auth/supabase-otp")
+        return cors(await handleSupabaseOtp(request, env));
+      if (path === "/auth/supabase-verify")
+        return cors(await handleSupabaseVerify(request, env));
+      if (path === "/auth/line/start")
+        return cors(await handleLineStart(request, env));
+      if (path === "/auth/line/callback")
+        return cors(await handleLineCallback(request, env));
+      if (path === "/auth/line/complete")
+        return cors(await handleLineComplete(request, env));
+      if (path === "/auth/line/nickname")
+        return cors(await handleLineNickname(request, env));
+      if (path === "/auth/nickname")
+        return cors(await handleNicknameUpdate(request, env));
+      if (path === "/auth/line/handoff/create")
+        return cors(await handleLineHandoffCreate(request, env));
+      if (path === "/auth/line/handoff/status")
+        return cors(await handleLineHandoffStatus(request, env));
+      if (path === "/auth/line/device")
+        return cors(await handleLineDevice(request, env));
+      if (path === "/auth/google/start")
+        return cors(await handleGoogleStart(request, env));
+      if (path === "/auth/google/callback")
+        return cors(await handleGoogleCallback(request, env));
+      if (path === "/auth/google/complete")
+        return cors(await handleGoogleComplete(request, env));
+      if (path === "/auth/google/nickname")
+        return cors(await handleGoogleNickname(request, env));
+      if (path === "/auth/google/handoff/create")
+        return cors(await handleLineHandoffCreate(request, env));
+      if (path === "/auth/google/handoff/status")
+        return cors(await handleLineHandoffStatus(request, env));
+      if (path === "/auth/google/device")
+        return cors(await handleGoogleDevice(request, env));
+      if (path === "/sub/verify")
+        return cors(await handleSubVerify(request, env));
+      if (path === "/sub/check")
+        return cors(await handleSubCheck(request, env));
+      if (path === "/sub/activate")
+        return cors(await handleSubActivate(request, env));
+      if (path === "/sub/restore")
+        return cors(await handleSubRestore(request, env));
+      if (path === "/sub/register-session")
+        return cors(await handleSubRegisterSession(request, env));
+      if (path === "/sub/validate-session")
+        return cors(await handleSubValidateSession(request, env));
+      if (path === "/sub/purchase-request")
+        return cors(await handlePurchaseRequest(request, env));
+      if (path === "/sub/purchase-status")
+        return cors(await handlePurchaseStatus(request, env));
+      if (path === "/sub/purchase-cancel")
+        return cors(await handlePurchaseCancel(request, env));
+      if (path === "/sub/app-config")
+        return cors(await handleAppConfig(request, env));
+      if (path === "/sub/admin-requests")
+        return cors(await handleAdminRequests(request, env));
+      if (path === "/sub/admin-activate")
+        return cors(await handleAdminActivate(request, env));
+      if (path === "/sub/purchase-cancel-by-id")
+        return cors(await handlePurchaseCancelById(request, env));
+      if (path === "/sub/register-trial")
+        return cors(await handleRegisterTrial(request, env));
+      if (path === "/sub/admin-clubs")
+        return cors(await handleAdminClubs(request, env));
+      if (path === "/sub/admin-subscribers")
+        return cors(await handleAdminSubscribers(request, env));
+      if (path === "/generate-round")
+        return cors(await handleGenerateRound(request, env));
+      if (path === "/tournament/engine")
+        return cors(await handleTournamentEngine(request, env));
+      if (path === "/offline-library/manifest")
+        return cors(await handleOfflineLibraryManifest(request, env));
+      if (path === "/offline-library/all")
+        return cors(await handleOfflineLibraryAll(request, env));
+      if (path === "/offline-library/get")
+        return cors(await handleOfflineLibraryGet(request, env));
+      if (path === "/offline-library/put")
+        return cors(await handleOfflineLibraryPut(request, env));
+      if (path === "/offline-library/delete")
+        return cors(await handleOfflineLibraryDelete(request, env));
+      if (path === "/club/create")
+        return cors(await handleClubCreate(request, env));
+      if (path === "/club/my-clubs")
+        return cors(await handleClubMyClubs(request, env));
+      if (path === "/club/organizers")
+        return cors(await handleClubOrganizers(request, env));
+      if (path === "/club/grant-organizer")
+        return cors(await handleClubGrantOrganizer(request, env));
+      if (path === "/club/revoke-organizer")
+        return cors(await handleClubRevokeOrganizer(request, env));
+      if (path === "/club/search-members")
+        return cors(await handleClubSearchMembers(request, env));
+      if (path === "/health")
+        return cors(json({ status: "ok" }));
       return cors(json({ error: "Not found" }, 404));
     } catch (e) {
       console.error("Worker error:", e);
@@ -87,6 +140,7 @@ __name2(json, "json");
 __name22(json, "json");
 __name222(json, "json");
 __name2222(json, "json");
+__name22222(json, "json");
 function cors(response) {
   const r = new Response(response.body, response);
   r.headers.set("Access-Control-Allow-Origin", "*");
@@ -94,21 +148,26 @@ function cors(response) {
   r.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
   return r;
 }
-
+__name(cors, "cors");
 function tournamentCompletedSets(score) {
   return score && Array.isArray(score.completedSets) ? score.completedSets : [];
 }
+__name(tournamentCompletedSets, "tournamentCompletedSets");
 function tournamentValidateScore(score, winner) {
-  if (!score || score.finished !== true) throw new Error("A completed scoreboard is required.");
-  if (winner !== "L" && winner !== "R") throw new Error("Winner must be L or R.");
+  if (!score || score.finished !== true)
+    throw new Error("A completed scoreboard is required.");
+  if (winner !== "L" && winner !== "R")
+    throw new Error("Winner must be L or R.");
   const sets = tournamentCompletedSets(score);
-  if (!sets.length) throw new Error("At least one completed set is required.");
+  if (!sets.length)
+    throw new Error("At least one completed set is required.");
   for (const set of sets) {
     if (!Array.isArray(set.score) || set.score.length < 2 || !set.score.every(Number.isFinite)) {
       throw new Error("Every completed set must contain two numeric scores.");
     }
   }
 }
+__name(tournamentValidateScore, "tournamentValidateScore");
 function tournamentGroupFixtures(payload) {
   const config = payload.config || {};
   const groups = Number(config.groups), per = Number(config.per);
@@ -116,166 +175,363 @@ function tournamentGroupFixtures(payload) {
     throw new Error("Invalid group configuration.");
   }
   const assignments = payload.assignments || {};
-  for (let g = 0; g < groups; g++) for (let t = 0; t < per; t++) {
-    const team = assignments[g + ":" + t];
-    if (!Array.isArray(team) || team.length !== 2 || !team[0] || !team[1] || team[0] === team[1]) {
-      throw new Error("Every group team must contain two different players.");
+  for (let g = 0; g < groups; g++)
+    for (let t = 0; t < per; t++) {
+      const team = assignments[g + ":" + t];
+      if (!Array.isArray(team) || team.length !== 2 || !team[0] || !team[1] || team[0] === team[1]) {
+        throw new Error("Every group team must contain two different players.");
+      }
     }
-  }
-  const matches = []; let serial = 1;
-  for (let g = 0; g < groups; g++) for (let i = 0; i < per; i++) for (let j = i + 1; j < per; j++) {
-    matches.push({ id:"G" + (g + 1) + "-M" + serial++, group:g, a:g + ":" + i, b:g + ":" + j, court:null, status:"pending" });
-  }
+  const matches = [];
+  let serial = 1;
+  for (let g = 0; g < groups; g++)
+    for (let i = 0; i < per; i++)
+      for (let j = i + 1; j < per; j++) {
+        matches.push({ id: "G" + (g + 1) + "-M" + serial++, group: g, a: g + ":" + i, b: g + ":" + j, court: null, status: "pending" });
+      }
   return matches;
 }
+__name(tournamentGroupFixtures, "tournamentGroupFixtures");
 function tournamentTeamFixtures(payload) {
   const clubs = Array.isArray(payload.clubs) ? payload.clubs : [];
   const count = Number(payload.matchesPerEncounter);
-  if (clubs.length < 2 || ![3,5,7,9].includes(count)) throw new Error("Invalid team tournament configuration.");
+  if (clubs.length < 2 || ![3, 5, 7, 9].includes(count))
+    throw new Error("Invalid team tournament configuration.");
   clubs.forEach((club) => {
     const players = Array.isArray(club && club.players) ? club.players.filter(Boolean) : [];
     if (players.length < count * 2 || new Set(players.map((name) => String(name).trim().toLocaleLowerCase())).size !== players.length) {
       throw new Error("Each club needs enough unique players for all doubles matches.");
     }
   });
-  const encounters = []; let serial = 0;
-  for (let i = 0; i < clubs.length; i++) for (let j = i + 1; j < clubs.length; j++) {
-    const id = "E" + ++serial;
-    encounters.push({ id, a:i, b:j, date:"", time:"", matches:Array.from({ length:count }, (_, k) => ({ id:id + "-D" + (k + 1), index:k, pairs:[[],[]], court:null, status:"pending" })) });
-  }
+  const encounters = [];
+  let serial = 0;
+  for (let i = 0; i < clubs.length; i++)
+    for (let j = i + 1; j < clubs.length; j++) {
+      const id = "E" + ++serial;
+      encounters.push({ id, a: i, b: j, date: "", time: "", matches: Array.from({ length: count }, (_, k) => ({ id: id + "-D" + (k + 1), index: k, pairs: [[], []], court: null, status: "pending" })) });
+    }
   return encounters;
 }
+__name(tournamentTeamFixtures, "tournamentTeamFixtures");
 function tournamentGroupStandings(payload) {
   const config = payload.config || {}, group = Number(payload.group), per = Number(config.per);
-  if (!Number.isInteger(group) || !Number.isInteger(per) || per < 2) throw new Error("Invalid group standings request.");
-  const teams = Array.from({ length:per }, (_, j) => ({ id:group + ":" + j, w:0, l:0, gw:0, gl:0, pf:0, pa:0, played:0 }));
+  if (!Number.isInteger(group) || !Number.isInteger(per) || per < 2)
+    throw new Error("Invalid group standings request.");
+  const teams = Array.from({ length: per }, (_, j) => ({ id: group + ":" + j, w: 0, l: 0, gw: 0, gl: 0, pf: 0, pa: 0, played: 0 }));
   const byId = new Map(teams.map((team) => [team.id, team]));
   const approved = (Array.isArray(payload.matches) ? payload.matches : []).filter((match) => Number(match.group) === group && match.status === "approved");
   for (const match of approved) {
-    const a = byId.get(match.a), b = byId.get(match.b); if (!a || !b) continue;
-    const winner = match.winner === "L" ? a : match.winner === "R" ? b : null; if (!winner) continue;
-    winner.w++; (winner === a ? b : a).l++; a.played++; b.played++;
+    const a = byId.get(match.a), b = byId.get(match.b);
+    if (!a || !b)
+      continue;
+    const winner = match.winner === "L" ? a : match.winner === "R" ? b : null;
+    if (!winner)
+      continue;
+    winner.w++;
+    (winner === a ? b : a).l++;
+    a.played++;
+    b.played++;
     for (const set of tournamentCompletedSets(match.score)) {
-      const x = Number(set.score && set.score[0]), y = Number(set.score && set.score[1]); if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
-      a.pf += x; a.pa += y; b.pf += y; b.pa += x;
-      if (x > y) { a.gw++; b.gl++; } else if (y > x) { b.gw++; a.gl++; }
+      const x = Number(set.score && set.score[0]), y = Number(set.score && set.score[1]);
+      if (!Number.isFinite(x) || !Number.isFinite(y))
+        continue;
+      a.pf += x;
+      a.pa += y;
+      b.pf += y;
+      b.pa += x;
+      if (x > y) {
+        a.gw++;
+        b.gl++;
+      } else if (y > x) {
+        b.gw++;
+        a.gl++;
+      }
     }
   }
-  teams.sort((a,b) => {
-    if (a.w !== b.w) return b.w - a.w;
+  teams.sort((a, b) => {
+    if (a.w !== b.w)
+      return b.w - a.w;
     const tied = teams.filter((team) => team.w === a.w);
     if (tied.length === 2) {
       const head = approved.find((m) => m.a === a.id && m.b === b.id || m.a === b.id && m.b === a.id);
-      if (head && (head.winner === "L" || head.winner === "R")) return (head.winner === "L" ? head.a : head.b) === a.id ? -1 : 1;
+      if (head && (head.winner === "L" || head.winner === "R"))
+        return (head.winner === "L" ? head.a : head.b) === a.id ? -1 : 1;
     }
-    return (b.gw - b.gl) - (a.gw - a.gl) || (b.pf - b.pa) - (a.pf - a.pa);
+    return b.gw - b.gl - (a.gw - a.gl) || b.pf - b.pa - (a.pf - a.pa);
   });
   return teams;
 }
+__name(tournamentGroupStandings, "tournamentGroupStandings");
 function tournamentTeamStandings(payload) {
   const clubs = Array.isArray(payload.clubs) ? payload.clubs : [], encounters = Array.isArray(payload.encounters) ? payload.encounters : [];
-  const rows = clubs.map((club, i) => ({ i, name:String(club && club.name || "Club " + (i + 1)), w:0, l:0, points:0, mw:0, ml:0, played:0, setsWon:0, setsLost:0, rallyFor:0, rallyAgainst:0, rank:0 }));
+  const rows = clubs.map((club, i) => ({ i, name: String(club && club.name || "Club " + (i + 1)), w: 0, l: 0, points: 0, mw: 0, ml: 0, played: 0, setsWon: 0, setsLost: 0, rallyFor: 0, rallyAgainst: 0, rank: 0 }));
   for (const encounter of encounters) {
     const done = (encounter.matches || []).filter((m) => m.status === "approved" && (m.winner === "L" || m.winner === "R"));
     for (const match of done) {
-      const a = rows[encounter.a], b = rows[encounter.b]; if (!a || !b) continue;
-      if (match.winner === "L") { a.mw++; b.ml++; a.points += 2; } else { b.mw++; a.ml++; b.points += 2; }
+      const a = rows[encounter.a], b = rows[encounter.b];
+      if (!a || !b)
+        continue;
+      if (match.winner === "L") {
+        a.mw++;
+        b.ml++;
+        a.points += 2;
+      } else {
+        b.mw++;
+        a.ml++;
+        b.points += 2;
+      }
       for (const set of tournamentCompletedSets(match.score)) {
-        const left = Number(set.score && set.score[0]), right = Number(set.score && set.score[1]); if (!Number.isFinite(left) || !Number.isFinite(right)) continue;
-        a.rallyFor += left; a.rallyAgainst += right; b.rallyFor += right; b.rallyAgainst += left;
-        if (left > right) { a.setsWon++; b.setsLost++; } else if (right > left) { b.setsWon++; a.setsLost++; }
+        const left = Number(set.score && set.score[0]), right = Number(set.score && set.score[1]);
+        if (!Number.isFinite(left) || !Number.isFinite(right))
+          continue;
+        a.rallyFor += left;
+        a.rallyAgainst += right;
+        b.rallyFor += right;
+        b.rallyAgainst += left;
+        if (left > right) {
+          a.setsWon++;
+          b.setsLost++;
+        } else if (right > left) {
+          b.setsWon++;
+          a.setsLost++;
+        }
       }
     }
     if ((encounter.matches || []).length && done.length === encounter.matches.length) {
-      const aw = done.filter((m) => m.winner === "L").length, bw = done.length - aw; rows[encounter.a].played++; rows[encounter.b].played++;
-      if (aw > bw) { rows[encounter.a].w++; rows[encounter.b].l++; } else if (bw > aw) { rows[encounter.b].w++; rows[encounter.a].l++; }
+      const aw = done.filter((m) => m.winner === "L").length, bw = done.length - aw;
+      rows[encounter.a].played++;
+      rows[encounter.b].played++;
+      if (aw > bw) {
+        rows[encounter.a].w++;
+        rows[encounter.b].l++;
+      } else if (bw > aw) {
+        rows[encounter.b].w++;
+        rows[encounter.a].l++;
+      }
     }
   }
-  const compare = (a,b) => b.w - a.w || b.setsWon - a.setsWon || b.rallyFor - a.rallyFor;
-  rows.sort((a,b) => compare(a,b) || a.i - b.i);
-  for (let i = 0; i < rows.length;) { let j = i + 1; while (j < rows.length && compare(rows[i], rows[j]) === 0) j++; for (let k = i; k < j; k++) rows[k].rank = i + 1; i = j; }
+  const compare = /* @__PURE__ */ __name((a, b) => b.w - a.w || b.setsWon - a.setsWon || b.rallyFor - a.rallyFor, "compare");
+  rows.sort((a, b) => compare(a, b) || a.i - b.i);
+  for (let i = 0; i < rows.length; ) {
+    let j = i + 1;
+    while (j < rows.length && compare(rows[i], rows[j]) === 0)
+      j++;
+    for (let k = i; k < j; k++)
+      rows[k].rank = i + 1;
+    i = j;
+  }
   return rows;
 }
+__name(tournamentTeamStandings, "tournamentTeamStandings");
 async function handleTournamentEngine(request, env) {
-  if (request.method !== "POST") return json({ error:"Method not allowed" }, 405);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
   const body = await request.json().catch(() => ({}));
-  try { await requireOfflineLibrarySession(body, env); }
-  catch (_) { return json({ error:"Authenticated device session required" }, 401); }
+  try {
+    await requireOfflineLibrarySession(body, env);
+  } catch (_) {
+    return json({ error: "Authenticated device session required" }, 401);
+  }
   const payload = body.payload && typeof body.payload === "object" ? body.payload : {};
   try {
-    if (body.action === "group-fixtures") return json({ matches:tournamentGroupFixtures(payload) });
-    if (body.action === "team-fixtures") return json({ encounters:tournamentTeamFixtures(payload) });
-    if (body.action === "group-standings") return json({ standings:tournamentGroupStandings(payload) });
-    if (body.action === "team-standings") return json({ standings:tournamentTeamStandings(payload) });
-    if (body.action === "knockout-generate") return json({ draw:tournamentKnockoutGenerate(payload) });
-    if (body.action === "knockout-generate-custom") return json({ draw:tournamentKnockoutGenerateCustom(payload) });
+    if (body.action === "group-fixtures")
+      return json({ matches: tournamentGroupFixtures(payload) });
+    if (body.action === "team-fixtures")
+      return json({ encounters: tournamentTeamFixtures(payload) });
+    if (body.action === "group-standings")
+      return json({ standings: tournamentGroupStandings(payload) });
+    if (body.action === "team-standings")
+      return json({ standings: tournamentTeamStandings(payload) });
+    if (body.action === "knockout-generate")
+      return json({ draw: tournamentKnockoutGenerate(payload) });
+    if (body.action === "knockout-generate-custom")
+      return json({ draw: tournamentKnockoutGenerateCustom(payload) });
     if (body.action === "approve-result") {
       tournamentValidateScore(payload.score, payload.winner);
-      const result = { status:"approved", winner:payload.winner, score:payload.score };
+      const result = { status: "approved", winner: payload.winner, score: payload.score };
       if (payload.left != null && payload.right != null) {
-        result.bracketResult = { winner:payload.winner === "L" ? payload.left : payload.right, loser:payload.winner === "L" ? payload.right : payload.left };
+        result.bracketResult = { winner: payload.winner === "L" ? payload.left : payload.right, loser: payload.winner === "L" ? payload.right : payload.left };
       }
       return json(result);
     }
-    return json({ error:"Unknown tournament engine action" }, 400);
-  } catch (error) { return json({ error:error.message || "Tournament computation failed" }, 400); }
+    return json({ error: "Unknown tournament engine action" }, 400);
+  } catch (error) {
+    return json({ error: error.message || "Tournament computation failed" }, 400);
+  }
 }
-
-function tournamentNextPow2(n) { let p = 1; while (p < n) p *= 2; return p; }
-function tournamentPrevPow2(n) { let p = 1; while (p * 2 <= n) p *= 2; return p; }
-function tournamentByeNeed(n) { n = Number(n) || 0; return n < 2 ? 0 : Math.max(0, Math.min(n - tournamentPrevPow2(n), tournamentNextPow2(n) - n)); }
+__name(handleTournamentEngine, "handleTournamentEngine");
+function tournamentNextPow2(n) {
+  let p = 1;
+  while (p < n)
+    p *= 2;
+  return p;
+}
+__name(tournamentNextPow2, "tournamentNextPow2");
+function tournamentPrevPow2(n) {
+  let p = 1;
+  while (p * 2 <= n)
+    p *= 2;
+  return p;
+}
+__name(tournamentPrevPow2, "tournamentPrevPow2");
+function tournamentByeNeed(n) {
+  n = Number(n) || 0;
+  return n < 2 ? 0 : Math.max(0, Math.min(n - tournamentPrevPow2(n), tournamentNextPow2(n) - n));
+}
+__name(tournamentByeNeed, "tournamentByeNeed");
 function tournamentAutomaticByeIds(entryIds) {
-  const n = entryIds.length, count = tournamentByeNeed(n); if (!count) return [];
-  const pairs = (n - count) / 2; if (!Number.isInteger(pairs)) throw Error("Could not build valid Round 1 for " + n + " teams.");
-  const out = []; let consumed = 0, base = Math.floor(pairs / count), extra = pairs % count;
-  for (let i = 0; i < count; i++) { consumed += (base + (i < extra ? 1 : 0)) * 2; out.push(Number(entryIds[Math.min(n - 1, consumed + i)])); }
+  const n = entryIds.length, count = tournamentByeNeed(n);
+  if (!count)
+    return [];
+  const pairs = (n - count) / 2;
+  if (!Number.isInteger(pairs))
+    throw Error("Could not build valid Round 1 for " + n + " teams.");
+  const out = [];
+  let consumed = 0, base = Math.floor(pairs / count), extra = pairs % count;
+  for (let i = 0; i < count; i++) {
+    consumed += (base + (i < extra ? 1 : 0)) * 2;
+    out.push(Number(entryIds[Math.min(n - 1, consumed + i)]));
+  }
   return out;
 }
+__name(tournamentAutomaticByeIds, "tournamentAutomaticByeIds");
 function tournamentBalancedSideSplits(ids, required) {
-  const cuts = [Math.ceil(ids.length / 2)]; if (ids.length % 2) cuts.push(Math.floor(ids.length / 2));
-  return cuts.map((cut) => { const top = ids.slice(0,cut), bottom = ids.slice(cut), topNeed = tournamentByeNeed(top.length), bottomNeed = tournamentByeNeed(bottom.length); return {cut,top,bottom,topNeed,bottomNeed,valid:topNeed+bottomNeed===required}; }).filter((item) => item.valid);
+  const cuts = [Math.ceil(ids.length / 2)];
+  if (ids.length % 2)
+    cuts.push(Math.floor(ids.length / 2));
+  return cuts.map((cut) => {
+    const top = ids.slice(0, cut), bottom = ids.slice(cut), topNeed = tournamentByeNeed(top.length), bottomNeed = tournamentByeNeed(bottom.length);
+    return { cut, top, bottom, topNeed, bottomNeed, valid: topNeed + bottomNeed === required };
+  }).filter((item) => item.valid);
 }
+__name(tournamentBalancedSideSplits, "tournamentBalancedSideSplits");
 function tournamentBranchSideMatches(entryIds, byeIds, side, startId) {
-  const byes = new Set((byeIds || []).map(Number)), matches = [], non = [], byeSources = []; let id = startId;
-  entryIds.forEach((entryId,pos) => (byes.has(Number(entryId)) ? byeSources : non).push({src:Number(entryId),pos}));
-  if (non.length % 2) throw Error("BYE positions leave an odd number of Round-1 teams on the " + side + " side.");
+  const byes = new Set((byeIds || []).map(Number)), matches = [], non = [], byeSources = [];
+  let id = startId;
+  entryIds.forEach((entryId, pos) => (byes.has(Number(entryId)) ? byeSources : non).push({ src: Number(entryId), pos }));
+  if (non.length % 2)
+    throw Error("BYE positions leave an odd number of Round-1 teams on the " + side + " side.");
   const winners = [];
-  for (let i=0;i<non.length;i+=2) { const a=non[i],b=non[i+1]; matches.push({id,round:1,side,a:a.src,b:b.src}); winners.push({src:"W"+id,pos:(a.pos+b.pos)/2}); id++; }
-  const sources=[] , available=winners.slice();
-  byeSources.slice().sort((a,b)=>a.pos-b.pos).forEach((bye)=>{ if(!available.length) throw Error("No Round-1 winner is available for a BYE on the "+side+" side."); available.sort((a,b)=>Math.abs(a.pos-bye.pos)-Math.abs(b.pos-bye.pos)||a.pos-b.pos); const opp=available.shift(); matches.push({id,round:2,side,a:bye.pos<opp.pos?bye.src:opp.src,b:bye.pos<opp.pos?opp.src:bye.src}); sources.push({src:"W"+id,pos:(bye.pos+opp.pos)/2}); id++; });
-  available.sort((a,b)=>a.pos-b.pos); if(available.length%2)sources.push(available.shift());
-  for(let i=0;i<available.length;i+=2){const a=available[i],b=available[i+1];matches.push({id,round:2,side,a:a.src,b:b.src});sources.push({src:"W"+id,pos:(a.pos+b.pos)/2});id++;}
-  sources.sort((a,b)=>a.pos-b.pos);let round=3;
-  while(sources.length>1){const next=[];if(sources.length%2){let carryIndex=0;if(sources.length>2)carryIndex=Math.abs(sources[1].pos-sources[2].pos)<=Math.abs(sources[sources.length-3].pos-sources[sources.length-2].pos)?sources.length-1:0;next.push(sources.splice(carryIndex,1)[0]);}for(let i=0;i<sources.length;i+=2){const a=sources[i],b=sources[i+1];matches.push({id,round,side,a:a.src,b:b.src});next.push({src:"W"+id,pos:(a.pos+b.pos)/2});id++;}sources.splice(0,sources.length,...next.sort((a,b)=>a.pos-b.pos));round++;}
-  return {matches,winner:sources[0].src,nextId:id,round:round-1};
+  for (let i = 0; i < non.length; i += 2) {
+    const a = non[i], b = non[i + 1];
+    matches.push({ id, round: 1, side, a: a.src, b: b.src });
+    winners.push({ src: "W" + id, pos: (a.pos + b.pos) / 2 });
+    id++;
+  }
+  const sources = [], available = winners.slice();
+  byeSources.slice().sort((a, b) => a.pos - b.pos).forEach((bye) => {
+    if (!available.length)
+      throw Error("No Round-1 winner is available for a BYE on the " + side + " side.");
+    available.sort((a, b) => Math.abs(a.pos - bye.pos) - Math.abs(b.pos - bye.pos) || a.pos - b.pos);
+    const opp = available.shift();
+    matches.push({ id, round: 2, side, a: bye.pos < opp.pos ? bye.src : opp.src, b: bye.pos < opp.pos ? opp.src : bye.src });
+    sources.push({ src: "W" + id, pos: (bye.pos + opp.pos) / 2 });
+    id++;
+  });
+  available.sort((a, b) => a.pos - b.pos);
+  if (available.length % 2)
+    sources.push(available.shift());
+  for (let i = 0; i < available.length; i += 2) {
+    const a = available[i], b = available[i + 1];
+    matches.push({ id, round: 2, side, a: a.src, b: b.src });
+    sources.push({ src: "W" + id, pos: (a.pos + b.pos) / 2 });
+    id++;
+  }
+  sources.sort((a, b) => a.pos - b.pos);
+  let round = 3;
+  while (sources.length > 1) {
+    const next = [];
+    if (sources.length % 2) {
+      let carryIndex = 0;
+      if (sources.length > 2)
+        carryIndex = Math.abs(sources[1].pos - sources[2].pos) <= Math.abs(sources[sources.length - 3].pos - sources[sources.length - 2].pos) ? sources.length - 1 : 0;
+      next.push(sources.splice(carryIndex, 1)[0]);
+    }
+    for (let i = 0; i < sources.length; i += 2) {
+      const a = sources[i], b = sources[i + 1];
+      matches.push({ id, round, side, a: a.src, b: b.src });
+      next.push({ src: "W" + id, pos: (a.pos + b.pos) / 2 });
+      id++;
+    }
+    sources.splice(0, sources.length, ...next.sort((a, b) => a.pos - b.pos));
+    round++;
+  }
+  return { matches, winner: sources[0].src, nextId: id, round: round - 1 };
 }
-function tournamentCustomSideMatches(entryIds,byeIds,side,startId,preferredCut){
-  if(entryIds.length<4)return tournamentBranchSideMatches(entryIds,byeIds,side,startId);
-  const byeSet=new Set((byeIds||[]).map(Number)),required=byeSet.size;let splits=tournamentBalancedSideSplits(entryIds.map(Number),required),chosen=null;
-  if(preferredCut!=null)splits=splits.slice().sort((a,b)=>(a.cut===Number(preferredCut)?-1:0)-(b.cut===Number(preferredCut)?-1:0));
-  for(const split of splits){const topByes=split.top.filter((id)=>byeSet.has(Number(id))),bottomByes=split.bottom.filter((id)=>byeSet.has(Number(id)));if(topByes.length===split.topNeed&&bottomByes.length===split.bottomNeed){chosen={split,topByes,bottomByes};break;}}
-  if(!chosen)throw Error("Choose a balanced BYE pattern for the "+side+" side.");
-  const top=tournamentBranchSideMatches(chosen.split.top,chosen.topByes,side,startId),bottom=tournamentBranchSideMatches(chosen.split.bottom,chosen.bottomByes,side,top.nextId),round=Math.max(top.round,bottom.round)+1,id=bottom.nextId,matches=top.matches.concat(bottom.matches);matches.push({id,round,side,a:top.winner,b:bottom.winner});return {matches,winner:"W"+id,nextId:id+1,round};
+__name(tournamentBranchSideMatches, "tournamentBranchSideMatches");
+function tournamentCustomSideMatches(entryIds, byeIds, side, startId, preferredCut) {
+  if (entryIds.length < 4)
+    return tournamentBranchSideMatches(entryIds, byeIds, side, startId);
+  const byeSet = new Set((byeIds || []).map(Number)), required = byeSet.size;
+  let splits = tournamentBalancedSideSplits(entryIds.map(Number), required), chosen = null;
+  if (preferredCut != null)
+    splits = splits.slice().sort((a, b) => (a.cut === Number(preferredCut) ? -1 : 0) - (b.cut === Number(preferredCut) ? -1 : 0));
+  for (const split of splits) {
+    const topByes = split.top.filter((id2) => byeSet.has(Number(id2))), bottomByes = split.bottom.filter((id2) => byeSet.has(Number(id2)));
+    if (topByes.length === split.topNeed && bottomByes.length === split.bottomNeed) {
+      chosen = { split, topByes, bottomByes };
+      break;
+    }
+  }
+  if (!chosen)
+    throw Error("Choose a balanced BYE pattern for the " + side + " side.");
+  const top = tournamentBranchSideMatches(chosen.split.top, chosen.topByes, side, startId), bottom = tournamentBranchSideMatches(chosen.split.bottom, chosen.bottomByes, side, top.nextId), round = Math.max(top.round, bottom.round) + 1, id = bottom.nextId, matches = top.matches.concat(bottom.matches);
+  matches.push({ id, round, side, a: top.winner, b: bottom.winner });
+  return { matches, winner: "W" + id, nextId: id + 1, round };
 }
-function tournamentKnockoutGenerateCustom(payload){
-  const count=Number(payload.count),leftCount=Number(payload.leftCount),rightCount=count-leftCount;if(count<4||count>64)throw Error("Enter between 4 and 64 teams.");if(leftCount<1||rightCount<1)throw Error("Both sides need at least one team.");
-  const names=Array.isArray(payload.names)?payload.names:[],entries=Array.from({length:count},(_,i)=>({id:i+1,name:names[i]?String(names[i]):"Entry "+(i+1)})),left=entries.slice(0,leftCount).map((e)=>e.id),right=entries.slice(leftCount).map((e)=>e.id);
-  const leftByeIds=Array.isArray(payload.leftByeIds)?payload.leftByeIds.map(Number):tournamentAutomaticByeIds(left),rightByeIds=Array.isArray(payload.rightByeIds)?payload.rightByeIds.map(Number):tournamentAutomaticByeIds(right),needLeft=tournamentByeNeed(left.length),needRight=tournamentByeNeed(right.length);
-  if(leftByeIds.length!==needLeft||rightByeIds.length!==needRight)throw Error("Select exactly "+needLeft+" left BYE position(s) and "+needRight+" right BYE position(s).");if(leftByeIds.some((id)=>!left.includes(id))||rightByeIds.some((id)=>!right.includes(id)))throw Error("A BYE position is outside its side.");
-  const a=tournamentCustomSideMatches(left,leftByeIds,"left",1,payload.leftCut),b=tournamentCustomSideMatches(right,rightByeIds,"right",a.nextId,payload.rightCut),finalId=b.nextId,matches=a.matches.concat(b.matches);matches.push({id:finalId,round:Math.max(a.round,b.round)+1,side:"center",a:a.winner,b:b.winner,final:true});
-  return {layout:"template-center",templateTeams:count,sideCapacity:null,leftCount,leftByeIds,rightByeIds,leftBranchCut:payload.leftCut||null,rightBranchCut:payload.rightCut||null,title:payload.title||"Tournament",entries,matches,results:{},structureLocked:true};
+__name(tournamentCustomSideMatches, "tournamentCustomSideMatches");
+function tournamentKnockoutGenerateCustom(payload) {
+  const count = Number(payload.count), leftCount = Number(payload.leftCount), rightCount = count - leftCount;
+  if (count < 4 || count > 64)
+    throw Error("Enter between 4 and 64 teams.");
+  if (leftCount < 1 || rightCount < 1)
+    throw Error("Both sides need at least one team.");
+  const names = Array.isArray(payload.names) ? payload.names : [], entries = Array.from({ length: count }, (_, i) => ({ id: i + 1, name: names[i] ? String(names[i]) : "Entry " + (i + 1) })), left = entries.slice(0, leftCount).map((e) => e.id), right = entries.slice(leftCount).map((e) => e.id);
+  const leftByeIds = Array.isArray(payload.leftByeIds) ? payload.leftByeIds.map(Number) : tournamentAutomaticByeIds(left), rightByeIds = Array.isArray(payload.rightByeIds) ? payload.rightByeIds.map(Number) : tournamentAutomaticByeIds(right), needLeft = tournamentByeNeed(left.length), needRight = tournamentByeNeed(right.length);
+  if (leftByeIds.length !== needLeft || rightByeIds.length !== needRight)
+    throw Error("Select exactly " + needLeft + " left BYE position(s) and " + needRight + " right BYE position(s).");
+  if (leftByeIds.some((id) => !left.includes(id)) || rightByeIds.some((id) => !right.includes(id)))
+    throw Error("A BYE position is outside its side.");
+  const a = tournamentCustomSideMatches(left, leftByeIds, "left", 1, payload.leftCut), b = tournamentCustomSideMatches(right, rightByeIds, "right", a.nextId, payload.rightCut), finalId = b.nextId, matches = a.matches.concat(b.matches);
+  matches.push({ id: finalId, round: Math.max(a.round, b.round) + 1, side: "center", a: a.winner, b: b.winner, final: true });
+  return { layout: "template-center", templateTeams: count, sideCapacity: null, leftCount, leftByeIds, rightByeIds, leftBranchCut: payload.leftCut || null, rightBranchCut: payload.rightCut || null, title: payload.title || "Tournament", entries, matches, results: {}, structureLocked: true };
 }
-function tournamentKnockoutGenerate(payload){
-  const names=(Array.isArray(payload.names)?payload.names:[]).map((name)=>String(name).trim()).filter(Boolean);if(names.length<2)throw Error("Enter at least two teams.");const size=tournamentNextPow2(names.length),slots=names.map((_,i)=>i+1).concat(Array(size-names.length).fill(null)),matches=[];let nextId=1,layer=slots,round=1;
-  while(layer.length>1){const output=[];for(let i=0;i<layer.length;i+=2){const a=layer[i],b=layer[i+1];if(a==null)output.push(b);else if(b==null)output.push(a);else{matches.push({id:nextId,round,a,b});output.push("W"+nextId++);}}layer=output;round++;}
-  if(payload.third){const semis=matches.filter((match)=>match.round===round-2);if(semis.length===2)matches.push({id:nextId++,round:round-1,a:"L"+semis[0].id,b:"L"+semis[1].id,third:true});}
-  return {layout:"ltr",title:payload.title||"Tournament",entries:names.map((name,i)=>({id:i+1,name})),matches,results:{}};
+__name(tournamentKnockoutGenerateCustom, "tournamentKnockoutGenerateCustom");
+function tournamentKnockoutGenerate(payload) {
+  const names = (Array.isArray(payload.names) ? payload.names : []).map((name) => String(name).trim()).filter(Boolean);
+  if (names.length < 2)
+    throw Error("Enter at least two teams.");
+  const size = tournamentNextPow2(names.length), slots = names.map((_, i) => i + 1).concat(Array(size - names.length).fill(null)), matches = [];
+  let nextId = 1, layer = slots, round = 1;
+  while (layer.length > 1) {
+    const output = [];
+    for (let i = 0; i < layer.length; i += 2) {
+      const a = layer[i], b = layer[i + 1];
+      if (a == null)
+        output.push(b);
+      else if (b == null)
+        output.push(a);
+      else {
+        matches.push({ id: nextId, round, a, b });
+        output.push("W" + nextId++);
+      }
+    }
+    layer = output;
+    round++;
+  }
+  if (payload.third) {
+    const semis = matches.filter((match) => match.round === round - 2);
+    if (semis.length === 2)
+      matches.push({ id: nextId++, round: round - 1, a: "L" + semis[0].id, b: "L" + semis[1].id, third: true });
+  }
+  return { layout: "ltr", title: payload.title || "Tournament", entries: names.map((name, i) => ({ id: i + 1, name })), matches, results: {} };
 }
-__name(cors, "cors");
+__name(tournamentKnockoutGenerate, "tournamentKnockoutGenerate");
 __name2(cors, "cors");
 __name22(cors, "cors");
 __name222(cors, "cors");
 __name2222(cors, "cors");
+__name22222(cors, "cors");
 function sbHeaders(env) {
   return {
     "apikey": env.SUPABASE_KEY,
@@ -289,6 +545,7 @@ __name2(sbHeaders, "sbHeaders");
 __name22(sbHeaders, "sbHeaders");
 __name222(sbHeaders, "sbHeaders");
 __name2222(sbHeaders, "sbHeaders");
+__name22222(sbHeaders, "sbHeaders");
 async function sbGet(env, table, query = "") {
   const url = env.SUPABASE_URL + "/rest/v1/" + table + (query ? "?" + query : "");
   const res = await fetch(url, { headers: sbHeaders(env) });
@@ -303,6 +560,7 @@ __name2(sbGet, "sbGet");
 __name22(sbGet, "sbGet");
 __name222(sbGet, "sbGet");
 __name2222(sbGet, "sbGet");
+__name22222(sbGet, "sbGet");
 async function sbPost(env, table, body, prefer = "return=representation") {
   const res = await fetch(env.SUPABASE_URL + "/rest/v1/" + table, {
     method: "POST",
@@ -320,6 +578,7 @@ __name2(sbPost, "sbPost");
 __name22(sbPost, "sbPost");
 __name222(sbPost, "sbPost");
 __name2222(sbPost, "sbPost");
+__name22222(sbPost, "sbPost");
 async function sbPatch(env, table, query, body, prefer = "return=minimal") {
   const res = await fetch(env.SUPABASE_URL + "/rest/v1/" + table + "?" + query, {
     method: "PATCH",
@@ -337,12 +596,14 @@ __name2(sbPatch, "sbPatch");
 __name22(sbPatch, "sbPatch");
 __name222(sbPatch, "sbPatch");
 __name2222(sbPatch, "sbPatch");
+__name22222(sbPatch, "sbPatch");
 async function sbDelete(env, table, query) {
   const res = await fetch(env.SUPABASE_URL + "/rest/v1/" + table + "?" + query, {
     method: "DELETE",
     headers: { ...sbHeaders(env), "Prefer": "return=minimal" }
   });
-  if (!res.ok) throw new Error("DELETE " + table + " failed: " + res.status);
+  if (!res.ok)
+    throw new Error("DELETE " + table + " failed: " + res.status);
   return true;
 }
 __name(sbDelete, "sbDelete");
@@ -350,6 +611,7 @@ __name2(sbDelete, "sbDelete");
 __name22(sbDelete, "sbDelete");
 __name222(sbDelete, "sbDelete");
 __name2222(sbDelete, "sbDelete");
+__name22222(sbDelete, "sbDelete");
 async function sbUpsert(env, table, body, onConflict) {
   const url = env.SUPABASE_URL + "/rest/v1/" + table + "?on_conflict=" + encodeURIComponent(onConflict);
   const res = await fetch(url, {
@@ -368,6 +630,7 @@ __name2(sbUpsert, "sbUpsert");
 __name22(sbUpsert, "sbUpsert");
 __name222(sbUpsert, "sbUpsert");
 __name2222(sbUpsert, "sbUpsert");
+__name22222(sbUpsert, "sbUpsert");
 var OFFLINE_LIBRARY_ENGINE = "round-engine-2026-08-28-v2";
 function normalizeOfflineLibrarySpec(raw) {
   const spec = raw && typeof raw === "object" ? raw : {};
@@ -387,7 +650,8 @@ function normalizeOfflineLibrarySpec(raw) {
   if (!Number.isInteger(courtCount) || courtCount < 1 || courtCount > 20 || playerCount < courtCount * 4) {
     throw new Error("Offline library courtCount must be between 1 and 20 and have four players per court.");
   }
-  if (gameType !== "doubles" && gameType !== "mixed") throw new Error("Offline library supports Doubles or Mixed Doubles only.");
+  if (gameType !== "doubles" && gameType !== "mixed")
+    throw new Error("Offline library supports Doubles or Mixed Doubles only.");
   if (algorithm !== "standard" && algorithm !== "balanced") {
     throw new Error("Offline library algorithm must be standard or balanced.");
   }
@@ -427,6 +691,7 @@ __name2(normalizeOfflineLibrarySpec, "normalizeOfflineLibrarySpec");
 __name22(normalizeOfflineLibrarySpec, "normalizeOfflineLibrarySpec");
 __name222(normalizeOfflineLibrarySpec, "normalizeOfflineLibrarySpec");
 __name2222(normalizeOfflineLibrarySpec, "normalizeOfflineLibrarySpec");
+__name22222(normalizeOfflineLibrarySpec, "normalizeOfflineLibrarySpec");
 function offlineLibrarySignature(spec) {
   const parts = [
     spec.engineVersion,
@@ -434,14 +699,17 @@ function offlineLibrarySignature(spec) {
     "c" + spec.courtCount,
     "p" + spec.playerCount
   ];
-  if (spec.gameType === "mixed") parts.push("m" + spec.menCount + "f" + spec.womenCount);
-  if (spec.algorithm === "balanced") parts.push("top" + spec.topRatedCount + "bottom" + spec.bottomRatedCount);
+  if (spec.gameType === "mixed")
+    parts.push("m" + spec.menCount + "f" + spec.womenCount);
+  if (spec.algorithm === "balanced")
+    parts.push("top" + spec.topRatedCount + "bottom" + spec.bottomRatedCount);
   parts.push(
     spec.algorithm,
     "random" + (spec.randomOrder ? "1" : "0"),
     "unique" + (spec.uniquePairMode ? "1" : "0")
   );
-  if (spec.fixedPairCount > 0) parts.push("fixed" + spec.fixedPairCount);
+  if (spec.fixedPairCount > 0)
+    parts.push("fixed" + spec.fixedPairCount);
   parts.push("r" + spec.roundCount);
   return parts.join("|");
 }
@@ -450,9 +718,11 @@ __name2(offlineLibrarySignature, "offlineLibrarySignature");
 __name22(offlineLibrarySignature, "offlineLibrarySignature");
 __name222(offlineLibrarySignature, "offlineLibrarySignature");
 __name2222(offlineLibrarySignature, "offlineLibrarySignature");
+__name22222(offlineLibrarySignature, "offlineLibrarySignature");
 function parseOfflineLibrarySignature(signature) {
   const parts = String(signature || "").split("|");
-  if (parts.length < 6 || parts[0] !== OFFLINE_LIBRARY_ENGINE) throw new Error("Unsupported offline library signature.");
+  if (parts.length < 6 || parts[0] !== OFFLINE_LIBRARY_ENGINE)
+    throw new Error("Unsupported offline library signature.");
   const spec = {
     engineVersion: parts[0],
     gameType: parts[1],
@@ -470,19 +740,26 @@ function parseOfflineLibrarySignature(signature) {
   };
   for (const part of parts.slice(2)) {
     let m;
-    if (m = /^c(\d+)$/.exec(part)) spec.courtCount = Number(m[1]);
-    else if (m = /^p(\d+)$/.exec(part)) spec.playerCount = Number(m[1]);
+    if (m = /^c(\d+)$/.exec(part))
+      spec.courtCount = Number(m[1]);
+    else if (m = /^p(\d+)$/.exec(part))
+      spec.playerCount = Number(m[1]);
     else if (m = /^m(\d+)f(\d+)$/.exec(part)) {
       spec.menCount = Number(m[1]);
       spec.womenCount = Number(m[2]);
     } else if (m = /^top(\d+)bottom(\d+)$/.exec(part)) {
       spec.topRatedCount = Number(m[1]);
       spec.bottomRatedCount = Number(m[2]);
-    } else if (part === "standard" || part === "balanced") spec.algorithm = part;
-    else if (m = /^random([01])$/.exec(part)) spec.randomOrder = m[1] === "1";
-    else if (m = /^unique([01])$/.exec(part)) spec.uniquePairMode = m[1] === "1";
-    else if (m = /^fixed(\d+)$/.exec(part)) spec.fixedPairCount = Number(m[1]);
-    else if (m = /^r(\d+)$/.exec(part)) spec.roundCount = Number(m[1]);
+    } else if (part === "standard" || part === "balanced")
+      spec.algorithm = part;
+    else if (m = /^random([01])$/.exec(part))
+      spec.randomOrder = m[1] === "1";
+    else if (m = /^unique([01])$/.exec(part))
+      spec.uniquePairMode = m[1] === "1";
+    else if (m = /^fixed(\d+)$/.exec(part))
+      spec.fixedPairCount = Number(m[1]);
+    else if (m = /^r(\d+)$/.exec(part))
+      spec.roundCount = Number(m[1]);
   }
   return normalizeOfflineLibrarySpec(spec);
 }
@@ -491,12 +768,15 @@ __name2(parseOfflineLibrarySignature, "parseOfflineLibrarySignature");
 __name22(parseOfflineLibrarySignature, "parseOfflineLibrarySignature");
 __name222(parseOfflineLibrarySignature, "parseOfflineLibrarySignature");
 __name2222(parseOfflineLibrarySignature, "parseOfflineLibrarySignature");
+__name22222(parseOfflineLibrarySignature, "parseOfflineLibrarySignature");
 async function requireOfflineLibrarySession(body, env) {
   const accountId = String(body && (body.accountId || body.userAccountId) || "").trim();
   const sessionToken = String(body && body.sessionToken || "").trim();
-  if (!accountId || !sessionToken) throw new Error("Offline library session is required.");
+  if (!accountId || !sessionToken)
+    throw new Error("Offline library session is required.");
   const rows = await sbGet(env, "active_sessions", "user_account_id=eq." + encodeURIComponent(accountId) + "&token=eq." + encodeURIComponent(sessionToken) + "&select=user_account_id&limit=1").catch(() => []);
-  if (!rows.length) throw new Error("Offline library session is invalid.");
+  if (!rows.length)
+    throw new Error("Offline library session is invalid.");
   return accountId;
 }
 __name(requireOfflineLibrarySession, "requireOfflineLibrarySession");
@@ -504,6 +784,7 @@ __name2(requireOfflineLibrarySession, "requireOfflineLibrarySession");
 __name22(requireOfflineLibrarySession, "requireOfflineLibrarySession");
 __name222(requireOfflineLibrarySession, "requireOfflineLibrarySession");
 __name2222(requireOfflineLibrarySession, "requireOfflineLibrarySession");
+__name22222(requireOfflineLibrarySession, "requireOfflineLibrarySession");
 async function offlineLibraryVersionToken(env) {
   const rows = await sbGet(env, "offline_round_libraries", "engine_version=eq." + encodeURIComponent(OFFLINE_LIBRARY_ENGINE) + "&select=signature,updated_at&order=signature.asc");
   const material = (rows || []).map((row) => String(row.signature || "") + "@" + String(row.updated_at || "")).join("\n");
@@ -516,8 +797,10 @@ __name2(offlineLibraryVersionToken, "offlineLibraryVersionToken");
 __name22(offlineLibraryVersionToken, "offlineLibraryVersionToken");
 __name222(offlineLibraryVersionToken, "offlineLibraryVersionToken");
 __name2222(offlineLibraryVersionToken, "offlineLibraryVersionToken");
+__name22222(offlineLibraryVersionToken, "offlineLibraryVersionToken");
 async function handleOfflineLibraryManifest(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
   const body = await request.json().catch(() => ({}));
   try {
     await requireOfflineLibrarySession(body, env);
@@ -532,8 +815,10 @@ __name2(handleOfflineLibraryManifest, "handleOfflineLibraryManifest");
 __name22(handleOfflineLibraryManifest, "handleOfflineLibraryManifest");
 __name222(handleOfflineLibraryManifest, "handleOfflineLibraryManifest");
 __name2222(handleOfflineLibraryManifest, "handleOfflineLibraryManifest");
+__name22222(handleOfflineLibraryManifest, "handleOfflineLibraryManifest");
 async function handleOfflineLibraryAll(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
   const body = await request.json().catch(() => ({}));
   try {
     await requireOfflineLibrarySession(body, env);
@@ -558,11 +843,14 @@ __name2(handleOfflineLibraryAll, "handleOfflineLibraryAll");
 __name22(handleOfflineLibraryAll, "handleOfflineLibraryAll");
 __name222(handleOfflineLibraryAll, "handleOfflineLibraryAll");
 __name2222(handleOfflineLibraryAll, "handleOfflineLibraryAll");
+__name22222(handleOfflineLibraryAll, "handleOfflineLibraryAll");
 function validateOfflineLibraryPayload(payload, spec) {
-  if (!payload || typeof payload !== "object") throw new Error("Offline library payload is required.");
+  if (!payload || typeof payload !== "object")
+    throw new Error("Offline library payload is required.");
   const records = Array.isArray(payload.records) ? payload.records : [];
-  if (records.length !== spec.roundCount) throw new Error("Offline library record count does not match the signature.");
-  const validName = /* @__PURE__ */ __name2222((name) => {
+  if (records.length !== spec.roundCount)
+    throw new Error("Offline library record count does not match the signature.");
+  const validName = /* @__PURE__ */ __name22222((name) => {
     const match = /^Offline Player (\d{1,3})$/.exec(String(name || "").split("#")[0]);
     return !!match && Number(match[1]) <= spec.playerCount;
   }, "validName");
@@ -572,7 +860,8 @@ function validateOfflineLibraryPayload(payload, spec) {
     const genders = new Map(catalog.map((player) => [String(player && player.name || "").split("#")[0], String(player && player.gender || "").toLowerCase()]));
     for (let index = 1; index <= spec.playerCount; index++) {
       const expected = index <= spec.menCount ? "male" : "female";
-      if (genders.get("Offline Player " + index) !== expected) throw new Error("Mixed library gender template does not match its signature.");
+      if (genders.get("Offline Player " + index) !== expected)
+        throw new Error("Mixed library gender template does not match its signature.");
     }
   }
   const storedFixedPairs = Array.isArray(payload.dataset && payload.dataset.fixedPairs) ? payload.dataset.fixedPairs.map((pair) => Array.isArray(pair) ? pair.map((name) => String(name || "").split("#")[0]) : []) : [];
@@ -580,7 +869,8 @@ function validateOfflineLibraryPayload(payload, spec) {
     throw new Error("Offline library fixed-pair template does not match its signature.");
   }
   records.forEach((record, index) => {
-    if (Number(record.sequence) !== index + 1) throw new Error("Offline library sequence is invalid.");
+    if (Number(record.sequence) !== index + 1)
+      throw new Error("Offline library sequence is invalid.");
     const round = record && record.round;
     if (!round || !Array.isArray(round.games) || round.games.length !== spec.courtCount) {
       throw new Error("Every offline library round must contain exactly " + spec.courtCount + " games.");
@@ -593,7 +883,8 @@ function validateOfflineLibraryPayload(payload, spec) {
       names.push(...game.pair1, ...game.pair2);
     });
     (round.resting || []).forEach((name) => names.push(name));
-    if (names.some((name) => !validName(name))) throw new Error("Offline library contains a non-template player name.");
+    if (names.some((name) => !validName(name)))
+      throw new Error("Offline library contains a non-template player name.");
     const baseNames = names.map((name) => String(name).split("#")[0]);
     if (baseNames.length !== spec.playerCount || new Set(baseNames).size !== spec.playerCount) {
       throw new Error("Offline library round does not contain the exact template player pool.");
@@ -601,7 +892,8 @@ function validateOfflineLibraryPayload(payload, spec) {
     expectedFixedPairs.forEach((pair) => {
       const together = round.games.some((game) => [game.pair1, game.pair2].some((team) => team.map((name) => String(name).split("#")[0]).includes(pair[0]) && team.map((name) => String(name).split("#")[0]).includes(pair[1])));
       const resting = pair.every((name) => (round.resting || []).map((value) => String(value).split("#")[0]).includes(name));
-      if (!together && !resting) throw new Error("Offline library round separates a fixed pair.");
+      if (!together && !resting)
+        throw new Error("Offline library round separates a fixed pair.");
     });
   });
   return { records };
@@ -611,8 +903,10 @@ __name2(validateOfflineLibraryPayload, "validateOfflineLibraryPayload");
 __name22(validateOfflineLibraryPayload, "validateOfflineLibraryPayload");
 __name222(validateOfflineLibraryPayload, "validateOfflineLibraryPayload");
 __name2222(validateOfflineLibraryPayload, "validateOfflineLibraryPayload");
+__name22222(validateOfflineLibraryPayload, "validateOfflineLibraryPayload");
 async function handleOfflineLibraryGet(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
   const body = await request.json();
   try {
     await requireOfflineLibrarySession(body, env);
@@ -626,7 +920,8 @@ async function handleOfflineLibraryGet(request, env) {
     "offline_round_libraries",
     "signature=eq." + encodeURIComponent(signature) + "&select=signature,payload&limit=1"
   );
-  if (!Array.isArray(rows) || !rows.length) return json({ found: false, signature, spec });
+  if (!Array.isArray(rows) || !rows.length)
+    return json({ found: false, signature, spec });
   validateOfflineLibraryPayload(rows[0].payload, spec);
   return json({ found: true, signature, spec, payload: rows[0].payload });
 }
@@ -635,8 +930,10 @@ __name2(handleOfflineLibraryGet, "handleOfflineLibraryGet");
 __name22(handleOfflineLibraryGet, "handleOfflineLibraryGet");
 __name222(handleOfflineLibraryGet, "handleOfflineLibraryGet");
 __name2222(handleOfflineLibraryGet, "handleOfflineLibraryGet");
+__name22222(handleOfflineLibraryGet, "handleOfflineLibraryGet");
 async function handleOfflineLibraryPut(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
   const body = await request.json();
   try {
     await requireOfflineLibrarySession(body, env);
@@ -669,8 +966,10 @@ __name2(handleOfflineLibraryPut, "handleOfflineLibraryPut");
 __name22(handleOfflineLibraryPut, "handleOfflineLibraryPut");
 __name222(handleOfflineLibraryPut, "handleOfflineLibraryPut");
 __name2222(handleOfflineLibraryPut, "handleOfflineLibraryPut");
+__name22222(handleOfflineLibraryPut, "handleOfflineLibraryPut");
 async function handleOfflineLibraryDelete(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
   const body = await request.json();
   try {
     await requireOfflineLibrarySession(body, env);
@@ -687,6 +986,7 @@ __name2(handleOfflineLibraryDelete, "handleOfflineLibraryDelete");
 __name22(handleOfflineLibraryDelete, "handleOfflineLibraryDelete");
 __name222(handleOfflineLibraryDelete, "handleOfflineLibraryDelete");
 __name2222(handleOfflineLibraryDelete, "handleOfflineLibraryDelete");
+__name22222(handleOfflineLibraryDelete, "handleOfflineLibraryDelete");
 async function signToken(payload, secret) {
   const data = JSON.stringify(payload);
   const key = await crypto.subtle.importKey(
@@ -705,10 +1005,12 @@ __name2(signToken, "signToken");
 __name22(signToken, "signToken");
 __name222(signToken, "signToken");
 __name2222(signToken, "signToken");
+__name22222(signToken, "signToken");
 async function verifyToken(token, secret) {
   try {
     const [dataB64, sigHex] = token.split(".");
-    if (!dataB64 || !sigHex) return null;
+    if (!dataB64 || !sigHex)
+      return null;
     const data = atob(dataB64);
     const key = await crypto.subtle.importKey(
       "raw",
@@ -719,9 +1021,11 @@ async function verifyToken(token, secret) {
     );
     const sigBytes = new Uint8Array(sigHex.match(/.{2}/g).map((h) => parseInt(h, 16)));
     const valid = await crypto.subtle.verify("HMAC", key, sigBytes, new TextEncoder().encode(data));
-    if (!valid) return null;
+    if (!valid)
+      return null;
     const payload = JSON.parse(data);
-    if (payload.exp && Date.now() > payload.exp) return null;
+    if (payload.exp && Date.now() > payload.exp)
+      return null;
     return payload;
   } catch {
     return null;
@@ -732,6 +1036,7 @@ __name2(verifyToken, "verifyToken");
 __name22(verifyToken, "verifyToken");
 __name222(verifyToken, "verifyToken");
 __name2222(verifyToken, "verifyToken");
+__name22222(verifyToken, "verifyToken");
 var TRIAL_DAYS = 60;
 function addTrialDays(date = /* @__PURE__ */ new Date()) {
   const d = new Date(date);
@@ -743,6 +1048,7 @@ __name2(addTrialDays, "addTrialDays");
 __name22(addTrialDays, "addTrialDays");
 __name222(addTrialDays, "addTrialDays");
 __name2222(addTrialDays, "addTrialDays");
+__name22222(addTrialDays, "addTrialDays");
 function cleanSubEmail(email) {
   return email ? String(email).trim().toLowerCase() : null;
 }
@@ -751,6 +1057,7 @@ __name2(cleanSubEmail, "cleanSubEmail");
 __name22(cleanSubEmail, "cleanSubEmail");
 __name222(cleanSubEmail, "cleanSubEmail");
 __name2222(cleanSubEmail, "cleanSubEmail");
+__name22222(cleanSubEmail, "cleanSubEmail");
 async function resolveSubIdentity(body, env, requireSession = true) {
   const accountId = String(body.accountId || body.userAccountId || "").trim();
   let email = cleanSubEmail(body.email);
@@ -759,25 +1066,29 @@ async function resolveSubIdentity(body, env, requireSession = true) {
   if (accountId) {
     if (requireSession) {
       const sessionToken = String(body.sessionToken || "").trim();
-      if (!sessionToken) return { error: "session_required" };
+      if (!sessionToken)
+        return { error: "session_required" };
       const sessions = await sbGet(
         env,
         "active_sessions",
         "user_account_id=eq." + encodeURIComponent(accountId) + "&token=eq." + encodeURIComponent(sessionToken) + "&select=user_account_id&limit=1"
       ).catch(() => []);
-      if (!sessions.length) return { error: "invalid_session" };
+      if (!sessions.length)
+        return { error: "invalid_session" };
     }
     const accounts = await sbGet(
       env,
       "user_accounts",
       "id=eq." + encodeURIComponent(accountId) + "&select=id,email,nickname,auth_provider&limit=1"
     ).catch(() => []);
-    if (!accounts.length) return { error: "account_not_found" };
+    if (!accounts.length)
+      return { error: "account_not_found" };
     email = cleanSubEmail(accounts[0].email);
     displayName = String(accounts[0].nickname || displayName || "").trim();
     authProvider = String(accounts[0].auth_provider || authProvider || "email").trim();
   }
-  if (!accountId && !email) return { error: "identity_required" };
+  if (!accountId && !email)
+    return { error: "identity_required" };
   return { accountId, email, displayName, authProvider };
 }
 __name(resolveSubIdentity, "resolveSubIdentity");
@@ -785,6 +1096,7 @@ __name2(resolveSubIdentity, "resolveSubIdentity");
 __name22(resolveSubIdentity, "resolveSubIdentity");
 __name222(resolveSubIdentity, "resolveSubIdentity");
 __name2222(resolveSubIdentity, "resolveSubIdentity");
+__name22222(resolveSubIdentity, "resolveSubIdentity");
 function subIdentityFilter(identity) {
   return identity.accountId ? "account_id=eq." + encodeURIComponent(identity.accountId) : "email=eq." + encodeURIComponent(identity.email);
 }
@@ -793,6 +1105,7 @@ __name2(subIdentityFilter, "subIdentityFilter");
 __name22(subIdentityFilter, "subIdentityFilter");
 __name222(subIdentityFilter, "subIdentityFilter");
 __name2222(subIdentityFilter, "subIdentityFilter");
+__name22222(subIdentityFilter, "subIdentityFilter");
 async function findSubPlan(env, identity, select = "account_id,email,display_name,auth_provider,plan,expires_at,device_id,activated_at") {
   let rows = [];
   if (identity.accountId) {
@@ -845,6 +1158,7 @@ __name2(findSubPlan, "findSubPlan");
 __name22(findSubPlan, "findSubPlan");
 __name222(findSubPlan, "findSubPlan");
 __name2222(findSubPlan, "findSubPlan");
+__name22222(findSubPlan, "findSubPlan");
 async function saveSubPlan(env, identity, values) {
   const rows = await findSubPlan(env, identity);
   const identityValues = {
@@ -864,11 +1178,13 @@ __name2(saveSubPlan, "saveSubPlan");
 __name22(saveSubPlan, "saveSubPlan");
 __name222(saveSubPlan, "saveSubPlan");
 __name2222(saveSubPlan, "saveSubPlan");
+__name22222(saveSubPlan, "saveSubPlan");
 async function handleSubVerify(request, env) {
   const body = await request.json();
   const deviceId = body.deviceId;
   const identity = await resolveSubIdentity(body, env);
-  if (identity.error || !deviceId) return json({ allowed: false, reason: identity.error || "missing_params" });
+  if (identity.error || !deviceId)
+    return json({ allowed: false, reason: identity.error || "missing_params" });
   const secret = env.TOKEN_SECRET || "fallback-secret-change-me";
   const rows = await findSubPlan(env, identity);
   if (!rows || !rows.length) {
@@ -902,9 +1218,12 @@ async function handleSubVerify(request, env) {
     ).catch(() => {
     });
   }
-  if (rec.expires_at && new Date(rec.expires_at) < /* @__PURE__ */ new Date()) return json({ allowed: false, reason: "expired", plan: rec.plan });
-  if (!rec.plan) return json({ allowed: false, reason: "no_plan" });
-  if (rec.device_id && rec.device_id !== deviceId) return json({ allowed: false, reason: "wrong_device" });
+  if (rec.expires_at && new Date(rec.expires_at) < /* @__PURE__ */ new Date())
+    return json({ allowed: false, reason: "expired", plan: rec.plan });
+  if (!rec.plan)
+    return json({ allowed: false, reason: "no_plan" });
+  if (rec.device_id && rec.device_id !== deviceId)
+    return json({ allowed: false, reason: "wrong_device" });
   if (!rec.device_id) {
     await sbPatch(
       env,
@@ -929,6 +1248,7 @@ __name2(handleSubVerify, "handleSubVerify");
 __name22(handleSubVerify, "handleSubVerify");
 __name222(handleSubVerify, "handleSubVerify");
 __name2222(handleSubVerify, "handleSubVerify");
+__name22222(handleSubVerify, "handleSubVerify");
 var DB_ACTIONS = ["get", "post", "patch", "delete", "upsert"];
 var DB_TABLE_RULES = {
   active_sessions: ["get", "post", "delete", "upsert"],
@@ -957,9 +1277,12 @@ var DB_BLOCKED_TABLES = [
   "user_plans"
 ];
 function isDbRequestAllowed(action, table) {
-  if (!DB_ACTIONS.includes(action)) return false;
-  if (!/^[a-z_][a-z0-9_]*$/i.test(table || "")) return false;
-  if (DB_BLOCKED_TABLES.includes(table)) return false;
+  if (!DB_ACTIONS.includes(action))
+    return false;
+  if (!/^[a-z_][a-z0-9_]*$/i.test(table || ""))
+    return false;
+  if (DB_BLOCKED_TABLES.includes(table))
+    return false;
   const allowedActions = DB_TABLE_RULES[table];
   return Array.isArray(allowedActions) && allowedActions.includes(action);
 }
@@ -968,11 +1291,14 @@ __name2(isDbRequestAllowed, "isDbRequestAllowed");
 __name22(isDbRequestAllowed, "isDbRequestAllowed");
 __name222(isDbRequestAllowed, "isDbRequestAllowed");
 __name2222(isDbRequestAllowed, "isDbRequestAllowed");
+__name22222(isDbRequestAllowed, "isDbRequestAllowed");
 function redactDbResult(table, value) {
-  if (table !== "clubs") return value;
+  if (table !== "clubs")
+    return value;
   const rows = Array.isArray(value) ? value : [value];
   const clean = rows.map((row) => {
-    if (!row || typeof row !== "object") return row;
+    if (!row || typeof row !== "object")
+      return row;
     const copy = { ...row };
     delete copy.admin_password;
     delete copy.select_password;
@@ -981,42 +1307,53 @@ function redactDbResult(table, value) {
   });
   return Array.isArray(value) ? clean : clean[0];
 }
+__name(redactDbResult, "redactDbResult");
 async function requireDbMutationSession(body, env, action, table) {
-  const bootstrap = table === "user_accounts" && action === "post" ||
-    table === "active_sessions" && ["post", "upsert"].includes(action) ||
-    table === "players" && action === "post" && !body.userAccountId;
-  if (bootstrap) return true;
-  try {
-    await requireOfflineLibrarySession({ accountId:body.userAccountId, sessionToken:body.sessionToken }, env);
+  const bootstrap = table === "user_accounts" && action === "post" || table === "active_sessions" && ["post", "upsert"].includes(action) || table === "players" && action === "post" && !body.userAccountId;
+  if (bootstrap)
     return true;
-  } catch (_) { return false; }
+  try {
+    await requireOfflineLibrarySession({ accountId: body.userAccountId, sessionToken: body.sessionToken }, env);
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
+__name(requireDbMutationSession, "requireDbMutationSession");
 async function handleClubVerifyPassword(request, env) {
-  if (request.method !== "POST") return json({ error:"Method not allowed" }, 405);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
   const body = await request.json().catch(() => ({}));
   const clubId = String(body.clubId || "").trim();
   const password = String(body.password || "");
   const kind = body.kind === "admin" ? "admin" : "select";
-  if (!clubId || !password) return json({ valid:false }, 400);
+  if (!clubId || !password)
+    return json({ valid: false }, 400);
   if (kind === "admin") {
-    try { await requireOfflineLibrarySession({ accountId:body.userAccountId, sessionToken:body.sessionToken }, env); }
-    catch (_) { return json({ valid:false, error:"Authentication required" }, 401); }
+    try {
+      await requireOfflineLibrarySession({ accountId: body.userAccountId, sessionToken: body.sessionToken }, env);
+    } catch (_) {
+      return json({ valid: false, error: "Authentication required" }, 401);
+    }
   }
   const column = kind === "admin" ? "admin_password" : "select_password";
   const rows = await sbGet(env, "clubs", "id=eq." + encodeURIComponent(clubId) + "&select=id,name," + column + "&limit=1").catch(() => []);
-  if (!rows.length) return json({ valid:false }, 404);
-  return json({ valid:String(rows[0][column] || "") === password, club:{ id:rows[0].id, name:rows[0].name || "" } });
+  if (!rows.length)
+    return json({ valid: false }, 404);
+  return json({ valid: String(rows[0][column] || "") === password, club: { id: rows[0].id, name: rows[0].name || "" } });
 }
+__name(handleClubVerifyPassword, "handleClubVerifyPassword");
 async function handleDb(request, env, path) {
   const body = await request.json().catch(() => ({}));
   const { table, query = "", data, onConflict, prefer } = body;
-  if (!table) return json({ error: "table required" }, 400);
+  if (!table)
+    return json({ error: "table required" }, 400);
   const action = path.split("/db/")[1];
   if (!isDbRequestAllowed(action, table)) {
     return json({ error: "DB route not allowed for this table/action" }, 403);
   }
   if (action !== "get" && !await requireDbMutationSession(body, env, action, table)) {
-    return json({ error:"Authenticated device session required" }, 401);
+    return json({ error: "Authenticated device session required" }, 401);
   }
   switch (action) {
     case "get":
@@ -1044,16 +1381,19 @@ __name2(handleDb, "handleDb");
 __name22(handleDb, "handleDb");
 __name222(handleDb, "handleDb");
 __name2222(handleDb, "handleDb");
+__name22222(handleDb, "handleDb");
 async function handleSendOtp(request, env) {
   const { email } = await request.json();
-  if (!email) return json({ error: "email required" }, 400);
+  if (!email)
+    return json({ error: "email required" }, 400);
   const res = await fetch(env.EDGE_BASE + "/send-otp", {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": "Bearer " + env.SUPABASE_KEY, "apikey": env.SUPABASE_KEY },
     body: JSON.stringify({ email: email.toLowerCase().trim() })
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) return json({ error: data.error || "Failed to send OTP" }, res.status);
+  if (!res.ok)
+    return json({ error: data.error || "Failed to send OTP" }, res.status);
   return json({ success: true });
 }
 __name(handleSendOtp, "handleSendOtp");
@@ -1061,16 +1401,19 @@ __name2(handleSendOtp, "handleSendOtp");
 __name22(handleSendOtp, "handleSendOtp");
 __name222(handleSendOtp, "handleSendOtp");
 __name2222(handleSendOtp, "handleSendOtp");
+__name22222(handleSendOtp, "handleSendOtp");
 async function handleVerifyOtp(request, env) {
   const { email, otp } = await request.json();
-  if (!email || !otp) return json({ error: "email and otp required" }, 400);
+  if (!email || !otp)
+    return json({ error: "email and otp required" }, 400);
   const res = await fetch(env.EDGE_BASE + "/verify-otp", {
     method: "POST",
     headers: { "Content-Type": "application/json", "Authorization": "Bearer " + env.SUPABASE_KEY, "apikey": env.SUPABASE_KEY },
     body: JSON.stringify({ email: email.toLowerCase().trim(), otp: otp.trim() })
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) return json({ error: data.error || "Invalid OTP" }, res.status);
+  if (!res.ok)
+    return json({ error: data.error || "Invalid OTP" }, res.status);
   return json({ success: true });
 }
 __name(handleVerifyOtp, "handleVerifyOtp");
@@ -1078,6 +1421,7 @@ __name2(handleVerifyOtp, "handleVerifyOtp");
 __name22(handleVerifyOtp, "handleVerifyOtp");
 __name222(handleVerifyOtp, "handleVerifyOtp");
 __name2222(handleVerifyOtp, "handleVerifyOtp");
+__name22222(handleVerifyOtp, "handleVerifyOtp");
 async function handleSupabaseOtp(request, env) {
   const { email } = await request.json();
   const res = await fetch(env.SUPABASE_URL + "/auth/v1/otp", {
@@ -1096,6 +1440,7 @@ __name2(handleSupabaseOtp, "handleSupabaseOtp");
 __name22(handleSupabaseOtp, "handleSupabaseOtp");
 __name222(handleSupabaseOtp, "handleSupabaseOtp");
 __name2222(handleSupabaseOtp, "handleSupabaseOtp");
+__name22222(handleSupabaseOtp, "handleSupabaseOtp");
 async function handleSupabaseVerify(request, env) {
   const { email, token } = await request.json();
   const res = await fetch(env.SUPABASE_URL + "/auth/v1/verify", {
@@ -1114,14 +1459,19 @@ __name2(handleSupabaseVerify, "handleSupabaseVerify");
 __name22(handleSupabaseVerify, "handleSupabaseVerify");
 __name222(handleSupabaseVerify, "handleSupabaseVerify");
 __name2222(handleSupabaseVerify, "handleSupabaseVerify");
+__name22222(handleSupabaseVerify, "handleSupabaseVerify");
 async function handleSubCheck(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
-  if (identity.error) return json({ valid: false, reason: identity.error });
+  if (identity.error)
+    return json({ valid: false, reason: identity.error });
   const rows = await findSubPlan(env, identity);
-  if (!rows || !rows.length) return json({ valid: false });
+  if (!rows || !rows.length)
+    return json({ valid: false });
   const rec = rows[0];
-  if (!rec.plan) return json({ valid: false });
-  if (rec.expires_at && new Date(rec.expires_at) < /* @__PURE__ */ new Date()) return json({ valid: false, expired: true });
+  if (!rec.plan)
+    return json({ valid: false });
+  if (rec.expires_at && new Date(rec.expires_at) < /* @__PURE__ */ new Date())
+    return json({ valid: false, expired: true });
   return json({ valid: true, plan: rec.plan, expires_at: rec.expires_at });
 }
 __name(handleSubCheck, "handleSubCheck");
@@ -1129,19 +1479,25 @@ __name2(handleSubCheck, "handleSubCheck");
 __name22(handleSubCheck, "handleSubCheck");
 __name222(handleSubCheck, "handleSubCheck");
 __name2222(handleSubCheck, "handleSubCheck");
+__name22222(handleSubCheck, "handleSubCheck");
 async function handleSubActivate(request, env) {
   const body = await request.json();
   const { key } = body;
-  if (!key) return json({ valid: false, error: "Key required" });
+  if (!key)
+    return json({ valid: false, error: "Key required" });
   const k = key.trim().toUpperCase();
   const rows = await sbGet(env, "licenses", "key=eq." + encodeURIComponent(k) + "&select=key,plan,expires_at").catch(() => []);
-  if (!rows || !rows.length) return json({ valid: false, error: "Invalid key \u2014 already used or does not exist" });
+  if (!rows || !rows.length)
+    return json({ valid: false, error: "Invalid key \u2014 already used or does not exist" });
   const lic = rows[0];
-  if (lic.expires_at && new Date(lic.expires_at) < /* @__PURE__ */ new Date()) return json({ valid: false, error: "This license key has expired" });
+  if (lic.expires_at && new Date(lic.expires_at) < /* @__PURE__ */ new Date())
+    return json({ valid: false, error: "This license key has expired" });
   const hasIdentity = !!(body.accountId || body.userAccountId || body.email);
-  if (!hasIdentity) return json({ valid: true, plan: lic.plan, expiry: lic.expires_at, preview: true });
+  if (!hasIdentity)
+    return json({ valid: true, plan: lic.plan, expiry: lic.expires_at, preview: true });
   const identity = await resolveSubIdentity(body, env);
-  if (identity.error) return json({ valid: false, error: identity.error });
+  if (identity.error)
+    return json({ valid: false, error: identity.error });
   await saveSubPlan(env, identity, {
     plan: lic.plan,
     expires_at: lic.expires_at || null,
@@ -1156,14 +1512,19 @@ __name2(handleSubActivate, "handleSubActivate");
 __name22(handleSubActivate, "handleSubActivate");
 __name222(handleSubActivate, "handleSubActivate");
 __name2222(handleSubActivate, "handleSubActivate");
+__name22222(handleSubActivate, "handleSubActivate");
 async function handleSubRestore(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
-  if (identity.error) return json({ restored: false, reason: identity.error });
+  if (identity.error)
+    return json({ restored: false, reason: identity.error });
   const rows = await findSubPlan(env, identity);
-  if (!rows || !rows.length) return json({ restored: false });
+  if (!rows || !rows.length)
+    return json({ restored: false });
   const rec = rows[0];
-  if (!rec.plan) return json({ restored: false });
-  if (rec.expires_at && new Date(rec.expires_at) < /* @__PURE__ */ new Date()) return json({ restored: false, expired: true });
+  if (!rec.plan)
+    return json({ restored: false });
+  if (rec.expires_at && new Date(rec.expires_at) < /* @__PURE__ */ new Date())
+    return json({ restored: false, expired: true });
   return json({ restored: true, plan: rec.plan, expires_at: rec.expires_at });
 }
 __name(handleSubRestore, "handleSubRestore");
@@ -1171,13 +1532,16 @@ __name2(handleSubRestore, "handleSubRestore");
 __name22(handleSubRestore, "handleSubRestore");
 __name222(handleSubRestore, "handleSubRestore");
 __name2222(handleSubRestore, "handleSubRestore");
+__name22222(handleSubRestore, "handleSubRestore");
 async function handleSubRegisterSession(request, env) {
   const body = await request.json();
   const identity = await resolveSubIdentity(body, env);
-  if (identity.error || !body.deviceId) return json({ ok: false, reason: identity.error || "device_required" });
+  if (identity.error || !body.deviceId)
+    return json({ ok: false, reason: identity.error || "device_required" });
   const rows = await findSubPlan(env, identity);
-  if (rows.length) await sbPatch(env, "user_plans", subIdentityFilter(identity), { device_id: body.deviceId }).catch(() => {
-  });
+  if (rows.length)
+    await sbPatch(env, "user_plans", subIdentityFilter(identity), { device_id: body.deviceId }).catch(() => {
+    });
   return json({ ok: true });
 }
 __name(handleSubRegisterSession, "handleSubRegisterSession");
@@ -1185,14 +1549,18 @@ __name2(handleSubRegisterSession, "handleSubRegisterSession");
 __name22(handleSubRegisterSession, "handleSubRegisterSession");
 __name222(handleSubRegisterSession, "handleSubRegisterSession");
 __name2222(handleSubRegisterSession, "handleSubRegisterSession");
+__name22222(handleSubRegisterSession, "handleSubRegisterSession");
 async function handleSubValidateSession(request, env) {
   const body = await request.json();
   const identity = await resolveSubIdentity(body, env);
-  if (identity.error || !body.deviceId) return json({ valid: false, reason: identity.error || "device_required" });
+  if (identity.error || !body.deviceId)
+    return json({ valid: false, reason: identity.error || "device_required" });
   const rows = await findSubPlan(env, identity);
-  if (!rows || !rows.length) return json({ valid: true });
+  if (!rows || !rows.length)
+    return json({ valid: true });
   const remote = rows[0].device_id;
-  if (!remote) return json({ valid: true });
+  if (!remote)
+    return json({ valid: true });
   return json({ valid: remote === body.deviceId });
 }
 __name(handleSubValidateSession, "handleSubValidateSession");
@@ -1200,11 +1568,13 @@ __name2(handleSubValidateSession, "handleSubValidateSession");
 __name22(handleSubValidateSession, "handleSubValidateSession");
 __name222(handleSubValidateSession, "handleSubValidateSession");
 __name2222(handleSubValidateSession, "handleSubValidateSession");
+__name22222(handleSubValidateSession, "handleSubValidateSession");
 async function handlePurchaseRequest(request, env) {
   const body = await request.json();
   const identity = await resolveSubIdentity(body, env);
   const plan = body.plan;
-  if (identity.error || !plan) return json({ success: false, error: identity.error || "plan required" });
+  if (identity.error || !plan)
+    return json({ success: false, error: identity.error || "plan required" });
   await sbDelete(env, "purchase_requests", subIdentityFilter(identity) + "&status=eq.pending").catch(() => {
   });
   try {
@@ -1228,19 +1598,23 @@ __name2(handlePurchaseRequest, "handlePurchaseRequest");
 __name22(handlePurchaseRequest, "handlePurchaseRequest");
 __name222(handlePurchaseRequest, "handlePurchaseRequest");
 __name2222(handlePurchaseRequest, "handlePurchaseRequest");
+__name22222(handlePurchaseRequest, "handlePurchaseRequest");
 async function handlePurchaseStatus(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
-  if (identity.error) return json({ found: false, reason: identity.error });
+  if (identity.error)
+    return json({ found: false, reason: identity.error });
   const rows = await sbGet(
     env,
     "purchase_requests",
     subIdentityFilter(identity) + "&status=eq.pending&order=created_at.desc&limit=1&select=plan,status,created_at"
   ).catch(() => []);
-  if (!rows || !rows.length) return json({ found: false });
+  if (!rows || !rows.length)
+    return json({ found: false });
   const req = rows[0];
   const expiresAt = new Date(new Date(req.created_at).getTime() + 48 * 60 * 60 * 1e3);
   const hrsLeft = Math.max(0, Math.ceil((expiresAt - Date.now()) / 36e5));
-  if (hrsLeft <= 0) return json({ found: false });
+  if (hrsLeft <= 0)
+    return json({ found: false });
   return json({ found: true, plan: req.plan, hrsLeft, status: req.status });
 }
 __name(handlePurchaseStatus, "handlePurchaseStatus");
@@ -1248,9 +1622,11 @@ __name2(handlePurchaseStatus, "handlePurchaseStatus");
 __name22(handlePurchaseStatus, "handlePurchaseStatus");
 __name222(handlePurchaseStatus, "handlePurchaseStatus");
 __name2222(handlePurchaseStatus, "handlePurchaseStatus");
+__name22222(handlePurchaseStatus, "handlePurchaseStatus");
 async function handlePurchaseCancel(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
-  if (identity.error) return json({ ok: false, reason: identity.error });
+  if (identity.error)
+    return json({ ok: false, reason: identity.error });
   await sbDelete(env, "purchase_requests", subIdentityFilter(identity) + "&status=eq.pending").catch(() => {
   });
   return json({ ok: true });
@@ -1260,6 +1636,7 @@ __name2(handlePurchaseCancel, "handlePurchaseCancel");
 __name22(handlePurchaseCancel, "handlePurchaseCancel");
 __name222(handlePurchaseCancel, "handlePurchaseCancel");
 __name2222(handlePurchaseCancel, "handlePurchaseCancel");
+__name22222(handlePurchaseCancel, "handlePurchaseCancel");
 async function handleAppConfig(request, env) {
   const rows = await sbGet(env, "app_config", "select=key,value").catch(() => []);
   const cfg = {};
@@ -1273,6 +1650,7 @@ __name2(handleAppConfig, "handleAppConfig");
 __name22(handleAppConfig, "handleAppConfig");
 __name222(handleAppConfig, "handleAppConfig");
 __name2222(handleAppConfig, "handleAppConfig");
+__name22222(handleAppConfig, "handleAppConfig");
 async function handleAdminRequests(request, env) {
   const rows = await sbGet(
     env,
@@ -1294,6 +1672,7 @@ __name2(handleAdminRequests, "handleAdminRequests");
 __name22(handleAdminRequests, "handleAdminRequests");
 __name222(handleAdminRequests, "handleAdminRequests");
 __name2222(handleAdminRequests, "handleAdminRequests");
+__name22222(handleAdminRequests, "handleAdminRequests");
 async function handleAdminActivate(request, env) {
   const body = await request.json();
   let { email, plan, expiresAt, requestId } = body;
@@ -1317,10 +1696,11 @@ async function handleAdminActivate(request, env) {
       plan = plan || requests[0].plan;
     }
   }
-  if (!identity.accountId && !identity.email || !plan) return json({ success: false, error: "account and plan required" });
+  if (!identity.accountId && !identity.email || !plan)
+    return json({ success: false, error: "account and plan required" });
   function genKey() {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    const seg = /* @__PURE__ */ __name2222(() => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join(""), "seg");
+    const seg = /* @__PURE__ */ __name22222(() => Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join(""), "seg");
     return [seg(), seg(), seg(), seg()].join("-");
   }
   __name(genKey, "genKey");
@@ -1328,6 +1708,7 @@ async function handleAdminActivate(request, env) {
   __name22(genKey, "genKey");
   __name222(genKey, "genKey");
   __name2222(genKey, "genKey");
+  __name22222(genKey, "genKey");
   const key = genKey();
   try {
     await saveSubPlan(env, identity, {
@@ -1354,9 +1735,11 @@ __name2(handleAdminActivate, "handleAdminActivate");
 __name22(handleAdminActivate, "handleAdminActivate");
 __name222(handleAdminActivate, "handleAdminActivate");
 __name2222(handleAdminActivate, "handleAdminActivate");
+__name22222(handleAdminActivate, "handleAdminActivate");
 async function handlePurchaseCancelById(request, env) {
   const { requestId } = await request.json();
-  if (!requestId) return json({ ok: false });
+  if (!requestId)
+    return json({ ok: false });
   await sbPatch(env, "purchase_requests", "id=eq." + requestId, { status: "dismissed" }).catch(() => {
   });
   return json({ ok: true });
@@ -1366,9 +1749,11 @@ __name2(handlePurchaseCancelById, "handlePurchaseCancelById");
 __name22(handlePurchaseCancelById, "handlePurchaseCancelById");
 __name222(handlePurchaseCancelById, "handlePurchaseCancelById");
 __name2222(handlePurchaseCancelById, "handlePurchaseCancelById");
+__name22222(handlePurchaseCancelById, "handlePurchaseCancelById");
 async function handleRegisterTrial(request, env) {
   const identity = await resolveSubIdentity(await request.json(), env);
-  if (identity.error) return json({ ok: false, reason: identity.error });
+  if (identity.error)
+    return json({ ok: false, reason: identity.error });
   const existing = await findSubPlan(env, identity);
   if (existing.length) {
     const rec = existing[0];
@@ -1399,9 +1784,11 @@ __name2(handleRegisterTrial, "handleRegisterTrial");
 __name22(handleRegisterTrial, "handleRegisterTrial");
 __name222(handleRegisterTrial, "handleRegisterTrial");
 __name2222(handleRegisterTrial, "handleRegisterTrial");
+__name22222(handleRegisterTrial, "handleRegisterTrial");
 async function handleAdminClubs(request, env) {
   const clubs = await sbGet(env, "clubs", "select=id,name,created_at,created_by&order=created_at.asc").catch(() => []);
-  if (!clubs.length) return json({ clubs: [] });
+  if (!clubs.length)
+    return json({ clubs: [] });
   const ownerIds = [...new Set(clubs.map((c) => c.created_by).filter(Boolean))];
   let accountMap = {};
   if (ownerIds.length) {
@@ -1410,7 +1797,8 @@ async function handleAdminClubs(request, env) {
       "user_accounts",
       "id=in.(" + ownerIds.join(",") + ")&select=id,email,nickname"
     ).catch(() => []);
-    for (const a of accounts) accountMap[a.id] = a;
+    for (const a of accounts)
+      accountMap[a.id] = a;
   }
   const result = clubs.map((c) => ({
     id: c.id,
@@ -1426,6 +1814,7 @@ __name2(handleAdminClubs, "handleAdminClubs");
 __name22(handleAdminClubs, "handleAdminClubs");
 __name222(handleAdminClubs, "handleAdminClubs");
 __name2222(handleAdminClubs, "handleAdminClubs");
+__name22222(handleAdminClubs, "handleAdminClubs");
 async function handleAdminSubscribers(request, env) {
   const rows = await sbGet(
     env,
@@ -1447,14 +1836,19 @@ __name2(handleAdminSubscribers, "handleAdminSubscribers");
 __name22(handleAdminSubscribers, "handleAdminSubscribers");
 __name222(handleAdminSubscribers, "handleAdminSubscribers");
 __name2222(handleAdminSubscribers, "handleAdminSubscribers");
+__name22222(handleAdminSubscribers, "handleAdminSubscribers");
 var MAX_CLUBS_PER_OWNER = 5;
 async function handleClubCreate(request, env) {
   const { userAccountId, name, select_password, admin_password } = await request.json();
-  if (!userAccountId) return json({ error: "userAccountId required" }, 400);
-  if (!name?.trim()) return json({ error: "Club name required" }, 400);
-  if (!admin_password) return json({ error: "Admin password required" }, 400);
+  if (!userAccountId)
+    return json({ error: "userAccountId required" }, 400);
+  if (!name?.trim())
+    return json({ error: "Club name required" }, 400);
+  if (!admin_password)
+    return json({ error: "Admin password required" }, 400);
   const internalMemberKey = select_password || "membership-only-" + crypto.randomUUID();
-  if (internalMemberKey === admin_password) return json({ error: "Admin password is invalid" }, 400);
+  if (internalMemberKey === admin_password)
+    return json({ error: "Admin password is invalid" }, 400);
   const existing = await sbGet(env, "clubs", "created_by=eq." + userAccountId + "&select=id").catch(() => []);
   if (existing.length >= MAX_CLUBS_PER_OWNER) {
     return json({ error: "You can only create up to " + MAX_CLUBS_PER_OWNER + " clubs.", limitReached: true }, 400);
@@ -1476,9 +1870,11 @@ __name2(handleClubCreate, "handleClubCreate");
 __name22(handleClubCreate, "handleClubCreate");
 __name222(handleClubCreate, "handleClubCreate");
 __name2222(handleClubCreate, "handleClubCreate");
+__name22222(handleClubCreate, "handleClubCreate");
 async function handleClubMyClubs(request, env) {
   const { userAccountId } = await request.json();
-  if (!userAccountId) return json({ error: "userAccountId required" }, 400);
+  if (!userAccountId)
+    return json({ error: "userAccountId required" }, 400);
   const owned = await sbGet(
     env,
     "clubs",
@@ -1512,18 +1908,22 @@ __name2(handleClubMyClubs, "handleClubMyClubs");
 __name22(handleClubMyClubs, "handleClubMyClubs");
 __name222(handleClubMyClubs, "handleClubMyClubs");
 __name2222(handleClubMyClubs, "handleClubMyClubs");
+__name22222(handleClubMyClubs, "handleClubMyClubs");
 async function handleClubOrganizers(request, env) {
   const { clubId, userAccountId, adminPassword } = await request.json();
-  if (!clubId) return json({ error: "clubId required" }, 400);
+  if (!clubId)
+    return json({ error: "clubId required" }, 400);
   const club = await sbGet(env, "clubs", "id=eq." + clubId + "&select=created_by,admin_password").catch(() => []);
-  if (!club.length) return json({ error: "Club not found" }, 404);
+  if (!club.length)
+    return json({ error: "Club not found" }, 404);
   const isOwnerById = club[0].created_by && club[0].created_by === userAccountId;
   const isOwnerByPw = adminPassword && club[0].admin_password === adminPassword;
   if (!isOwnerById && !isOwnerByPw) {
     return json({ error: "Only the club owner can view organizers" }, 403);
   }
   const rows = await sbGet(env, "club_organizers", "club_id=eq." + clubId + "&select=user_account_id").catch(() => []);
-  if (!rows.length) return json({ organizers: [] });
+  if (!rows.length)
+    return json({ organizers: [] });
   const ids = rows.map((r) => r.user_account_id);
   const accounts = await sbGet(
     env,
@@ -1537,11 +1937,14 @@ __name2(handleClubOrganizers, "handleClubOrganizers");
 __name22(handleClubOrganizers, "handleClubOrganizers");
 __name222(handleClubOrganizers, "handleClubOrganizers");
 __name2222(handleClubOrganizers, "handleClubOrganizers");
+__name22222(handleClubOrganizers, "handleClubOrganizers");
 async function handleClubGrantOrganizer(request, env) {
   const { clubId, userAccountId, targetUserAccountId, adminPassword } = await request.json();
-  if (!clubId || !targetUserAccountId) return json({ error: "clubId and targetUserAccountId required" }, 400);
+  if (!clubId || !targetUserAccountId)
+    return json({ error: "clubId and targetUserAccountId required" }, 400);
   const club = await sbGet(env, "clubs", "id=eq." + clubId + "&select=created_by,admin_password").catch(() => []);
-  if (!club.length) return json({ error: "Club not found" }, 404);
+  if (!club.length)
+    return json({ error: "Club not found" }, 404);
   const isOwnerById = club[0].created_by && club[0].created_by === userAccountId;
   const isOwnerByPw = adminPassword && club[0].admin_password === adminPassword;
   if (!isOwnerById && !isOwnerByPw) {
@@ -1552,7 +1955,8 @@ async function handleClubGrantOrganizer(request, env) {
     "memberships",
     "club_id=eq." + clubId + "&user_account_id=eq." + targetUserAccountId + "&select=id"
   ).catch(() => []);
-  if (!membership.length) return json({ error: "This person is not a member of your club" }, 400);
+  if (!membership.length)
+    return json({ error: "This person is not a member of your club" }, 400);
   await sbUpsert(
     env,
     "club_organizers",
@@ -1567,11 +1971,14 @@ __name2(handleClubGrantOrganizer, "handleClubGrantOrganizer");
 __name22(handleClubGrantOrganizer, "handleClubGrantOrganizer");
 __name222(handleClubGrantOrganizer, "handleClubGrantOrganizer");
 __name2222(handleClubGrantOrganizer, "handleClubGrantOrganizer");
+__name22222(handleClubGrantOrganizer, "handleClubGrantOrganizer");
 async function handleClubRevokeOrganizer(request, env) {
   const { clubId, userAccountId, targetUserAccountId, adminPassword } = await request.json();
-  if (!clubId || !targetUserAccountId) return json({ error: "clubId and targetUserAccountId required" }, 400);
+  if (!clubId || !targetUserAccountId)
+    return json({ error: "clubId and targetUserAccountId required" }, 400);
   const club = await sbGet(env, "clubs", "id=eq." + clubId + "&select=created_by,admin_password").catch(() => []);
-  if (!club.length) return json({ error: "Club not found" }, 404);
+  if (!club.length)
+    return json({ error: "Club not found" }, 404);
   const isOwnerById = club[0].created_by && club[0].created_by === userAccountId;
   const isOwnerByPw = adminPassword && club[0].admin_password === adminPassword;
   if (!isOwnerById && !isOwnerByPw) {
@@ -1590,11 +1997,14 @@ __name2(handleClubRevokeOrganizer, "handleClubRevokeOrganizer");
 __name22(handleClubRevokeOrganizer, "handleClubRevokeOrganizer");
 __name222(handleClubRevokeOrganizer, "handleClubRevokeOrganizer");
 __name2222(handleClubRevokeOrganizer, "handleClubRevokeOrganizer");
+__name22222(handleClubRevokeOrganizer, "handleClubRevokeOrganizer");
 async function handleClubSearchMembers(request, env) {
   const { clubId, userAccountId, query = "", adminPassword } = await request.json();
-  if (!clubId) return json({ error: "clubId required" }, 400);
+  if (!clubId)
+    return json({ error: "clubId required" }, 400);
   const club = await sbGet(env, "clubs", "id=eq." + clubId + "&select=created_by,admin_password").catch(() => []);
-  if (!club.length) return json({ error: "Club not found" }, 404);
+  if (!club.length)
+    return json({ error: "Club not found" }, 404);
   const isOwnerById = club[0].created_by && club[0].created_by === userAccountId;
   const isOwnerByPw = adminPassword && club[0].admin_password === adminPassword;
   if (!isOwnerById && !isOwnerByPw) {
@@ -1611,7 +2021,8 @@ async function handleClubSearchMembers(request, env) {
   const eligible = memberships.filter(
     (m) => m.user_account_id && m.user_account_id !== ownerId && m.user_account_id !== userAccountId && !grantedSet.has(m.user_account_id)
   );
-  if (!eligible.length) return json({ members: [] });
+  if (!eligible.length)
+    return json({ members: [] });
   const ids = eligible.map((m) => m.user_account_id);
   const accounts = await sbGet(
     env,
@@ -1627,6 +2038,7 @@ __name2(handleClubSearchMembers, "handleClubSearchMembers");
 __name22(handleClubSearchMembers, "handleClubSearchMembers");
 __name222(handleClubSearchMembers, "handleClubSearchMembers");
 __name2222(handleClubSearchMembers, "handleClubSearchMembers");
+__name22222(handleClubSearchMembers, "handleClubSearchMembers");
 function pairKey(a, b) {
   return [a, b].sort().join("&");
 }
@@ -1635,6 +2047,7 @@ __name2(pairKey, "pairKey");
 __name22(pairKey, "pairKey");
 __name222(pairKey, "pairKey");
 __name2222(pairKey, "pairKey");
+__name22222(pairKey, "pairKey");
 function gameKey(p1, p2) {
   return [[p1[0], p1[1]].sort().join("&"), [p2[0], p2[1]].sort().join("&")].sort().join(":");
 }
@@ -1643,6 +2056,7 @@ __name2(gameKey, "gameKey");
 __name22(gameKey, "gameKey");
 __name222(gameKey, "gameKey");
 __name2222(gameKey, "gameKey");
+__name22222(gameKey, "gameKey");
 function shuffle(arr) {
   arr = [...arr];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -1656,9 +2070,11 @@ __name2(shuffle, "shuffle");
 __name22(shuffle, "shuffle");
 __name222(shuffle, "shuffle");
 __name2222(shuffle, "shuffle");
+__name22222(shuffle, "shuffle");
 function getRating(name, allPlayers) {
   const p = allPlayers.find((p2) => p2.name === name);
-  if (!p) return 1;
+  if (!p)
+    return 1;
   return parseFloat(p.activeRating ?? p.clubRating ?? p.rating ?? 1);
 }
 __name(getRating, "getRating");
@@ -1666,6 +2082,7 @@ __name2(getRating, "getRating");
 __name22(getRating, "getRating");
 __name222(getRating, "getRating");
 __name2222(getRating, "getRating");
+__name22222(getRating, "getRating");
 function getGender(name, allPlayers) {
   const p = allPlayers.find((p2) => p2.name === name);
   return p ? p.gender : null;
@@ -1675,6 +2092,7 @@ __name2(getGender, "getGender");
 __name22(getGender, "getGender");
 __name222(getGender, "getGender");
 __name2222(getGender, "getGender");
+__name22222(getGender, "getGender");
 function selectRestingAndPlaying(state) {
   const { activeplayers, numCourts, fixedPairs, restQueue, courtFormats = [], courtTypes = [], allPlayers = [], pairPlayedSet, opponentMap = {} } = state;
   const total = activeplayers.length;
@@ -1688,20 +2106,26 @@ function selectRestingAndPlaying(state) {
     const fmt = courtFormats[c] || "doubles";
     const type = String(courtTypes[c] || "free").toLowerCase();
     if (fmt === "singles") {
-      if (type === "md" || type === "men" || type === "singles-men") strictMenSeats += 2;
-      else if (type === "ld" || type === "wd" || type === "women" || type === "ladies" || type === "singles-women") strictWomenSeats += 2;
-      else fullyGenderConstrained = false;
+      if (type === "md" || type === "men" || type === "singles-men")
+        strictMenSeats += 2;
+      else if (type === "ld" || type === "wd" || type === "women" || type === "ladies" || type === "singles-women")
+        strictWomenSeats += 2;
+      else
+        fullyGenderConstrained = false;
     } else {
-      if (type === "md") strictMenSeats += 4;
-      else if (type === "ld" || type === "wd") strictWomenSeats += 4;
+      if (type === "md")
+        strictMenSeats += 4;
+      else if (type === "ld" || type === "wd")
+        strictWomenSeats += 4;
       else if (type === "xd") {
         strictMenSeats += 2;
         strictWomenSeats += 2;
-      } else fullyGenderConstrained = false;
+      } else
+        fullyGenderConstrained = false;
     }
   }
   if (fullyGenderConstrained && !fixedPairs.length) {
-    const genderOf = /* @__PURE__ */ __name2222((player) => String(getGender(player, allPlayers) || "").toLowerCase(), "genderOf");
+    const genderOf = /* @__PURE__ */ __name22222((player) => String(getGender(player, allPlayers) || "").toLowerCase(), "genderOf");
     const activeMen = activeplayers.filter((player) => genderOf(player) === "male");
     const activeWomen = activeplayers.filter((player) => genderOf(player) === "female");
     const ordered = [
@@ -1723,9 +2147,10 @@ function selectRestingAndPlaying(state) {
     (t) => t === "MD" || t === "LD" || t === "WD" || t === "XD" || t === "men" || t === "ladies" || t === "singles-men" || t === "singles-women"
   );
   if (hasTypedCourts && numResting > 0) {
-    let swapIn = /* @__PURE__ */ __name222(function(needed, currentPlaying, restPool, surplusPlaying) {
+    let swapIn = /* @__PURE__ */ __name2222(function(needed, currentPlaying, restPool, surplusPlaying) {
       const shortfall = needed - currentPlaying.length;
-      if (shortfall <= 0) return;
+      if (shortfall <= 0)
+        return;
       const canSwap = Math.min(shortfall, restPool.length, surplusPlaying.length);
       for (let i = 0; i < canSwap; i++) {
         const pullIn = restPool[i];
@@ -1736,8 +2161,8 @@ function selectRestingAndPlaying(state) {
         playing.push(pullIn);
       }
     }, "swapIn");
-    __name2222(swapIn, "swapIn");
-    const genderOf = /* @__PURE__ */ __name2222((p) => {
+    __name22222(swapIn, "swapIn");
+    const genderOf = /* @__PURE__ */ __name22222((p) => {
       const pl = allPlayers.find((x) => x.name === p);
       return pl ? pl.gender : "Male";
     }, "genderOf");
@@ -1746,11 +2171,15 @@ function selectRestingAndPlaying(state) {
       const fmt = courtFormats[c] || "doubles";
       const type = courtTypes[c] || "free";
       if (fmt === "singles") {
-        if (type === "MD" || type === "men" || type === "singles-men") menNeeded += 2;
-        if (type === "LD" || type === "WD" || type === "women" || type === "ladies" || type === "singles-women") womenNeeded += 2;
+        if (type === "MD" || type === "men" || type === "singles-men")
+          menNeeded += 2;
+        if (type === "LD" || type === "WD" || type === "women" || type === "ladies" || type === "singles-women")
+          womenNeeded += 2;
       } else {
-        if (type === "MD") menNeeded += 4;
-        if (type === "LD" || type === "WD") womenNeeded += 4;
+        if (type === "MD")
+          menNeeded += 4;
+        if (type === "LD" || type === "WD")
+          womenNeeded += 4;
         if (type === "XD") {
           menNeeded += 2;
           womenNeeded += 2;
@@ -1777,8 +2206,10 @@ __name2(selectRestingAndPlaying, "selectRestingAndPlaying");
 __name22(selectRestingAndPlaying, "selectRestingAndPlaying");
 __name222(selectRestingAndPlaying, "selectRestingAndPlaying");
 __name2222(selectRestingAndPlaying, "selectRestingAndPlaying");
+__name22222(selectRestingAndPlaying, "selectRestingAndPlaying");
 function reorderFreePlayersByLastRound(freePlayers, lastRound, numCourts) {
-  if (!numCourts || !freePlayers.length) return [...freePlayers];
+  if (!numCourts || !freePlayers.length)
+    return [...freePlayers];
   const total = freePlayers.length;
   const base = Math.floor(total / numCourts);
   const rem = total % numCourts;
@@ -1788,9 +2219,10 @@ function reorderFreePlayersByLastRound(freePlayers, lastRound, numCourts) {
   const played = freePlayers.filter((p) => lrSet.has(p));
   const courts = Array.from({ length: numCourts }, () => []);
   let c = 0;
-  const distribute = /* @__PURE__ */ __name2222((list) => {
+  const distribute = /* @__PURE__ */ __name22222((list) => {
     for (const p of list) {
-      while (courts[c].length >= caps[c]) c = (c + 1) % numCourts;
+      while (courts[c].length >= caps[c])
+        c = (c + 1) % numCourts;
       courts[c].push(p);
       c = (c + 1) % numCourts;
     }
@@ -1804,6 +2236,7 @@ __name2(reorderFreePlayersByLastRound, "reorderFreePlayersByLastRound");
 __name22(reorderFreePlayersByLastRound, "reorderFreePlayersByLastRound");
 __name222(reorderFreePlayersByLastRound, "reorderFreePlayersByLastRound");
 __name2222(reorderFreePlayersByLastRound, "reorderFreePlayersByLastRound");
+__name22222(reorderFreePlayersByLastRound, "reorderFreePlayersByLastRound");
 function getNextFixedPairGames(state, fixedPairs, numCourts) {
   const hash = JSON.stringify(fixedPairs);
   if (!state.fixedPairGameQueue || !state.fixedPairGameQueue.length || state.fixedPairGameQueueHash !== hash) {
@@ -1829,6 +2262,7 @@ __name2(getNextFixedPairGames, "getNextFixedPairGames");
 __name22(getNextFixedPairGames, "getNextFixedPairGames");
 __name222(getNextFixedPairGames, "getNextFixedPairGames");
 __name2222(getNextFixedPairGames, "getNextFixedPairGames");
+__name22222(getNextFixedPairGames, "getNextFixedPairGames");
 function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
   const allPairs = [], unused = [], used = [];
   for (let i = 0; i < playing.length; i++) {
@@ -1838,8 +2272,10 @@ function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
       const isNew = !pairPlayedSet.has(key);
       const obj = { a, b, key, isNew };
       allPairs.push(obj);
-      if (isNew) unused.push(obj);
-      else used.push(obj);
+      if (isNew)
+        unused.push(obj);
+      else
+        used.push(obj);
     }
   }
   function oppScore(pair, selected) {
@@ -1848,7 +2284,9 @@ function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
     for (const [x, y] of selected) {
       for (const bp of [a, b]) {
         let n = 0;
-        for (const ap of [x, y]) if ((opponentMap[bp] || {})[ap] === 1) n++;
+        for (const ap of [x, y])
+          if ((opponentMap[bp] || {})[ap] === 1)
+            n++;
         score += n === 2 ? 2 : n === 1 ? 1 : 0;
       }
     }
@@ -1859,20 +2297,25 @@ function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
   __name22(oppScore, "oppScore");
   __name222(oppScore, "oppScore");
   __name2222(oppScore, "oppScore");
+  __name22222(oppScore, "oppScore");
   function pickBest(candidates) {
     const usedP = /* @__PURE__ */ new Set(), sel = [];
     let best = null, branches = 0;
     const MAX = 15e3;
     function dfs(start, score) {
-      if (branches++ > MAX) return;
+      if (branches++ > MAX)
+        return;
       if (sel.length === required) {
-        if (!best || score > best.score) best = { score, pairs: sel.map((p) => [...p]) };
+        if (!best || score > best.score)
+          best = { score, pairs: sel.map((p) => [...p]) };
         return;
       }
-      if (candidates.length - start < required - sel.length) return;
+      if (candidates.length - start < required - sel.length)
+        return;
       for (let i = start; i < candidates.length; i++) {
         const { a, b, isNew } = candidates[i];
-        if (usedP.has(a) || usedP.has(b)) continue;
+        if (usedP.has(a) || usedP.has(b))
+          continue;
         usedP.add(a);
         usedP.add(b);
         sel.push([a, b]);
@@ -1887,6 +2330,7 @@ function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
     __name22(dfs, "dfs");
     __name222(dfs, "dfs");
     __name2222(dfs, "dfs");
+    __name22222(dfs, "dfs");
     dfs(0, 0);
     return best ? best.pairs : null;
   }
@@ -1895,18 +2339,22 @@ function findDisjointPairs(playing, pairPlayedSet, required, opponentMap) {
   __name22(pickBest, "pickBest");
   __name222(pickBest, "pickBest");
   __name2222(pickBest, "pickBest");
+  __name22222(pickBest, "pickBest");
   if (unused.length >= required) {
     const r = pickBest(unused);
-    if (r) return r;
+    if (r)
+      return r;
   }
   const combined = [...unused, ...used];
   if (combined.length >= required) {
     const r = pickBest(combined);
-    if (r) return r;
+    if (r)
+      return r;
   }
   if (allPairs.length >= required) {
     const r = pickBest(allPairs);
-    if (r) return r;
+    if (r)
+      return r;
   }
   return [];
 }
@@ -1915,6 +2363,7 @@ __name2(findDisjointPairs, "findDisjointPairs");
 __name22(findDisjointPairs, "findDisjointPairs");
 __name222(findDisjointPairs, "findDisjointPairs");
 __name2222(findDisjointPairs, "findDisjointPairs");
+__name22222(findDisjointPairs, "findDisjointPairs");
 function getMatchupScores(allPairs, opponentMap) {
   const scores = [];
   for (let i = 0; i < allPairs.length; i++) {
@@ -1936,8 +2385,10 @@ function getMatchupScores(allPairs, opponentMap) {
     }
   }
   scores.sort((a, b) => {
-    if (b.freshness !== a.freshness) return b.freshness - a.freshness;
-    if (a.totalScore !== b.totalScore) return a.totalScore - b.totalScore;
+    if (b.freshness !== a.freshness)
+      return b.freshness - a.freshness;
+    if (a.totalScore !== b.totalScore)
+      return a.totalScore - b.totalScore;
     const sa = a.of.a1 + a.of.a2 + a.of.b1 + a.of.b2, sb = b.of.a1 + b.of.a2 + b.of.b1 + b.of.b2;
     return sb - sa;
   });
@@ -1948,9 +2399,11 @@ __name2(getMatchupScores, "getMatchupScores");
 __name22(getMatchupScores, "getMatchupScores");
 __name222(getMatchupScores, "getMatchupScores");
 __name2222(getMatchupScores, "getMatchupScores");
+__name22222(getMatchupScores, "getMatchupScores");
 function buildGroupedUniqueGames(state, playing) {
   const { numCourts, pairPlayedSet, opponentMap = {}, allRounds = [] } = state;
-  if (!numCourts || playing.length !== numCourts * 4) return null;
+  if (!numCourts || playing.length !== numCourts * 4)
+    return null;
   const last = allRounds.length ? allRounds[allRounds.length - 1] : null;
   const lastPlaying = new Set(
     last?.games ? last.games.flatMap((g) => [...g.pair1 || [], ...g.pair2 || []]) : []
@@ -1970,12 +2423,14 @@ function buildGroupedUniqueGames(state, playing) {
   __name22(arrangements, "arrangements");
   __name222(arrangements, "arrangements");
   __name2222(arrangements, "arrangements");
+  __name22222(arrangements, "arrangements");
   function scoreGame(pair1, pair2) {
     const partnerRepeats = (pairPlayedSet.has(pairKey(pair1[0], pair1[1])) ? 1 : 0) + (pairPlayedSet.has(pairKey(pair2[0], pair2[1])) ? 1 : 0);
     let opponentRepeats = 0;
-    for (const a of pair1) for (const b of pair2) {
-      opponentRepeats += Number((opponentMap[a] || {})[b] || 0);
-    }
+    for (const a of pair1)
+      for (const b of pair2) {
+        opponentRepeats += Number((opponentMap[a] || {})[b] || 0);
+      }
     return { partnerRepeats, opponentRepeats };
   }
   __name(scoreGame, "scoreGame");
@@ -1983,6 +2438,7 @@ function buildGroupedUniqueGames(state, playing) {
   __name22(scoreGame, "scoreGame");
   __name222(scoreGame, "scoreGame");
   __name2222(scoreGame, "scoreGame");
+  __name22222(scoreGame, "scoreGame");
   let best = null;
   const attempts = Math.max(300, numCourts * 250);
   for (let attempt = 0; attempt < attempts; attempt++) {
@@ -1992,9 +2448,11 @@ function buildGroupedUniqueGames(state, playing) {
     const courtOffset = attempt % numCourts;
     rr.forEach((p, i) => groups[(courtOffset + i) % numCourts].push(p));
     for (let c = 0; c < numCourts; c++) {
-      while (groups[c].length < 4 && cc.length) groups[c].push(cc.pop());
+      while (groups[c].length < 4 && cc.length)
+        groups[c].push(cc.pop());
     }
-    if (groups.some((g) => g.length !== 4)) continue;
+    if (groups.some((g) => g.length !== 4))
+      continue;
     const games = [];
     let partnerRepeats = 0;
     let opponentRepeats = 0;
@@ -2014,7 +2472,8 @@ function buildGroupedUniqueGames(state, playing) {
     const key = [partnerRepeats, opponentRepeats];
     if (!best || key[0] < best.key[0] || key[0] === best.key[0] && key[1] < best.key[1]) {
       best = { key, games };
-      if (partnerRepeats === 0 && opponentRepeats === 0) break;
+      if (partnerRepeats === 0 && opponentRepeats === 0)
+        break;
     }
   }
   return best?.games || null;
@@ -2024,6 +2483,7 @@ __name2(buildGroupedUniqueGames, "buildGroupedUniqueGames");
 __name22(buildGroupedUniqueGames, "buildGroupedUniqueGames");
 __name222(buildGroupedUniqueGames, "buildGroupedUniqueGames");
 __name2222(buildGroupedUniqueGames, "buildGroupedUniqueGames");
+__name22222(buildGroupedUniqueGames, "buildGroupedUniqueGames");
 function randomRound(state) {
   const { numCourts, fixedPairs, restCount, opponentMap, pairPlayedSet, lastRound = [] } = state;
   const { resting, playing } = selectRestingAndPlaying(state);
@@ -2063,7 +2523,8 @@ function randomRound(state) {
   if (freePairs.length < required) {
     const used = new Set(freePairs.flat());
     for (let i = 0; i < freePlayers.length && freePairs.length < required; i++) {
-      if (used.has(freePlayers[i])) continue;
+      if (used.has(freePlayers[i]))
+        continue;
       for (let j = i + 1; j < freePlayers.length; j++) {
         if (!used.has(freePlayers[j])) {
           freePairs.push([freePlayers[i], freePlayers[j]]);
@@ -2079,11 +2540,13 @@ function randomRound(state) {
   const games = [], usedPairs = /* @__PURE__ */ new Set();
   for (const m of scores) {
     const k1 = m.pair1.join("&"), k2 = m.pair2.join("&");
-    if (usedPairs.has(k1) || usedPairs.has(k2)) continue;
+    if (usedPairs.has(k1) || usedPairs.has(k2))
+      continue;
     games.push({ court: games.length + 1, pair1: [...m.pair1], pair2: [...m.pair2] });
     usedPairs.add(k1);
     usedPairs.add(k2);
-    if (games.length >= numCourts) break;
+    if (games.length >= numCourts)
+      break;
   }
   state.roundIndex = (state.roundIndex || 0) + 1;
   return {
@@ -2098,6 +2561,7 @@ __name2(randomRound, "randomRound");
 __name22(randomRound, "randomRound");
 __name222(randomRound, "randomRound");
 __name2222(randomRound, "randomRound");
+__name22222(randomRound, "randomRound");
 function calculateTiers(activeplayers, allPlayers) {
   const ratingMap = {};
   for (const p of allPlayers || []) {
@@ -2117,13 +2581,17 @@ __name2(calculateTiers, "calculateTiers");
 __name22(calculateTiers, "calculateTiers");
 __name222(calculateTiers, "calculateTiers");
 __name2222(calculateTiers, "calculateTiers");
+__name22222(calculateTiers, "calculateTiers");
 function getGameTierRule(pair1, pair2, tierMap) {
-  const sig = /* @__PURE__ */ __name2222((pair) => [...pair].map((p) => tierMap[p] || "inter").sort().join("+"), "sig");
+  const sig = /* @__PURE__ */ __name22222((pair) => [...pair].map((p) => tierMap[p] || "inter").sort().join("+"), "sig");
   const s1 = sig(pair1), s2 = sig(pair2);
-  if (["strong+strong", "inter+inter", "weak+weak"].includes(s1) && s1 === s2) return 1;
-  if (["inter+strong", "strong+weak", "inter+weak"].includes(s1) && s1 === s2) return 2;
+  if (["strong+strong", "inter+inter", "weak+weak"].includes(s1) && s1 === s2)
+    return 1;
+  if (["inter+strong", "strong+weak", "inter+weak"].includes(s1) && s1 === s2)
+    return 2;
   const sw = /* @__PURE__ */ new Set(["strong+weak", "weak+strong"]);
-  if (sw.has(s1) && s2 === "inter+inter" || s1 === "inter+inter" && sw.has(s2)) return 3;
+  if (sw.has(s1) && s2 === "inter+inter" || s1 === "inter+inter" && sw.has(s2))
+    return 3;
   return 0;
 }
 __name(getGameTierRule, "getGameTierRule");
@@ -2131,12 +2599,15 @@ __name2(getGameTierRule, "getGameTierRule");
 __name22(getGameTierRule, "getGameTierRule");
 __name222(getGameTierRule, "getGameTierRule");
 __name2222(getGameTierRule, "getGameTierRule");
+__name22222(getGameTierRule, "getGameTierRule");
 function buildRepetitionHistory(allRounds) {
   const pairSet = /* @__PURE__ */ new Set(), gameSet = /* @__PURE__ */ new Set();
   for (const rnd of allRounds) {
-    if (!rnd?.games) continue;
+    if (!rnd?.games)
+      continue;
     for (const g of rnd.games) {
-      if (!g.pair1 || !g.pair2) continue;
+      if (!g.pair1 || !g.pair2)
+        continue;
       const k1 = pairKey(g.pair1[0], g.pair1[1]);
       const k2 = pairKey(g.pair2[0], g.pair2[1]);
       pairSet.add(k1);
@@ -2151,8 +2622,10 @@ __name2(buildRepetitionHistory, "buildRepetitionHistory");
 __name22(buildRepetitionHistory, "buildRepetitionHistory");
 __name222(buildRepetitionHistory, "buildRepetitionHistory");
 __name2222(buildRepetitionHistory, "buildRepetitionHistory");
+__name22222(buildRepetitionHistory, "buildRepetitionHistory");
 function isGameRepeated(game, gameSet) {
-  if (!game?.pair1 || !game?.pair2) return false;
+  if (!game?.pair1 || !game?.pair2)
+    return false;
   const k1 = pairKey(game.pair1[0], game.pair1[1]);
   const k2 = pairKey(game.pair2[0], game.pair2[1]);
   return gameSet.has([k1, k2].sort().join(":"));
@@ -2162,9 +2635,13 @@ __name2(isGameRepeated, "isGameRepeated");
 __name22(isGameRepeated, "isGameRepeated");
 __name222(isGameRepeated, "isGameRepeated");
 __name2222(isGameRepeated, "isGameRepeated");
+__name22222(isGameRepeated, "isGameRepeated");
 function getOppFreshness(t1, t2, opponentMap) {
   let f = 0;
-  for (const a of t1) for (const b of t2) if (!(opponentMap[a] || {})[b]) f++;
+  for (const a of t1)
+    for (const b of t2)
+      if (!(opponentMap[a] || {})[b])
+        f++;
   return f;
 }
 __name(getOppFreshness, "getOppFreshness");
@@ -2172,10 +2649,12 @@ __name2(getOppFreshness, "getOppFreshness");
 __name22(getOppFreshness, "getOppFreshness");
 __name222(getOppFreshness, "getOppFreshness");
 __name2222(getOppFreshness, "getOppFreshness");
+__name22222(getOppFreshness, "getOppFreshness");
 function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   const { opponentMap, allRounds = [], allPlayers = [] } = state;
   const ratingMap = {};
-  for (const p of allPlayers) ratingMap[p.name] = parseFloat(p.clubRating || p.rating || 3);
+  for (const p of allPlayers)
+    ratingMap[p.name] = parseFloat(p.clubRating || p.rating || 3);
   function getRating2(name) {
     return ratingMap[name] || 3;
   }
@@ -2183,7 +2662,8 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name2(getRating2, "getRating2");
   __name22(getRating2, "getRating2");
   __name222(getRating2, "getRating2");
-  __name2222(getRating2, "getRating");
+  __name2222(getRating2, "getRating2");
+  __name22222(getRating2, "getRating");
   function pk(a, b) {
     return [a, b].sort().join("&");
   }
@@ -2192,14 +2672,19 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name22(pk, "pk");
   __name222(pk, "pk");
   __name2222(pk, "pk");
+  __name22222(pk, "pk");
   function isPairRepeated(a, b) {
     const key = pk(a, b);
     for (const rnd of allRounds) {
-      if (!rnd || !rnd.games) continue;
+      if (!rnd || !rnd.games)
+        continue;
       for (const g of rnd.games) {
-        if (!g.pair1 || !g.pair2) continue;
-        if (pk(g.pair1[0], g.pair1[1]) === key) return true;
-        if (pk(g.pair2[0], g.pair2[1]) === key) return true;
+        if (!g.pair1 || !g.pair2)
+          continue;
+        if (pk(g.pair1[0], g.pair1[1]) === key)
+          return true;
+        if (pk(g.pair2[0], g.pair2[1]) === key)
+          return true;
       }
     }
     return false;
@@ -2209,6 +2694,7 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name22(isPairRepeated, "isPairRepeated");
   __name222(isPairRepeated, "isPairRepeated");
   __name2222(isPairRepeated, "isPairRepeated");
+  __name22222(isPairRepeated, "isPairRepeated");
   function isFullGameRepeated(p1, p2) {
     return isGameRepeated({ pair1: p1, pair2: p2 }, gameSet);
   }
@@ -2217,18 +2703,23 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name22(isFullGameRepeated, "isFullGameRepeated");
   __name222(isFullGameRepeated, "isFullGameRepeated");
   __name2222(isFullGameRepeated, "isFullGameRepeated");
+  __name22222(isFullGameRepeated, "isFullGameRepeated");
   function pairAge(a, b) {
     const key = pk(a, b);
     let lastRound = -1;
     for (let r = 0; r < allRounds.length; r++) {
       const rnd = allRounds[r];
-      if (!rnd || !rnd.games) continue;
+      if (!rnd || !rnd.games)
+        continue;
       for (const g of rnd.games) {
-        if (!g.pair1 || !g.pair2) continue;
-        if (pk(g.pair1[0], g.pair1[1]) === key || pk(g.pair2[0], g.pair2[1]) === key) lastRound = r;
+        if (!g.pair1 || !g.pair2)
+          continue;
+        if (pk(g.pair1[0], g.pair1[1]) === key || pk(g.pair2[0], g.pair2[1]) === key)
+          lastRound = r;
       }
     }
-    if (lastRound === -1) return allRounds.length + 1;
+    if (lastRound === -1)
+      return allRounds.length + 1;
     return allRounds.length - lastRound;
   }
   __name(pairAge, "pairAge");
@@ -2236,17 +2727,21 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name22(pairAge, "pairAge");
   __name222(pairAge, "pairAge");
   __name2222(pairAge, "pairAge");
+  __name22222(pairAge, "pairAge");
   const gameScores = [];
   const n = playing.length;
   for (let i = 0; i < n - 1; i++) {
     for (let j = i + 1; j < n; j++) {
       const t1 = [playing[i], playing[j]];
       for (let k = i + 1; k < n; k++) {
-        if (k === j) continue;
+        if (k === j)
+          continue;
         for (let l = k + 1; l < n; l++) {
-          if (l === j) continue;
+          if (l === j)
+            continue;
           const t2 = [playing[k], playing[l]];
-          if ((/* @__PURE__ */ new Set([...t1, ...t2])).size !== 4) continue;
+          if ((/* @__PURE__ */ new Set([...t1, ...t2])).size !== 4)
+            continue;
           const rule = getGameTierRule(t1, t2, tierMap);
           const score = (rule === 1 ? 30 : rule === 2 ? 20 : rule === 3 ? 10 : 5) + pairAge(t1[0], t1[1]) + pairAge(t2[0], t2[1]) + getOppFreshness(t1, t2, opponentMap) * 2;
           gameScores.push({ pair1: [...t1], pair2: [...t2], courtRule: rule, score, players: /* @__PURE__ */ new Set([...t1, ...t2]) });
@@ -2259,16 +2754,21 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
     const picked = [{ pair1: [...startGame.pair1], pair2: [...startGame.pair2], courtRule: startGame.courtRule, repeated: false }];
     const used = /* @__PURE__ */ new Set([...startGame.players]);
     for (const g of gameScores) {
-      if (picked.length >= numCourts) break;
-      if (g === startGame) continue;
-      let overlap = false;
-      for (const p of g.players) if (used.has(p)) {
-        overlap = true;
+      if (picked.length >= numCourts)
         break;
-      }
-      if (overlap) continue;
+      if (g === startGame)
+        continue;
+      let overlap = false;
+      for (const p of g.players)
+        if (used.has(p)) {
+          overlap = true;
+          break;
+        }
+      if (overlap)
+        continue;
       picked.push({ pair1: [...g.pair1], pair2: [...g.pair2], courtRule: g.courtRule, repeated: false });
-      for (const p of g.players) used.add(p);
+      for (const p of g.players)
+        used.add(p);
     }
     return picked.length === numCourts ? picked : null;
   }
@@ -2277,11 +2777,14 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name22(greedyFrom, "greedyFrom");
   __name222(greedyFrom, "greedyFrom");
   __name2222(greedyFrom, "greedyFrom");
+  __name22222(greedyFrom, "greedyFrom");
   function countRepeats(games) {
     let count = 0;
     for (const g of games) {
-      if (isPairRepeated(g.pair1[0], g.pair1[1])) count++;
-      if (isPairRepeated(g.pair2[0], g.pair2[1])) count++;
+      if (isPairRepeated(g.pair1[0], g.pair1[1]))
+        count++;
+      if (isPairRepeated(g.pair2[0], g.pair2[1]))
+        count++;
     }
     return count;
   }
@@ -2290,47 +2793,58 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name22(countRepeats, "countRepeats");
   __name222(countRepeats, "countRepeats");
   __name2222(countRepeats, "countRepeats");
+  __name22222(countRepeats, "countRepeats");
   function applySwapFix(games) {
     const tolerances = [0.5, 1, 1.5, Infinity];
     for (const tolerance of tolerances) {
       const anyRepeated = games.some((g) => isPairRepeated(g.pair1[0], g.pair1[1]) || isPairRepeated(g.pair2[0], g.pair2[1]));
-      if (!anyRepeated) break;
+      if (!anyRepeated)
+        break;
       for (let ci = 0; ci < games.length; ci++) {
         const game = games[ci];
         for (const badPairKey of ["pair1", "pair2"]) {
-          if (!isPairRepeated(game[badPairKey][0], game[badPairKey][1])) continue;
+          if (!isPairRepeated(game[badPairKey][0], game[badPairKey][1]))
+            continue;
           const badPair = game[badPairKey];
           const goodPair = game[badPairKey === "pair1" ? "pair2" : "pair1"];
           for (let pi = 0; pi < badPair.length; pi++) {
             const swapOut = badPair[pi];
             const keepIn = badPair[1 - pi];
             for (let cj = 0; cj < games.length; cj++) {
-              if (cj === ci) continue;
+              if (cj === ci)
+                continue;
               const otherGame = games[cj];
               for (const otherPairKey of ["pair1", "pair2"]) {
                 const candidatePair = otherGame[otherPairKey];
                 for (let qi = 0; qi < candidatePair.length; qi++) {
                   const swapIn = candidatePair[qi];
                   const swapInPartner = candidatePair[1 - qi];
-                  if (Math.abs(getRating2(swapOut) - getRating2(swapIn)) > tolerance) continue;
+                  if (Math.abs(getRating2(swapOut) - getRating2(swapIn)) > tolerance)
+                    continue;
                   const newBadPair = [keepIn, swapIn];
                   const newOtherPair = [swapOut, swapInPartner];
-                  if (isPairRepeated(newBadPair[0], newBadPair[1])) continue;
-                  if (isPairRepeated(newOtherPair[0], newOtherPair[1])) continue;
+                  if (isPairRepeated(newBadPair[0], newBadPair[1]))
+                    continue;
+                  if (isPairRepeated(newOtherPair[0], newOtherPair[1]))
+                    continue;
                   const newGame1p1 = badPairKey === "pair1" ? newBadPair : goodPair;
                   const newGame1p2 = badPairKey === "pair1" ? goodPair : newBadPair;
                   const otherGoodPair = otherGame[otherPairKey === "pair1" ? "pair2" : "pair1"];
                   const newGame2p1 = otherPairKey === "pair1" ? newOtherPair : otherGoodPair;
                   const newGame2p2 = otherPairKey === "pair1" ? otherGoodPair : newOtherPair;
-                  if (isFullGameRepeated(newGame1p1, newGame1p2)) continue;
-                  if (isFullGameRepeated(newGame2p1, newGame2p2)) continue;
+                  if (isFullGameRepeated(newGame1p1, newGame1p2))
+                    continue;
+                  if (isFullGameRepeated(newGame2p1, newGame2p2))
+                    continue;
                   game[badPairKey] = [...newBadPair];
                   candidatePair[qi] = swapOut;
                   break;
                 }
-                if (!isPairRepeated(game[badPairKey][0], game[badPairKey][1])) break;
+                if (!isPairRepeated(game[badPairKey][0], game[badPairKey][1]))
+                  break;
               }
-              if (!isPairRepeated(game[badPairKey][0], game[badPairKey][1])) break;
+              if (!isPairRepeated(game[badPairKey][0], game[badPairKey][1]))
+                break;
             }
           }
         }
@@ -2343,20 +2857,24 @@ function findBestCourtCombination(playing, numCourts, tierMap, state, gameSet) {
   __name22(applySwapFix, "applySwapFix");
   __name222(applySwapFix, "applySwapFix");
   __name2222(applySwapFix, "applySwapFix");
+  __name22222(applySwapFix, "applySwapFix");
   const BEAM_SIZE = Math.min(12, gameScores.length);
   let bestResult = null, bestRepeats = Infinity;
   for (let b = 0; b < BEAM_SIZE; b++) {
     const attempt = greedyFrom(gameScores[b]);
-    if (!attempt) continue;
+    if (!attempt)
+      continue;
     const fixed = applySwapFix(attempt.map((g) => ({ pair1: [...g.pair1], pair2: [...g.pair2], courtRule: g.courtRule, repeated: false })));
     const repeats = countRepeats(fixed);
     if (repeats < bestRepeats) {
       bestRepeats = repeats;
       bestResult = fixed;
-      if (repeats === 0) break;
+      if (repeats === 0)
+        break;
     }
   }
-  if (!bestResult) return null;
+  if (!bestResult)
+    return null;
   for (const g of bestResult) {
     g.repeated = isFullGameRepeated(g.pair1, g.pair2);
     g.pair1Repeated = isPairRepeated(g.pair1[0], g.pair1[1]);
@@ -2369,17 +2887,22 @@ __name2(findBestCourtCombination, "findBestCourtCombination");
 __name22(findBestCourtCombination, "findBestCourtCombination");
 __name222(findBestCourtCombination, "findBestCourtCombination");
 __name2222(findBestCourtCombination, "findBestCourtCombination");
+__name22222(findBestCourtCombination, "findBestCourtCombination");
 function updateAfterRound(state, games) {
   for (const [t1, t2] of games) {
-    if (!t1 || !t2) continue;
+    if (!t1 || !t2)
+      continue;
     state.pairPlayedSet.add(pairKey(t1[0], t1[1]));
     state.pairPlayedSet.add(pairKey(t2[0], t2[1]));
-    for (const a of t1) for (const b of t2) {
-      if (!state.opponentMap[a]) state.opponentMap[a] = {};
-      if (!state.opponentMap[b]) state.opponentMap[b] = {};
-      state.opponentMap[a][b] = (state.opponentMap[a][b] || 0) + 1;
-      state.opponentMap[b][a] = (state.opponentMap[b][a] || 0) + 1;
-    }
+    for (const a of t1)
+      for (const b of t2) {
+        if (!state.opponentMap[a])
+          state.opponentMap[a] = {};
+        if (!state.opponentMap[b])
+          state.opponentMap[b] = {};
+        state.opponentMap[a][b] = (state.opponentMap[a][b] || 0) + 1;
+        state.opponentMap[b][a] = (state.opponentMap[b][a] || 0) + 1;
+      }
   }
 }
 __name(updateAfterRound, "updateAfterRound");
@@ -2387,12 +2910,14 @@ __name2(updateAfterRound, "updateAfterRound");
 __name22(updateAfterRound, "updateAfterRound");
 __name222(updateAfterRound, "updateAfterRound");
 __name2222(updateAfterRound, "updateAfterRound");
+__name22222(updateAfterRound, "updateAfterRound");
 function resetForCompetitive(state) {
   if (!state.opponentMap || typeof state.opponentMap !== "object") {
     state.opponentMap = {};
   }
   for (const p of state.activeplayers) {
-    if (!state.opponentMap[p]) state.opponentMap[p] = {};
+    if (!state.opponentMap[p])
+      state.opponentMap[p] = {};
     for (const p2 of state.activeplayers) {
       if (p !== p2 && state.opponentMap[p][p2] === void 0) {
         state.opponentMap[p][p2] = 0;
@@ -2405,6 +2930,7 @@ __name2(resetForCompetitive, "resetForCompetitive");
 __name22(resetForCompetitive, "resetForCompetitive");
 __name222(resetForCompetitive, "resetForCompetitive");
 __name2222(resetForCompetitive, "resetForCompetitive");
+__name22222(resetForCompetitive, "resetForCompetitive");
 function competitiveRound(state) {
   const { activeplayers, numCourts, restCount, allRounds, allPlayers } = state;
   const tierMap = calculateTiers(activeplayers, allPlayers);
@@ -2451,6 +2977,7 @@ __name2(competitiveRound, "competitiveRound");
 __name22(competitiveRound, "competitiveRound");
 __name222(competitiveRound, "competitiveRound");
 __name2222(competitiveRound, "competitiveRound");
+__name22222(competitiveRound, "competitiveRound");
 function cloneBalancedCandidateState(state, candidateIndex) {
   const clone = { ...state };
   clone.activeplayers = [...state.activeplayers || []];
@@ -2472,8 +2999,10 @@ __name2(cloneBalancedCandidateState, "cloneBalancedCandidateState");
 __name22(cloneBalancedCandidateState, "cloneBalancedCandidateState");
 __name222(cloneBalancedCandidateState, "cloneBalancedCandidateState");
 __name2222(cloneBalancedCandidateState, "cloneBalancedCandidateState");
+__name22222(cloneBalancedCandidateState, "cloneBalancedCandidateState");
 function balancedRoundScore(round, state) {
-  if (!round || !Array.isArray(round.games)) return -Infinity;
+  if (!round || !Array.isArray(round.games))
+    return -Infinity;
   const ratings = {};
   for (const player of state.allPlayers || []) {
     const raw = player.guest || player.unrated ? 1 : player.rating || player.clubRating || 1;
@@ -2513,10 +3042,14 @@ function balancedRoundScore(round, state) {
     worstTeamGap = Math.max(worstTeamGap, gap);
     courtStrengths.push((team1 + team2) / Math.max(1, p1.length + p2.length));
     const matchKey = gameKey(p1, p2);
-    if (previousKeys.has(matchKey)) repeatedLastRound += 1;
-    else if (state.gamesMap && state.gamesMap.has(matchKey)) repeatedOlderGames += 1;
-    if (p1.length === 2 && state.pairPlayedSet?.has(pairKey(p1[0], p1[1]))) repeatedPartners += 1;
-    if (p2.length === 2 && state.pairPlayedSet?.has(pairKey(p2[0], p2[1]))) repeatedPartners += 1;
+    if (previousKeys.has(matchKey))
+      repeatedLastRound += 1;
+    else if (state.gamesMap && state.gamesMap.has(matchKey))
+      repeatedOlderGames += 1;
+    if (p1.length === 2 && state.pairPlayedSet?.has(pairKey(p1[0], p1[1])))
+      repeatedPartners += 1;
+    if (p2.length === 2 && state.pairPlayedSet?.has(pairKey(p2[0], p2[1])))
+      repeatedPartners += 1;
   }
   const courtSpread = courtStrengths.length ? Math.max(...courtStrengths) - Math.min(...courtStrengths) : 0;
   return -consecutiveRests * 1e12 - priorRestTotal * 1e9 - worstTeamGap * 1e6 - teamGapTotal * 1e5 - courtSpread * 1e4 - repeatedLastRound * 1e8 - repeatedOlderGames * 1e3 - repeatedPartners * 100;
@@ -2526,6 +3059,7 @@ __name2(balancedRoundScore, "balancedRoundScore");
 __name22(balancedRoundScore, "balancedRoundScore");
 __name222(balancedRoundScore, "balancedRoundScore");
 __name2222(balancedRoundScore, "balancedRoundScore");
+__name22222(balancedRoundScore, "balancedRoundScore");
 function copyBalancedCandidateState(target, source) {
   target.restQueue = [...source.restQueue || []];
   target.restCount = { ...source.restCount || {} };
@@ -2544,13 +3078,15 @@ __name2(copyBalancedCandidateState, "copyBalancedCandidateState");
 __name22(copyBalancedCandidateState, "copyBalancedCandidateState");
 __name222(copyBalancedCandidateState, "copyBalancedCandidateState");
 __name2222(copyBalancedCandidateState, "copyBalancedCandidateState");
+__name22222(copyBalancedCandidateState, "copyBalancedCandidateState");
 function generateBestBalancedRound(state) {
   const candidates = [];
   for (let candidateIndex = 0; candidateIndex < 3; candidateIndex++) {
     const candidateState = cloneBalancedCandidateState(state, candidateIndex);
     const round = competitiveRound(candidateState);
     const qc = validateRound(round, candidateState);
-    if (!qc.valid) continue;
+    if (!qc.valid)
+      continue;
     candidates.push({
       round,
       state: candidateState,
@@ -2558,7 +3094,8 @@ function generateBestBalancedRound(state) {
       candidateIndex
     });
   }
-  if (!candidates.length) return competitiveRound(state);
+  if (!candidates.length)
+    return competitiveRound(state);
   candidates.sort((a, b) => b.score - a.score || a.candidateIndex - b.candidateIndex);
   const best = candidates[0];
   copyBalancedCandidateState(state, best.state);
@@ -2569,21 +3106,27 @@ __name2(generateBestBalancedRound, "generateBestBalancedRound");
 __name22(generateBestBalancedRound, "generateBestBalancedRound");
 __name222(generateBestBalancedRound, "generateBestBalancedRound");
 __name2222(generateBestBalancedRound, "generateBestBalancedRound");
+__name22222(generateBestBalancedRound, "generateBestBalancedRound");
 function validateRound(rnd, state) {
   const fails = [];
-  if (!rnd?.games) return { valid: false, hardFails: ["No games"] };
+  if (!rnd?.games)
+    return { valid: false, hardFails: ["No games"] };
   const { games, playing } = rnd;
   const { numCourts, fixedPairs = [], gamesMap, courtFormats = [], courtTypes = [], allPlayers = [] } = state;
-  if (games.length !== numCourts) fails.push(`Court count: got ${games.length}, expected ${numCourts}`);
+  if (games.length !== numCourts)
+    fails.push(`Court count: got ${games.length}, expected ${numCourts}`);
   const seen = /* @__PURE__ */ new Set();
   for (let i = 0; i < games.length; i++) {
     const g = games[i];
     const courtIndex = Number.isFinite(Number(g.court)) ? Math.max(0, Number(g.court) - 1) : i;
     const expectedSize = courtFormats[courtIndex] === "singles" ? 1 : 2;
-    if (!g.pair1 || g.pair1.length !== expectedSize) fails.push(`Court ${i + 1}: pair1 invalid`);
-    if (!g.pair2 || g.pair2.length !== expectedSize) fails.push(`Court ${i + 1}: pair2 invalid`);
+    if (!g.pair1 || g.pair1.length !== expectedSize)
+      fails.push(`Court ${i + 1}: pair1 invalid`);
+    if (!g.pair2 || g.pair2.length !== expectedSize)
+      fails.push(`Court ${i + 1}: pair2 invalid`);
     for (const p of [...g.pair1 || [], ...g.pair2 || []]) {
-      if (seen.has(p)) fails.push(`Duplicate player: ${p}`);
+      if (seen.has(p))
+        fails.push(`Duplicate player: ${p}`);
       seen.add(p);
     }
     const format = courtFormats[courtIndex] || "doubles";
@@ -2600,35 +3143,45 @@ function validateRound(rnd, state) {
         fails.push(`Court ${i + 1}: Ladies' Singles requires 2 female players`);
       }
     } else {
-      if (type === "md" && men !== 4) fails.push(`Court ${i + 1}: MD requires 4 male players`);
-      if ((type === "ld" || type === "wd") && women !== 4) fails.push(`Court ${i + 1}: WD requires 4 female players`);
+      if (type === "md" && men !== 4)
+        fails.push(`Court ${i + 1}: MD requires 4 male players`);
+      if ((type === "ld" || type === "wd") && women !== 4)
+        fails.push(`Court ${i + 1}: WD requires 4 female players`);
       if (type === "xd") {
-        if (men !== 2 || women !== 2) fails.push(`Court ${i + 1}: XD requires 2 male and 2 female players`);
+        if (men !== 2 || women !== 2)
+          fails.push(`Court ${i + 1}: XD requires 2 male and 2 female players`);
         const pair1Mixed = (g.pair1 || []).some((p) => String(getGender(p, allPlayers)).toLowerCase() === "male") && (g.pair1 || []).some((p) => String(getGender(p, allPlayers)).toLowerCase() === "female");
         const pair2Mixed = (g.pair2 || []).some((p) => String(getGender(p, allPlayers)).toLowerCase() === "male") && (g.pair2 || []).some((p) => String(getGender(p, allPlayers)).toLowerCase() === "female");
-        if (!pair1Mixed || !pair2Mixed) fails.push(`Court ${i + 1}: each XD team requires 1 male and 1 female player`);
+        if (!pair1Mixed || !pair2Mixed)
+          fails.push(`Court ${i + 1}: each XD team requires 1 male and 1 female player`);
       }
     }
   }
-  for (const p of playing || []) if (!seen.has(p)) fails.push(`Missing from courts: ${p}`);
+  for (const p of playing || [])
+    if (!seen.has(p))
+      fails.push(`Missing from courts: ${p}`);
   if (fixedPairs.length) {
     const restSet = new Set((rnd.resting || []).map((r) => r.split("#")[0]));
     for (const [a, b] of fixedPairs) {
-      if (restSet.has(a) && restSet.has(b)) continue;
+      if (restSet.has(a) && restSet.has(b))
+        continue;
       if (!restSet.has(a) && !restSet.has(b)) {
         const together = games.some(
           (g) => g.pair1?.includes(a) && g.pair1?.includes(b) || g.pair2?.includes(a) && g.pair2?.includes(b)
         );
-        if (!together) fails.push(`Fixed pair split: ${a} & ${b}`);
+        if (!together)
+          fails.push(`Fixed pair split: ${a} & ${b}`);
       }
     }
   }
   if (gamesMap && !state.balancedGamesMode) {
     for (let i = 0; i < games.length; i++) {
       const g = games[i];
-      if (!g.pair1 || !g.pair2) continue;
+      if (!g.pair1 || !g.pair2)
+        continue;
       const mk = gameKey(g.pair1, g.pair2);
-      if (gamesMap.has(mk)) fails.push(`Court ${i + 1} repeated match`);
+      if (gamesMap.has(mk))
+        fails.push(`Court ${i + 1} repeated match`);
     }
   }
   return { valid: fails.length === 0, hardFails: fails };
@@ -2638,6 +3191,7 @@ __name2(validateRound, "validateRound");
 __name22(validateRound, "validateRound");
 __name222(validateRound, "validateRound");
 __name2222(validateRound, "validateRound");
+__name22222(validateRound, "validateRound");
 function mbmBestGame(pool, waitQueue, state) {
   const { opponentMap = {}, allRounds = [], allPlayers = [] } = state;
   function pairAge(a, b) {
@@ -2645,10 +3199,13 @@ function mbmBestGame(pool, waitQueue, state) {
     let lastRound = -1;
     for (let r = 0; r < allRounds.length; r++) {
       const rnd = allRounds[r];
-      if (!rnd?.games) continue;
+      if (!rnd?.games)
+        continue;
       for (const g of rnd.games) {
-        if (!g.pair1 || !g.pair2) continue;
-        if (pairKey(g.pair1[0], g.pair1[1]) === key || pairKey(g.pair2[0], g.pair2[1]) === key) lastRound = r;
+        if (!g.pair1 || !g.pair2)
+          continue;
+        if (pairKey(g.pair1[0], g.pair1[1]) === key || pairKey(g.pair2[0], g.pair2[1]) === key)
+          lastRound = r;
       }
     }
     return lastRound === -1 ? allRounds.length + 1 : allRounds.length - lastRound;
@@ -2658,10 +3215,13 @@ function mbmBestGame(pool, waitQueue, state) {
   __name22(pairAge, "pairAge");
   __name222(pairAge, "pairAge");
   __name2222(pairAge, "pairAge");
+  __name22222(pairAge, "pairAge");
   function oppFreshness(t1, t2) {
     let fresh = 0;
-    for (const a of t1) for (const b of t2)
-      if (!(opponentMap[a] || {})[b]) fresh++;
+    for (const a of t1)
+      for (const b of t2)
+        if (!(opponentMap[a] || {})[b])
+          fresh++;
     return fresh;
   }
   __name(oppFreshness, "oppFreshness");
@@ -2669,6 +3229,7 @@ function mbmBestGame(pool, waitQueue, state) {
   __name22(oppFreshness, "oppFreshness");
   __name222(oppFreshness, "oppFreshness");
   __name2222(oppFreshness, "oppFreshness");
+  __name22222(oppFreshness, "oppFreshness");
   function waitWeight(players) {
     let w = 0;
     for (const p of players) {
@@ -2682,6 +3243,7 @@ function mbmBestGame(pool, waitQueue, state) {
   __name22(waitWeight, "waitWeight");
   __name222(waitWeight, "waitWeight");
   __name2222(waitWeight, "waitWeight");
+  __name22222(waitWeight, "waitWeight");
   function scoreGame(pair1, pair2) {
     const opp = oppFreshness(pair1, pair2);
     const age = pairAge(pair1[0], pair1[1]) + pairAge(pair2[0], pair2[1]);
@@ -2693,6 +3255,7 @@ function mbmBestGame(pool, waitQueue, state) {
   __name22(scoreGame, "scoreGame");
   __name222(scoreGame, "scoreGame");
   __name2222(scoreGame, "scoreGame");
+  __name22222(scoreGame, "scoreGame");
   let best = null;
   const n = pool.length;
   for (let i = 0; i < n - 3; i++) {
@@ -2722,6 +3285,7 @@ __name2(mbmBestGame, "mbmBestGame");
 __name22(mbmBestGame, "mbmBestGame");
 __name222(mbmBestGame, "mbmBestGame");
 __name2222(mbmBestGame, "mbmBestGame");
+__name22222(mbmBestGame, "mbmBestGame");
 function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   const active = [...state.activeplayers || []];
   const allPlayers = state.allPlayers || [];
@@ -2729,9 +3293,10 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   const types = Array.from({ length: state.numCourts || 0 }, (_, i) => String((state.courtTypes || [])[i] || "free").toLowerCase());
   const seats = formats.reduce((sum, format) => sum + (format === "singles" ? 2 : 4), 0);
   const restNeeded = Math.max(0, active.length - seats);
-  if (active.length < seats) throw new Error("Not enough active players for the selected courts");
-  const rating = /* @__PURE__ */ __name2222((name) => getRating(name, allPlayers), "rating");
-  const gender = /* @__PURE__ */ __name2222((name) => String(getGender(name, allPlayers) || "").toLowerCase(), "gender");
+  if (active.length < seats)
+    throw new Error("Not enough active players for the selected courts");
+  const rating = /* @__PURE__ */ __name22222((name) => getRating(name, allPlayers), "rating");
+  const gender = /* @__PURE__ */ __name22222((name) => String(getGender(name, allPlayers) || "").toLowerCase(), "gender");
   const rankedActive = [...active].sort((a, b) => rating(b) - rating(a) || String(a).localeCompare(String(b)));
   const activeHalf = Math.ceil(rankedActive.length / 2);
   const suppliedBand = state.frozenBalancedBands;
@@ -2752,9 +3317,10 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   ];
   const qpos = new Map(queue.map((name, index) => [name, index]));
   const subgroupPosition = /* @__PURE__ */ new Map();
-  for (const sex of ["male", "female"]) for (const value of [1, 0]) {
-    queue.filter((name) => gender(name) === sex && activeBand.get(name) === value).forEach((name, index) => subgroupPosition.set(name, index));
-  }
+  for (const sex of ["male", "female"])
+    for (const value of [1, 0]) {
+      queue.filter((name) => gender(name) === sex && activeBand.get(name) === value).forEach((name, index) => subgroupPosition.set(name, index));
+    }
   const restCount = state.restCount || {};
   const previousRest = new Set((state.allRounds?.at(-1)?.resting || []).map((raw) => String(raw).split("#")[0]));
   const historicalPlayers = new Set((state.allRounds || []).flatMap((round) => [
@@ -2770,7 +3336,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   ]);
   const mustPlay = new Set((state.allRounds || []).length && previousPlaying.size ? active.filter((name) => !historicalPlayers.has(name) || previousRoster.size >= seats && !previousRoster.has(name)) : []);
   const hasPlayPriority = mustPlay.size > 0;
-  const priorityRestScore = /* @__PURE__ */ __name22((resting) => hasPlayPriority ? [
+  const priorityRestScore = /* @__PURE__ */ __name222((resting) => hasPlayPriority ? [
     resting.reduce((sum, name) => sum + Number(!historicalPlayers.has(name)), 0),
     resting.reduce((sum, name) => sum + Number(historicalPlayers.has(name) && !previousRoster.has(name)), 0)
   ] : [0, 0], "priorityRestScore");
@@ -2781,8 +3347,10 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   for (let roundIndex = 0; roundIndex < (state.allRounds || []).length; roundIndex++) {
     for (const raw of state.allRounds[roundIndex]?.resting || []) {
       const name = String(raw).split("#")[0];
-      if (!Object.prototype.hasOwnProperty.call(lastRestRound, name)) continue;
-      if (roundIndex - lastRestRound[name] === 2) shortRestGaps[name]++;
+      if (!Object.prototype.hasOwnProperty.call(lastRestRound, name))
+        continue;
+      if (roundIndex - lastRestRound[name] === 2)
+        shortRestGaps[name]++;
       lastRestRound[name] = roundIndex;
     }
   }
@@ -2790,9 +3358,10 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   for (let roundIndex = 1; roundIndex < (state.allRounds || []).length; roundIndex++) {
     const before = new Set((state.allRounds[roundIndex - 1]?.resting || []).map((raw) => String(raw).split("#")[0]));
     const current = new Set((state.allRounds[roundIndex]?.resting || []).map((raw) => String(raw).split("#")[0]));
-    for (const name of current) if (before.has(name) && Object.prototype.hasOwnProperty.call(doubleRestTurns, name)) {
-      doubleRestTurns[name]++;
-    }
+    for (const name of current)
+      if (before.has(name) && Object.prototype.hasOwnProperty.call(doubleRestTurns, name)) {
+        doubleRestTurns[name]++;
+      }
   }
   const standardFreeQueue = queue;
   const standardFreePosition = new Map(standardFreeQueue.map((name, index) => [name, index]));
@@ -2816,13 +3385,15 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(randomCycleOrder, "randomCycleOrder");
   __name222(randomCycleOrder, "randomCycleOrder");
   __name2222(randomCycleOrder, "randomCycleOrder");
+  __name22222(randomCycleOrder, "randomCycleOrder");
   let updatedRestQueue = null;
   function standardFreeResting() {
     const selected = [];
     const selectedSet = /* @__PURE__ */ new Set();
     while (selected.length < restNeeded) {
       const available = active.filter((name) => !selectedSet.has(name));
-      if (!available.length) break;
+      if (!available.length)
+        break;
       const cycle = Math.min(...available.map((name) => restCount[name] || 0));
       const layer = available.filter((name) => (restCount[name] || 0) === cycle);
       layer.sort(
@@ -2841,6 +3412,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(standardFreeResting, "standardFreeResting");
   __name222(standardFreeResting, "standardFreeResting");
   __name2222(standardFreeResting, "standardFreeResting");
+  __name22222(standardFreeResting, "standardFreeResting");
   function standardXdResting() {
     const requiredPerGender = formats.length * 2;
     const men = active.filter((name) => gender(name) === "male");
@@ -2854,7 +3426,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       const initialCycle = pool.length ? Math.min(...pool.map((name) => restCount[name] || 0)) : 0;
       while (selected2.length < needed) {
         const available = pool.filter((name) => !selectedSet.has(name));
-        if (!available.length) break;
+        if (!available.length)
+          break;
         const cycle = Math.min(...available.map((name) => restCount[name] || 0));
         const layer = available.filter((name) => (restCount[name] || 0) === cycle);
         const startsCycle = cycle > 0 && pool.every((name) => (restCount[name] || 0) === cycle);
@@ -2883,6 +3456,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name22(selectGroup, "selectGroup");
     __name222(selectGroup, "selectGroup");
     __name2222(selectGroup, "selectGroup");
+    __name22222(selectGroup, "selectGroup");
     const selected = /* @__PURE__ */ new Set([
       ...selectGroup(men, men.length - requiredPerGender),
       ...selectGroup(women, women.length - requiredPerGender)
@@ -2894,6 +3468,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(standardXdResting, "standardXdResting");
   __name222(standardXdResting, "standardXdResting");
   __name2222(standardXdResting, "standardXdResting");
+  __name22222(standardXdResting, "standardXdResting");
   function standardMixedResting() {
     const men = active.filter((name) => gender(name) === "male");
     const women = active.filter((name) => gender(name) === "female");
@@ -2923,12 +3498,14 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name22(preview, "preview");
     __name222(preview, "preview");
     __name2222(preview, "preview");
+    __name22222(preview, "preview");
     let allocation = null;
     const minimumPlayingMen = Math.max(menMinimum, totalPlaying - women.length);
     const maximumPlayingMen = Math.min(men.length, menMinimum + freeSeats);
     for (let playingMen = minimumPlayingMen; playingMen <= maximumPlayingMen; playingMen++) {
       const playingWomen = totalPlaying - playingMen;
-      if (playingWomen < womenMinimum || playingWomen > women.length) continue;
+      if (playingWomen < womenMinimum || playingWomen > women.length)
+        continue;
       const menPreview = preview(men, men.length - playingMen);
       const womenPreview = preview(women, women.length - playingWomen);
       const score = [
@@ -2941,45 +3518,50 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         allocation = { score, menRest: men.length - playingMen, womenRest: women.length - playingWomen };
       }
     }
-    if (!allocation) throw new Error("No feasible gender allocation for the selected mixed court types");
+    if (!allocation)
+      throw new Error("No feasible gender allocation for the selected mixed court types");
     let currentOrder = updatedRestQueue || queue;
     if (types.length === 3 && types.filter((type) => type === "md").length === 1 && types.filter((type) => type === "ld" || type === "wd").length === 1 && types.filter((type) => type === "xd").length === 1 && allocation.menRest === 2 && allocation.womenRest === 1) {
       const mdIndex = types.indexOf("md"), ldIndex = types.findIndex((type) => type === "ld" || type === "wd"), xdIndex = types.indexOf("xd");
-      const spread = /* @__PURE__ */ __name2222((pool, history, selected2) => {
+      const spread = /* @__PURE__ */ __name22222((pool, history, selected2) => {
         const set = new Set(selected2), values = pool.map((name) => (history.counts[name] || 0) + Number(set.has(name)));
         return Math.max(...values) - Math.min(...values);
       }, "spread");
       let best = null;
-      for (const menRest of combinations(men, 2)) for (const womenRest of combinations(women, 1)) {
-        const resting = [...menRest, ...womenRest], restSet = new Set(resting);
-        const projectedRest = active.map((name) => (restCount[name] || 0) + Number(restSet.has(name)));
-        const restSpread = Math.max(...projectedRest) - Math.min(...projectedRest);
-        const playingMen = men.filter((name) => !restSet.has(name)), playingWomen = women.filter((name) => !restSet.has(name));
-        let typeScore = null;
-        for (const mdPlayers of combinations(playingMen, 4)) {
-          const mdSet = new Set(mdPlayers), xdMen = playingMen.filter((name) => !mdSet.has(name));
-          for (const ldPlayers of combinations(playingWomen, 4)) {
-            const ldSet = new Set(ldPlayers), xdWomen = playingWomen.filter((name) => !ldSet.has(name));
-            const spreads = [
-              spread(men, typeHistory[mdIndex], mdPlayers),
-              spread(women, typeHistory[ldIndex], ldPlayers),
-              spread(men, typeHistory[xdIndex], xdMen),
-              spread(women, typeHistory[xdIndex], xdWomen)
-            ];
-            const score2 = [Math.max(...spreads), spreads.reduce((sum, value) => sum + value, 0)];
-            if (!typeScore || compareVector(score2, typeScore) < 0) typeScore = score2;
+      for (const menRest of combinations(men, 2))
+        for (const womenRest of combinations(women, 1)) {
+          const resting = [...menRest, ...womenRest], restSet = new Set(resting);
+          const projectedRest = active.map((name) => (restCount[name] || 0) + Number(restSet.has(name)));
+          const restSpread = Math.max(...projectedRest) - Math.min(...projectedRest);
+          const playingMen = men.filter((name) => !restSet.has(name)), playingWomen = women.filter((name) => !restSet.has(name));
+          let typeScore = null;
+          for (const mdPlayers of combinations(playingMen, 4)) {
+            const mdSet = new Set(mdPlayers), xdMen = playingMen.filter((name) => !mdSet.has(name));
+            for (const ldPlayers of combinations(playingWomen, 4)) {
+              const ldSet = new Set(ldPlayers), xdWomen = playingWomen.filter((name) => !ldSet.has(name));
+              const spreads = [
+                spread(men, typeHistory[mdIndex], mdPlayers),
+                spread(women, typeHistory[ldIndex], ldPlayers),
+                spread(men, typeHistory[xdIndex], xdMen),
+                spread(women, typeHistory[xdIndex], xdWomen)
+              ];
+              const score2 = [Math.max(...spreads), spreads.reduce((sum, value) => sum + value, 0)];
+              if (!typeScore || compareVector(score2, typeScore) < 0)
+                typeScore = score2;
+            }
           }
+          const score = [
+            restSpread,
+            resting.reduce((sum, name) => sum + Number(previousRest.has(name)), 0),
+            ...typeScore || [99, 99],
+            projectedRest.reduce((sum, value) => sum + value * value, 0),
+            resting.reduce((sum, name) => sum + (qpos.get(name) ?? active.length), 0)
+          ];
+          if (!best || compareVector(score, best.score) < 0)
+            best = { score, resting };
         }
-        const score = [
-          restSpread,
-          resting.reduce((sum, name) => sum + Number(previousRest.has(name)), 0),
-          ...typeScore || [99, 99],
-          projectedRest.reduce((sum, value) => sum + value * value, 0),
-          resting.reduce((sum, name) => sum + (qpos.get(name) ?? active.length), 0)
-        ];
-        if (!best || compareVector(score, best.score) < 0) best = { score, resting };
-      }
-      if (best) return currentOrder.filter((name) => best.resting.includes(name));
+      if (best)
+        return currentOrder.filter((name) => best.resting.includes(name));
     }
     function opportunityProgress(name) {
       const playerGender = gender(name);
@@ -2989,11 +3571,15 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       const progress = [];
       for (const type of relevant) {
         let appearances = 0;
-        for (const round of state.allRounds || []) for (const game of round.games || []) {
-          if (String(game.format || "doubles").toLowerCase() !== "doubles") continue;
-          if (String(game.courtType || "free").toLowerCase() !== type) continue;
-          if ([...game.pair1 || [], ...game.pair2 || []].includes(name)) appearances++;
-        }
+        for (const round of state.allRounds || [])
+          for (const game of round.games || []) {
+            if (String(game.format || "doubles").toLowerCase() !== "doubles")
+              continue;
+            if (String(game.courtType || "free").toLowerCase() !== type)
+              continue;
+            if ([...game.pair1 || [], ...game.pair2 || []].includes(name))
+              appearances++;
+          }
         const seats2 = type === "xd" ? 2 : 4;
         progress.push(appearances / seats2);
       }
@@ -3007,12 +3593,14 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name22(opportunityProgress, "opportunityProgress");
     __name222(opportunityProgress, "opportunityProgress");
     __name2222(opportunityProgress, "opportunityProgress");
+    __name22222(opportunityProgress, "opportunityProgress");
     function selectGroup(pool, needed) {
       const selected2 = [], selectedSet = /* @__PURE__ */ new Set();
       const initialCycle = pool.length ? Math.min(...pool.map((name) => restCount[name] || 0)) : 0;
       while (selected2.length < needed) {
         const available = pool.filter((name) => !selectedSet.has(name));
-        if (!available.length) break;
+        if (!available.length)
+          break;
         const cycle = Math.min(...available.map((name) => restCount[name] || 0));
         const layer = available.filter((name) => (restCount[name] || 0) === cycle);
         const startsCycle = cycle > 0 && pool.every((name) => (restCount[name] || 0) === cycle);
@@ -3040,6 +3628,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name22(selectGroup, "selectGroup");
     __name222(selectGroup, "selectGroup");
     __name2222(selectGroup, "selectGroup");
+    __name22222(selectGroup, "selectGroup");
     const selected = /* @__PURE__ */ new Set([
       ...selectGroup(men, allocation.menRest),
       ...selectGroup(women, allocation.womenRest)
@@ -3051,6 +3640,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(standardMixedResting, "standardMixedResting");
   __name222(standardMixedResting, "standardMixedResting");
   __name2222(standardMixedResting, "standardMixedResting");
+  __name22222(standardMixedResting, "standardMixedResting");
   function combinations(items, needed, start = 0, chosen = [], output = []) {
     if (chosen.length === needed) {
       output.push([...chosen]);
@@ -3068,6 +3658,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(combinations, "combinations");
   __name222(combinations, "combinations");
   __name2222(combinations, "combinations");
+  __name22222(combinations, "combinations");
   function fixedRestOK(resting) {
     const set = new Set(resting);
     return true;
@@ -3077,6 +3668,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(fixedRestOK, "fixedRestOK");
   __name222(fixedRestOK, "fixedRestOK");
   __name2222(fixedRestOK, "fixedRestOK");
+  __name22222(fixedRestOK, "fixedRestOK");
   function restScore(resting) {
     const set = new Set(resting);
     const projected = active.map((name) => (restCount[name] || 0) + (set.has(name) ? 1 : 0));
@@ -3105,8 +3697,11 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(restScore, "restScore");
   __name222(restScore, "restScore");
   __name2222(restScore, "restScore");
-  const compareVector = /* @__PURE__ */ __name2222((a, b) => {
-    for (let i = 0; i < Math.max(a.length, b.length); i++) if ((a[i] || 0) !== (b[i] || 0)) return (a[i] || 0) - (b[i] || 0);
+  __name22222(restScore, "restScore");
+  const compareVector = /* @__PURE__ */ __name22222((a, b) => {
+    for (let i = 0; i < Math.max(a.length, b.length); i++)
+      if ((a[i] || 0) !== (b[i] || 0))
+        return (a[i] || 0) - (b[i] || 0);
     return 0;
   }, "compareVector");
   function historyForType(courtIndex) {
@@ -3117,7 +3712,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       for (const game of state.allRounds[r]?.games || []) {
         const historicalIndex = Math.max(0, Number(game.court || 1) - 1);
         const historicalKey = (game.format || formats[historicalIndex] || "doubles") + ":" + String(game.courtType || types[historicalIndex] || "free").toLowerCase();
-        if (historicalKey !== key) continue;
+        if (historicalKey !== key)
+          continue;
         for (const name of [...game.pair1 || [], ...game.pair2 || []]) {
           counts[name] = (counts[name] || 0) + 1;
           last[name] = r;
@@ -3131,6 +3727,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(historyForType, "historyForType");
   __name222(historyForType, "historyForType");
   __name2222(historyForType, "historyForType");
+  __name22222(historyForType, "historyForType");
   const typeHistory = formats.map((_, index) => historyForType(index));
   function boundedRandomBalancedRestOptions() {
     const ordered = [...queue].sort(
@@ -3146,12 +3743,15 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     }
     const unique = /* @__PURE__ */ new Map();
     for (const resting of candidates) {
-      if (!fixedRestOK(resting)) continue;
+      if (!fixedRestOK(resting))
+        continue;
       const key = [...resting].sort().join("|");
-      if (!unique.has(key)) unique.set(key, { resting, score: restScore(resting) });
+      if (!unique.has(key))
+        unique.set(key, { resting, score: restScore(resting) });
     }
     const options = [...unique.values()].sort((a, b) => compareVector(a.score, b.score));
-    if (!options.length) return [];
+    if (!options.length)
+      return [];
     const fairnessLength2 = restNeeded === 1 ? 2 : 3;
     const bestFairness2 = options[0].score.slice(0, fairnessLength2);
     const equallyFair2 = options.filter(
@@ -3173,53 +3773,68 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(boundedRandomBalancedRestOptions, "boundedRandomBalancedRestOptions");
   __name222(boundedRandomBalancedRestOptions, "boundedRandomBalancedRestOptions");
   __name2222(boundedRandomBalancedRestOptions, "boundedRandomBalancedRestOptions");
+  __name22222(boundedRandomBalancedRestOptions, "boundedRandomBalancedRestOptions");
   const fastRandomBalancedFree = fastBalancedFree && state.randomPlayerOrder === true;
   const restOptions = restNeeded ? fastStandardFree ? [{ resting: standardFreeResting(), score: [] }] : fastStandardXD ? [{ resting: standardXdResting(), score: [] }] : fastStandardMixed ? [{ resting: standardMixedResting(), score: [] }] : fastRandomBalancedFree ? boundedRandomBalancedRestOptions() : combinations(queue, restNeeded).filter(fixedRestOK).map((resting) => ({ resting, score: restScore(resting) })).sort((a, b) => compareVector(a.score, b.score)) : [{ resting: [], score: [] }];
-  const pkey = /* @__PURE__ */ __name2222((a, b) => [a, b].sort().join("&"), "pkey");
+  const pkey = /* @__PURE__ */ __name22222((a, b) => [a, b].sort().join("&"), "pkey");
   const priorPairs = /* @__PURE__ */ new Map(), priorOpponents = /* @__PURE__ */ new Map(), priorGames = /* @__PURE__ */ new Map(), priorPlayerGroups = /* @__PURE__ */ new Map();
-  for (const round of state.allRounds || []) for (const game of round.games || []) {
-    if (game.pair1?.length === 2 && game.pair2?.length === 2) {
-      for (const pair of [game.pair1, game.pair2]) priorPairs.set(pkey(pair[0], pair[1]), (priorPairs.get(pkey(pair[0], pair[1])) || 0) + 1);
-      for (const a of game.pair1) for (const b of game.pair2) priorOpponents.set(pkey(a, b), (priorOpponents.get(pkey(a, b)) || 0) + 1);
-      const gameKey2 = [pkey(game.pair1[0], game.pair1[1]), pkey(game.pair2[0], game.pair2[1])].sort().join(":");
-      priorGames.set(gameKey2, (priorGames.get(gameKey2) || 0) + 1);
-      const playerGroupKey = [...game.pair1, ...game.pair2].slice().sort().join("&");
-      priorPlayerGroups.set(playerGroupKey, (priorPlayerGroups.get(playerGroupKey) || 0) + 1);
+  for (const round of state.allRounds || [])
+    for (const game of round.games || []) {
+      if (game.pair1?.length === 2 && game.pair2?.length === 2) {
+        for (const pair of [game.pair1, game.pair2])
+          priorPairs.set(pkey(pair[0], pair[1]), (priorPairs.get(pkey(pair[0], pair[1])) || 0) + 1);
+        for (const a of game.pair1)
+          for (const b of game.pair2)
+            priorOpponents.set(pkey(a, b), (priorOpponents.get(pkey(a, b)) || 0) + 1);
+        const gameKey2 = [pkey(game.pair1[0], game.pair1[1]), pkey(game.pair2[0], game.pair2[1])].sort().join(":");
+        priorGames.set(gameKey2, (priorGames.get(gameKey2) || 0) + 1);
+        const playerGroupKey = [...game.pair1, ...game.pair2].slice().sort().join("&");
+        priorPlayerGroups.set(playerGroupKey, (priorPlayerGroups.get(playerGroupKey) || 0) + 1);
+      }
     }
-  }
   const priorMixedPartners = new Map(active.map((name) => [name, 0]));
   for (const round of state.allRounds || []) {
     const historicalBands = round.balancedBands || round.balancedRatingMap && Object.fromEntries(
       Object.entries(round.balancedRatingMap).map(([name, value]) => [name, Number(value) >= 5 ? 1 : 0])
     );
-    if (!historicalBands) continue;
-    for (const game of round.games || []) for (const pair of [game.pair1, game.pair2]) {
-      if (!Array.isArray(pair) || pair.length !== 2) continue;
-      if (Number(historicalBands[pair[0]]) === Number(historicalBands[pair[1]])) continue;
-      for (const name of pair) priorMixedPartners.set(name, (priorMixedPartners.get(name) || 0) + 1);
-    }
+    if (!historicalBands)
+      continue;
+    for (const game of round.games || [])
+      for (const pair of [game.pair1, game.pair2]) {
+        if (!Array.isArray(pair) || pair.length !== 2)
+          continue;
+        if (Number(historicalBands[pair[0]]) === Number(historicalBands[pair[1]]))
+          continue;
+        for (const name of pair)
+          priorMixedPartners.set(name, (priorMixedPartners.get(name) || 0) + 1);
+      }
   }
   const preferMixedBalancedRound = (state.allRounds || []).length % 2 === 1;
-  const singlesTypeKey = /* @__PURE__ */ __name2222((type) => ["md", "men", "singles-men"].includes(type) ? "singles-men" : ["ld", "wd", "women", "ladies", "singles-women"].includes(type) ? "singles-women" : "singles-free", "singlesTypeKey");
+  const singlesTypeKey = /* @__PURE__ */ __name22222((type) => ["md", "men", "singles-men"].includes(type) ? "singles-men" : ["ld", "wd", "women", "ladies", "singles-women"].includes(type) ? "singles-women" : "singles-free", "singlesTypeKey");
   const priorSinglesMeetings = /* @__PURE__ */ new Map();
-  for (const round of state.allRounds || []) for (const game of round.games || []) {
-    if ((game.pair1 || []).length !== 1 || (game.pair2 || []).length !== 1) continue;
-    const key = singlesTypeKey(String(game.courtType || "free").toLowerCase()) + ":" + pkey(game.pair1[0], game.pair2[0]);
-    priorSinglesMeetings.set(key, (priorSinglesMeetings.get(key) || 0) + 1);
-  }
+  for (const round of state.allRounds || [])
+    for (const game of round.games || []) {
+      if ((game.pair1 || []).length !== 1 || (game.pair2 || []).length !== 1)
+        continue;
+      const key = singlesTypeKey(String(game.courtType || "free").toLowerCase()) + ":" + pkey(game.pair1[0], game.pair2[0]);
+      priorSinglesMeetings.set(key, (priorSinglesMeetings.get(key) || 0) + 1);
+    }
   function combinedRoundRobinOrder(type) {
     const key = singlesTypeKey(type);
     const pool = active.filter((name) => key === "singles-free" || key === "singles-men" && gender(name) === "male" || key === "singles-women" && gender(name) === "female");
     const rotation = [...pool].sort((a, b) => (qpos.get(a) ?? active.length) - (qpos.get(b) ?? active.length) || String(a).localeCompare(String(b)));
-    if (rotation.length % 2) rotation.push(null);
+    if (rotation.length % 2)
+      rotation.push(null);
     const order = /* @__PURE__ */ new Map();
     let sequence = 0;
     for (let round = 0; round < Math.max(0, rotation.length - 1); round++) {
       for (let index = 0; index < rotation.length / 2; index++) {
         const first = rotation[index], second = rotation[rotation.length - 1 - index];
-        if (first && second) order.set(pkey(first, second), sequence++);
+        if (first && second)
+          order.set(pkey(first, second), sequence++);
       }
-      if (rotation.length > 2) rotation.splice(1, 0, rotation.pop());
+      if (rotation.length > 2)
+        rotation.splice(1, 0, rotation.pop());
     }
     return order;
   }
@@ -3228,6 +3843,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(combinedRoundRobinOrder, "combinedRoundRobinOrder");
   __name222(combinedRoundRobinOrder, "combinedRoundRobinOrder");
   __name2222(combinedRoundRobinOrder, "combinedRoundRobinOrder");
+  __name22222(combinedRoundRobinOrder, "combinedRoundRobinOrder");
   const combinedRoundRobin = new Map(types.map((type) => [singlesTypeKey(type), combinedRoundRobinOrder(type)]));
   const standardFreeMode = !useBalancedBands && formats.every((format) => format === "doubles") && types.every((type) => type === "free");
   function canFormFreshNonFixedPairs(resting) {
@@ -3242,16 +3858,20 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       }
     }
     const free = playing.filter((name) => !fixedPlayersPlaying.has(name));
-    if (free.length % 2) return false;
+    if (free.length % 2)
+      return false;
     const memo = /* @__PURE__ */ new Map();
     function match(remaining) {
-      if (!remaining.length) return true;
+      if (!remaining.length)
+        return true;
       const key = remaining.slice().sort().join("|");
-      if (memo.has(key)) return memo.get(key);
+      if (memo.has(key))
+        return memo.get(key);
       const first = remaining[0];
       for (let index = 1; index < remaining.length; index++) {
         const second = remaining[index];
-        if ((priorPairs.get(pkey(first, second)) || 0) > 0) continue;
+        if ((priorPairs.get(pkey(first, second)) || 0) > 0)
+          continue;
         const next = remaining.slice(1, index).concat(remaining.slice(index + 1));
         if (match(next)) {
           memo.set(key, true);
@@ -3266,6 +3886,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name22(match, "match");
     __name222(match, "match");
     __name2222(match, "match");
+    __name22222(match, "match");
     return match(free);
   }
   __name(canFormFreshNonFixedPairs, "canFormFreshNonFixedPairs");
@@ -3273,6 +3894,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(canFormFreshNonFixedPairs, "canFormFreshNonFixedPairs");
   __name222(canFormFreshNonFixedPairs, "canFormFreshNonFixedPairs");
   __name2222(canFormFreshNonFixedPairs, "canFormFreshNonFixedPairs");
+  __name22222(canFormFreshNonFixedPairs, "canFormFreshNonFixedPairs");
   function canFormFreshTypedGames(resting) {
     const restSet = new Set(resting), playing = active.filter((name) => !restSet.has(name));
     const courtCandidates = types.map((type) => {
@@ -3285,24 +3907,32 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         ];
         for (const [first, second] of arrangements) {
           const names = [...first, ...second], men = names.filter((name) => gender(name) === "male").length;
-          if (type === "md" && men !== 4) continue;
-          if ((type === "ld" || type === "wd") && men !== 0) continue;
-          if (type === "xd" && (men !== 2 || first.filter((name) => gender(name) === "male").length !== 1 || second.filter((name) => gender(name) === "male").length !== 1)) continue;
-          if ((priorPairs.get(pkey(first[0], first[1])) || 0) > 0 || (priorPairs.get(pkey(second[0], second[1])) || 0) > 0) continue;
+          if (type === "md" && men !== 4)
+            continue;
+          if ((type === "ld" || type === "wd") && men !== 0)
+            continue;
+          if (type === "xd" && (men !== 2 || first.filter((name) => gender(name) === "male").length !== 1 || second.filter((name) => gender(name) === "male").length !== 1))
+            continue;
+          if ((priorPairs.get(pkey(first[0], first[1])) || 0) > 0 || (priorPairs.get(pkey(second[0], second[1])) || 0) > 0)
+            continue;
           candidates.push({ players: group });
         }
       }
       return candidates;
     });
-    if (courtCandidates.some((candidates) => !candidates.length)) return false;
+    if (courtCandidates.some((candidates) => !candidates.length))
+      return false;
     const order = types.map((_, index) => index).sort((a, b) => courtCandidates[a].length - courtCandidates[b].length);
     function assign(position, available) {
-      if (position === order.length) return true;
+      if (position === order.length)
+        return true;
       for (const candidate of courtCandidates[order[position]]) {
-        if (!candidate.players.every((name) => available.has(name))) continue;
+        if (!candidate.players.every((name) => available.has(name)))
+          continue;
         const next = new Set(available);
         candidate.players.forEach((name) => next.delete(name));
-        if (assign(position + 1, next)) return true;
+        if (assign(position + 1, next))
+          return true;
       }
       return false;
     }
@@ -3311,6 +3941,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name22(assign, "assign");
     __name222(assign, "assign");
     __name2222(assign, "assign");
+    __name22222(assign, "assign");
     return assign(0, new Set(playing));
   }
   __name(canFormFreshTypedGames, "canFormFreshTypedGames");
@@ -3318,23 +3949,29 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(canFormFreshTypedGames, "canFormFreshTypedGames");
   __name222(canFormFreshTypedGames, "canFormFreshTypedGames");
   __name2222(canFormFreshTypedGames, "canFormFreshTypedGames");
+  __name22222(canFormFreshTypedGames, "canFormFreshTypedGames");
   function freeRestAlternatives() {
-    if (!standardFreeMode || !restNeeded || !fastStandardFree) return restOptions;
+    if (!standardFreeMode || !restNeeded || !fastStandardFree)
+      return restOptions;
     let combinationTotal = 1;
     const choose = Math.min(restNeeded, queue.length - restNeeded);
-    for (let index = 1; index <= choose; index++) combinationTotal = combinationTotal * (queue.length - choose + index) / index;
+    for (let index = 1; index <= choose; index++)
+      combinationTotal = combinationTotal * (queue.length - choose + index) / index;
     let restingGroups;
     if (combinationTotal <= 5e3) {
       restingGroups = combinations(queue, restNeeded);
     } else {
       const base = restOptions[0].resting, baseSet = new Set(base), playing = queue.filter((name) => !baseSet.has(name));
       restingGroups = [base];
-      for (const out of base) for (const into of playing) restingGroups.push(base.map((name) => name === out ? into : name));
+      for (const out of base)
+        for (const into of playing)
+          restingGroups.push(base.map((name) => name === out ? into : name));
     }
     const unique = /* @__PURE__ */ new Map();
     for (const resting of restingGroups) {
       const key = [...resting].sort().join("|");
-      if (!unique.has(key) && fixedRestOK(resting)) unique.set(key, { resting, score: restScore(resting) });
+      if (!unique.has(key) && fixedRestOK(resting))
+        unique.set(key, { resting, score: restScore(resting) });
     }
     return [...unique.values()].sort((a, b) => compareVector(a.score, b.score));
   }
@@ -3343,6 +3980,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(freeRestAlternatives, "freeRestAlternatives");
   __name222(freeRestAlternatives, "freeRestAlternatives");
   __name2222(freeRestAlternatives, "freeRestAlternatives");
+  __name22222(freeRestAlternatives, "freeRestAlternatives");
   const freeOptions = freeRestAlternatives();
   const fairnessLength = restNeeded === 1 ? 2 : 3;
   const bestFairness = freeOptions[0]?.score.slice(0, fairnessLength) || [];
@@ -3370,6 +4008,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(doubleRestRotationScore, "doubleRestRotationScore");
   __name222(doubleRestRotationScore, "doubleRestRotationScore");
   __name2222(doubleRestRotationScore, "doubleRestRotationScore");
+  __name22222(doubleRestRotationScore, "doubleRestRotationScore");
   const relaxedRestOptions = canRelaxForUniqueMatch ? freeOptions.filter((option) => option.resting.every((name) => !restedLastTwoRounds.has(name))).sort((a, b) => compareVector(doubleRestRotationScore(a), doubleRestRotationScore(b))) : [];
   const fifoRestingKey = [...fifoRestOption?.resting || []].sort().join("|");
   let prioritizedRestOptions = standardFreeMode ? [
@@ -3382,18 +4021,23 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   if (fastStandardMixed && restNeeded) {
     let combinationTotal = 1;
     const choose = Math.min(restNeeded, queue.length - restNeeded);
-    for (let index = 1; index <= choose; index++) combinationTotal = combinationTotal * (queue.length - choose + index) / index;
+    for (let index = 1; index <= choose; index++)
+      combinationTotal = combinationTotal * (queue.length - choose + index) / index;
     let groups;
-    if (combinationTotal <= 5e3) groups = combinations(queue, restNeeded);
+    if (combinationTotal <= 5e3)
+      groups = combinations(queue, restNeeded);
     else {
       const base = restOptions[0].resting, baseSet = new Set(base), playing = queue.filter((name) => !baseSet.has(name));
       groups = [base];
-      for (const out of base) for (const into of playing) groups.push(base.map((name) => name === out ? into : name));
+      for (const out of base)
+        for (const into of playing)
+          groups.push(base.map((name) => name === out ? into : name));
     }
     const mixedOptions = [], seen = /* @__PURE__ */ new Set();
     for (const resting of groups) {
       const key = [...resting].sort().join("|");
-      if (seen.has(key) || !fixedRestOK(resting)) continue;
+      if (seen.has(key) || !fixedRestOK(resting))
+        continue;
       seen.add(key);
       const set = new Set(resting), projected = active.map((name) => (restCount[name] || 0) + Number(set.has(name)));
       const genderSpreads = ["male", "female"].map((sex) => {
@@ -3413,7 +4057,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     const candidates = /* @__PURE__ */ new Map();
     [...prioritizedRestOptions, ...freeOptions].forEach((option) => {
       const key = [...option.resting].sort().join("|");
-      if (!candidates.has(key)) candidates.set(key, option);
+      if (!candidates.has(key))
+        candidates.set(key, option);
     });
     const allCandidates = [...candidates.values()];
     const reserved = mustPlay.size <= seats ? allCandidates.filter((option) => option.resting.every((name) => !mustPlay.has(name))) : [];
@@ -3448,18 +4093,24 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       );
       return playingTopCount % 2 === 0;
     });
-    if (balancedFeasible.length) prioritizedRestOptions = [balancedFeasible[0]];
+    if (balancedFeasible.length)
+      prioritizedRestOptions = [balancedFeasible[0]];
   }
   function typeGenderOK(pair1, pair2, format, type) {
     const names = [...pair1, ...pair2], men = names.filter((name) => gender(name) === "male").length, women = names.filter((name) => gender(name) === "female").length;
     if (format === "singles") {
-      if (["md", "men", "singles-men"].includes(type)) return men === 2;
-      if (["ld", "wd", "women", "ladies", "singles-women"].includes(type)) return women === 2;
+      if (["md", "men", "singles-men"].includes(type))
+        return men === 2;
+      if (["ld", "wd", "women", "ladies", "singles-women"].includes(type))
+        return women === 2;
       return true;
     }
-    if (type === "md") return men === 4;
-    if (type === "ld" || type === "wd") return women === 4;
-    if (type === "xd") return men === 2 && women === 2 && pair1.filter((name) => gender(name) === "male").length === 1 && pair2.filter((name) => gender(name) === "male").length === 1;
+    if (type === "md")
+      return men === 4;
+    if (type === "ld" || type === "wd")
+      return women === 4;
+    if (type === "xd")
+      return men === 2 && women === 2 && pair1.filter((name) => gender(name) === "male").length === 1 && pair2.filter((name) => gender(name) === "male").length === 1;
     return true;
   }
   __name(typeGenderOK, "typeGenderOK");
@@ -3467,13 +4118,17 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(typeGenderOK, "typeGenderOK");
   __name222(typeGenderOK, "typeGenderOK");
   __name2222(typeGenderOK, "typeGenderOK");
+  __name22222(typeGenderOK, "typeGenderOK");
   function fixedOK(pair1, pair2, playingSet) {
     const court = /* @__PURE__ */ new Set([...pair1, ...pair2]);
     for (const player of court) {
       const mate = fixedMate.get(player);
-      if (!mate || !playingSet.has(mate)) continue;
-      if (!court.has(mate)) return false;
-      if (!(pair1.includes(player) && pair1.includes(mate) || pair2.includes(player) && pair2.includes(mate))) return false;
+      if (!mate || !playingSet.has(mate))
+        continue;
+      if (!court.has(mate))
+        return false;
+      if (!(pair1.includes(player) && pair1.includes(mate) || pair2.includes(player) && pair2.includes(mate)))
+        return false;
     }
     return true;
   }
@@ -3482,6 +4137,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(fixedOK, "fixedOK");
   __name222(fixedOK, "fixedOK");
   __name2222(fixedOK, "fixedOK");
+  __name22222(fixedOK, "fixedOK");
   function hasFixedTeam(pair) {
     return pair.length === 2 && fixedMate.get(pair[0]) === pair[1];
   }
@@ -3490,36 +4146,45 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(hasFixedTeam, "hasFixedTeam");
   __name222(hasFixedTeam, "hasFixedTeam");
   __name2222(hasFixedTeam, "hasFixedTeam");
+  __name22222(hasFixedTeam, "hasFixedTeam");
   function solve(playing) {
-    if (!useBalancedBands) playing = reorderStandardPlayingByFairness(playing, state.allRounds || []);
+    if (!useBalancedBands)
+      playing = reorderStandardPlayingByFairness(playing, state.allRounds || []);
     const rankedPlaying = [...playing].sort((a, b) => rating(b) - rating(a) || String(a).localeCompare(String(b)));
     const playingHalf = Math.ceil(rankedPlaying.length / 2);
     const allSingles = formats.every((format) => format === "singles");
     const band = useBalancedBands ? suppliedBand ? activeBand : allSingles ? activeBand : new Map(rankedPlaying.map((name, index) => [name, index < playingHalf ? 1 : 0])) : new Map(playing.map((name) => [name, 0]));
     const playingSet = new Set(playing);
     if (fastStandardFree || fastBalancedFree) {
-      let bounded = /* @__PURE__ */ __name222(function(position, available, games, score, enforceReturningSpread = true) {
-        if (++nodes2 > (fastBalancedFree ? 5e3 : 2500)) return;
+      let bounded = /* @__PURE__ */ __name2222(function(position, available, games, score, enforceReturningSpread = true) {
+        if (++nodes2 > (fastBalancedFree ? 5e3 : 2500))
+          return;
         if (position === formats.length) {
-          if (!best2 || compareVector(score, best2.score) < 0) best2 = { score, games: [...games] };
+          if (!best2 || compareVector(score, best2.score) < 0)
+            best2 = { score, games: [...games] };
           return;
         }
-        if (best2 && compareVector(score, best2.score) >= 0) return;
+        if (best2 && compareVector(score, best2.score) >= 0)
+          return;
         for (const candidate of candidates) {
-          if (!candidate.players.every((name) => available.has(name))) continue;
+          if (!candidate.players.every((name) => available.has(name)))
+            continue;
           const returningOnCourt = candidate.players.reduce(
             (sum, name) => sum + Number(returningRested.has(name)),
             0
           );
-          if (enforceReturningSpread && returningOnCourt > maxReturningPerCourt) continue;
+          if (enforceReturningSpread && returningOnCourt > maxReturningPerCourt)
+            continue;
           const next = new Set(available);
           candidate.players.forEach((name) => next.delete(name));
           bounded(position + 1, next, [...games, candidate], score.map((value, index) => value + (candidate.score[index] || 0)), enforceReturningSpread);
-          if (best2 && best2.score.every((value) => value === 0)) return;
-          if (nodes2 > (fastBalancedFree ? 5e3 : 2500)) return;
+          if (best2 && best2.score.every((value) => value === 0))
+            return;
+          if (nodes2 > (fastBalancedFree ? 5e3 : 2500))
+            return;
         }
       }, "bounded");
-      __name2222(bounded, "bounded");
+      __name22222(bounded, "bounded");
       const history = typeHistory[0];
       const returningRested = new Set(playing.filter((name) => previousRest.has(name)));
       const maxReturningPerCourt = Math.ceil(returningRested.size / Math.max(1, formats.length));
@@ -3562,11 +4227,14 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         nodes2 = 0;
         bounded(0, new Set(ordered), [], Array(8).fill(0), false);
       }
-      if (fastBalancedFree && !best2) return null;
+      if (fastBalancedFree && !best2)
+        return null;
       const selected = best2?.games || ordered.reduce((games, _, index) => {
-        if (index % 4) return games;
+        if (index % 4)
+          return games;
         const group = ordered.slice(index, index + 4);
-        if (group.length === 4) games.push({ pair1: [group[0], group[1]], pair2: [group[2], group[3]] });
+        if (group.length === 4)
+          games.push({ pair1: [group[0], group[1]], pair2: [group[2], group[3]] });
         return games;
       }, []);
       return selected.map((game, courtIndex) => ({
@@ -3579,40 +4247,48 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       }));
     }
     if (fastStandardXD) {
-      let boundedXd = /* @__PURE__ */ __name222(function(position, available, games, score) {
-        if (++nodes2 > 3e3) return;
+      let boundedXd = /* @__PURE__ */ __name2222(function(position, available, games, score) {
+        if (++nodes2 > 3e3)
+          return;
         if (position === formats.length) {
-          if (!best2 || compareVector(score, best2.score) < 0) best2 = { score, games: [...games] };
+          if (!best2 || compareVector(score, best2.score) < 0)
+            best2 = { score, games: [...games] };
           return;
         }
-        if (best2 && compareVector(score, best2.score) >= 0) return;
+        if (best2 && compareVector(score, best2.score) >= 0)
+          return;
         for (const candidate of candidates) {
-          if (!candidate.players.every((name) => available.has(name))) continue;
+          if (!candidate.players.every((name) => available.has(name)))
+            continue;
           const next = new Set(available);
           candidate.players.forEach((name) => next.delete(name));
           boundedXd(position + 1, next, [...games, candidate], score.map((value, index) => value + (candidate.score[index] || 0)));
-          if (best2 && best2.score.every((value) => value === 0)) return;
-          if (nodes2 > 3e3) return;
+          if (best2 && best2.score.every((value) => value === 0))
+            return;
+          if (nodes2 > 3e3)
+            return;
         }
       }, "boundedXd");
-      __name2222(boundedXd, "boundedXd");
+      __name22222(boundedXd, "boundedXd");
       const men = playing.filter((name) => gender(name) === "male");
       const women = playing.filter((name) => gender(name) === "female");
       const candidates = [];
-      for (const maleGroup of combinations(men, 2)) for (const femaleGroup of combinations(women, 2)) {
-        for (const [pair1, pair2] of [
-          [[maleGroup[0], femaleGroup[0]], [maleGroup[1], femaleGroup[1]]],
-          [[maleGroup[0], femaleGroup[1]], [maleGroup[1], femaleGroup[0]]]
-        ]) {
-          const pairRepeats = (priorPairs.get(pkey(pair1[0], pair1[1])) || 0) + (priorPairs.get(pkey(pair2[0], pair2[1])) || 0);
-          const opponentRepeats = pair1.reduce((sum, a) => sum + pair2.reduce((inner, b) => inner + (priorOpponents.get(pkey(a, b)) || 0), 0), 0);
-          candidates.push({ pair1, pair2, players: [...maleGroup, ...femaleGroup], score: [pairRepeats, opponentRepeats] });
+      for (const maleGroup of combinations(men, 2))
+        for (const femaleGroup of combinations(women, 2)) {
+          for (const [pair1, pair2] of [
+            [[maleGroup[0], femaleGroup[0]], [maleGroup[1], femaleGroup[1]]],
+            [[maleGroup[0], femaleGroup[1]], [maleGroup[1], femaleGroup[0]]]
+          ]) {
+            const pairRepeats = (priorPairs.get(pkey(pair1[0], pair1[1])) || 0) + (priorPairs.get(pkey(pair2[0], pair2[1])) || 0);
+            const opponentRepeats = pair1.reduce((sum, a) => sum + pair2.reduce((inner, b) => inner + (priorOpponents.get(pkey(a, b)) || 0), 0), 0);
+            candidates.push({ pair1, pair2, players: [...maleGroup, ...femaleGroup], score: [pairRepeats, opponentRepeats] });
+          }
         }
-      }
       candidates.sort((a, b) => compareVector(a.score, b.score));
       let best2 = null, nodes2 = 0;
       boundedXd(0, new Set(playing), [], [0, 0]);
-      if (!best2) return null;
+      if (!best2)
+        return null;
       return best2.games.map((game, courtIndex) => ({
         court: courtIndex + 1,
         pair1: [...game.pair1],
@@ -3627,8 +4303,9 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       const xdIndex = types.indexOf("xd");
       const men = playing.filter((name) => gender(name) === "male");
       const women = playing.filter((name) => gender(name) === "female");
-      if (men.length !== 6 || women.length !== 6) return null;
-      const projectedSpread = /* @__PURE__ */ __name2222((pool, history, selected) => {
+      if (men.length !== 6 || women.length !== 6)
+        return null;
+      const projectedSpread = /* @__PURE__ */ __name22222((pool, history, selected) => {
         const set = new Set(selected);
         const values = pool.map((name) => (history.counts[name] || 0) + Number(set.has(name)));
         return Math.max(...values) - Math.min(...values);
@@ -3648,11 +4325,13 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
             projectedSpread(allWomen, typeHistory[xdIndex], xdWomen)
           ];
           const score = [Math.max(...spreads), spreads.reduce((sum, value) => sum + value, 0)];
-          if (!allocation || compareVector(score, allocation.score) < 0) allocation = { score, mdPlayers, ldPlayers, xdMen, xdWomen, xdPlayers };
+          if (!allocation || compareVector(score, allocation.score) < 0)
+            allocation = { score, mdPlayers, ldPlayers, xdMen, xdWomen, xdPlayers };
         }
       }
-      if (!allocation) return null;
-      const bestSameGenderGame = /* @__PURE__ */ __name2222((group) => {
+      if (!allocation)
+        return null;
+      const bestSameGenderGame = /* @__PURE__ */ __name22222((group) => {
         const arrangements = [
           [[group[0], group[1]], [group[2], group[3]]],
           [[group[0], group[2]], [group[1], group[3]]],
@@ -3684,15 +4363,19 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       for (const group of combinations(playing, size)) {
         if (format === "singles") {
           const pair1 = [group[0]], pair2 = [group[1]];
-          if (fixedMate.has(group[0]) || fixedMate.has(group[1])) continue;
-          if (useBalancedBands && band.get(group[0]) !== band.get(group[1]) || !typeGenderOK(pair1, pair2, format, types[courtIndex])) continue;
+          if (fixedMate.has(group[0]) || fixedMate.has(group[1]))
+            continue;
+          if (useBalancedBands && band.get(group[0]) !== band.get(group[1]) || !typeGenderOK(pair1, pair2, format, types[courtIndex]))
+            continue;
           output.push({ pair1, pair2, players: group });
         } else {
           const arrangements = [[[group[0], group[1]], [group[2], group[3]]], [[group[0], group[2]], [group[1], group[3]]], [[group[0], group[3]], [group[1], group[2]]]];
           for (const [pair1, pair2] of arrangements) {
-            if (!fixedOK(pair1, pair2, playingSet) || !typeGenderOK(pair1, pair2, format, types[courtIndex])) continue;
+            if (!fixedOK(pair1, pair2, playingSet) || !typeGenderOK(pair1, pair2, format, types[courtIndex]))
+              continue;
             const sum1 = pair1.reduce((sum, name) => sum + band.get(name), 0), sum2 = pair2.reduce((sum, name) => sum + band.get(name), 0);
-            if (useBalancedBands && !hasFixedTeam(pair1) && !hasFixedTeam(pair2) && sum1 !== sum2) continue;
+            if (useBalancedBands && !hasFixedTeam(pair1) && !hasFixedTeam(pair2) && sum1 !== sum2)
+              continue;
             output.push({ pair1: [...pair1], pair2: [...pair2], players: group });
           }
         }
@@ -3733,7 +4416,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     }
     let best = null, nodes = 0;
     function mixedCompletionScore(games, fallbackScore) {
-      if (!fastStandardMixed) return fallbackScore;
+      if (!fastStandardMixed)
+        return fallbackScore;
       const spreads = [];
       for (const type of [...new Set(types)]) {
         const courtIndex = types.indexOf(type);
@@ -3743,7 +4427,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         );
         const selected = new Set(games.filter((game) => game.courtType === type).flatMap((game) => [...game.pair1, ...game.pair2]));
         const projected = eligible.map((name) => (history.counts[name] || 0) + Number(selected.has(name)));
-        if (projected.length) spreads.push(Math.max(...projected) - Math.min(...projected));
+        if (projected.length)
+          spreads.push(Math.max(...projected) - Math.min(...projected));
       }
       return [Math.max(0, ...spreads), spreads.reduce((sum, value) => sum + value, 0), ...fallbackScore];
     }
@@ -3752,23 +4437,31 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name22(mixedCompletionScore, "mixedCompletionScore");
     __name222(mixedCompletionScore, "mixedCompletionScore");
     __name2222(mixedCompletionScore, "mixedCompletionScore");
+    __name22222(mixedCompletionScore, "mixedCompletionScore");
     function dfs(position, available, games, score) {
-      if (++nodes > 1e6) return;
-      if (best && fixedMate.size > 0 && best.score[0] === 0 && best.score[1] === 0) return;
-      if (best && fastStandardMixed && best.score[2] === 0 && best.score[3] === 0) return;
-      if (best && !useBalancedBands && !fastStandardMixed && fixedMate.size === 0) return;
+      if (++nodes > 1e6)
+        return;
+      if (best && fixedMate.size > 0 && best.score[0] === 0 && best.score[1] === 0)
+        return;
+      if (best && fastStandardMixed && best.score[2] === 0 && best.score[3] === 0)
+        return;
+      if (best && !useBalancedBands && !fastStandardMixed && fixedMate.size === 0)
+        return;
       if (best && !fastStandardMixed) {
         const lowerBound = score.map((value, index) => value + (suffixMinimum[position][index] || 0));
-        if (compareVector(lowerBound, best.score) >= 0) return;
+        if (compareVector(lowerBound, best.score) >= 0)
+          return;
       }
       if (position === order.length) {
         const completeScore = mixedCompletionScore(games, score);
-        if (!best || compareVector(completeScore, best.score) < 0) best = { score: completeScore, games: [...games].sort((a, b) => a.court - b.court) };
+        if (!best || compareVector(completeScore, best.score) < 0)
+          best = { score: completeScore, games: [...games].sort((a, b) => a.court - b.court) };
         return;
       }
       const courtIndex = order[position];
       for (const candidate of courtCandidates[courtIndex]) {
-        if (!candidate.players.every((name) => available.has(name))) continue;
+        if (!candidate.players.every((name) => available.has(name)))
+          continue;
         const next = new Set(available);
         candidate.players.forEach((name) => next.delete(name));
         dfs(position + 1, next, [...games, { court: courtIndex + 1, pair1: candidate.pair1, pair2: candidate.pair2, format: formats[courtIndex], courtType: types[courtIndex] }], score.map((value, index) => value + (candidate.score[index] || 0)));
@@ -3779,6 +4472,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
     __name22(dfs, "dfs");
     __name222(dfs, "dfs");
     __name2222(dfs, "dfs");
+    __name22222(dfs, "dfs");
     dfs(0, new Set(playing), [], useBalancedBands ? [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] : [0, 0, 0, 0, 0, 0, 0]);
     return best?.games || null;
   }
@@ -3787,6 +4481,7 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   __name22(solve, "solve");
   __name222(solve, "solve");
   __name2222(solve, "solve");
+  __name22222(solve, "solve");
   let bestSinglesResult = null;
   let bestSinglesScore = null;
   let bestFixedResult = null;
@@ -3799,14 +4494,19 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
   let bestResolvedPriority = null;
   for (const option of prioritizedRestOptions) {
     const optionPriority = priorityRestScore(option.resting);
-    if (bestResolvedPriority && compareVector(optionPriority, bestResolvedPriority) > 0) break;
-    if (standardPath === "singles" && compareVector(option.score.slice(0, 3), bestSinglesRestScore) !== 0) continue;
+    if (bestResolvedPriority && compareVector(optionPriority, bestResolvedPriority) > 0)
+      break;
+    if (standardPath === "singles" && compareVector(option.score.slice(0, 3), bestSinglesRestScore) !== 0)
+      continue;
     const restSet = new Set(option.resting), playing = active.filter((name) => !restSet.has(name));
     const games = solve(playing);
-    if (!games) continue;
-    if (!bestResolvedPriority) bestResolvedPriority = optionPriority;
+    if (!games)
+      continue;
+    if (!bestResolvedPriority)
+      bestResolvedPriority = optionPriority;
     const result = { round: (state.roundIndex || 0) + 1, resting: option.resting.map((name) => `${name}#${(restCount[name] || 0) + 1}`), playing, games };
-    if (updatedRestQueue) result.updatedRestQueue = updatedRestQueue;
+    if (updatedRestQueue)
+      result.updatedRestQueue = updatedRestQueue;
     if (useBalancedBands) {
       const ranked = [...playing].sort((a, b) => rating(b) - rating(a) || String(a).localeCompare(String(b)));
       const half = Math.ceil(ranked.length / 2);
@@ -3840,7 +4540,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       }
       continue;
     }
-    if (fifoRestMode) return result;
+    if (fifoRestMode)
+      return result;
     if (standardPath === "singles") {
       const repeatOpponents = games.reduce((sum, game) => sum + (priorOpponents.get(pkey(game.pair1[0], game.pair2[0])) || 0), 0);
       const opportunityMaximum = games.reduce((sum, game) => {
@@ -3853,12 +4554,14 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         bestSinglesResult = result;
         bestSinglesScore = score;
       }
-      if (repeatOpponents === 0) break;
+      if (repeatOpponents === 0)
+        break;
       continue;
     }
     if (standardFreeMode && fixedMate.size === 0) {
       const playerGroupRepeats = games.reduce((sum, game) => {
-        if (game.pair1.length !== 2 || game.pair2.length !== 2) return sum;
+        if (game.pair1.length !== 2 || game.pair2.length !== 2)
+          return sum;
         const key = [...game.pair1, ...game.pair2].slice().sort().join("&");
         return sum + (priorPlayerGroups.get(key) || 0);
       }, 0);
@@ -3867,7 +4570,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         0
       ), 0);
       const completeRepeats = games.reduce((sum, game) => {
-        if (game.pair1.length !== 2 || game.pair2.length !== 2) return sum;
+        if (game.pair1.length !== 2 || game.pair2.length !== 2)
+          return sum;
         const key = [pkey(game.pair1[0], game.pair1[1]), pkey(game.pair2[0], game.pair2[1])].sort().join(":");
         return sum + (priorGames.get(key) || 0);
       }, 0);
@@ -3882,7 +4586,8 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         bestStandardFreeResult = result;
         bestStandardFreeScore = score;
       }
-      if (playerGroupRepeats === 0 && pairRepeats === 0 && completeRepeats === 0) break;
+      if (playerGroupRepeats === 0 && pairRepeats === 0 && completeRepeats === 0)
+        break;
       continue;
     }
     if (fixedMate.size > 0 && (!useBalancedBands || canRelaxForUniqueMatch)) {
@@ -3891,17 +4596,20 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
       const restSpread = Math.max(...projected) - Math.min(...projected);
       const consecutiveRest = option.resting.reduce((sum, name) => sum + Number(previousRest.has(name)), 0);
       const playerGroupRepeats = games.reduce((sum, game) => {
-        if (game.pair1.length !== 2 || game.pair2.length !== 2) return sum;
+        if (game.pair1.length !== 2 || game.pair2.length !== 2)
+          return sum;
         const key = [...game.pair1, ...game.pair2].slice().sort().join("&");
         return sum + (priorPlayerGroups.get(key) || 0);
       }, 0);
       const completeRepeats = games.reduce((sum, game) => {
-        if (game.pair1.length !== 2 || game.pair2.length !== 2) return sum;
+        if (game.pair1.length !== 2 || game.pair2.length !== 2)
+          return sum;
         const key = [pkey(game.pair1[0], game.pair1[1]), pkey(game.pair2[0], game.pair2[1])].sort().join(":");
         return sum + (priorGames.get(key) || 0);
       }, 0);
       const nonFixedPairRepeats = games.reduce((sum, game) => sum + [game.pair1, game.pair2].reduce((pairSum, pair) => {
-        if (pair.length !== 2 || hasFixedTeam(pair)) return pairSum;
+        if (pair.length !== 2 || hasFixedTeam(pair))
+          return pairSum;
         return pairSum + (priorPairs.get(pkey(pair[0], pair[1])) || 0);
       }, 0), 0);
       const squares = projected.reduce((sum, value) => sum + value * value, 0);
@@ -3911,15 +4619,20 @@ function sharedRoundStrict(state, useBalancedBands, standardPath = "") {
         bestFixedResult = result;
         bestFixedScore = score;
       }
-      if (playerGroupRepeats === 0 && completeRepeats === 0 && nonFixedPairRepeats === 0) break;
+      if (playerGroupRepeats === 0 && completeRepeats === 0 && nonFixedPairRepeats === 0)
+        break;
       continue;
     }
     return result;
   }
-  if (bestSinglesResult) return bestSinglesResult;
-  if (bestFixedResult) return bestFixedResult;
-  if (bestStandardFreeResult) return bestStandardFreeResult;
-  if (bestRandomBalancedResult) return bestRandomBalancedResult;
+  if (bestSinglesResult)
+    return bestSinglesResult;
+  if (bestFixedResult)
+    return bestFixedResult;
+  if (bestStandardFreeResult)
+    return bestStandardFreeResult;
+  if (bestRandomBalancedResult)
+    return bestRandomBalancedResult;
   throw new Error(`No valid ${useBalancedBands ? "Balanced" : "Standard"} round satisfies the selected formats, FIFO, eligibility and fixed-pair rules`);
 }
 __name(sharedRoundStrict, "sharedRoundStrict");
@@ -3927,26 +4640,31 @@ __name2(sharedRoundStrict, "sharedRoundStrict");
 __name22(sharedRoundStrict, "sharedRoundStrict");
 __name222(sharedRoundStrict, "sharedRoundStrict");
 __name2222(sharedRoundStrict, "sharedRoundStrict");
+__name22222(sharedRoundStrict, "sharedRoundStrict");
 function reorderStandardPlayingByFairness(playing, allRounds) {
   const original = new Map((playing || []).map((name, index) => [name, index]));
   const sharedGames = new Map((playing || []).map((name) => [name, /* @__PURE__ */ new Set()]));
   const partners = new Map((playing || []).map((name) => [name, /* @__PURE__ */ new Set()]));
   const gamesPlayed = new Map((playing || []).map((name) => [name, 0]));
   const poolSet = new Set(playing || []);
-  for (const round of allRounds || []) for (const game of round?.games || []) {
-    const left = game?.pair1 || [], right = game?.pair2 || [];
-    const names = [...left, ...right].filter((name) => poolSet.has(name));
-    for (const name of names) gamesPlayed.set(name, (gamesPlayed.get(name) || 0) + 1);
-    for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++) {
-      sharedGames.get(names[i])?.add(names[j]);
-      sharedGames.get(names[j])?.add(names[i]);
+  for (const round of allRounds || [])
+    for (const game of round?.games || []) {
+      const left = game?.pair1 || [], right = game?.pair2 || [];
+      const names = [...left, ...right].filter((name) => poolSet.has(name));
+      for (const name of names)
+        gamesPlayed.set(name, (gamesPlayed.get(name) || 0) + 1);
+      for (let i = 0; i < names.length; i++)
+        for (let j = i + 1; j < names.length; j++) {
+          sharedGames.get(names[i])?.add(names[j]);
+          sharedGames.get(names[j])?.add(names[i]);
+        }
+      for (const pair of [left, right]) {
+        if (pair.length !== 2 || !poolSet.has(pair[0]) || !poolSet.has(pair[1]))
+          continue;
+        partners.get(pair[0])?.add(pair[1]);
+        partners.get(pair[1])?.add(pair[0]);
+      }
     }
-    for (const pair of [left, right]) {
-      if (pair.length !== 2 || !poolSet.has(pair[0]) || !poolSet.has(pair[1])) continue;
-      partners.get(pair[0])?.add(pair[1]);
-      partners.get(pair[1])?.add(pair[0]);
-    }
-  }
   const possible = Math.max(0, (playing || []).length - 1);
   return [...playing || []].sort((a, b) => possible - (sharedGames.get(b)?.size || 0) - (possible - (sharedGames.get(a)?.size || 0)) || possible - (partners.get(b)?.size || 0) - (possible - (partners.get(a)?.size || 0)) || (gamesPlayed.get(a) || 0) - (gamesPlayed.get(b) || 0) || (original.get(a) || 0) - (original.get(b) || 0));
 }
@@ -3955,6 +4673,7 @@ __name2(reorderStandardPlayingByFairness, "reorderStandardPlayingByFairness");
 __name22(reorderStandardPlayingByFairness, "reorderStandardPlayingByFairness");
 __name222(reorderStandardPlayingByFairness, "reorderStandardPlayingByFairness");
 __name2222(reorderStandardPlayingByFairness, "reorderStandardPlayingByFairness");
+__name22222(reorderStandardPlayingByFairness, "reorderStandardPlayingByFairness");
 function standardFreeDoublesRound(state) {
   return sharedRoundStrict(state, false, "free");
 }
@@ -3963,6 +4682,7 @@ __name2(standardFreeDoublesRound, "standardFreeDoublesRound");
 __name22(standardFreeDoublesRound, "standardFreeDoublesRound");
 __name222(standardFreeDoublesRound, "standardFreeDoublesRound");
 __name2222(standardFreeDoublesRound, "standardFreeDoublesRound");
+__name22222(standardFreeDoublesRound, "standardFreeDoublesRound");
 function standardXdDoublesRound(state) {
   return sharedRoundStrict(state, false, "xd");
 }
@@ -3971,6 +4691,7 @@ __name2(standardXdDoublesRound, "standardXdDoublesRound");
 __name22(standardXdDoublesRound, "standardXdDoublesRound");
 __name222(standardXdDoublesRound, "standardXdDoublesRound");
 __name2222(standardXdDoublesRound, "standardXdDoublesRound");
+__name22222(standardXdDoublesRound, "standardXdDoublesRound");
 function standardMixedTypedDoublesRound(state) {
   return sharedRoundStrict(state, false, "typed");
 }
@@ -3979,6 +4700,7 @@ __name2(standardMixedTypedDoublesRound, "standardMixedTypedDoublesRound");
 __name22(standardMixedTypedDoublesRound, "standardMixedTypedDoublesRound");
 __name222(standardMixedTypedDoublesRound, "standardMixedTypedDoublesRound");
 __name2222(standardMixedTypedDoublesRound, "standardMixedTypedDoublesRound");
+__name22222(standardMixedTypedDoublesRound, "standardMixedTypedDoublesRound");
 function standardCombinedRound(state) {
   const courtCount = state.numCourts || 0;
   const formats = Array.from({ length: courtCount }, (_, index) => String((state.courtFormats || [])[index] || "doubles").toLowerCase());
@@ -3992,6 +4714,7 @@ __name2(standardCombinedRound, "standardCombinedRound");
 __name22(standardCombinedRound, "standardCombinedRound");
 __name222(standardCombinedRound, "standardCombinedRound");
 __name2222(standardCombinedRound, "standardCombinedRound");
+__name22222(standardCombinedRound, "standardCombinedRound");
 function standardSinglesRound(state) {
   const courtCount = state.numCourts || 0;
   const formats = Array.from({ length: courtCount }, (_, index) => String((state.courtFormats || [])[index] || "doubles").toLowerCase());
@@ -4002,14 +4725,17 @@ function standardSinglesRound(state) {
   const allPlayers = state.allPlayers || [];
   const types = Array.from({ length: courtCount }, (_, index) => String((state.courtTypes || [])[index] || "free").toLowerCase());
   const seats = courtCount * 2;
-  if (active.length < seats) throw new Error("Not enough active players for the selected Singles courts");
-  const gender = /* @__PURE__ */ __name2222((name) => String(getGender(name, allPlayers) || "").toLowerCase(), "gender");
-  const eligible = /* @__PURE__ */ __name2222((name, type) => {
-    if (["md", "men", "singles-men"].includes(type)) return gender(name) === "male";
-    if (["ld", "wd", "women", "ladies", "singles-women"].includes(type)) return gender(name) === "female";
+  if (active.length < seats)
+    throw new Error("Not enough active players for the selected Singles courts");
+  const gender = /* @__PURE__ */ __name22222((name) => String(getGender(name, allPlayers) || "").toLowerCase(), "gender");
+  const eligible = /* @__PURE__ */ __name22222((name, type) => {
+    if (["md", "men", "singles-men"].includes(type))
+      return gender(name) === "male";
+    if (["ld", "wd", "women", "ladies", "singles-women"].includes(type))
+      return gender(name) === "female";
     return true;
   }, "eligible");
-  const choose = /* @__PURE__ */ __name2222((items, needed, start = 0, picked = [], output = []) => {
+  const choose = /* @__PURE__ */ __name22222((items, needed, start = 0, picked = [], output = []) => {
     if (picked.length === needed) {
       output.push([...picked]);
       return output;
@@ -4028,30 +4754,36 @@ function standardSinglesRound(state) {
     ...active.filter((name) => !(state.restQueue || []).includes(name))
   ];
   const queuePosition = new Map(queue.map((name, index) => [name, index]));
-  const typeKey = /* @__PURE__ */ __name2222((type) => ["md", "men", "singles-men"].includes(type) ? "singles-men" : ["ld", "wd", "women", "ladies", "singles-women"].includes(type) ? "singles-women" : "singles-free", "typeKey");
+  const typeKey = /* @__PURE__ */ __name22222((type) => ["md", "men", "singles-men"].includes(type) ? "singles-men" : ["ld", "wd", "women", "ladies", "singles-women"].includes(type) ? "singles-women" : "singles-free", "typeKey");
   const appearances = Object.fromEntries(types.map((type) => [typeKey(type), Object.fromEntries(active.map((name) => [name, 0]))]));
   const meetings = /* @__PURE__ */ new Map();
-  for (const round of state.allRounds || []) for (const game of round.games || []) {
-    if ((game.pair1 || []).length !== 1 || (game.pair2 || []).length !== 1) continue;
-    const historicalType = typeKey(String(game.courtType || "free").toLowerCase());
-    if (!appearances[historicalType]) appearances[historicalType] = Object.fromEntries(active.map((name) => [name, 0]));
-    const first = game.pair1[0], second = game.pair2[0];
-    appearances[historicalType][first] = (appearances[historicalType][first] || 0) + 1;
-    appearances[historicalType][second] = (appearances[historicalType][second] || 0) + 1;
-    const key = historicalType + ":" + [first, second].sort().join("&");
-    meetings.set(key, (meetings.get(key) || 0) + 1);
-  }
+  for (const round of state.allRounds || [])
+    for (const game of round.games || []) {
+      if ((game.pair1 || []).length !== 1 || (game.pair2 || []).length !== 1)
+        continue;
+      const historicalType = typeKey(String(game.courtType || "free").toLowerCase());
+      if (!appearances[historicalType])
+        appearances[historicalType] = Object.fromEntries(active.map((name) => [name, 0]));
+      const first = game.pair1[0], second = game.pair2[0];
+      appearances[historicalType][first] = (appearances[historicalType][first] || 0) + 1;
+      appearances[historicalType][second] = (appearances[historicalType][second] || 0) + 1;
+      const key = historicalType + ":" + [first, second].sort().join("&");
+      meetings.set(key, (meetings.get(key) || 0) + 1);
+    }
   function roundRobinOrder(pool) {
     const rotation = [...pool].sort((a, b) => (queuePosition.get(a) ?? active.length) - (queuePosition.get(b) ?? active.length) || String(a).localeCompare(String(b)));
-    if (rotation.length % 2) rotation.push(null);
+    if (rotation.length % 2)
+      rotation.push(null);
     const order = /* @__PURE__ */ new Map();
     let sequence = 0;
     for (let round = 0; round < Math.max(0, rotation.length - 1); round++) {
       for (let index = 0; index < rotation.length / 2; index++) {
         const first = rotation[index], second = rotation[rotation.length - 1 - index];
-        if (first && second) order.set([first, second].sort().join("&"), sequence++);
+        if (first && second)
+          order.set([first, second].sort().join("&"), sequence++);
       }
-      if (rotation.length > 2) rotation.splice(1, 0, rotation.pop());
+      if (rotation.length > 2)
+        rotation.splice(1, 0, rotation.pop());
     }
     return order;
   }
@@ -4060,14 +4792,16 @@ function standardSinglesRound(state) {
   __name22(roundRobinOrder, "roundRobinOrder");
   __name222(roundRobinOrder, "roundRobinOrder");
   __name2222(roundRobinOrder, "roundRobinOrder");
+  __name22222(roundRobinOrder, "roundRobinOrder");
   const roundRobin = {
     "singles-men": roundRobinOrder(active.filter((name) => gender(name) === "male")),
     "singles-women": roundRobinOrder(active.filter((name) => gender(name) === "female")),
     "singles-free": roundRobinOrder(active)
   };
-  const compare = /* @__PURE__ */ __name2222((left, right) => {
+  const compare = /* @__PURE__ */ __name22222((left, right) => {
     for (let index = 0; index < Math.max(left.length, right.length); index++) {
-      if ((left[index] || 0) !== (right[index] || 0)) return (left[index] || 0) - (right[index] || 0);
+      if ((left[index] || 0) !== (right[index] || 0))
+        return (left[index] || 0) - (right[index] || 0);
     }
     return 0;
   }, "compare");
@@ -4075,14 +4809,15 @@ function standardSinglesRound(state) {
   let best = null;
   const restOptions = restNeeded ? choose(queue, restNeeded) : [[]];
   for (const resting of restOptions) {
-    let search = /* @__PURE__ */ __name222(function(position, available, games) {
+    let search = /* @__PURE__ */ __name2222(function(position, available, games) {
       if (position === order.length) {
         const typeSpreads = [];
         for (const key of [...new Set(types.map(typeKey))]) {
           const selected = new Set(games.filter((game) => game.key === key).flatMap((game) => game.pair));
           const relevant = active.filter((name) => key === "singles-free" || eligible(name, key));
           const values = relevant.map((name) => (appearances[key]?.[name] || 0) + Number(selected.has(name)));
-          if (values.length) typeSpreads.push(Math.max(...values) - Math.min(...values));
+          if (values.length)
+            typeSpreads.push(Math.max(...values) - Math.min(...values));
         }
         const opponentCounts = games.map((game) => meetings.get(game.key + ":" + game.pair.slice().sort().join("&")) || 0);
         const roundRobinPriority = games.reduce((sum, game) => sum + (roundRobin[game.key]?.get(game.pair.slice().sort().join("&")) ?? 1e5), 0);
@@ -4097,18 +4832,20 @@ function standardSinglesRound(state) {
           restSquares,
           fifo
         ];
-        if (!best || compare(score, best.score) < 0) best = { score, resting: [...resting], playing: [...playing], games: [...games] };
+        if (!best || compare(score, best.score) < 0)
+          best = { score, resting: [...resting], playing: [...playing], games: [...games] };
         return;
       }
       const courtIndex = order[position];
       for (const candidate of candidates[courtIndex]) {
-        if (!candidate.pair.every((name) => available.has(name))) continue;
+        if (!candidate.pair.every((name) => available.has(name)))
+          continue;
         const next = new Set(available);
         candidate.pair.forEach((name) => next.delete(name));
         search(position + 1, next, [...games, { court: courtIndex + 1, pair: candidate.pair, type: candidate.type, key: candidate.key }]);
       }
     }, "search");
-    __name2222(search, "search");
+    __name22222(search, "search");
     const restSet = new Set(resting);
     const playing = active.filter((name) => !restSet.has(name));
     const projectedRest = active.map((name) => (restCount[name] || 0) + Number(restSet.has(name)));
@@ -4120,11 +4857,13 @@ function standardSinglesRound(state) {
       const pool = playing.filter((name) => eligible(name, type));
       return choose(pool, 2).map((pair) => ({ pair, type, key: typeKey(type) }));
     });
-    if (candidates.some((list) => !list.length)) continue;
+    if (candidates.some((list) => !list.length))
+      continue;
     const order = candidates.map((_, index) => index).sort((a, b) => candidates[a].length - candidates[b].length);
     search(0, new Set(playing), []);
   }
-  if (!best) throw new Error("No valid Standard Singles round satisfies eligibility and resting rules");
+  if (!best)
+    throw new Error("No valid Standard Singles round satisfies eligibility and resting rules");
   return {
     round: (state.roundIndex || 0) + 1,
     resting: best.resting.map((name) => `${name}#${(restCount[name] || 0) + 1}`),
@@ -4144,16 +4883,21 @@ __name2(standardSinglesRound, "standardSinglesRound");
 __name22(standardSinglesRound, "standardSinglesRound");
 __name222(standardSinglesRound, "standardSinglesRound");
 __name2222(standardSinglesRound, "standardSinglesRound");
+__name22222(standardSinglesRound, "standardSinglesRound");
 function standardRoundStrict(state) {
   const courtCount = state.numCourts || 0;
   const formats = Array.from({ length: courtCount }, (_, index) => String((state.courtFormats || [])[index] || "doubles").toLowerCase());
   const types = Array.from({ length: courtCount }, (_, index) => String((state.courtTypes || [])[index] || "free").toLowerCase());
   const allDoubles = formats.every((format) => format === "doubles");
   const allSingles = formats.every((format) => format === "singles");
-  if (allSingles) return standardSinglesRound(state);
-  if (allDoubles && types.every((type) => type === "free")) return standardFreeDoublesRound(state);
-  if (allDoubles && types.every((type) => type === "xd")) return standardXdDoublesRound(state);
-  if (allDoubles) return standardMixedTypedDoublesRound(state);
+  if (allSingles)
+    return standardSinglesRound(state);
+  if (allDoubles && types.every((type) => type === "free"))
+    return standardFreeDoublesRound(state);
+  if (allDoubles && types.every((type) => type === "xd"))
+    return standardXdDoublesRound(state);
+  if (allDoubles)
+    return standardMixedTypedDoublesRound(state);
   return standardCombinedRound(state);
 }
 __name(standardRoundStrict, "standardRoundStrict");
@@ -4161,6 +4905,7 @@ __name2(standardRoundStrict, "standardRoundStrict");
 __name22(standardRoundStrict, "standardRoundStrict");
 __name222(standardRoundStrict, "standardRoundStrict");
 __name2222(standardRoundStrict, "standardRoundStrict");
+__name22222(standardRoundStrict, "standardRoundStrict");
 function balancedRoundStrict(state) {
   return sharedRoundStrict(state, true);
 }
@@ -4169,6 +4914,7 @@ __name2(balancedRoundStrict, "balancedRoundStrict");
 __name22(balancedRoundStrict, "balancedRoundStrict");
 __name222(balancedRoundStrict, "balancedRoundStrict");
 __name2222(balancedRoundStrict, "balancedRoundStrict");
+__name22222(balancedRoundStrict, "balancedRoundStrict");
 function restartGenerationCycleFromLatestRound(state) {
   const latest = Array.isArray(state.allRounds) && state.allRounds.length ? state.allRounds[state.allRounds.length - 1] : null;
   state.allRounds = latest ? [latest] : [];
@@ -4177,12 +4923,15 @@ function restartGenerationCycleFromLatestRound(state) {
   state.fixedPairGameQueue = null;
   state.fixedPairGameQueueHash = null;
   for (const game of latest?.games || []) {
-    if (!game?.pair1 || !game?.pair2) continue;
+    if (!game?.pair1 || !game?.pair2)
+      continue;
     const left = [...game.pair1].sort().join("&");
     const right = [...game.pair2].sort().join("&");
     state.gamesMap.add([left, right].sort().join(":"));
-    if (game.pair1.length === 2) state.pairPlayedSet.add(pairKey(game.pair1[0], game.pair1[1]));
-    if (game.pair2.length === 2) state.pairPlayedSet.add(pairKey(game.pair2[0], game.pair2[1]));
+    if (game.pair1.length === 2)
+      state.pairPlayedSet.add(pairKey(game.pair1[0], game.pair1[1]));
+    if (game.pair2.length === 2)
+      state.pairPlayedSet.add(pairKey(game.pair2[0], game.pair2[1]));
   }
 }
 __name(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatestRound");
@@ -4190,6 +4939,7 @@ __name2(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatest
 __name22(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatestRound");
 __name222(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatestRound");
 __name2222(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatestRound");
+__name22222(restartGenerationCycleFromLatestRound, "restartGenerationCycleFromLatestRound");
 async function handleGenerateRound(request, env) {
   const req = await request.json();
   const restCount = Object.fromEntries(req.restCount || []);
@@ -4200,7 +4950,8 @@ async function handleGenerateRound(request, env) {
   let lastRound = [];
   if (allRounds.length) {
     const last = allRounds[allRounds.length - 1];
-    if (last?.games) lastRound = last.games.flatMap((g) => [...g.pair1 || [], ...g.pair2 || []]);
+    if (last?.games)
+      lastRound = last.games.flatMap((g) => [...g.pair1 || [], ...g.pair2 || []]);
   }
   const state = {
     activeplayers: req.activeplayers || [],
@@ -4233,7 +4984,8 @@ async function handleGenerateRound(request, env) {
   if (req._mbmCall) {
     const waitQueue = req._mbmWaitQueue || [];
     const game = mbmBestGame(state.activeplayers, waitQueue, state);
-    if (!game) return json({ error: "Not enough players" }, 400);
+    if (!game)
+      return json({ error: "Not enough players" }, 400);
     return json({ games: [{ court: 1, pair1: game.pair1, pair2: game.pair2 }] });
   }
   const hasDoubleTypedCourts = (state.courtTypes || []).some(
@@ -4243,19 +4995,27 @@ async function handleGenerateRound(request, env) {
   const useComp = state.playMode === "competitive";
   const useBalanced = state.balancedGamesMode || state.gameGenerationMode === "balanced";
   const useRatingAware = useComp || useBalanced;
-  if (useRatingAware && state.lastMode !== (useBalanced ? "balanced" : "competitive")) resetForCompetitive(state);
+  if (useRatingAware && state.lastMode !== (useBalanced ? "balanced" : "competitive"))
+    resetForCompetitive(state);
   let result = null;
   let fallbackUsed = false;
   let finalQc = { valid: false, hardFails: ["Round was not generated"] };
   for (let attempt = 0; attempt < 3; attempt++) {
     let roundFn;
-    if (useBalanced) roundFn = balancedRoundStrict;
-    else if (false) roundFn = useBalanced ? (state2) => generateBestBalancedTypedRound(state2, typedRound) : typedRound;
-    else if (!useComp) roundFn = standardRoundStrict;
-    else if (false) roundFn = useBalanced ? (state2) => generateBestBalancedTypedRound(state2, typedBestRound) : typedBestRound;
-    else if (useBalanced) roundFn = generateBestBalancedRound;
-    else if (useRatingAware) roundFn = competitiveRound;
-    else roundFn = randomRound;
+    if (useBalanced)
+      roundFn = balancedRoundStrict;
+    else if (false)
+      roundFn = useBalanced ? (state2) => generateBestBalancedTypedRound(state2, typedRound) : typedRound;
+    else if (!useComp)
+      roundFn = standardRoundStrict;
+    else if (false)
+      roundFn = useBalanced ? (state2) => generateBestBalancedTypedRound(state2, typedBestRound) : typedBestRound;
+    else if (useBalanced)
+      roundFn = generateBestBalancedRound;
+    else if (useRatingAware)
+      roundFn = competitiveRound;
+    else
+      roundFn = randomRound;
     try {
       result = roundFn(state);
     } catch (error) {
@@ -4268,7 +5028,8 @@ async function handleGenerateRound(request, env) {
     }
     const qc = validateRound(result, state);
     finalQc = qc;
-    if (qc.valid) break;
+    if (qc.valid)
+      break;
     if (!useBalanced && !useComp && attempt === 0) {
       restartGenerationCycleFromLatestRound(state);
       fallbackUsed = true;
@@ -4286,7 +5047,8 @@ async function handleGenerateRound(request, env) {
       }
     }
   }
-  if (!result) return json({ error: "Failed to generate round" }, 500);
+  if (!result)
+    return json({ error: "Failed to generate round" }, 500);
   if (!finalQc.valid) {
     return json({
       error: "Unable to generate a valid round for the selected court formats",
@@ -4314,6 +5076,7 @@ __name2(handleGenerateRound, "handleGenerateRound");
 __name22(handleGenerateRound, "handleGenerateRound");
 __name222(handleGenerateRound, "handleGenerateRound");
 __name2222(handleGenerateRound, "handleGenerateRound");
+__name22222(handleGenerateRound, "handleGenerateRound");
 function lineAppUrl(env) {
   try {
     const url = new URL(env.LINE_APP_URL || "https://scs-app.com/");
@@ -4330,8 +5093,10 @@ __name2(lineAppUrl, "lineAppUrl");
 __name22(lineAppUrl, "lineAppUrl");
 __name222(lineAppUrl, "lineAppUrl");
 __name2222(lineAppUrl, "lineAppUrl");
+__name22222(lineAppUrl, "lineAppUrl");
 function lineCallbackUrl(request, env) {
-  if (env.LINE_CALLBACK_URL) return env.LINE_CALLBACK_URL;
+  if (env.LINE_CALLBACK_URL)
+    return env.LINE_CALLBACK_URL;
   return new URL("/auth/line/callback", request.url).toString();
 }
 __name(lineCallbackUrl, "lineCallbackUrl");
@@ -4339,6 +5104,7 @@ __name2(lineCallbackUrl, "lineCallbackUrl");
 __name22(lineCallbackUrl, "lineCallbackUrl");
 __name222(lineCallbackUrl, "lineCallbackUrl");
 __name2222(lineCallbackUrl, "lineCallbackUrl");
+__name22222(lineCallbackUrl, "lineCallbackUrl");
 function lineRedirect(env, key, value) {
   const target = lineAppUrl(env);
   target.hash = key + "=" + encodeURIComponent(String(value || "unknown"));
@@ -4356,11 +5122,13 @@ __name2(lineRedirect, "lineRedirect");
 __name22(lineRedirect, "lineRedirect");
 __name222(lineRedirect, "lineRedirect");
 __name2222(lineRedirect, "lineRedirect");
+__name22222(lineRedirect, "lineRedirect");
 function lineRandom(bytes = 24) {
   const data = new Uint8Array(bytes);
   crypto.getRandomValues(data);
   let binary = "";
-  for (const value of data) binary += String.fromCharCode(value);
+  for (const value of data)
+    binary += String.fromCharCode(value);
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 __name(lineRandom, "lineRandom");
@@ -4368,11 +5136,13 @@ __name2(lineRandom, "lineRandom");
 __name22(lineRandom, "lineRandom");
 __name222(lineRandom, "lineRandom");
 __name2222(lineRandom, "lineRandom");
+__name22222(lineRandom, "lineRandom");
 function readCookie(request, name) {
   const cookie = request.headers.get("Cookie") || "";
   for (const part of cookie.split(";")) {
     const index = part.indexOf("=");
-    if (index < 0 || part.slice(0, index).trim() !== name) continue;
+    if (index < 0 || part.slice(0, index).trim() !== name)
+      continue;
     try {
       return decodeURIComponent(part.slice(index + 1).trim());
     } catch {
@@ -4386,6 +5156,7 @@ __name2(readCookie, "readCookie");
 __name22(readCookie, "readCookie");
 __name222(readCookie, "readCookie");
 __name2222(readCookie, "readCookie");
+__name22222(readCookie, "readCookie");
 function lineStateCookie(value, maxAge) {
   return "scs_line_state=" + encodeURIComponent(value || "") + "; Path=/auth/line; HttpOnly; Secure; SameSite=Lax; Max-Age=" + String(maxAge);
 }
@@ -4394,6 +5165,7 @@ __name2(lineStateCookie, "lineStateCookie");
 __name22(lineStateCookie, "lineStateCookie");
 __name222(lineStateCookie, "lineStateCookie");
 __name2222(lineStateCookie, "lineStateCookie");
+__name22222(lineStateCookie, "lineStateCookie");
 function lineSafeNickname(value) {
   const nickname = String(value || "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 60);
   return nickname || "LINE Player";
@@ -4403,6 +5175,7 @@ __name2(lineSafeNickname, "lineSafeNickname");
 __name22(lineSafeNickname, "lineSafeNickname");
 __name222(lineSafeNickname, "lineSafeNickname");
 __name2222(lineSafeNickname, "lineSafeNickname");
+__name22222(lineSafeNickname, "lineSafeNickname");
 async function lineVerifierHash(value) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(String(value || "")));
   return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -4412,6 +5185,7 @@ __name2(lineVerifierHash, "lineVerifierHash");
 __name22(lineVerifierHash, "lineVerifierHash");
 __name222(lineVerifierHash, "lineVerifierHash");
 __name2222(lineVerifierHash, "lineVerifierHash");
+__name22222(lineVerifierHash, "lineVerifierHash");
 function lineValidHandoff(id, verifier) {
   return /^[a-f0-9-]{36}$/i.test(String(id || "")) && /^[A-Za-z0-9_-]{40,128}$/.test(String(verifier || ""));
 }
@@ -4420,6 +5194,7 @@ __name2(lineValidHandoff, "lineValidHandoff");
 __name22(lineValidHandoff, "lineValidHandoff");
 __name222(lineValidHandoff, "lineValidHandoff");
 __name2222(lineValidHandoff, "lineValidHandoff");
+__name22222(lineValidHandoff, "lineValidHandoff");
 async function handleLineStart(request, env) {
   if (!env.LINE_CHANNEL_ID || !env.LINE_CHANNEL_SECRET || !env.TOKEN_SECRET) {
     return lineRedirect(env, "line_error", "not_configured");
@@ -4477,9 +5252,12 @@ __name2(handleLineStart, "handleLineStart");
 __name22(handleLineStart, "handleLineStart");
 __name222(handleLineStart, "handleLineStart");
 __name2222(handleLineStart, "handleLineStart");
+__name22222(handleLineStart, "handleLineStart");
 async function handleLineHandoffCreate(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!env.TOKEN_SECRET) return json({ error: "Social login is not configured" }, 503);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
+  if (!env.TOKEN_SECRET)
+    return json({ error: "Social login is not configured" }, 503);
   const body = await request.json().catch(() => ({}));
   const id = String(body.id || "");
   const verifier = String(body.verifier || "");
@@ -4509,11 +5287,14 @@ __name2(handleLineHandoffCreate, "handleLineHandoffCreate");
 __name22(handleLineHandoffCreate, "handleLineHandoffCreate");
 __name222(handleLineHandoffCreate, "handleLineHandoffCreate");
 __name2222(handleLineHandoffCreate, "handleLineHandoffCreate");
+__name22222(handleLineHandoffCreate, "handleLineHandoffCreate");
 async function handleLineDevice(request, env) {
-  if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
+  if (request.method !== "GET")
+    return json({ error: "Method not allowed" }, 405);
   const url = new URL(request.url);
   const code = String(url.searchParams.get("code") || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  if (!/^[A-HJ-NP-Z2-9]{8}$/.test(code)) return lineRedirect(env, "line_error", "invalid_handoff");
+  if (!/^[A-HJ-NP-Z2-9]{8}$/.test(code))
+    return lineRedirect(env, "line_error", "invalid_handoff");
   try {
     const rows = await sbGet(
       env,
@@ -4539,6 +5320,7 @@ __name2(handleLineDevice, "handleLineDevice");
 __name22(handleLineDevice, "handleLineDevice");
 __name222(handleLineDevice, "handleLineDevice");
 __name2222(handleLineDevice, "handleLineDevice");
+__name22222(handleLineDevice, "handleLineDevice");
 async function handleLineCallback(request, env) {
   const url = new URL(request.url);
   const clearCookie = lineStateCookie("", 0);
@@ -4589,7 +5371,8 @@ async function handleLineCallback(request, env) {
       body: tokenBody.toString()
     });
     const tokenData = await tokenResponse.json().catch(() => ({}));
-    if (!tokenResponse.ok || !tokenData.id_token) throw new Error("token_exchange_failed");
+    if (!tokenResponse.ok || !tokenData.id_token)
+      throw new Error("token_exchange_failed");
     const verifyBody = new URLSearchParams({
       id_token: tokenData.id_token,
       client_id: env.LINE_CHANNEL_ID,
@@ -4601,7 +5384,8 @@ async function handleLineCallback(request, env) {
       body: verifyBody.toString()
     });
     const profile = await verifyResponse.json().catch(() => ({}));
-    if (!verifyResponse.ok || !profile.sub) throw new Error("id_token_invalid");
+    if (!verifyResponse.ok || !profile.sub)
+      throw new Error("id_token_invalid");
     const lineUserId = String(profile.sub);
     const nickname = lineSafeNickname(profile.name);
     let accounts;
@@ -4612,7 +5396,8 @@ async function handleLineCallback(request, env) {
         "line_user_id=eq." + encodeURIComponent(lineUserId) + "&select=id,nickname,email,gender,auth_provider,line_picture_url,line_nickname_confirmed"
       );
     } catch (error) {
-      if (String(error.message || "").includes("line_user_id")) throw new Error("database_not_ready");
+      if (String(error.message || "").includes("line_user_id"))
+        throw new Error("database_not_ready");
       throw error;
     }
     let account;
@@ -4623,7 +5408,8 @@ async function handleLineCallback(request, env) {
         line_picture_url: profile.picture || null,
         auth_provider: mergeAuthProvider(account.auth_provider, "line")
       };
-      if (!account.email && profile.email) updates.email = String(profile.email).toLowerCase();
+      if (!account.email && profile.email)
+        updates.email = String(profile.email).toLowerCase();
       await sbPatch(env, "user_accounts", "id=eq." + encodeURIComponent(account.id), updates);
       account = { ...account, ...updates };
     } else {
@@ -4725,22 +5511,28 @@ __name2(handleLineCallback, "handleLineCallback");
 __name22(handleLineCallback, "handleLineCallback");
 __name222(handleLineCallback, "handleLineCallback");
 __name2222(handleLineCallback, "handleLineCallback");
+__name22222(handleLineCallback, "handleLineCallback");
 async function handleLineHandoffStatus(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!env.TOKEN_SECRET) return json({ error: "Social login is not configured" }, 503);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
+  if (!env.TOKEN_SECRET)
+    return json({ error: "Social login is not configured" }, 503);
   const body = await request.json().catch(() => ({}));
   const id = String(body.id || "");
   const verifier = String(body.verifier || "");
-  if (!lineValidHandoff(id, verifier)) return json({ error: "Invalid handoff" }, 400);
+  if (!lineValidHandoff(id, verifier))
+    return json({ error: "Invalid handoff" }, 400);
   const rows = await sbGet(
     env,
     "line_login_handoffs",
     "id=eq." + encodeURIComponent(id) + "&select=id,verifier_hash,status,account_id,completion_proof,expires_at"
   );
   const handoff = rows && rows[0];
-  if (!handoff) return json({ status: "pending" });
+  if (!handoff)
+    return json({ status: "pending" });
   const verifierHash = await lineVerifierHash(verifier);
-  if (handoff.verifier_hash !== verifierHash) return json({ error: "Invalid handoff" }, 403);
+  if (handoff.verifier_hash !== verifierHash)
+    return json({ error: "Invalid handoff" }, 403);
   if (new Date(handoff.expires_at).getTime() <= Date.now()) {
     await sbDelete(env, "line_login_handoffs", "id=eq." + encodeURIComponent(id)).catch(() => {
     });
@@ -4751,7 +5543,8 @@ async function handleLineHandoffStatus(request, env) {
     });
     return json({ status: "cancelled" });
   }
-  if (handoff.status !== "complete") return json({ status: "pending" });
+  if (handoff.status !== "complete")
+    return json({ status: "pending" });
   const proof = await verifyToken(handoff.completion_proof || "", env.TOKEN_SECRET);
   if (!proof || !["line_handoff_completion", "google_handoff_completion"].includes(proof.purpose) || proof.handoffId !== id || proof.verifierHash !== verifierHash || String(proof.accountId) !== String(handoff.account_id)) {
     return json({ error: "Invalid handoff proof" }, 403);
@@ -4771,9 +5564,12 @@ __name2(handleLineHandoffStatus, "handleLineHandoffStatus");
 __name22(handleLineHandoffStatus, "handleLineHandoffStatus");
 __name222(handleLineHandoffStatus, "handleLineHandoffStatus");
 __name2222(handleLineHandoffStatus, "handleLineHandoffStatus");
+__name22222(handleLineHandoffStatus, "handleLineHandoffStatus");
 async function handleLineComplete(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!env.TOKEN_SECRET) return json({ error: "LINE Login is not configured" }, 503);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
+  if (!env.TOKEN_SECRET)
+    return json({ error: "LINE Login is not configured" }, 503);
   const body = await request.json().catch(() => ({}));
   const payload = await verifyToken(body.ticket || "", env.TOKEN_SECRET);
   if (!payload || payload.purpose !== "line_login_ticket" || !payload.accountId) {
@@ -4784,7 +5580,8 @@ async function handleLineComplete(request, env) {
     "user_accounts",
     "id=eq." + encodeURIComponent(payload.accountId) + "&select=id,nickname,email,gender,auth_provider,line_picture_url,line_nickname_confirmed"
   );
-  if (!rows || !rows.length) return json({ error: "LINE account was not found." }, 404);
+  if (!rows || !rows.length)
+    return json({ error: "LINE account was not found." }, 404);
   const account = rows[0];
   return json({
     needsProfile: account.line_nickname_confirmed === false,
@@ -4805,16 +5602,20 @@ __name2(handleLineComplete, "handleLineComplete");
 __name22(handleLineComplete, "handleLineComplete");
 __name222(handleLineComplete, "handleLineComplete");
 __name2222(handleLineComplete, "handleLineComplete");
+__name22222(handleLineComplete, "handleLineComplete");
 async function handleLineNickname(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!env.TOKEN_SECRET) return json({ error: "LINE Login is not configured" }, 503);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
+  if (!env.TOKEN_SECRET)
+    return json({ error: "LINE Login is not configured" }, 503);
   const body = await request.json().catch(() => ({}));
   const payload = await verifyToken(body.ticket || "", env.TOKEN_SECRET);
   if (!payload || payload.purpose !== "line_login_ticket" || !payload.accountId) {
     return json({ error: "LINE login expired. Please try again." }, 401);
   }
   const nickname = String(body.nickname || "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 40);
-  if (!nickname) return json({ error: "Please enter your player nickname." }, 400);
+  if (!nickname)
+    return json({ error: "Please enter your player nickname." }, 400);
   const gender = String(body.gender || "");
   if (!["Male", "Female"].includes(gender)) {
     return json({ error: "Please select your gender." }, 400);
@@ -4827,7 +5628,8 @@ async function handleLineNickname(request, env) {
     "return=representation"
   );
   const account = rows && rows[0];
-  if (!account) return json({ error: "LINE account was not found." }, 404);
+  if (!account)
+    return json({ error: "LINE account was not found." }, 404);
   return json({
     user: {
       id: account.id,
@@ -4845,6 +5647,7 @@ __name2(handleLineNickname, "handleLineNickname");
 __name22(handleLineNickname, "handleLineNickname");
 __name222(handleLineNickname, "handleLineNickname");
 __name2222(handleLineNickname, "handleLineNickname");
+__name22222(handleLineNickname, "handleLineNickname");
 function googleAppUrl(env) {
   try {
     const url = new URL(env.GOOGLE_APP_URL || env.LINE_APP_URL || "https://scs-app.com/");
@@ -4861,8 +5664,10 @@ __name2(googleAppUrl, "googleAppUrl");
 __name22(googleAppUrl, "googleAppUrl");
 __name222(googleAppUrl, "googleAppUrl");
 __name2222(googleAppUrl, "googleAppUrl");
+__name22222(googleAppUrl, "googleAppUrl");
 function googleCallbackUrl(request, env) {
-  if (env.GOOGLE_CALLBACK_URL) return env.GOOGLE_CALLBACK_URL;
+  if (env.GOOGLE_CALLBACK_URL)
+    return env.GOOGLE_CALLBACK_URL;
   return new URL("/auth/google/callback", request.url).toString();
 }
 __name(googleCallbackUrl, "googleCallbackUrl");
@@ -4870,6 +5675,7 @@ __name2(googleCallbackUrl, "googleCallbackUrl");
 __name22(googleCallbackUrl, "googleCallbackUrl");
 __name222(googleCallbackUrl, "googleCallbackUrl");
 __name2222(googleCallbackUrl, "googleCallbackUrl");
+__name22222(googleCallbackUrl, "googleCallbackUrl");
 function googleRedirect(env, key, value) {
   const target = googleAppUrl(env);
   target.hash = key + "=" + encodeURIComponent(String(value || "unknown"));
@@ -4887,6 +5693,7 @@ __name2(googleRedirect, "googleRedirect");
 __name22(googleRedirect, "googleRedirect");
 __name222(googleRedirect, "googleRedirect");
 __name2222(googleRedirect, "googleRedirect");
+__name22222(googleRedirect, "googleRedirect");
 function googleStateCookie(value, maxAge) {
   return "scs_google_state=" + encodeURIComponent(value || "") + "; Path=/auth/google; HttpOnly; Secure; SameSite=Lax; Max-Age=" + String(maxAge);
 }
@@ -4895,6 +5702,7 @@ __name2(googleStateCookie, "googleStateCookie");
 __name22(googleStateCookie, "googleStateCookie");
 __name222(googleStateCookie, "googleStateCookie");
 __name2222(googleStateCookie, "googleStateCookie");
+__name22222(googleStateCookie, "googleStateCookie");
 function googleSafeDisplayName(value) {
   const name = String(value || "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 60);
   return name || "Google Player";
@@ -4904,9 +5712,11 @@ __name2(googleSafeDisplayName, "googleSafeDisplayName");
 __name22(googleSafeDisplayName, "googleSafeDisplayName");
 __name222(googleSafeDisplayName, "googleSafeDisplayName");
 __name2222(googleSafeDisplayName, "googleSafeDisplayName");
+__name22222(googleSafeDisplayName, "googleSafeDisplayName");
 function mergeAuthProvider(existing, provider) {
   const providers = String(existing || "").split("_").map((value) => value.trim()).filter(Boolean);
-  if (!providers.includes(provider)) providers.push(provider);
+  if (!providers.includes(provider))
+    providers.push(provider);
   return providers.length ? providers.join("_") : provider;
 }
 __name(mergeAuthProvider, "mergeAuthProvider");
@@ -4914,6 +5724,7 @@ __name2(mergeAuthProvider, "mergeAuthProvider");
 __name22(mergeAuthProvider, "mergeAuthProvider");
 __name222(mergeAuthProvider, "mergeAuthProvider");
 __name2222(mergeAuthProvider, "mergeAuthProvider");
+__name22222(mergeAuthProvider, "mergeAuthProvider");
 async function handleGoogleStart(request, env) {
   if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.TOKEN_SECRET) {
     return googleRedirect(env, "google_error", "not_configured");
@@ -4970,11 +5781,14 @@ __name2(handleGoogleStart, "handleGoogleStart");
 __name22(handleGoogleStart, "handleGoogleStart");
 __name222(handleGoogleStart, "handleGoogleStart");
 __name2222(handleGoogleStart, "handleGoogleStart");
+__name22222(handleGoogleStart, "handleGoogleStart");
 async function handleGoogleDevice(request, env) {
-  if (request.method !== "GET") return json({ error: "Method not allowed" }, 405);
+  if (request.method !== "GET")
+    return json({ error: "Method not allowed" }, 405);
   const url = new URL(request.url);
   const code = String(url.searchParams.get("code") || "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
-  if (!/^[A-HJ-NP-Z2-9]{8}$/.test(code)) return googleRedirect(env, "google_error", "invalid_handoff");
+  if (!/^[A-HJ-NP-Z2-9]{8}$/.test(code))
+    return googleRedirect(env, "google_error", "invalid_handoff");
   try {
     const rows = await sbGet(
       env,
@@ -5000,6 +5814,7 @@ __name2(handleGoogleDevice, "handleGoogleDevice");
 __name22(handleGoogleDevice, "handleGoogleDevice");
 __name222(handleGoogleDevice, "handleGoogleDevice");
 __name2222(handleGoogleDevice, "handleGoogleDevice");
+__name22222(handleGoogleDevice, "handleGoogleDevice");
 async function handleGoogleCallback(request, env) {
   const url = new URL(request.url);
   const clearCookie = googleStateCookie("", 0);
@@ -5026,10 +5841,13 @@ async function handleGoogleCallback(request, env) {
     const code = url.searchParams.get("code");
     const returnedState = url.searchParams.get("state");
     const cookieState = readCookie(request, "scs_google_state");
-    if (!code || !returnedState) throw new Error("invalid_state");
+    if (!code || !returnedState)
+      throw new Error("invalid_state");
     const state = await verifyToken(returnedState, env.GOOGLE_STATE_SECRET || env.TOKEN_SECRET);
-    if (!state || state.purpose !== "google_oauth_state" || !state.nonce) throw new Error("invalid_state");
-    if (!state.handoffId && (!cookieState || returnedState !== cookieState)) throw new Error("invalid_state");
+    if (!state || state.purpose !== "google_oauth_state" || !state.nonce)
+      throw new Error("invalid_state");
+    if (!state.handoffId && (!cookieState || returnedState !== cookieState))
+      throw new Error("invalid_state");
     const tokenBody = new URLSearchParams({
       grant_type: "authorization_code",
       code,
@@ -5043,7 +5861,8 @@ async function handleGoogleCallback(request, env) {
       body: tokenBody.toString()
     });
     const tokenData = await tokenResponse.json().catch(() => ({}));
-    if (!tokenResponse.ok || !tokenData.id_token) throw new Error("token_exchange_failed");
+    if (!tokenResponse.ok || !tokenData.id_token)
+      throw new Error("token_exchange_failed");
     const verifyUrl = new URL("https://oauth2.googleapis.com/tokeninfo");
     verifyUrl.searchParams.set("id_token", tokenData.id_token);
     const verifyResponse = await fetch(verifyUrl.toString(), { headers: { "Accept": "application/json" } });
@@ -5063,7 +5882,8 @@ async function handleGoogleCallback(request, env) {
         "google_user_id=eq." + encodeURIComponent(googleUserId) + "&select=id,nickname,email,gender,auth_provider,google_picture_url,google_nickname_confirmed"
       );
     } catch (error) {
-      if (String(error.message || "").includes("google_user_id")) throw new Error("database_not_ready");
+      if (String(error.message || "").includes("google_user_id"))
+        throw new Error("database_not_ready");
       throw error;
     }
     let account;
@@ -5074,7 +5894,8 @@ async function handleGoogleCallback(request, env) {
         google_picture_url: profile.picture || null,
         auth_provider: mergeAuthProvider(account.auth_provider, "google")
       };
-      if (!account.email && email) updates.email = email;
+      if (!account.email && email)
+        updates.email = email;
       await sbPatch(env, "user_accounts", "id=eq." + encodeURIComponent(account.id), updates);
       account = { ...account, ...updates };
     } else {
@@ -5176,9 +5997,12 @@ __name2(handleGoogleCallback, "handleGoogleCallback");
 __name22(handleGoogleCallback, "handleGoogleCallback");
 __name222(handleGoogleCallback, "handleGoogleCallback");
 __name2222(handleGoogleCallback, "handleGoogleCallback");
+__name22222(handleGoogleCallback, "handleGoogleCallback");
 async function handleGoogleComplete(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!env.TOKEN_SECRET) return json({ error: "Google Login is not configured" }, 503);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
+  if (!env.TOKEN_SECRET)
+    return json({ error: "Google Login is not configured" }, 503);
   const body = await request.json().catch(() => ({}));
   const payload = await verifyToken(body.ticket || "", env.TOKEN_SECRET);
   if (!payload || payload.purpose !== "google_login_ticket" || !payload.accountId) {
@@ -5189,7 +6013,8 @@ async function handleGoogleComplete(request, env) {
     "user_accounts",
     "id=eq." + encodeURIComponent(payload.accountId) + "&select=id,nickname,email,gender,auth_provider,google_picture_url,google_nickname_confirmed"
   );
-  if (!rows || !rows.length) return json({ error: "Google account was not found." }, 404);
+  if (!rows || !rows.length)
+    return json({ error: "Google account was not found." }, 404);
   const account = rows[0];
   return json({
     needsProfile: account.google_nickname_confirmed === false,
@@ -5210,16 +6035,20 @@ __name2(handleGoogleComplete, "handleGoogleComplete");
 __name22(handleGoogleComplete, "handleGoogleComplete");
 __name222(handleGoogleComplete, "handleGoogleComplete");
 __name2222(handleGoogleComplete, "handleGoogleComplete");
+__name22222(handleGoogleComplete, "handleGoogleComplete");
 async function handleGoogleNickname(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!env.TOKEN_SECRET) return json({ error: "Google Login is not configured" }, 503);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
+  if (!env.TOKEN_SECRET)
+    return json({ error: "Google Login is not configured" }, 503);
   const body = await request.json().catch(() => ({}));
   const payload = await verifyToken(body.ticket || "", env.TOKEN_SECRET);
   if (!payload || payload.purpose !== "google_login_ticket" || !payload.accountId) {
     return json({ error: "Google login expired. Please try again." }, 401);
   }
   const nickname = String(body.nickname || "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 40);
-  if (!nickname) return json({ error: "Please enter your player nickname." }, 400);
+  if (!nickname)
+    return json({ error: "Please enter your player nickname." }, 400);
   const gender = String(body.gender || "");
   if (!["Male", "Female"].includes(gender)) {
     return json({ error: "Please select your gender." }, 400);
@@ -5232,7 +6061,8 @@ async function handleGoogleNickname(request, env) {
     "return=representation"
   );
   const account = rows && rows[0];
-  if (!account) return json({ error: "Google account was not found." }, 404);
+  if (!account)
+    return json({ error: "Google account was not found." }, 404);
   return json({
     user: {
       id: account.id,
@@ -5250,20 +6080,25 @@ __name2(handleGoogleNickname, "handleGoogleNickname");
 __name22(handleGoogleNickname, "handleGoogleNickname");
 __name222(handleGoogleNickname, "handleGoogleNickname");
 __name2222(handleGoogleNickname, "handleGoogleNickname");
+__name22222(handleGoogleNickname, "handleGoogleNickname");
 async function handleNicknameUpdate(request, env) {
-  if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  if (request.method !== "POST")
+    return json({ error: "Method not allowed" }, 405);
   const body = await request.json().catch(() => ({}));
   const userId = String(body.userId || "");
   const sessionToken = String(body.sessionToken || "");
   const nickname = String(body.nickname || "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, 40);
-  if (!userId || !sessionToken) return json({ error: "Please sign in again." }, 401);
-  if (!nickname) return json({ error: "Please enter your player nickname." }, 400);
+  if (!userId || !sessionToken)
+    return json({ error: "Please sign in again." }, 401);
+  if (!nickname)
+    return json({ error: "Please enter your player nickname." }, 400);
   const sessions = await sbGet(
     env,
     "active_sessions",
     "user_account_id=eq." + encodeURIComponent(userId) + "&token=eq." + encodeURIComponent(sessionToken) + "&select=user_account_id"
   );
-  if (!sessions || !sessions.length) return json({ error: "Your session has expired. Please sign in again." }, 401);
+  if (!sessions || !sessions.length)
+    return json({ error: "Your session has expired. Please sign in again." }, 401);
   const rows = await sbPatch(
     env,
     "user_accounts",
@@ -5272,7 +6107,8 @@ async function handleNicknameUpdate(request, env) {
     "return=representation"
   );
   const account = rows && rows[0];
-  if (!account) return json({ error: "Account was not found." }, 404);
+  if (!account)
+    return json({ error: "Account was not found." }, 404);
   return json({
     user: {
       id: account.id,
@@ -5289,6 +6125,7 @@ __name2(handleNicknameUpdate, "handleNicknameUpdate");
 __name22(handleNicknameUpdate, "handleNicknameUpdate");
 __name222(handleNicknameUpdate, "handleNicknameUpdate");
 __name2222(handleNicknameUpdate, "handleNicknameUpdate");
+__name22222(handleNicknameUpdate, "handleNicknameUpdate");
 export {
   worker_default as default
 };
