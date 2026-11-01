@@ -169,6 +169,10 @@
     if (target === 'member-home') { selectRole('member'); return; }
     if (target === 'workspace-home') { selectRole(currentRole()); return; }
     if (target === 'club-access') {
+      // The club setup sheet is a modal. Restore Club Manager Home as its
+      // underlying page BEFORE opening it, so Cancel/X never exposes the
+      // previously visited Slot Manager (or another stale page).
+      if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
       if (typeof _showClubSetupSheet === 'function') _showClubSetupSheet('vault');
       else if (typeof showToast === 'function') showToast('Club login is not available yet.');
       return;
