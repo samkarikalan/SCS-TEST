@@ -173,7 +173,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V562" defer></script>
-  <script src="role-workspaces.js?v=V603" defer></script>
+  <script src="role-workspaces.js?v=V604" defer></script>
   <script src="scoring.js?v=V558" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V559" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -1153,6 +1153,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
 #scsTournamentPlayersListPage .scs-tplayer-drawer-list .scs-tplayer-filter-pill[aria-pressed="true"]{background:#36314f;border:0}
 #scsTournamentPlayersListPage .scs-tplayer-drawer-list .scs-tplayer-filter-pill[hidden]{display:none}
 #scsTournamentEditClubGroup select{border-color:color-mix(in srgb,var(--scs-subclub-color,#6157ee) 45%,#414052)}
+#joinClubPage.scs-practice-current-page{padding-top:calc(env(safe-area-inset-top,0px) + 73px)!important}
 </style>
 <style>
 /* V552: Tournament Players Manager text contrast only; no layout changes. */
@@ -2669,12 +2670,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   </div>
 
   <div id="joinClubPage" class="page" style="display:none;">
-    <div class="sheet-header">
-      <div class="sheet-header-spacer"></div>
-      <span class="sheet-title" data-i18n="myClubs">Clubs</span>
-      <button class="sheet-close-btn" onclick="scsGuideReturnFromJoinClub()">✕</button>
-    </div>
-
+    <!-- My Clubs uses the shared SCS hamburger/title header. -->
 <div class="clubs-page-shell" style="padding:14px;">
 
   <section id="clubsAccountCard" class="clubs-account-card" aria-label="Account">
@@ -4230,7 +4226,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V603', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V604', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4976,8 +4972,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
  var header=document.getElementById('scsPracticeSharedHeader');
  var title=document.getElementById('scsPracticeSharedTitle');
  if(!header||!title)return;
- var ids=['scsActivityHome','settingsPage','playersPage','fixedPairsPage','roundsPage','roundHistoryOverlay','roundSettingsOverlay','vaultModifyPage','vaultPage','vaultSlotsPage','vaultPlayingPage','vaultRegisterPage','vaultRequestsPage','dashboardPage','homePageOverlay'];
- var labels={scsActivityHome:'Club Manager',settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Player Manager',vaultModifyPage:'Player Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
+ var ids=['joinClubPage','scsActivityHome','settingsPage','playersPage','fixedPairsPage','roundsPage','roundHistoryOverlay','roundSettingsOverlay','vaultModifyPage','vaultPage','vaultSlotsPage','vaultPlayingPage','vaultRegisterPage','vaultRequestsPage','dashboardPage','homePageOverlay'];
+ var labels={joinClubPage:'My Clubs',scsActivityHome:'Club Manager',settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Player Manager',vaultModifyPage:'Player Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
  function visible(el){if(!el||el.hidden)return false;var st=getComputedStyle(el);return st.display!=='none'&&st.visibility!=='hidden';}
  var previousActive=null;
  function refresh(){
