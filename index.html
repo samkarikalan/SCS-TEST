@@ -162,7 +162,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="auth.js?v=V149" defer></script>
 
-  <script src="authUI.js?v=V149" defer></script>
+  <script src="authUI.js?v=V562" defer></script>
   <script src="tournament-engine.js?v=V559" defer></script>
 
   <script src="subscription.js?v=V149" defer></script>
@@ -172,7 +172,8 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="engjap.js?v=V149" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
-  <script src="main.js?v=V149" defer></script>
+  <script src="main.js?v=V562" defer></script>
+  <script src="role-workspaces.js?v=V583" defer></script>
   <script src="scoring.js?v=V558" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V559" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -205,7 +206,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="report.js?v=V149" defer></script>
 
-  <link rel="stylesheet" href="ui.css?v=V560">
+  <link rel="stylesheet" href="ui.css?v=V562">
   <style id="simpleAppBottomBarStyles">
     /* Flat, theme-aware navigation shared by all three app hubs. */
     body #homeMoreSectionV#homeMoreSectionV .viewer-action-bar,
@@ -1176,13 +1177,18 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
       <div class="scs-phase1-ref-shade" onclick="this.closest('details').removeAttribute('open')"></div>
       <nav class="scs-phase1-ref-panel" aria-label="Practice Manager navigation">
         <div class="scs-phase1-ref-panel-title"><strong>SCS</strong><button type="button" aria-label="Close Practice Manager menu" onclick="event.stopPropagation();this.closest('details').open=false">×</button></div>
-        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('viewer')" class="scs-phase1-menu-entry"><span>⌂</span> My Hub</button>
-        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('vault');homeGo('vaultModifyPage',null);if(typeof vaultRenderModify==='function')vaultRenderModify()"><span>♙</span> Player Manager</button>
-        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('organiser')"><span>🏸</span> Round Manager</button>
-        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('vault')"><span>▣</span> Slot Manager</button>
-        <button type="button" class="scs-phase1-menu-placeholder" disabled><span>▥</span> Dashboard</button>
-        <button type="button" onclick="this.closest('details').open=false;document.getElementById('scsPracticeShowHub').checked=true;scsPrimaryNavigate('settings')"><span>⚙</span> Settings</button>
-        <button type="button" onclick="this.closest('details').removeAttribute('open');scsActivityReturnHome()" class="scs-phase1-ref-home"><span>⌂</span> SCS Home</button>
+        <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('member-home')" class="scs-phase1-menu-entry"><span>⌂</span> Member Home</button>
+        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('workspace-home')" class="scs-phase1-menu-entry"><span>⌂</span> Club Manager Home</button>
+        <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('clubs')" class="scs-phase1-menu-entry"><span>🏢</span> My Clubs</button>
+        <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('my-slots')" class="scs-phase1-menu-entry"><span>📅</span> My Slots</button>
+        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('players')"><span>♙</span> Members &amp; Players</button>
+        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('rounds')"><span>🏸</span> Round Manager</button>
+        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('slots')"><span>▣</span> Slot Manager</button>
+        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('tournaments')"><span>🏆</span> Tournaments</button>
+        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('dashboard')"><span>▥</span> Dashboard</button>
+        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('settings')"><span>⚙</span> Settings</button>
+        <button type="button" data-scs-roles="member manager" data-scs-manager-only onclick="this.closest('details').open=false;scsSwitchRoleWorkspace()"><span>⇄</span> Switch Workspace</button>
+        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('account')"><span>◎</span> Account</button>
       </nav>
     </details>
     <strong id="scsPracticeSharedTitle">Practice Manager</strong><span class="scs-phase1-ref-icon" aria-hidden="true">🏸</span>
@@ -2489,10 +2495,12 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
 
   <!-- ── My Hub Home quick sections ── -->
   <section class="myhub-home-sections myhub-plain-menu" aria-label="My Hub">
+    <div class="myhub-navigation-links">
     <h2 class="myhub-home-section-title">My SCS</h2>
     <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('slots')"><span class="myhub-home-icon">📅</span><strong>My Slots</strong><span class="myhub-home-chevron">›</span></button>
     <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('clubs')"><span class="myhub-home-icon">👥</span><strong>Joined Clubs</strong><span class="myhub-home-chevron">›</span></button>
     <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('report')"><span class="myhub-home-icon">📊</span><strong>Reports</strong><span class="myhub-home-chevron">›</span></button>
+    </div>
     <h2 class="myhub-home-section-title">My Activity</h2>
     <div class="myhub-home-group" id="myHubNewSlotsGroup">
       <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('new')"><span class="myhub-home-icon">🔔</span><strong>New Posted Slots</strong><span class="myhub-home-count" id="myHubNewSlotsCount">0</span><span class="myhub-home-chevron">›</span></button>
@@ -2506,7 +2514,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
       <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('live')"><span class="myhub-home-icon">📡</span><strong>Live</strong><span class="myhub-home-count" id="myHubLiveCount">0</span><span class="myhub-home-chevron">›</span></button>
       <div class="myhub-home-list" id="myHubLiveList"></div>
     </div>
-    <div class="myhub-home-group" id="myHubApprovePlayersGroup" hidden>
+    <div class="myhub-home-group" id="myHubApprovePlayersGroup" data-scs-roles="manager" hidden>
       <button type="button" class="myhub-home-card" onclick="scsHomeQuickAction('approve')"><span class="myhub-home-icon">✓</span><strong>Approve Players</strong><span class="myhub-home-count" id="myHubApprovePlayersCount">0</span><span class="myhub-home-chevron">›</span></button>
     </div>
   </section>
@@ -4670,16 +4678,35 @@ body.app-light #scsActivityHome .scs-activity-settings,body.light-mode #scsActiv
 #scsActivityHome .scs-home-chevron{font-size:35px;font-weight:300;color:#b9c6d8;line-height:1;padding:0 4px}
 #scsActivityHome .scs-home-menu-row:focus-visible{outline:2px solid #76c6ff;outline-offset:2px}
 #scsActivityHome .scs-home-menu-row:active{background:#ffffff12!important}
+#scsActivityHome .scs-club-activity-title{margin:0 0 10px;padding:0 2px;font-size:clamp(19px,4.8vw,24px);color:#fff}
+#scsActivityHome .scs-club-activity-subtitle{margin:0 0 18px;padding:0 2px;color:#9fb3cc;font-size:14px}
+#scsActivityHome .scs-club-activity-loading{opacity:.7}
+#scsActivityHome .scs-home-brand{display:none!important}
+#scsActivityHome{padding-top:calc(env(safe-area-inset-top,0px) + 96px)!important;z-index:100040!important}
+body[data-scs-role-workspace="manager"] #scsPracticeSharedHeader{z-index:100050}
+body[data-scs-role-workspace="manager"]:has(#scsActivityHome:not([hidden])) #scsPracticeSharedHeader .scs-phase1-ref-icon{display:none}
+#scsActivityHome .scs-club-activity-title{font-size:1.25rem;margin:0 0 4px}
+#scsActivityHome .scs-club-activity-subtitle{margin:0 0 12px;font-size:.86rem}
+#scsActivityHome .scs-home-menu-row{min-height:68px;padding:8px 2px;gap:12px}
+#scsActivityHome .scs-home-menu-icon{width:38px;height:38px;flex-basis:38px;border-radius:12px;font-size:18px;background:transparent!important}
+#scsActivityHome .scs-home-menu-copy{gap:2px}
+#scsActivityHome .scs-home-menu-copy strong{font-size:1rem}
+#scsActivityHome .scs-home-menu-copy small{font-size:.78rem}
+#scsActivityHome .scs-home-chevron{font-size:25px}
 @media(max-width:360px){#scsActivityHome .scs-home-brand{gap:10px}#scsActivityHome .scs-home-brand-name{padding-left:10px;font-size:21px}#scsActivityHome .scs-home-logo{width:95px;height:95px}#scsActivityHome .scs-home-menu-row{gap:11px}#scsActivityHome .scs-home-menu-icon{flex-basis:48px;width:48px;height:48px}}
 </style>
 <div id="scsActivityHome" hidden role="dialog" aria-modal="true" aria-label="Sports Club Manager Home">
  <div class="scs-activity-panel scs-home-simple">
   <header class="scs-home-brand"><img src="clubs-brand.png" alt="CLUBS badminton logo" class="scs-home-logo"><div class="scs-home-brand-name"><strong>Sports Club</strong><strong>Manager</strong></div></header>
-  <nav class="scs-home-menu" aria-label="Main navigation">
-   <button type="button" id="scsSharedClubAction" class="scs-home-menu-row" onclick="scsActivityClubAction()" aria-label="My Club"><span class="scs-home-menu-icon scs-home-login" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M10 4h12l-1.3 5H11.3L10 4Z"/><path d="M12 9v4.5l-3 4.5v3h14v-3l-3-4.5V9"/><path d="M10 21v4h12v-4M7 28h18"/></svg></span><span class="scs-home-menu-copy"><strong>My Club</strong><small id="scsHomeLoginSubtitle">View and manage your clubs</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
-   <button type="button" class="scs-home-menu-row" onclick="scsActivityChoose('practice')"><span class="scs-home-menu-icon scs-home-practice" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m9 23 7-7"/><path d="m13 19-3.5-3.5a4 4 0 0 1 0-5.7l2.3-2.3 10.7 10.7-2.3 2.3a4 4 0 0 1-5.7 0L13 19Z"/><path d="m13.5 6 9.5 9.5M17 5l8 8M20.5 4l6.5 6.5"/><circle cx="7.5" cy="24.5" r="3.5"/></svg></span><span class="scs-home-menu-copy"><strong>Practice Manager</strong><small>Rounds, players, slots and practice</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
-   <button type="button" class="scs-home-menu-row" onclick="scsActivityChoose('tournament')"><span class="scs-home-menu-icon scs-home-tournament" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M10 5h12v5c0 6-2.7 9-6 9s-6-3-6-9V5Z"/><path d="M10 8H6v2c0 4 2.2 6 6 6M22 8h4v2c0 4-2.2 6-6 6M16 19v5M11 28h10M13 24h6"/></svg></span><span class="scs-home-menu-copy"><strong>Tournament Manager</strong><small>Create, manage and follow tournaments</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
-  </nav>
+  <section aria-labelledby="scsClubActivityTitle">
+   <h2 id="scsClubActivityTitle" class="scs-club-activity-title">Club Activity</h2>
+   <p class="scs-club-activity-subtitle" id="scsClubActivityClubName">Active club</p>
+   <div class="scs-home-menu" id="scsClubActivityList" aria-live="polite">
+    <button type="button" class="scs-home-menu-row" onclick="scsRoleMenuNavigate('slots')"><span class="scs-home-menu-icon scs-home-practice" aria-hidden="true">☀</span><span class="scs-home-menu-copy"><strong>Today's Slot</strong><small id="scsClubTodaySlot" class="scs-club-activity-loading">Loading…</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
+    <button type="button" class="scs-home-menu-row" onclick="scsRoleMenuNavigate('slots')"><span class="scs-home-menu-icon scs-home-login" aria-hidden="true">→</span><span class="scs-home-menu-copy"><strong>Next Slot</strong><small id="scsClubNextSlot" class="scs-club-activity-loading">Loading…</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
+    <button type="button" class="scs-home-menu-row" onclick="scsRoleMenuNavigate('slots')"><span class="scs-home-menu-icon scs-home-tournament" aria-hidden="true">↶</span><span class="scs-home-menu-copy"><strong>Recent Slot</strong><small id="scsClubRecentSlot" class="scs-club-activity-loading">Loading…</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
+   </div>
+  </section>
   <span id="scsSharedClubName" hidden></span><span id="scsSharedClubStatus" hidden></span>
  </div>
 </div>
@@ -4724,7 +4751,39 @@ window.scsActivityClubAction=function(){
  if(typeof scsOpenStandaloneClubPage==='function')scsOpenStandaloneClubPage();
  else if(typeof showHomeScreen==='function')showHomeScreen();
 };
-window.scsActivityShowHome=function(){var e=document.getElementById('scsActivityHome');if(e)e.hidden=false;scsActivityRefreshClub();};
+window.scsClubActivitySlotText=function(slot,empty){
+ if(!slot)return empty;
+ var time=String(slot.start_time||'').slice(0,5),venue=slot.venue||slot.venue_name||'Club session';
+ return [slot.slot_date,time,venue].filter(Boolean).join(' · ');
+};
+window.scsClubActivityRefresh=async function(){
+ var clubId=localStorage.getItem('kbrr_vault_club_id')||localStorage.getItem('kbrr_my_club_id')||'';
+ var clubName=localStorage.getItem('kbrr_vault_club_name')||localStorage.getItem('kbrr_my_club_name')||'Active club';
+ var clubLabel=document.getElementById('scsClubActivityClubName');if(clubLabel)clubLabel.textContent=clubName;
+ var todayEl=document.getElementById('scsClubTodaySlot'),nextEl=document.getElementById('scsClubNextSlot'),recentEl=document.getElementById('scsClubRecentSlot');
+ if(!clubId||typeof vaultSlotsLoadRange!=='function'){
+  if(todayEl)todayEl.textContent='No slot today';if(nextEl)nextEl.textContent='No upcoming slot';if(recentEl)recentEl.textContent='No recent slot';return;
+ }
+ [todayEl,nextEl,recentEl].forEach(function(el){if(el){el.textContent='Loading…';el.classList.add('scs-club-activity-loading')}});
+ try{
+  var now=new Date(),start=new Date(now),end=new Date(now);start.setDate(start.getDate()-60);end.setDate(end.getDate()+90);
+  var dateString=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+  var today=dateString(now),rows=await vaultSlotsLoadRange({clubId:clubId,startDateStr:dateString(start),endDateStr:dateString(end)});
+  rows=(rows||[]).filter(function(s){return s&&s.status!=='cancelled'}).sort(function(a,b){return String(a.slot_date||'').localeCompare(String(b.slot_date||''))||String(a.start_time||'').localeCompare(String(b.start_time||''))});
+  var todaySlot=rows.find(function(s){return s.slot_date===today});
+  var nextSlot=rows.find(function(s){return s.slot_date>today});
+  var recent=rows.filter(function(s){return s.slot_date<today}).pop();
+  if(todayEl)todayEl.textContent=scsClubActivitySlotText(todaySlot,'No slot today');
+  if(nextEl)nextEl.textContent=scsClubActivitySlotText(nextSlot,'No upcoming slot');
+  if(recentEl)recentEl.textContent=scsClubActivitySlotText(recent,'No recent slot');
+ }catch(_){if(todayEl)todayEl.textContent='Unable to load';if(nextEl)nextEl.textContent='Unable to load';if(recentEl)recentEl.textContent='Unable to load'}
+ [todayEl,nextEl,recentEl].forEach(function(el){if(el)el.classList.remove('scs-club-activity-loading')});
+};
+window.scsActivityShowHome=function(){
+ var e=document.getElementById('scsActivityHome'),header=document.getElementById('scsPracticeSharedHeader'),title=document.getElementById('scsPracticeSharedTitle');
+ if(e)e.hidden=false;if(header)header.hidden=false;if(title)title.textContent='Club Manager';
+ scsActivityRefreshClub();scsClubActivityRefresh();
+};
 window.addEventListener('storage',function(e){if(!e.key||e.key==='appLanguage'||/^kbrr_my_club_(id|name)$/.test(e.key))scsActivityRefreshClub();});
 
 window.scsActivityChoose=function(mode){
@@ -4769,11 +4828,13 @@ window.scsActivityReturnHome=function(){
   <div class="scs-tmgr-side-shade" onclick="scsTournamentMenuToggle(false)" hidden></div>
   <nav id="scsTournamentSideMenu" class="scs-tmgr-side-menu" aria-label="Tournament navigation" aria-hidden="true">
     <div class="scs-tmgr-side-top"><strong>SCS</strong><button type="button" onclick="scsTournamentMenuToggle(false)" aria-label="Close tournament menu">×</button></div>
-    <button type="button" onclick="scsTournamentMenuChoose('scsTournamentManagerMyTournaments')"><span>🏆</span>My Tournaments</button>
-    <button type="button" onclick="scsTournamentMenuChoose('scsTournamentManagerStart')"><span>＋</span>New Tournament</button>
-    <button type="button" onclick="scsTournamentMenuChoose('scsTournamentManagerPlayers')"><span>♙</span>Players Manager</button>
-    <button type="button" onclick="scsTournamentMenuChoose('scsTournamentManagerConduct')"><span>▣</span>Conduct a Match</button>
-    <button type="button" class="scs-tmgr-side-home" onclick="scsTournamentMenuToggle(false);scsActivityReturnHome()"><span>⌂</span>SCS Home</button>
+    <button type="button" data-scs-roles="member" onclick="scsTournamentMenuChoose('scsTournamentManagerLive')"><span>◉</span>Watch Tournaments</button>
+    <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerMyTournaments')"><span>🏆</span>My Tournaments</button>
+    <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerStart')"><span>＋</span>New Tournament</button>
+    <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerPlayers')"><span>♙</span>Players Manager</button>
+    <button type="button" data-scs-roles="member manager" onclick="scsTournamentMenuChoose('scsTournamentManagerConduct')"><span>▣</span>Score a Match</button>
+    <button type="button" class="scs-tmgr-side-home" data-scs-roles="member" onclick="scsTournamentMenuToggle(false);scsRoleMenuNavigate('workspace-home')"><span>⌂</span>Member Home</button>
+    <button type="button" class="scs-tmgr-side-home" data-scs-roles="manager" onclick="scsTournamentMenuToggle(false);scsRoleMenuNavigate('workspace-home')"><span>⌂</span>Club Manager Home</button>
   </nav>
 </div>
 
@@ -4893,7 +4954,7 @@ window.TournamentNavigation={
   var score=document.getElementById('scsScoringOverlay');if(score)score.hidden=true;
  },
  open:function(handler){
-  var allowed=['scsTournamentManagerMyTournaments','scsTournamentManagerStart','scsTournamentManagerPlayers','scsTournamentManagerConduct','scsOpenTournamentManager'];
+  var allowed=['scsTournamentManagerLive','scsTournamentManagerMyTournaments','scsTournamentManagerStart','scsTournamentManagerPlayers','scsTournamentManagerConduct','scsOpenTournamentManager'];
   if(allowed.indexOf(handler)<0||typeof window[handler]!=='function')return;
   this.close();this.active=handler;window[handler]();
   if(typeof window.scsRefreshTournamentHeader==='function')window.scsRefreshTournamentHeader();
@@ -4909,8 +4970,8 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
  var header=document.getElementById('scsPracticeSharedHeader');
  var title=document.getElementById('scsPracticeSharedTitle');
  if(!header||!title)return;
- var ids=['settingsPage','playersPage','fixedPairsPage','roundsPage','roundHistoryOverlay','roundSettingsOverlay','vaultModifyPage','vaultPage','vaultSlotsPage','vaultPlayingPage','vaultRegisterPage','vaultRequestsPage','dashboardPage','homePageOverlay'];
- var labels={settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Player Manager',vaultModifyPage:'Player Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
+ var ids=['scsActivityHome','settingsPage','playersPage','fixedPairsPage','roundsPage','roundHistoryOverlay','roundSettingsOverlay','vaultModifyPage','vaultPage','vaultSlotsPage','vaultPlayingPage','vaultRegisterPage','vaultRequestsPage','dashboardPage','homePageOverlay'];
+ var labels={scsActivityHome:'Club Manager',settingsPage:'Settings',playersPage:'Player Manager',fixedPairsPage:'Round Manager',roundsPage:'Round Manager',roundHistoryOverlay:'Round Manager',roundSettingsOverlay:'Round Manager',vaultPage:'Slot Manager',vaultSlotsPage:'Slot Manager',vaultPlayingPage:'Slot Manager',vaultRegisterPage:'Player Manager',vaultModifyPage:'Player Manager',vaultRequestsPage:'Slot Manager',dashboardPage:'Dashboard',homePageOverlay:'Practice Manager'};
  function visible(el){if(!el||el.hidden)return false;var st=getComputedStyle(el);return st.display!=='none'&&st.visibility!=='hidden';}
  var previousActive=null;
  function refresh(){
@@ -4936,7 +4997,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
       (document.body.classList.contains('vault-mode')?'vault':
       ((typeof appMode!=='undefined'&&appMode)||
       (typeof welcomeSelectedWorkspace!=='undefined'&&welcomeSelectedWorkspace)||'viewer'));
-    label=workspace==='organiser'?'Round Manager':(workspace==='vault'?'Slot Manager':'My Hub');
+    label=workspace==='organiser'?'Round Manager':(workspace==='vault'?'Slot Manager':(document.body.dataset.scsRoleWorkspace==='member'?'Member Home':'My Hub'));
     }
    }
    title.textContent=label;
@@ -4947,7 +5008,7 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
     var roundScroll=target.querySelector('.rounds-scroll-container');
     if(roundScroll)roundScroll.scrollTop=0;
    }
-  }else{var drawer=header.querySelector('details');if(drawer)drawer.open=false;}
+  }
   previousActive=active;
  }
  var scheduled=false;

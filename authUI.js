@@ -1282,6 +1282,14 @@ async function authShowModeLauncher() {
     return;
   }
 
+  // V561: after account authentication, select only a server-authorised
+  // Member or Club Manager workspace. Legacy internal modes remain behind
+  // this two-role interface for compatibility with live rounds and slots.
+  if (typeof scsRouteAfterLoginByRole === 'function') {
+    var roleHandled = await scsRouteAfterLoginByRole();
+    if (roleHandled) return;
+  }
+
   // My Hub is now the application Home. Keep the former mode launcher only
   // as dormant compatibility markup and open My Hub directly after login.
   if (typeof window.scsPrefetchWelcomeHubData === 'function') {

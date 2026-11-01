@@ -628,6 +628,7 @@ function authLogout() {
   localStorage.removeItem('kbrr_my_player');
   localStorage.removeItem('kbrr_app_mode');
   localStorage.removeItem('scs_demo_mode');
+  sessionStorage.removeItem('scs_role_chosen_session');
   if (typeof _demoClear === 'function') _demoClear();
   localStorage.removeItem('scs_organiser_verified');
   localStorage.removeItem('scs_vault_verified');

@@ -2037,6 +2037,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (typeof restoreUserClubRoles === 'function') {
         await restoreUserClubRoles().catch(function(){});
       }
+      // V562: keep the restored login and ask which authorised workspace to open.
+      if (typeof scsRouteAfterLoginByRole === 'function') {
+        await scsRouteAfterLoginByRole();
+      }
     }).catch(function(e) {
       console.warn('Background session validation skipped:', e && (e.message || e));
     });
