@@ -1,4 +1,4 @@
-/* V595: two user-facing workspaces over the existing compatible app modes. */
+/* V600: two user-facing workspaces over the existing compatible app modes. */
 (function () {
   'use strict';
 
@@ -167,7 +167,16 @@
     if (target === 'clubs' || target === 'account') { if (typeof scsOpenStandaloneClubPage === 'function') scsOpenStandaloneClubPage(); return; }
     if (target === 'my-slots') { if (typeof homeOpenViewerSlots === 'function') homeOpenViewerSlots(); return; }
     if (target === 'rounds') {
-      var id = localStorage.getItem('kbrr_org_club_id') || localStorage.getItem('kbrr_my_club_id') || '';
+      // Prevent showHomeScreen() from treating this as an unset activity and
+      // reopening Club Manager Home over Round Manager.
+      window.scsActivityMode = 'practice';
+      // The unchecked legacy hub switch displays the full-screen Practice
+      // welcome layer. Round Manager shares that overlay, so hide the welcome.
+      var practiceHub = document.getElementById('scsPracticeShowHub');
+      if (practiceHub) practiceHub.checked = true;
+      var id = currentRole() === 'manager'
+        ? (localStorage.getItem('kbrr_vault_club_id') || localStorage.getItem('kbrr_org_club_id') || localStorage.getItem('kbrr_my_club_id') || '')
+        : (localStorage.getItem('kbrr_org_club_id') || localStorage.getItem('kbrr_my_club_id') || '');
       if (typeof openOrganiserWorkspaceForMember === 'function') openOrganiserWorkspaceForMember(id);
       return;
     }
@@ -179,6 +188,21 @@
       if (typeof scsPrimaryNavigate === 'function') scsPrimaryNavigate('settings');
       if (currentRole() === 'manager') window.__scsSettingsReturnState = { activityHome:true };
     }
+  }
+
+  function closeVisiblePlayerManager() {
+    var modify = document.getElementById('vaultModifyPage');
+    if (modify && getComputedStyle(modify).display !== 'none') {
+      modify.style.display = 'none';
+      menuNavigate('workspace-home');
+      return;
+    }
+    var players = document.getElementById('playersPage');
+    if (players && getComputedStyle(players).display !== 'none' && typeof navBack === 'function') {
+      navBack();
+      return;
+    }
+    menuNavigate(currentRole() === 'manager' ? 'workspace-home' : 'member-home');
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -211,5 +235,6 @@
   window.scsRouteAfterLoginByRole = routeAfterLogin;
   window.scsSwitchRoleWorkspace = switchWorkspace;
   window.scsRoleMenuNavigate = menuNavigate;
+  window.scsCloseVisiblePlayerManager = closeVisiblePlayerManager;
   window.scsReturnToRoleHome = function () { menuNavigate(currentRole() === 'member' ? 'member-home' : 'workspace-home'); };
 })();

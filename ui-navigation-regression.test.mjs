@@ -35,6 +35,9 @@ test('home routes close competing overlays and use role-aware returns', () => {
   assert.match(html, /id="vaultModifyPage"[\s\S]*?onclick="scsReturnToRoleHome\(\)"/);
   assert.match(html, /id="dashboardPage"[\s\S]*?onclick="scsReturnToRoleHome\(\)"/);
   assert.match(html, /document\.body\.dataset\.scsRoleWorkspace==='member'[\s\S]*?scsRoleMenuNavigate\('member-home'\)/);
+  assert.match(roles, /practiceHub\.checked = true/, 'Round Manager must hide the Practice welcome overlay');
+  assert.match(html, /id="playersBackBtn" onclick="scsCloseVisiblePlayerManager\(\)"/);
+  assert.match(html, /id="scsRoundPlayersDone"[\s\S]*?onclick="scsCloseVisiblePlayerManager\(\)"/);
 });
 
 test('settings and active club use the role-aware canonical flows', () => {
