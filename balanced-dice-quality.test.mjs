@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
-const source = await readFile(new URL('../rounds.js', import.meta.url), 'utf8');
+const source = await readFile(new URL('./rounds.js', import.meta.url), 'utf8');
 const start = source.indexOf('function balancedDiceQuality(');
 const end = source.indexOf('async function RefreshRound(', start);
 const { balancedDiceQuality, compareBalancedDiceQuality } = vm.runInNewContext(

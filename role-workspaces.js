@@ -1,4 +1,4 @@
-/* V583: two user-facing workspaces over the existing compatible app modes. */
+/* V595: two user-facing workspaces over the existing compatible app modes. */
 (function () {
   'use strict';
 
@@ -42,20 +42,25 @@
 
   function activeClubName(role) {
     var name = '';
+    // Club Manager has its own selected club. Prefer it over the shared
+    // member club so the drawer always identifies the workspace in use.
     if (role === 'manager') name = localStorage.getItem('kbrr_vault_club_name') || '';
-    else name = localStorage.getItem('kbrr_my_club_name') || '';
-    if (!name && typeof getMyClub === 'function') {
-      try { var club = getMyClub(); name = club && club.name || ''; } catch (_) {}
+    if (typeof getMyClub === 'function') {
+      try { var club = getMyClub(); if (!name) name = club && club.name || ''; } catch (_) {}
     }
+    if (!name) name = localStorage.getItem('kbrr_my_club_name') || '';
     return name || 'No active club';
   }
 
   function syncMenu(role) {
     role = role || currentRole();
+    var activeClub = null;
+    try { activeClub = typeof getMyClub === 'function' ? getMyClub() : null; } catch (_) {}
+    var hasActiveClub = !!(activeClub && activeClub.id) || !!localStorage.getItem('kbrr_vault_club_id');
     document.body.dataset.scsRoleWorkspace = role;
     document.querySelectorAll('[data-scs-roles]').forEach(function (element) {
       var roles = String(element.getAttribute('data-scs-roles') || '').split(/\s+/);
-      element.hidden = roles.indexOf(role) < 0;
+      element.hidden = roles.indexOf(role) < 0 || (element.hasAttribute('data-scs-club-logged-in') && !hasActiveClub);
     });
     document.querySelectorAll('[data-scs-manager-only]').forEach(function (element) { element.hidden = !access.manager; });
     var drawerClub = document.querySelector('#scsPracticeSharedHeader .scs-phase1-ref-panel-title strong');
@@ -83,6 +88,8 @@
     if (role === 'manager') {
       if (typeof saveVisibleWorkspaces === 'function') saveVisibleWorkspaces(['vault']);
       if (typeof requestVaultMode === 'function') requestVaultMode();
+      if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
+      setTimeout(function () { if (typeof scsActivityShowHome === 'function') scsActivityShowHome(); }, 250);
     } else {
       if (typeof saveVisibleWorkspaces === 'function') saveVisibleWorkspaces(['viewer']);
       window.scsActivityMode = 'member';
@@ -133,6 +140,9 @@
   function menuNavigate(target) {
     var drawer = document.querySelector('#scsPracticeSharedHeader details');
     if (drawer) drawer.open = false;
+    if ((target === 'workspace-home' || target === 'member-home') && window.TournamentNavigation && typeof window.TournamentNavigation.close === 'function') {
+      window.TournamentNavigation.close();
+    }
     var activityHome = document.getElementById('scsActivityHome');
     if (activityHome && target !== 'workspace-home') {
       var closeActivityHome = function () { activityHome.hidden = true; };
@@ -143,6 +153,17 @@
     }
     if (target === 'member-home') { selectRole('member'); return; }
     if (target === 'workspace-home') { selectRole(currentRole()); return; }
+    if (target === 'club-access') {
+      if (typeof _showClubSetupSheet === 'function') _showClubSetupSheet('vault');
+      else if (typeof showToast === 'function') showToast('Club login is not available yet.');
+      return;
+    }
+    if (target === 'club-logout') {
+      if (typeof welcomeLogoutWorkspace === 'function') welcomeLogoutWorkspace('vault');
+      else if (typeof vaultLogoutClub === 'function') vaultLogoutClub();
+      setTimeout(function () { syncMenu('manager'); if (typeof scsActivityShowHome === 'function') scsActivityShowHome(); }, 100);
+      return;
+    }
     if (target === 'clubs' || target === 'account') { if (typeof scsOpenStandaloneClubPage === 'function') scsOpenStandaloneClubPage(); return; }
     if (target === 'my-slots') { if (typeof homeOpenViewerSlots === 'function') homeOpenViewerSlots(); return; }
     if (target === 'rounds') {
@@ -154,7 +175,10 @@
     if (target === 'players') { if (typeof scsPrimaryNavigate === 'function') scsPrimaryNavigate('vault'); if (typeof homeGo === 'function') homeGo('vaultModifyPage',null); if (typeof vaultRenderModify === 'function') vaultRenderModify(); return; }
     if (target === 'slots') { if (typeof scsPrimaryNavigate === 'function') scsPrimaryNavigate('vault'); return; }
     if (target === 'dashboard') { if (typeof homeGo === 'function') homeGo('dashboardPage','tabBtnDashboard'); return; }
-    if (target === 'settings') { if (typeof scsPrimaryNavigate === 'function') scsPrimaryNavigate('settings'); }
+    if (target === 'settings') {
+      if (typeof scsPrimaryNavigate === 'function') scsPrimaryNavigate('settings');
+      if (currentRole() === 'manager') window.__scsSettingsReturnState = { activityHome:true };
+    }
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -170,6 +194,14 @@
       new MutationObserver(enforceTitle).observe(title, { childList:true, characterData:true, subtree:true });
       new MutationObserver(enforceTitle).observe(activityHome, { attributes:true, attributeFilter:['hidden'] });
     }
+    var authOverlay = document.getElementById('authOverlay');
+    if (authOverlay && activityHome && typeof MutationObserver === 'function') {
+      var protectLoggedOutHome = function () {
+        if (getComputedStyle(authOverlay).display !== 'none') activityHome.hidden = true;
+      };
+      new MutationObserver(protectLoggedOutHome).observe(authOverlay, { attributes:true, attributeFilter:['style','class','hidden'] });
+      protectLoggedOutHome();
+    }
   });
   window.addEventListener('storage', function (event) {
     if (!event.key || event.key === ACTIVE_KEY || /kbrr_(my|org|vault)_club_(id|name)/.test(event.key)) syncMenu();
@@ -179,4 +211,5 @@
   window.scsRouteAfterLoginByRole = routeAfterLogin;
   window.scsSwitchRoleWorkspace = switchWorkspace;
   window.scsRoleMenuNavigate = menuNavigate;
+  window.scsReturnToRoleHome = function () { menuNavigate(currentRole() === 'member' ? 'member-home' : 'workspace-home'); };
 })();
