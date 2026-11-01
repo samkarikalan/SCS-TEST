@@ -181,7 +181,15 @@
       return;
     }
     if (target === 'clubs' || target === 'account') { if (typeof scsOpenStandaloneClubPage === 'function') scsOpenStandaloneClubPage(); return; }
-    if (target === 'my-slots') { if (typeof homeOpenViewerSlots === 'function') homeOpenViewerSlots(); return; }
+    if (target === 'my-slots') {
+      // Round Manager leaves appMode='organiser'. My Slots belongs to the
+      // viewer workspace, so restore it before selecting the slots tab.
+      // Do not call selectRole('member'): it resets the member home tab.
+      if (typeof appMode !== 'undefined' && appMode !== 'viewer' &&
+          typeof switchMode === 'function') switchMode('viewer');
+      if (typeof homeOpenViewerSlots === 'function') homeOpenViewerSlots();
+      return;
+    }
     if (target === 'rounds') {
       // Prevent showHomeScreen() from treating this as an unset activity and
       // reopening Club Manager Home over Round Manager.
