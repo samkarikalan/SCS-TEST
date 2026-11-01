@@ -149,6 +149,23 @@
       closeActivityHome();
       // Close synchronously. Delayed writes used to race against later navigation.
     }
+    // A drawer selection owns the navigation. Retire the previous workspace
+    // before calling a destination's loader: otherwise that loader can briefly
+    // reveal the previous page (or a stale tournament overlay) underneath it.
+    // The destination itself remains responsible for showing its own page.
+    if (target !== 'member-home' && target !== 'workspace-home' &&
+        target !== 'club-access' && target !== 'club-logout') {
+      var oldHome = document.getElementById('homePageOverlay');
+      if (oldHome) oldHome.style.display = 'none';
+      document.querySelectorAll('.page').forEach(function (page) {
+        page.style.display = 'none';
+      });
+      ['scsTournamentManager', 'scsTournamentContinue', 'scsTournamentLive',
+       'scsTournamentTypePicker'].forEach(function (id) {
+        var overlay = document.getElementById(id);
+        if (overlay) overlay.hidden = true;
+      });
+    }
     if (target === 'member-home') { selectRole('member'); return; }
     if (target === 'workspace-home') { selectRole(currentRole()); return; }
     if (target === 'club-access') {
@@ -190,7 +207,7 @@
     if (target === 'slots') { if (typeof scsPrimaryNavigate === 'function') scsPrimaryNavigate('vault'); return; }
     if (target === 'dashboard') { if (typeof homeGo === 'function') homeGo('dashboardPage','tabBtnDashboard'); return; }
     if (target === 'settings') {
-      if (typeof scsPrimaryNavigate === 'function') scsPrimaryNavigate('settings');
+      if (typeof homeGo === 'function') homeGo('settingsPage', 'tabBtnSettings');
       if (currentRole() === 'manager') window.__scsSettingsReturnState = { activityHome:true };
     }
   }
