@@ -1,1 +1,5 @@
-{"version":"V605","build":"2026-11-02","scope":"Club setup cancel returns to Club Manager Home"}
+{
+  "version": "V606",
+  "build": "2026-11-02",
+  "scope": "menu history and club setup cancel"
+}
