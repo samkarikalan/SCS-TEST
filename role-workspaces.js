@@ -89,7 +89,7 @@
       if (typeof saveVisibleWorkspaces === 'function') saveVisibleWorkspaces(['vault']);
       if (typeof requestVaultMode === 'function') requestVaultMode();
       if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
-      setTimeout(function () { if (typeof scsActivityShowHome === 'function') scsActivityShowHome(); }, 250);
+      // Do not schedule a second home opening: it can cover a page selected immediately after login.
     } else {
       if (typeof saveVisibleWorkspaces === 'function') saveVisibleWorkspaces(['viewer']);
       window.scsActivityMode = 'member';
@@ -147,9 +147,7 @@
     if (activityHome && target !== 'workspace-home') {
       var closeActivityHome = function () { activityHome.hidden = true; };
       closeActivityHome();
-      setTimeout(closeActivityHome, 0);
-      setTimeout(closeActivityHome, 100);
-      setTimeout(closeActivityHome, 300);
+      // Close synchronously. Delayed writes used to race against later navigation.
     }
     if (target === 'member-home') { selectRole('member'); return; }
     if (target === 'workspace-home') { selectRole(currentRole()); return; }
@@ -161,7 +159,8 @@
     if (target === 'club-logout') {
       if (typeof welcomeLogoutWorkspace === 'function') welcomeLogoutWorkspace('vault');
       else if (typeof vaultLogoutClub === 'function') vaultLogoutClub();
-      setTimeout(function () { syncMenu('manager'); if (typeof scsActivityShowHome === 'function') scsActivityShowHome(); }, 100);
+      syncMenu('manager');
+      if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
       return;
     }
     if (target === 'clubs' || target === 'account') { if (typeof scsOpenStandaloneClubPage === 'function') scsOpenStandaloneClubPage(); return; }
@@ -181,7 +180,13 @@
       return;
     }
     if (target === 'tournaments') { if (typeof scsOpenTournamentManager === 'function') scsOpenTournamentManager(); return; }
-    if (target === 'players') { if (typeof scsPrimaryNavigate === 'function') scsPrimaryNavigate('vault'); if (typeof homeGo === 'function') homeGo('vaultModifyPage',null); if (typeof vaultRenderModify === 'function') vaultRenderModify(); return; }
+    if (target === 'players') {
+      // Open the requested page directly. scsPrimaryNavigate('vault') first
+      // opens Slot Manager and can asynchronously repaint it over Players.
+      if (typeof homeGo === 'function') homeGo('vaultModifyPage',null);
+      if (typeof vaultRenderModify === 'function') vaultRenderModify();
+      return;
+    }
     if (target === 'slots') { if (typeof scsPrimaryNavigate === 'function') scsPrimaryNavigate('vault'); return; }
     if (target === 'dashboard') { if (typeof homeGo === 'function') homeGo('dashboardPage','tabBtnDashboard'); return; }
     if (target === 'settings') {
