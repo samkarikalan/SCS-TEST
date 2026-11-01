@@ -1,5 +1,5 @@
 {
-  "version": "V606",
+  "version": "V607",
   "build": "2026-11-02",
-  "scope": "menu history and club setup cancel"
+  "scope": "Club setup full page with hamburger; revert V606 history"
 }

@@ -137,27 +137,7 @@
     else if (typeof showToast === 'function') showToast('This account has Member access only.');
   }
 
-  // History is owned by menu navigation, not by workspace mode changes.
-  // This avoids returning to a hard-coded home or a stale underlying page.
-  var menuHistory = [];
-  var currentMenuPage = null;
-  var returningFromMenu = false;
-  function menuBack() {
-    var previous = menuHistory.pop();
-    if (!previous) return false;
-    returningFromMenu = true;
-    try { menuNavigate(previous); } finally { returningFromMenu = false; }
-    return true;
-  }
-
   function menuNavigate(target) {
-    if (!returningFromMenu && target !== currentMenuPage &&
-        target !== 'club-logout') {
-      if (currentMenuPage) menuHistory.push(currentMenuPage);
-      currentMenuPage = target;
-    } else if (returningFromMenu) {
-      currentMenuPage = target;
-    }
     var drawer = document.querySelector('#scsPracticeSharedHeader details');
     if (drawer) drawer.open = false;
     if ((target === 'workspace-home' || target === 'member-home') && window.TournamentNavigation && typeof window.TournamentNavigation.close === 'function') {
@@ -189,8 +169,7 @@
     if (target === 'member-home') { selectRole('member'); return; }
     if (target === 'workspace-home') { selectRole(currentRole()); return; }
     if (target === 'club-access') {
-      window.__scsMenuClubSetupOpen = true;
-      // Preserve the current page under the modal. Cancel/X uses menuBack.
+      // Club setup is a full page; retain the previous page for Cancel.
       if (typeof _showClubSetupSheet === 'function') _showClubSetupSheet('vault');
       else if (typeof showToast === 'function') showToast('Club login is not available yet.');
       return;
@@ -287,7 +266,6 @@
   window.scsRouteAfterLoginByRole = routeAfterLogin;
   window.scsSwitchRoleWorkspace = switchWorkspace;
   window.scsRoleMenuNavigate = menuNavigate;
-  window.scsRoleMenuBack = menuBack;
   window.scsCloseVisiblePlayerManager = closeVisiblePlayerManager;
   window.scsReturnToRoleHome = function () { menuNavigate(currentRole() === 'member' ? 'member-home' : 'workspace-home'); };
 })();

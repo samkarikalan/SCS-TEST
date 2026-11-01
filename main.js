@@ -2931,12 +2931,14 @@ function _showClubSetupSheet(targetMode) {
 
   const overlay = document.createElement('div');
   overlay.id = 'clubSetupSheetOverlay';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:10020;background:rgba(0,0,0,0.6);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:10020;background:var(--bg,#0b1526);display:block;overflow-y:auto';
   overlay.innerHTML = `
-    <div class="club-setup-sheet" id="clubSetupSheet">
-      <button type="button" class="club-setup-assist-close" aria-label="Close and return to Assist" onclick="_clubSetupClose(true)">✕</button>
-      <div class="mode-sheet-handle"></div>
-      <div class="mode-sheet-title">${modeLabel}</div>
+    <div class="club-setup-sheet scs-club-setup-fullpage" id="clubSetupSheet" style="position:relative;inset:auto;transform:none;width:100%;max-width:none;min-height:100%;max-height:none;border:0;border-radius:0;padding:0;background:var(--bg,#0b1526)">
+      <header class="scs-club-setup-header" style="display:flex;align-items:center;gap:18px;padding:calc(env(safe-area-inset-top,0px) + 18px) 22px 18px;background:#0c192c;border-bottom:1px solid #32435a;position:sticky;top:0;z-index:2">
+        <button type="button" aria-label="Open navigation menu" onclick="scsClubSetupOpenMenu()" style="background:none;border:0;color:#f4b84b;font-size:1.6rem;cursor:pointer">☰</button>
+        <strong style="font-size:1.25rem;color:white">${modeLabel}</strong>
+      </header>
+      <div style="padding:20px 22px 30px;max-width:720px;margin:auto">
       <p style="font-size:0.84rem;color:var(--text-dim);margin-bottom:16px;line-height:1.5">
         ${connectText}
       </p>
@@ -2975,6 +2977,7 @@ function _showClubSetupSheet(targetMode) {
             <button class="admin-modal-ok" style="flex:1" onclick="_clubSetupCreateDirect()">${t('createClub') || 'Create Club'}</button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   `;
@@ -6357,4 +6360,11 @@ function scsHomeQuickAction(action) {
       if (typeof homeGo === 'function') homeGo('joinClubPage', null);
     }, 40);
   }
+}
+
+function scsClubSetupOpenMenu() {
+  _clubSetupClose(false);
+  var drawer = document.querySelector('#scsPracticeSharedHeader details');
+  if (drawer) { drawer.open = true; return; }
+  if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
 }
