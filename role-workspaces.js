@@ -57,6 +57,13 @@
     var activeClub = null;
     try { activeClub = typeof getMyClub === 'function' ? getMyClub() : null; } catch (_) {}
     var hasActiveClub = !!(activeClub && activeClub.id) || !!localStorage.getItem('kbrr_vault_club_id');
+    // One rule for the existing menu: a selected club disables Club Login.
+    // Use the same selected-club state already displayed in this drawer.
+    document.querySelectorAll('[data-scs-club-login]').forEach(function (button) {
+      button.disabled = hasActiveClub;
+      button.setAttribute('aria-disabled', String(hasActiveClub));
+      button.title = hasActiveClub ? 'A club is already selected' : '';
+    });
     document.body.dataset.scsRoleWorkspace = role;
     document.querySelectorAll('[data-scs-roles]').forEach(function (element) {
       var roles = String(element.getAttribute('data-scs-roles') || '').split(/\s+/);
@@ -177,54 +184,15 @@
     if (target === 'member-home') { selectRole('member'); return; }
     if (target === 'workspace-home') { selectRole(currentRole()); return; }
     if (target === 'club-access') {
-      // Resolve the role using the SAME verified grants used by the drawer.
-      // A missing local password flag is not evidence of a logged-out account:
-      // role restoration may have refreshed the club without that flag.
-      (async function () {
-        var account = user();
-        if (!account || !account.id) {
-          if (typeof _showClubSetupSheet === 'function') _showClubSetupSheet('vault');
-          return;
-        }
-        var granted = await loadAccess(true);
-        var selectedId = '';
-        try { selectedId = localStorage.getItem('kbrr_vault_club_id') || ''; } catch (_) {}
-        var authorisedId = selectedId && granted.managerClubIds.indexOf(String(selectedId)) >= 0
-          ? selectedId : (granted.managerClubIds[0] || '');
-        if (authorisedId) {
-          // Use the already verified server-side club role, not an unrelated
-          // Slot Manager navigation state or a stale local verified flag.
-          if (authorisedId !== selectedId) {
-            var clubs = await sbGet('clubs','id=eq.'+encodeURIComponent(authorisedId)+'&select=id,name').catch(function(){return [];});
-            if (clubs && clubs[0]) {
-              localStorage.setItem('kbrr_vault_club_id', String(clubs[0].id));
-              localStorage.setItem('kbrr_vault_club_name', clubs[0].name || '');
-            }
-          }
-          localStorage.setItem(ACTIVE_KEY, 'manager');
-          syncMenu('manager');
-          if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
-          return;
-        }
-        var memberClub = null;
-        try { memberClub = typeof getMyClub === 'function' ? getMyClub() : null; } catch (_) {}
-        if (memberClub && memberClub.id) {
-          await selectRole('member');
-          return;
-        }
-        if (typeof _showClubSetupSheet === 'function') _showClubSetupSheet('vault');
-      })().catch(function(error) {
-        // Network failure must not erase a previously verified local session.
-        if (typeof hasVerifiedWorkspaceRole === 'function' &&
-            hasVerifiedWorkspaceRole('vault')) {
-          localStorage.setItem(ACTIVE_KEY, 'manager');
-          syncMenu('manager');
-          if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
-        } else if (typeof showToast === 'function') {
-          showToast('Unable to verify club access. Please reconnect.');
-        }
-        console.warn('Club access restoration:',error);
-      });
+      // Do not navigate or authenticate when already connected to a club.
+      var memberClub = null;
+      try { memberClub = typeof getMyClub === 'function' ? getMyClub() : null; } catch (_) {}
+      if ((memberClub && memberClub.id) || localStorage.getItem('kbrr_vault_club_id')) {
+        syncMenu();
+        return;
+      }
+      // No selected club: open the proven Club Login / Create page directly.
+      if (typeof _showClubSetupSheet === 'function') _showClubSetupSheet('vault');
       return;
     }
     if (target === 'club-logout') {

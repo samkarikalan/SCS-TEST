@@ -165,15 +165,15 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="authUI.js?v=V562" defer></script>
   <script src="tournament-engine.js?v=V559" defer></script>
 
-  <script src="subscription.js?v=V617" defer></script>
+  <script src="subscription.js?v=V618" defer></script>
 
   <script src="HomeScreen.js?v=V560" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
-  <script src="main.js?v=V617" defer></script>
-  <script src="role-workspaces.js?v=V617" defer></script>
+  <script src="main.js?v=V618" defer></script>
+  <script src="role-workspaces.js?v=V618" defer></script>
   <script src="scoring.js?v=V558" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V559" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -1171,7 +1171,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
 #dashboardPage .scs-dashboard-bracket-action{display:flex;justify-content:flex-end;padding:8px 16px 4px}
 </style>
 <style>
-/* V617: Existing Select Players action, styled identically to the Fixed Pairs FAB. */
+/* V618: Existing Select Players action, styled identically to the Fixed Pairs FAB. */
 #playersPage #scsPlayersFloatingAdd.fp-open-create-btn {
   position:fixed !important;right:24px !important;
   bottom:calc(28px + env(safe-area-inset-bottom)) !important;
@@ -1206,7 +1206,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
         <div class="scs-phase1-ref-panel-title"><span class="scs-phase1-ref-club-title"><strong>SCS</strong><button type="button" class="scs-phase1-ref-club-logout" data-scs-roles="manager" data-scs-club-logged-in aria-label="Logout from active club" title="Club Logout" onclick="event.stopPropagation();scsRoleMenuNavigate('club-logout')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9"></path><path d="M18.36 5.64a9 9 0 1 1-12.72 0"></path></svg></button></span><button type="button" aria-label="Close Practice Manager menu" onclick="event.stopPropagation();this.closest('details').open=false">×</button></div>
         <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('member-home')" class="scs-phase1-menu-entry"><span>⌂</span> Member Home</button>
         <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('workspace-home')" class="scs-phase1-menu-entry"><span>⌂</span> Club Manager Home</button>
-        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('club-access')"><span>🏢</span> Club Login / Create</button>
+        <button type="button" data-scs-roles="manager" data-scs-club-login onclick="scsRoleMenuNavigate('club-access')"><span>🏢</span> Club Login / Create</button>
         <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('clubs')" class="scs-phase1-menu-entry"><span>🏢</span> My Clubs</button>
         <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('my-slots')" class="scs-phase1-menu-entry"><span>📅</span> My Slots</button>
         <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('players')"><span>♙</span> Members &amp; Players</button>
@@ -4239,7 +4239,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V617', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V618', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
