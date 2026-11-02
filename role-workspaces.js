@@ -176,9 +176,31 @@
     if (target === 'member-home') { selectRole('member'); return; }
     if (target === 'workspace-home') { selectRole(currentRole()); return; }
     if (target === 'club-access') {
-      // The club setup sheet is a modal. Restore Club Manager Home as its
-      // underlying page BEFORE opening it, so Cancel/X never exposes the
-      // previously visited Slot Manager (or another stale page).
+      // Reuse an authenticated club session; never prompt again merely because
+      // the user opened Club Login / Create from the drawer.
+      var verified = false, vaultClub = '';
+      try {
+        verified = sessionStorage.getItem('scs_vault_verified') === '1' ||
+                   localStorage.getItem('scs_vault_verified') === '1';
+        vaultClub = localStorage.getItem('kbrr_vault_club_id') || '';
+      } catch (_) {}
+      if (verified && vaultClub) {
+        // Existing manager session: show the actual Club Manager Home, not
+        // requestVaultMode(), which may invoke the setup sheet again.
+        localStorage.setItem(ACTIVE_KEY, 'manager');
+        syncMenu('manager');
+        if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
+        return;
+      }
+      var memberClub = null;
+      try { memberClub = typeof getMyClub === 'function' ? getMyClub() : null; } catch (_) {}
+      if (memberClub && memberClub.id && currentRole() === 'member') {
+        selectRole('member').catch(function (error) {
+          if (typeof showToast === 'function') showToast(error.message);
+        });
+        return;
+      }
+      // Only users without an active club session see Join / Create.
       if (typeof _showClubSetupSheet === 'function') _showClubSetupSheet('vault');
       else if (typeof showToast === 'function') showToast('Club login is not available yet.');
       return;

@@ -1,5 +1,1 @@
-{
-  "version": "V615",
-  "build": "2026-11-02",
-  "scope": "Reuse existing approval UI on club home"
-}
+{"version": "V616", "build": "2026-11-02", "scope": "reuse active club session when opening club login"}
