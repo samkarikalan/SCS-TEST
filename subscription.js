@@ -485,9 +485,9 @@ async function showUpgradeScreen(reason) {
 
   screen.innerHTML =
     '<div style="width:100%;max-width:400px;">' +
-    (!isExpired ? '<div style="text-align:right;margin-bottom:8px;">' +
+    '<div style="text-align:right;margin-bottom:8px;">' +
       '<button class="subscription-close-x" type="button" aria-label="Close" onclick="hideUpgradeScreen()">✕</button>' +
-    '</div>' : '') +
+    '</div>' +
     '<div style="text-align:center;margin-bottom:28px;">' +
       '<div style="font-size:2.5rem;margin-bottom:10px;">' + (isExpired ? '⏰' : isBasic_ ? '⬆️' : '🏸') + '</div>' +
       '<div style="font-size:1.3rem;font-weight:800;color:var(--text,#fff);margin-bottom:6px;">' +
@@ -496,14 +496,6 @@ async function showUpgradeScreen(reason) {
       '<div style="font-size:0.82rem;color:var(--muted,#888);">' +
         (isExpired ? _subT('trialEndedDays', 'Your 60-day trial has ended') : isBasic_ ? _subT('unlockAllFeatures', 'Unlock all features') : _subT('daysLeftTrial', '{days} days left in trial', { days: daysLeft })) +
       '</div>' +
-    '</div>' +
-    '<div style="background:var(--surface,#1e1e2e);border:1px solid var(--border,#2a2a4a);border-radius:16px;padding:18px;margin-bottom:12px;">' +
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
-        '<div style="font-weight:700;color:var(--text,#fff);">' + _subT('basic', 'Basic') + '</div>' +
-        '<div style="font-size:1.1rem;font-weight:800;color:#6c63ff;">¥' + priceBasic + '<span style="font-size:0.72rem;font-weight:400;color:var(--muted,#888)">/' + _subT('year', 'year') + '</span></div>' +
-      '</div>' +
-      '<div style="font-size:0.75rem;color:var(--muted,#888);margin-bottom:12px;">🏸 ' + _subT('playerModeOnly', 'Player mode only') + '</div>' +
-      '<button id="reqBasicBtn" data-plan="basic" style="width:100%;padding:10px;border-radius:10px;border:none;background:#6c63ff;color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit;">' + _subT('requestBasicPlan', 'Request Basic Plan') + '</button>' +
     '</div>' +
     '<div style="background:linear-gradient(135deg,rgba(108,99,255,0.15),rgba(0,212,255,0.08));border:1.5px solid rgba(108,99,255,0.4);border-radius:16px;padding:18px;margin-bottom:20px;position:relative;">' +
       '<div style="position:absolute;top:-10px;right:16px;background:#6c63ff;color:#fff;font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:20px;">' + _subT('recommended', 'RECOMMENDED') + '</div>' +
@@ -516,14 +508,6 @@ async function showUpgradeScreen(reason) {
     '</div>' +
     '<div id="upgradeRequestStatus" style="margin-bottom:12px;"></div>' +
     '<div id="upgradeRequestMsg" style="color:#e63757;font-size:0.78rem;text-align:center;min-height:16px;margin-bottom:12px;"></div>' +
-    '<div style="background:var(--surface,#1e1e2e);border:1px solid var(--border,#2a2a4a);border-radius:14px;padding:16px;margin-bottom:16px;">' +
-      '<div style="font-size:0.78rem;color:var(--muted,#888);margin-bottom:10px;">' + _subT('alreadyHaveKey', 'Already have a key? Enter it here:') + '</div>' +
-      '<input id="upgradeKeyInput" type="text" placeholder="SCS-XXXX-XXXX-XXXX"' +
-        ' style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--border,#2a2a4a);background:var(--bg,#0f0f1a);color:var(--text,#fff);font-size:0.9rem;text-align:center;letter-spacing:2px;margin-bottom:8px;font-family:inherit;box-sizing:border-box;"' +
-        ' oninput="this.value=this.value.toUpperCase()">' +
-      '<div id="upgradeKeyError" style="color:#e63757;font-size:0.75rem;min-height:16px;text-align:center;margin-bottom:8px;"></div>' +
-      '<button onclick="upgradeActivateKey()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#7c3aed,#6c63ff);color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:inherit;">🔑 ' + _subT('activateKey', 'Activate Key') + '</button>' +
-    '</div>' +
     (!isExpired ? '<button onclick="hideUpgradeScreen()" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--border,#2a2a4a);background:transparent;color:var(--muted,#888);font-size:0.82rem;cursor:pointer;font-family:inherit;">' + _subT('continueTrialDays', 'Continue with Trial ({days} days left)', { days: daysLeft }) + '</button>' : '') +
     '</div>';
 

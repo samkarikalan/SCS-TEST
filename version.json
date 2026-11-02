@@ -1,1 +1,5 @@
-{"version": "V608", "build": "2026-11-02", "scope": "Dashboard duplicate header and X removal"}
+{
+  "version": "V609",
+  "build": "2026-11-02",
+  "scope": "Subscription settings subpage Pro only with X close"
+}

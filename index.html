@@ -165,15 +165,15 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="authUI.js?v=V562" defer></script>
   <script src="tournament-engine.js?v=V559" defer></script>
 
-  <script src="subscription.js?v=V149" defer></script>
+  <script src="subscription.js?v=V609" defer></script>
 
   <script src="HomeScreen.js?v=V560" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
-  <script src="main.js?v=V608" defer></script>
-  <script src="role-workspaces.js?v=V608" defer></script>
+  <script src="main.js?v=V609" defer></script>
+  <script src="role-workspaces.js?v=V609" defer></script>
   <script src="scoring.js?v=V558" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V559" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -4226,7 +4226,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V608', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V609', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
