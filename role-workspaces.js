@@ -138,6 +138,13 @@
   }
 
   function menuNavigate(target) {
+    // A destination selected from the shared hamburger closes Club Login.
+    // Opening/dismissing the hamburger itself never changes the current page.
+    if (target !== 'club-access') {
+      var clubSetup = document.getElementById('clubSetupSheetOverlay');
+      if (clubSetup && typeof _clubSetupClose === 'function') _clubSetupClose(false);
+    }
+
     var drawer = document.querySelector('#scsPracticeSharedHeader details');
     if (drawer) drawer.open = false;
     if ((target === 'workspace-home' || target === 'member-home') && window.TournamentNavigation && typeof window.TournamentNavigation.close === 'function') {
@@ -169,7 +176,9 @@
     if (target === 'member-home') { selectRole('member'); return; }
     if (target === 'workspace-home') { selectRole(currentRole()); return; }
     if (target === 'club-access') {
-      // Club setup is a full page; retain the previous page for Cancel.
+      // The club setup sheet is a modal. Restore Club Manager Home as its
+      // underlying page BEFORE opening it, so Cancel/X never exposes the
+      // previously visited Slot Manager (or another stale page).
       if (typeof _showClubSetupSheet === 'function') _showClubSetupSheet('vault');
       else if (typeof showToast === 'function') showToast('Club login is not available yet.');
       return;

@@ -2961,7 +2961,7 @@ function _showClubSetupSheet(targetMode) {
         </div>
         <div id="csJoinFeedback" style="font-size:0.82rem;color:var(--red);min-height:18px;margin-bottom:10px"></div>
         <div style="display:flex;gap:10px">
-          <button class="admin-modal-cancel" style="flex:1" onclick="_clubSetupClose(true)">${t('cancel') || 'Cancel'}</button>
+          <button class="admin-modal-cancel" style="flex:1" onclick="scsClubSetupCancel()">${t('cancel') || 'Cancel'}</button>
           <button class="admin-modal-ok" style="flex:1" onclick="_clubSetupJoin()">${t('joinBtn') || 'Join'}</button>
         </div>
       </div>
@@ -2973,7 +2973,7 @@ function _showClubSetupSheet(targetMode) {
           <input type="password" id="csCreateAdminPw" class="auth-input" placeholder="${t('enterAdminPasswordPh')}"  style="margin-bottom:10px">
           <div id="csCreateFeedback" style="font-size:0.82rem;min-height:18px;margin-bottom:10px"></div>
           <div style="display:flex;gap:10px">
-            <button class="admin-modal-cancel" style="flex:1" onclick="_clubSetupClose(true)">${t('cancel') || 'Cancel'}</button>
+            <button class="admin-modal-cancel" style="flex:1" onclick="scsClubSetupCancel()">${t('cancel') || 'Cancel'}</button>
             <button class="admin-modal-ok" style="flex:1" onclick="_clubSetupCreateDirect()">${t('createClub') || 'Create Club'}</button>
           </div>
         </div>
@@ -3256,7 +3256,9 @@ async function _clubSetupCreateDirect() {
       sessionStorage.setItem('appMode', mode);
       localStorage.setItem('kbrr_app_mode', mode);
       applyMode(mode);
-      if (!_clubSetupClose(true) && typeof showHomeScreen === 'function') showHomeScreen();
+      _clubSetupClose(false);
+      if (typeof scsRoleMenuNavigate === 'function') scsRoleMenuNavigate('workspace-home');
+      else if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
     }, 1000);
   } catch(e) { setFb('❌ ' + e.message, false); }
 }
@@ -6366,9 +6368,26 @@ function scsHomeQuickAction(action) {
   }
 }
 
+function scsClubSetupCancel() {
+  // Cancel the form, not the page. Do not restore the last active Slot Manager.
+  var sheet = document.getElementById('clubSetupSheet');
+  if (!sheet) return;
+  sheet.querySelectorAll('input').forEach(function(input) { input.value = ''; });
+  sheet.querySelectorAll('[id$="Feedback"]').forEach(function(el) { el.textContent = ''; });
+}
 function scsClubSetupOpenMenu() {
-  _clubSetupClose(false);
+  var overlay = document.getElementById('clubSetupSheetOverlay');
   var drawer = document.querySelector('#scsPracticeSharedHeader details');
-  if (drawer) { drawer.open = true; return; }
-  if (typeof scsActivityShowHome === 'function') scsActivityShowHome();
+  if (!overlay || !drawer) return;
+  // Reveal the EXISTING shared menu without navigating or closing this page.
+  overlay.style.visibility = 'hidden';
+  drawer.open = true;
+  var watcher = new MutationObserver(function() {
+    if (!drawer.open) {
+      watcher.disconnect();
+      if (document.getElementById('clubSetupSheetOverlay') === overlay)
+        overlay.style.visibility = 'visible';
+    }
+  });
+  watcher.observe(drawer, {attributes:true,attributeFilter:['open']});
 }
