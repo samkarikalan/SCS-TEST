@@ -1,19 +1,19 @@
 // SCS_BUILD_50_MYHUB_EMBEDDED_CLUBS_REPORT
 /* Sports Club Scheduler service worker — complete installed-app updates. */
-const CACHE_NAME = 'scs-cache-V623';
-const APP_SHELL = './index.html?v=V623';
+const CACHE_NAME = 'scs-cache-V624';
+const APP_SHELL = './index.html?v=V624';
 
 const ASSETS = [
   APP_SHELL,
   './scs-practice-card-pro.png', './scs-tournament-card-pro.png', './scs-practice-card-textfree.png', './scs-tournament-card-textfree.png',
   './ui.css?v=V560', './rounds.css?v=V149',
-  './shared-court-popup.js?v=V623', './shared-court-popup.css?v=V398', './scs-api.js?v=V623', './tournament-engine.js?v=V559', './team-tournament.js?v=V623', './team-tournament.css?v=V321', './shared-match-card.css?v=V395', './shared-match-center.js?v=V395', './group-tournament.js?v=V623', './group-tournament.css?v=V414', './tournament-team-picker.js?v=V402', './tournament-players-page.js?v=V403', './tournament-bracket.js?v=V623', './tournament-bracket.css?v=V454', './scoring.js?v=V623', './court-center.js?v=V406', './offline-db.js?v=V149', './offline-rounds.js?v=V149', './full-schedule.js?v=V623', './snapshot.js?v=V149', './supabase.js?v=V411', './auth.js?v=V149',
-  './authUI.js?v=V623', './subscription.js?v=V618', './HomeScreen.js?v=V560', './role-workspaces.js?v=V623',
-  './engjap.js?v=V623', './main.js?v=V562', './games.js?v=V623',
-  './rounds.js?v=V149', './mbm.js?v=V623', './players.js?v=V149',
-  './importPlayers.js?v=V623', './settings.js?v=V553', './summary.js?v=V149',
+  './shared-court-popup.js?v=V624', './shared-court-popup.css?v=V398', './scs-api.js?v=V624', './tournament-engine.js?v=V559', './team-tournament.js?v=V624', './team-tournament.css?v=V321', './shared-match-card.css?v=V395', './shared-match-center.js?v=V395', './group-tournament.js?v=V624', './group-tournament.css?v=V414', './tournament-team-picker.js?v=V402', './tournament-players-page.js?v=V403', './tournament-bracket.js?v=V624', './tournament-bracket.css?v=V454', './scoring.js?v=V624', './court-center.js?v=V406', './offline-db.js?v=V149', './offline-rounds.js?v=V149', './full-schedule.js?v=V624', './snapshot.js?v=V149', './supabase.js?v=V411', './auth.js?v=V149',
+  './authUI.js?v=V624', './subscription.js?v=V618', './HomeScreen.js?v=V624', './role-workspaces.js?v=V624',
+  './engjap.js?v=V624', './main.js?v=V562', './games.js?v=V624',
+  './rounds.js?v=V149', './mbm.js?v=V624', './players.js?v=V149',
+  './importPlayers.js?v=V624', './settings.js?v=V553', './summary.js?v=V149',
   './help.js?v=V149', './profile.js?v=V149', './account-status.js?v=V557', './dashboard.js?v=V149',
-  './slots.js?v=V552', './notifications.js?v=V149', './viewer.js?v=V149',
+  './slots.js?v=V624', './notifications.js?v=V149', './viewer.js?v=V149',
   './report.js?v=V149', './manifest.json?v=V209',
   './male.png?v=V149', './female.png?v=V149', './win-cup.png?v=V149',
   './welcome-default-myhub.png?v=V149', './welcome-default-round-manager.png?v=V149', './welcome-default-slot-manager.png?v=V149',

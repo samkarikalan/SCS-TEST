@@ -2334,12 +2334,12 @@ var html = '', ownedHtml = '';
     '</div>' +
   '</div>';
   if (ownedIds.has(String(m.club_id))) {
-    ownedHtml += '<div class="jc-club-row jc-club-item"'+(isActive?'':' style="cursor:pointer" onclick="jcActivateClub(this)"')+' data-cid="'+jcEscapeHtml(m.club_id)+'" data-cname="'+jcEscapeHtml(cname)+'"><div class="jc-club-icon">'+icon+'</div><div class="jc-club-info"><div class="jc-club-name">'+jcEscapeHtml(cname)+'</div><div class="jc-club-nick">Club owner · '+jcEscapeHtml(t('asNick'))+' '+jcEscapeHtml(m.nickname)+'</div></div><div class="jc-club-actions"><span class="jc-club-badge jc-badge-active">Owner</span></div></div>';
+    ownedHtml += '<div class="jc-club-row jc-club-item"'+(isActive?'':' style="cursor:pointer" onclick="jcActivateClub(this)"')+' data-cid="'+jcEscapeHtml(m.club_id)+'" data-cname="'+jcEscapeHtml(cname)+'"><div class="jc-club-icon">'+icon+'</div><div class="jc-club-info"><div class="jc-club-name">'+jcEscapeHtml(cname)+'</div><div class="jc-club-nick">Club owner · '+jcEscapeHtml(t('asNick'))+' '+jcEscapeHtml(m.nickname)+'</div></div><div class="jc-club-actions"><span class="jc-club-badge jc-badge-active">'+jcEscapeHtml(t('scsOwner'))+'</span></div></div>';
   } else html += rowHtml;
 });
 
 clubs.filter(function(c){return ownedIds.has(String(c.id)) && !(memberships||[]).some(function(m){return String(m.club_id)===String(c.id)})}).forEach(function(c){
-  ownedHtml += '<div class="jc-club-row jc-club-item" data-cid="'+jcEscapeHtml(c.id)+'" data-cname="'+jcEscapeHtml(c.name)+'"><div class="jc-club-icon">🏢</div><div class="jc-club-info"><div class="jc-club-name">'+jcEscapeHtml(c.name)+'</div><div class="jc-club-nick">Club owner</div></div><div class="jc-club-actions"><span class="jc-club-badge jc-badge-active">Owner</span></div></div>';
+  ownedHtml += '<div class="jc-club-row jc-club-item" data-cid="'+jcEscapeHtml(c.id)+'" data-cname="'+jcEscapeHtml(c.name)+'"><div class="jc-club-icon">🏢</div><div class="jc-club-info"><div class="jc-club-name">'+jcEscapeHtml(c.name)+'</div><div class="jc-club-nick">'+jcEscapeHtml(t('scsClubOwner'))+'</div></div><div class="jc-club-actions"><span class="jc-club-badge jc-badge-active">'+jcEscapeHtml(t('scsOwner'))+'</span></div></div>';
 });
 
 // Pending clubs

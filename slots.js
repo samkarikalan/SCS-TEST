@@ -6593,7 +6593,7 @@ function myHubRenderQuickSlots() {
   todayCount.textContent=todaySlots.length;
   var todayGroup=document.getElementById('myHubTodaySlotsGroup');
   if (todayGroup) { todayGroup.hidden=!todaySlots.length; if (!todaySlots.length) todayGroup.classList.remove('is-open'); }
-  newList.innerHTML=newSlots.length ? newSlots.map(function(s){return _mcsRenderSlotCard(s,{compact:true});}).join('') : '<div class="myhub-home-empty">No new slots to join</div>';
+  newList.innerHTML=newSlots.length ? newSlots.map(function(s){return _mcsRenderSlotCard(s,{compact:true});}).join('') : '<div class="myhub-home-empty">' + (typeof t === 'function' ? t('scsNoNewSlots') : 'No new slots to join') + '</div>';
   todayList.innerHTML=todaySlots.length ? todaySlots.map(function(s){return _mcsRenderSlotCard(s,{compact:true});}).join('') : '<div class="myhub-home-empty">No joined slots today</div>';
   _mcsNormalizeSlotActionLabels(newList); _mcsNormalizeSlotActionLabels(todayList);
 }

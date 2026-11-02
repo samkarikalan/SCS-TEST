@@ -167,13 +167,13 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="subscription.js?v=V618" defer></script>
 
-  <script src="HomeScreen.js?v=V620" defer></script>
+  <script src="HomeScreen.js?v=V624" defer></script>
 
-  <script src="engjap.js?v=V623" defer></script>
+  <script src="engjap.js?v=V624" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V618" defer></script>
-  <script src="role-workspaces.js?v=V623" defer></script>
+  <script src="role-workspaces.js?v=V624" defer></script>
   <script src="scoring.js?v=V621" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V621" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V621" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -199,7 +199,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="account-status.js?v=V557" defer></script>
 
   <script src="dashboard.js?v=V149" defer></script>
-  <script src="slots.js?v=V551" defer></script>
+  <script src="slots.js?v=V624" defer></script>
   <script src="notifications.js?v=V149" defer></script>
 
   <script src="viewer.js?v=V149" defer></script>
@@ -1817,7 +1817,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
     <button type="button" class="scs-home-quick-action-row scs-home-quick-register-row" onclick="scsHomeQuickAction('register')"><span class="scs-home-quick-icon" aria-hidden="true">📋</span><span class="scs-home-quick-copy"><strong>Register Players</strong><span id="scsQuickRegisterClubName" class="scs-home-quick-subtitle"></span></span></button>
     <button type="button" class="scs-home-quick-action-row scs-home-quick-modify-row" onclick="scsHomeQuickAction('modify')"><span class="scs-home-quick-icon" aria-hidden="true">✏️</span><span class="scs-home-quick-copy"><strong>Modify Players</strong><span id="scsQuickModifyClubName" class="scs-home-quick-subtitle"></span></span></button>
     <button type="button" id="scsQuickRoundsTemplate" class="scs-home-quick-action-row scs-home-quick-template-row" hidden onclick="scsHomeQuickAction('template')"><span class="scs-home-quick-icon" aria-hidden="true">🧩</span><span class="scs-home-quick-copy"><strong>Rounds Template</strong><span class="scs-home-quick-subtitle">Create / Edit Templates</span></span></button>
-    <button type="button" id="scsQuickApprovePlayers" class="scs-home-quick-action-row scs-home-quick-approve-row" hidden onclick="scsHomeQuickAction('approve')"><span class="scs-home-quick-icon" aria-hidden="true">✓</span><span class="scs-home-quick-copy"><strong id="scsQuickApprovePlayersLabel">Approve Players</strong><span id="scsQuickApproveClubName" class="scs-home-quick-subtitle"></span></span></button>
+    <button type="button" id="scsQuickApprovePlayers" class="scs-home-quick-action-row scs-home-quick-approve-row" hidden onclick="scsHomeQuickAction('approve')"><span class="scs-home-quick-icon" aria-hidden="true">✓</span><span class="scs-home-quick-copy"><strong id="scsQuickApprovePlayersLabel" data-i18n="scsApprovePlayers">Approve Players</strong><span id="scsQuickApproveClubName" class="scs-home-quick-subtitle"></span></span></button>
     <button type="button" class="scs-home-quick-action-row scs-home-quick-join-row" onclick="scsHomeQuickAction('club')"><span class="scs-home-quick-icon" aria-hidden="true">🏢</span><strong>Join a Club</strong></button>
     <button type="button" class="scs-home-quick-action-row scs-home-quick-court-row" onclick="scsHomeQuickAction('courtCenter')"><span class="scs-home-quick-icon" aria-hidden="true">🏟️</span><span class="scs-home-quick-copy"><strong>Court Center</strong><span class="scs-home-quick-subtitle">Assign · Live Score · Approve</span></span></button>
     <button type="button" class="scs-home-quick-action-row scs-home-quick-score-row" onclick="scsHomeQuickAction('score')"><span class="scs-home-quick-icon" aria-hidden="true">🏆</span><span class="scs-home-quick-copy"><strong>Score a Match</strong><span id="scsQuickScoreClubName" class="scs-home-quick-subtitle"></span></span></button>
@@ -1829,8 +1829,8 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
 <div id="scsProfileQuickMenu" class="scs-home-quick-menu" hidden onclick="if(event.target===this)scsCloseProfileQuickMenu()">
   <div class="scs-home-quick-panel" role="dialog" aria-modal="true" aria-label="My Profile">
     <button type="button" class="scs-home-quick-action-row scs-home-quick-slot-row" onclick="scsProfileQuickAction('slots')"><span class="scs-home-quick-icon" aria-hidden="true">📅</span><strong>My Slots</strong></button>
-    <button type="button" class="scs-home-quick-action-row scs-home-quick-round-row" onclick="scsProfileQuickAction('clubs')"><span class="scs-home-quick-icon" aria-hidden="true">👥</span><strong>Joined Clubs</strong></button>
-    <button type="button" class="scs-home-quick-action-row scs-home-quick-full-schedule-row" onclick="scsProfileQuickAction('report')"><span class="scs-home-quick-icon" aria-hidden="true">📊</span><strong>Reports</strong></button>
+    <button type="button" class="scs-home-quick-action-row scs-home-quick-round-row" onclick="scsProfileQuickAction('clubs')"><span class="scs-home-quick-icon" aria-hidden="true">👥</span><strong data-i18n="scsJoinedClubs">Joined Clubs</strong></button>
+    <button type="button" class="scs-home-quick-action-row scs-home-quick-full-schedule-row" onclick="scsProfileQuickAction('report')"><span class="scs-home-quick-icon" aria-hidden="true">📊</span><strong data-i18n="scsReports">Reports</strong></button>
     <button type="button" class="scs-home-quick-action-row scs-home-quick-register-row" onclick="scsProfileQuickAction('edit')"><span class="scs-home-quick-icon" aria-hidden="true">✎</span><strong>Edit Profile</strong></button>
     <button class="scs-home-quick-cancel" type="button" onclick="scsCloseProfileQuickMenu()">Cancel</button>
   </div>
@@ -2524,18 +2524,18 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <!-- ── My Hub Home quick sections ── -->
   <section class="myhub-home-sections myhub-plain-menu" aria-label="My Hub">
     <div class="myhub-navigation-links">
-    <h2 class="myhub-home-section-title">My SCS</h2>
+    <h2 class="myhub-home-section-title" data-i18n="scsMySCS">My SCS</h2>
     <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('slots')"><span class="myhub-home-icon">📅</span><strong>My Slots</strong><span class="myhub-home-chevron">›</span></button>
-    <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('clubs')"><span class="myhub-home-icon">👥</span><strong>Joined Clubs</strong><span class="myhub-home-chevron">›</span></button>
-    <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('report')"><span class="myhub-home-icon">📊</span><strong>Reports</strong><span class="myhub-home-chevron">›</span></button>
+    <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('clubs')"><span class="myhub-home-icon">👥</span><strong data-i18n="scsJoinedClubs">Joined Clubs</strong><span class="myhub-home-chevron">›</span></button>
+    <button type="button" class="myhub-simple-link" onclick="scsProfileQuickAction('report')"><span class="myhub-home-icon">📊</span><strong data-i18n="scsReports">Reports</strong><span class="myhub-home-chevron">›</span></button>
     </div>
-    <h2 class="myhub-home-section-title">My Activity</h2>
+    <h2 class="myhub-home-section-title" data-i18n="scsMyActivity">My Activity</h2>
     <div class="myhub-home-group" id="myHubNewSlotsGroup">
-      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('new')"><span class="myhub-home-icon">🔔</span><strong>New Posted Slots</strong><span class="myhub-home-count" id="myHubNewSlotsCount">0</span><span class="myhub-home-chevron">›</span></button>
+      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('new')"><span class="myhub-home-icon">🔔</span><strong data-i18n="scsNewPostedSlots">New Posted Slots</strong><span class="myhub-home-count" id="myHubNewSlotsCount">0</span><span class="myhub-home-chevron">›</span></button>
       <div class="myhub-home-list" id="myHubNewSlotsList"></div>
     </div>
     <div class="myhub-home-group" id="myHubTodaySlotsGroup" hidden>
-      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('today')"><span class="myhub-home-icon">📅</span><strong>Today Slots</strong><span class="myhub-home-count" id="myHubTodaySlotsCount">0</span><span class="myhub-home-chevron">›</span></button>
+      <button type="button" class="myhub-home-card" onclick="myHubToggleQuickGroup('today')"><span class="myhub-home-icon">📅</span><strong data-i18n="scsTodaySlots">Today Slots</strong><span class="myhub-home-count" id="myHubTodaySlotsCount">0</span><span class="myhub-home-chevron">›</span></button>
       <div class="myhub-home-list" id="myHubTodaySlotsList"></div>
     </div>
     <div class="myhub-home-group" id="myHubLiveGroup" hidden>
@@ -2543,7 +2543,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
       <div class="myhub-home-list" id="myHubLiveList"></div>
     </div>
     <div class="myhub-home-group" id="myHubApprovePlayersGroup" data-scs-roles="manager" hidden>
-      <button type="button" class="myhub-home-card" onclick="scsHomeQuickAction('approve')"><span class="myhub-home-icon">✓</span><strong>Approve Players</strong><span class="myhub-home-count" id="myHubApprovePlayersCount">0</span><span class="myhub-home-chevron">›</span></button>
+      <button type="button" class="myhub-home-card" onclick="scsHomeQuickAction('approve')"><span class="myhub-home-icon">✓</span><strong data-i18n="scsApprovePlayers">Approve Players</strong><span class="myhub-home-count" id="myHubApprovePlayersCount">0</span><span class="myhub-home-chevron">›</span></button>
     </div>
   </section>
 
@@ -2559,8 +2559,8 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
       </div>
       <div class="mc-slots-tools">
         <div class="mc-slots-filter mc-slots-layout-filter" role="tablist" aria-label="Slot layout">
-          <button type="button" id="mcSlotsLayoutCompact" class="mc-slots-filter-btn is-active" role="tab" aria-selected="true" onclick="myCardSlotsSetLayout('compact')">Compact</button>
-          <button type="button" id="mcSlotsLayoutCalendar" class="mc-slots-filter-btn" role="tab" aria-selected="false" onclick="myCardSlotsSetLayout('calendar')">Calendar</button>
+          <button type="button" id="mcSlotsLayoutCompact" data-i18n="scsCompact" class="mc-slots-filter-btn is-active" role="tab" aria-selected="true" onclick="myCardSlotsSetLayout('compact')">Compact</button>
+          <button type="button" id="mcSlotsLayoutCalendar" data-i18n="scsCalendar" class="mc-slots-filter-btn" role="tab" aria-selected="false" onclick="myCardSlotsSetLayout('calendar')">Calendar</button>
         </div>
         <div class="mc-slots-filter" role="tablist" aria-label="Slot view">
           <button type="button" id="mcSlotsFilterUpcoming" class="mc-slots-filter-btn is-active" role="tab" aria-selected="true" onclick="myCardSlotsSetView('upcoming')" data-i18n="upcoming">Upcoming</button>
@@ -2706,12 +2706,12 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   </section>
 
   <div class="clubs-page-tabs" role="tablist" aria-label="Club lists">
-    <button type="button" id="clubsOwnedTab" class="active" role="tab" aria-selected="true" aria-controls="clubsOwnedPanel" onclick="clubsPageSelectTab('owned')">My Clubs</button>
-    <button type="button" id="clubsJoinedTab" role="tab" aria-selected="false" aria-controls="clubsJoinedPanel" onclick="clubsPageSelectTab('joined')">Joined Clubs</button>
+    <button type="button" id="clubsOwnedTab" data-i18n="scsMenuMyClubs" class="active" role="tab" aria-selected="true" aria-controls="clubsOwnedPanel" onclick="clubsPageSelectTab('owned')">My Clubs</button>
+    <button type="button" id="clubsJoinedTab" data-i18n="scsJoinedClubs" role="tab" aria-selected="false" aria-controls="clubsJoinedPanel" onclick="clubsPageSelectTab('joined')">Joined Clubs</button>
   </div>
 
   <section id="clubsOwnedPanel" class="clubs-tab-panel" role="tabpanel" aria-labelledby="clubsOwnedTab">
-    <div class="jc-section-title">Clubs I manage</div>
+    <div class="jc-section-title" data-i18n="scsClubsManage">Clubs I manage</div>
     <div id="myOwnedClubsListInner"><div class="jc-empty">Loading...</div></div>
   </section>
 
@@ -4238,7 +4238,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V623', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V624', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
