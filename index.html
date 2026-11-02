@@ -169,11 +169,11 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="HomeScreen.js?v=V620" defer></script>
 
-  <script src="engjap.js?v=V621" defer></script>
+  <script src="engjap.js?v=V623" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V618" defer></script>
-  <script src="role-workspaces.js?v=V620" defer></script>
+  <script src="role-workspaces.js?v=V623" defer></script>
   <script src="scoring.js?v=V621" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V621" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V621" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -1204,19 +1204,19 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
       <div class="scs-phase1-ref-shade" onclick="this.closest('details').removeAttribute('open')"></div>
       <nav class="scs-phase1-ref-panel" aria-label="Practice Manager navigation">
         <div class="scs-phase1-ref-panel-title"><span class="scs-phase1-ref-club-title"><strong>SCS</strong><button type="button" class="scs-phase1-ref-club-logout" data-scs-roles="manager" data-scs-club-logged-in aria-label="Logout from active club" title="Club Logout" onclick="event.stopPropagation();scsRoleMenuNavigate('club-logout')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9"></path><path d="M18.36 5.64a9 9 0 1 1-12.72 0"></path></svg></button></span><button type="button" aria-label="Close Practice Manager menu" onclick="event.stopPropagation();this.closest('details').open=false">×</button></div>
-        <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('member-home')" class="scs-phase1-menu-entry"><span>⌂</span> Member Home</button>
-        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('workspace-home')" class="scs-phase1-menu-entry"><span>⌂</span> Club Manager Home</button>
-        <button type="button" data-scs-roles="manager" data-scs-club-login onclick="scsRoleMenuNavigate('club-access')"><span>🏢</span> Club Login / Create</button>
-        <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('clubs')" class="scs-phase1-menu-entry"><span>🏢</span> My Clubs</button>
-        <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('my-slots')" class="scs-phase1-menu-entry"><span>📅</span> My Slots</button>
-        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('players')"><span>♙</span> Members &amp; Players</button>
-        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('rounds')"><span>🏸</span> Round Manager</button>
-        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('slots')"><span>▣</span> Slot Manager</button>
-        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('tournaments')"><span>🏆</span> Tournaments</button>
-        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('dashboard')"><span>▥</span> Dashboard</button>
-        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('settings')"><span>⚙</span> Settings</button>
-        <button type="button" data-scs-roles="member manager" onclick="this.closest('details').open=false;scsSwitchRoleWorkspace()"><span>⇄</span> Switch Workspace</button>
-        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('account')"><span>◎</span> Account</button>
+        <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('member-home')" class="scs-phase1-menu-entry"><span>⌂</span> <span data-i18n="scsMenuMemberHome">Member Home</span></button>
+        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('workspace-home')" class="scs-phase1-menu-entry"><span>⌂</span> <span data-i18n="scsMenuClubHome">Club Manager Home</span></button>
+        <button type="button" data-scs-roles="manager" data-scs-club-login onclick="scsRoleMenuNavigate('club-access')"><span>🏢</span> <span data-i18n="scsMenuClubLogin">Club Login / Create</span></button>
+        <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('clubs')" class="scs-phase1-menu-entry"><span>🏢</span> <span data-i18n="scsMenuMyClubs">My Clubs</span></button>
+        <button type="button" data-scs-roles="member" onclick="scsRoleMenuNavigate('my-slots')" class="scs-phase1-menu-entry"><span>📅</span> <span data-i18n="scsMenuMySlots">My Slots</span></button>
+        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('players')"><span>♙</span> <span data-i18n="scsMenuMembersPlayers">Members &amp; Players</span></button>
+        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('rounds')"><span>🏸</span> <span data-i18n="roundManager">Round Manager</span></button>
+        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('slots')"><span>▣</span> <span data-i18n="slotManager">Slot Manager</span></button>
+        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('tournaments')"><span>🏆</span> <span data-i18n="scsMenuTournaments">Tournaments</span></button>
+        <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('dashboard')"><span>▥</span> <span data-i18n="dashboard">Dashboard</span></button>
+        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('settings')"><span>⚙</span> <span data-i18n="settings">Settings</span></button>
+        <button type="button" data-scs-roles="member manager" onclick="this.closest('details').open=false;scsSwitchRoleWorkspace()"><span>⇄</span> <span data-i18n="scsMenuSwitchWorkspace">Switch Workspace</span></button>
+        <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('account')"><span>◎</span> <span data-i18n="scsMenuAccount">Account</span></button>
       </nav>
     </details>
     <strong id="scsPracticeSharedTitle">Practice Manager</strong><span class="scs-phase1-ref-icon" aria-hidden="true">🏸</span>
@@ -4238,7 +4238,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V621', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V623', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when

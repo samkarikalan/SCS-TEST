@@ -2,39 +2,12 @@
 (function () {
   'use strict';
 
-  var CACHE_KEY = 'scs_role_access_v1';
   var ACTIVE_KEY = 'scs_active_role_workspace';
   var SESSION_KEY = 'scs_role_chosen_session';
-  var access = { member:true, manager:false, managerClubIds:[] };
+  // Both workspaces are included in the single SCS license.
+  var access = { member:true, manager:true, managerClubIds:[] };
 
-  function user() { return typeof authGetUser === 'function' ? authGetUser() : null; }
-  function unique(values) { return values.filter(function (value, index, list) { return value && list.indexOf(value) === index; }); }
-  function cacheKey(account) { return CACHE_KEY + '_' + String(account && account.id || 'guest'); }
-  function readCache(account) {
-    try { return JSON.parse(localStorage.getItem(cacheKey(account)) || 'null'); } catch (_) { return null; }
-  }
-  function writeCache(account, value) {
-    try { localStorage.setItem(cacheKey(account), JSON.stringify(value)); } catch (_) {}
-  }
-
-  async function loadAccess(force) {
-    var account = user();
-    if (!account || !account.id) { access = { member:true, manager:false, managerClubIds:[] }; return access; }
-    if (!force) {
-      var cached = readCache(account);
-      if (cached && Date.now() - Number(cached.updatedAt || 0) < 5 * 60 * 1000) { access = cached; return access; }
-    }
-    try {
-      var rows = await sbGet('user_club_roles', 'user_account_id=eq.' + encodeURIComponent(account.id) + '&vault_verified=eq.true&select=club_id');
-      var owned = await sbGet('clubs', 'created_by=eq.' + encodeURIComponent(account.id) + '&select=id').catch(function () { return []; });
-      var ids = unique((rows || []).map(function (row) { return String(row.club_id || ''); }).concat((owned || []).map(function (club) { return String(club.id || ''); })));
-      access = { member:true, manager:ids.length > 0, managerClubIds:ids, updatedAt:Date.now() };
-      writeCache(account, access);
-    } catch (_) {
-      access = readCache(account) || { member:true, manager:false, managerClubIds:[] };
-    }
-    return access;
-  }
+  async function loadAccess() { return access; }
 
   function currentRole() {
     return localStorage.getItem(ACTIVE_KEY) === 'manager' && access.manager ? 'manager' : 'member';
@@ -64,6 +37,13 @@
       button.setAttribute('aria-disabled', String(hasActiveClub));
       button.title = hasActiveClub ? 'A club is already selected' : '';
     });
+    // Refresh existing drawer labels from the selected app language.
+    var menuLanguage = (typeof currentLang !== 'undefined' && currentLang) || localStorage.getItem('appLanguage') || 'en';
+    var menuDictionary = typeof translations !== 'undefined' ? (translations[menuLanguage] || translations.en || {}) : {};
+    document.querySelectorAll('#scsPracticeSharedHeader [data-i18n]').forEach(function (element) {
+      var value = menuDictionary[element.dataset.i18n];
+      if (value) element.textContent = value;
+    });
     document.body.dataset.scsRoleWorkspace = role;
     document.querySelectorAll('[data-scs-roles]').forEach(function (element) {
       var roles = String(element.getAttribute('data-scs-roles') || '').split(/\s+/);
@@ -86,7 +66,6 @@
   }
 
   async function selectRole(role) {
-    if (role === 'manager' && !access.manager) throw Error('Club Manager access is not available for this account.');
     role = role === 'manager' ? 'manager' : 'member';
     localStorage.setItem(ACTIVE_KEY, role);
     sessionStorage.setItem(SESSION_KEY, '1');
@@ -121,8 +100,15 @@
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
     overlay.setAttribute('aria-labelledby', 'scsRoleChooserTitle');
-    overlay.innerHTML = '<section class="scs-role-chooser-card"><small>SCS ACCOUNT</small><h2 id="scsRoleChooserTitle">How will you use SCS?</h2><p>Choose a workspace. You can switch later from the menu.</p><button type="button" data-role-choice="member"><span>♙</span><b>Member</b><em>Join slots, play tournaments and organise rounds</em></button>' +
-      (access.manager ? '<button type="button" data-role-choice="manager"><span>▦</span><b>Club Manager</b><em>Manage players, slots, tournaments and your club</em></button>' : '') + '</section>';
+    // The existing Settings language selection also applies to this dynamic chooser.
+    overlay.innerHTML = '<section class="scs-role-chooser-card"><small data-i18n="scsAccount">SCS ACCOUNT</small><h2 id="scsRoleChooserTitle" data-i18n="scsWorkspaceQuestion">How will you use SCS?</h2><p data-i18n="scsWorkspaceHint">Choose a workspace. You can switch later from the menu.</p><button type="button" data-role-choice="member"><span>♙</span><b data-i18n="scsMemberRole">Member</b><em data-i18n="scsMemberRoleDesc">Join slots, play tournaments and organise rounds</em></button>' +
+      '<button type="button" data-role-choice="manager"><span>▦</span><b data-i18n="scsClubManagerRole">Club Manager</b><em data-i18n="scsClubManagerRoleDesc">Manage players, slots, tournaments and your club</em></button></section>';
+    var language = (typeof currentLang !== 'undefined' && currentLang) || localStorage.getItem('appLanguage') || 'en';
+    var dictionary = typeof translations !== 'undefined' ? (translations[language] || translations.en || {}) : {};
+    overlay.querySelectorAll('[data-i18n]').forEach(function (element) {
+      var translated = dictionary[element.dataset.i18n];
+      if (translated) element.textContent = translated;
+    });
     document.body.appendChild(overlay);
     overlay.querySelectorAll('[data-role-choice]').forEach(function (button) {
       button.addEventListener('click', function () { selectRole(button.getAttribute('data-role-choice')).catch(function (error) { if (typeof showToast === 'function') showToast(error.message); }); });
@@ -133,16 +119,15 @@
     await loadAccess(true);
     // Do not recreate the chooser when another login callback finishes after
     // the user already selected a workspace in this tab.
-    if (access.manager && sessionStorage.getItem(SESSION_KEY) !== '1') showChooser();
-    else if (access.manager) await selectRole(currentRole());
-    else await selectRole('member');
+    if (sessionStorage.getItem(SESSION_KEY) !== '1') showChooser();
+    else await selectRole(currentRole());
     return true;
   }
 
   async function switchWorkspace() {
     await loadAccess(false);
-    if (access.manager) { sessionStorage.removeItem(SESSION_KEY); showChooser(); }
-    else if (typeof showToast === 'function') showToast('This account has Member access only.');
+    sessionStorage.removeItem(SESSION_KEY);
+    showChooser();
   }
 
   function menuNavigate(target) {
