@@ -165,15 +165,15 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="authUI.js?v=V562" defer></script>
   <script src="tournament-engine.js?v=V559" defer></script>
 
-  <script src="subscription.js?v=V610" defer></script>
+  <script src="subscription.js?v=V611" defer></script>
 
   <script src="HomeScreen.js?v=V560" defer></script>
 
   <script src="engjap.js?v=V149" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
-  <script src="main.js?v=V610" defer></script>
-  <script src="role-workspaces.js?v=V610" defer></script>
+  <script src="main.js?v=V611" defer></script>
+  <script src="role-workspaces.js?v=V611" defer></script>
   <script src="scoring.js?v=V558" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V559" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -1171,7 +1171,7 @@ body.scs-practice-shared-active #addPlayersTypePanel #players-names {
 #dashboardPage .scs-dashboard-bracket-action{display:flex;justify-content:flex-end;padding:8px 16px 4px}
 </style>
 <style>
-/* V610: Existing Add Player action, styled identically to the Fixed Pairs FAB. */
+/* V611: Existing Select Players action, styled identically to the Fixed Pairs FAB. */
 #playersPage #scsPlayersFloatingAdd.fp-open-create-btn {
   position:fixed !important;right:24px !important;
   bottom:calc(28px + env(safe-area-inset-bottom)) !important;
@@ -3666,18 +3666,8 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
       <button class="sheet-done-btn" id="playersBackBtn" onclick="scsCloseVisiblePlayerManager()" data-i18n="done">Done</button>
     </div>
 
-  <!-- Compact player actions: existing workflows, simplified presentation -->
-  <div class="players-action-row" role="group" aria-label="Player actions">
-    <button class="players-action-btn players-action-select" type="button" onclick="newImportShowModal()">
-      <span class="players-action-icon players-action-select-icon" aria-hidden="true">☑</span>
-      <span class="players-action-label" data-i18n="selectPlayers">Select Players</span>
-      <span class="players-action-arrow" aria-hidden="true">›</span>
-    </button>
-
-
-  </div>
-
-  <button type="button" id="scsPlayersFloatingAdd" class="fp-open-create-btn" onclick="scsPlayersOpenNewPlayer()" aria-label="Add Player" title="Add Player"><span aria-hidden="true">+</span></button>
+  <!-- Existing Select Players action, now using the Fixed Pairs-style floating +. -->
+  <button type="button" id="scsPlayersFloatingAdd" class="fp-open-create-btn" onclick="newImportShowModal()" aria-label="Select Players" title="Select Players"><span aria-hidden="true">+</span></button>
 
   <button type="button" id="scsRoundPlayersDone" aria-label="Done selecting players; return to Round Manager" onclick="scsCloseVisiblePlayerManager()"><span aria-hidden="true">✓</span><span>Done</span></button>
 
@@ -4249,7 +4239,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V610', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V611', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
