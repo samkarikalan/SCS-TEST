@@ -3185,7 +3185,10 @@ async function _clubSetupJoin() {
         localStorage.setItem('kbrr_app_mode', 'vault');
         applyMode('vault');
         updateModePill('vault');
-        if (!_clubSetupClose(true) && typeof showHomeScreen === 'function') showHomeScreen();
+        _clubSetupClose(false);
+        if (typeof scsRoleMenuNavigate === 'function') {
+          scsRoleMenuNavigate(role === 'admin' ? 'workspace-home' : 'member-home');
+        } else if (typeof showHomeScreen === 'function') showHomeScreen();
       } else if (mode === 'organiser' || mode === 'organiser_guest') {
         // Organiser accepts user or admin password
         sessionStorage.setItem('scs_organiser_verified', '1');
@@ -3195,9 +3198,10 @@ async function _clubSetupJoin() {
         localStorage.setItem('kbrr_app_mode', 'organiser');
         applyMode('organiser');
         updateModePill('organiser');
-        if (!_clubSetupClose(true) && typeof showHomeScreen === 'function') {
-          showHomeScreen();
-        }
+        _clubSetupClose(false);
+        if (typeof scsRoleMenuNavigate === 'function') {
+          scsRoleMenuNavigate(role === 'admin' ? 'workspace-home' : 'member-home');
+        } else if (typeof showHomeScreen === 'function') showHomeScreen();
       }
     }, 700);
   } catch(e) { setFb('❌ ' + e.message, false); }
