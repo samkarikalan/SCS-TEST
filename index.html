@@ -167,13 +167,13 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="subscription.js?v=V618" defer></script>
 
-  <script src="HomeScreen.js?v=V624" defer></script>
+  <script src="HomeScreen.js?v=V625" defer></script>
 
-  <script src="engjap.js?v=V624" defer></script>
+  <script src="engjap.js?v=V625" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V618" defer></script>
-  <script src="role-workspaces.js?v=V624" defer></script>
+  <script src="role-workspaces.js?v=V625" defer></script>
   <script src="scoring.js?v=V621" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V621" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V621" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -199,7 +199,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="account-status.js?v=V557" defer></script>
 
   <script src="dashboard.js?v=V149" defer></script>
-  <script src="slots.js?v=V624" defer></script>
+  <script src="slots.js?v=V625" defer></script>
   <script src="notifications.js?v=V149" defer></script>
 
   <script src="viewer.js?v=V149" defer></script>
@@ -4238,7 +4238,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V624', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V625', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4795,7 +4795,7 @@ window.scsClubActivityRefresh=async function(){
 };
 window.scsActivityShowHome=function(){
  var e=document.getElementById('scsActivityHome'),header=document.getElementById('scsPracticeSharedHeader'),title=document.getElementById('scsPracticeSharedTitle');
- if(e)e.hidden=false;if(header)header.hidden=false;if(title)title.textContent='Club Manager';
+ if(e)e.hidden=false;if(header)header.hidden=false;if(title){var lang=(typeof currentLang!=='undefined'&&currentLang)||localStorage.getItem('appLanguage')||'en';title.textContent=(typeof translations!=='undefined'&&translations[lang]&&translations[lang].scsClubManagerRole)||'Club Manager';}
  scsActivityRefreshClub();scsClubActivityRefresh();
  setTimeout(scsClubActivityRefresh,300);
  setTimeout(scsClubActivityRefresh,1000);
@@ -4939,7 +4939,11 @@ window.scsActivityReturnHome=function(){
       if(score&&!score.hidden&&getComputedStyle(score).display!=='none'&&document.getElementById('scsScoreMatchPicker')&&!document.getElementById('scsScoreMatchPicker').hidden)active='scsScoringOverlay';
       header.hidden=!active;
       if(active){
-        document.getElementById('scsTournamentDynamicTitle').textContent=titles[active]||(active==='registration'?'Players Manager':'Tournament');
+        var rawTitle=titles[active]||(active==='registration'?'Players Manager':'Tournament');
+        var lang=(typeof currentLang!=='undefined'&&currentLang)||localStorage.getItem('appLanguage')||'en';
+        var dict=(typeof translations!=='undefined'&&(translations[lang]||translations.en))||{};
+        var keys={'Tournament Manager':'scsTournamentManagerTitle','My Tournaments':'scsMyTournamentsTitle','New Tournament':'scsNewTournamentTitle','Live Tournaments':'scsLiveTournamentsTitle','Tournament':'scsTournamentTitle','Conduct a Match':'scsConductMatchTitle','Players Manager':'scsPlayersManagerTitle'};
+        document.getElementById('scsTournamentDynamicTitle').textContent=dict[keys[rawTitle]]||rawTitle;
       }
     }
     var observer=new MutationObserver(refresh);
@@ -4947,6 +4951,7 @@ window.scsActivityReturnHome=function(){
     observer.observe(document.body,{attributes:true,attributeFilter:['class']});
     refresh();
     window.scsRefreshTournamentHeader=refresh;
+    window.addEventListener('storage',function(e){if(e.key==='appLanguage')refresh();});
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
@@ -5018,7 +5023,10 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')scsTournamen
     label=workspace==='organiser'?'Round Manager':(workspace==='vault'?'Slot Manager':(document.body.dataset.scsRoleWorkspace==='member'?'Member Home':'My Hub'));
     }
    }
-   title.textContent=label;
+   var titleLanguage=(typeof currentLang!=='undefined'&&currentLang)||localStorage.getItem('appLanguage')||'en';
+   var titleDictionary=(typeof translations!=='undefined'&&(translations[titleLanguage]||translations.en))||{};
+   var titleKeys={'Member Home':'scsMenuMemberHome','My Hub':'scsMyHubTitle','My Clubs':'scsMenuMyClubs','Club Manager':'scsClubManagerRole','Settings':'settings','Player Manager':'scsPlayerManagerTitle','Round Manager':'scsRoundManagerTitle','Slot Manager':'scsSlotManagerTitle','Dashboard':'scsDashboardTitle','Practice Manager':'scsPracticeManagerTitle'};
+   title.textContent=titleDictionary[titleKeys[label]]||label;
    if(target&&target.classList.contains('page'))target.classList.add('scs-practice-current-page');
    /* V537: A newly opened Round page starts at its top, not the previous editor scroll. */
    if(active==='roundsPage' && previousActive!==active){

@@ -54,7 +54,7 @@
     if (drawerClub) drawerClub.textContent = activeClubName(role);
     var title = document.getElementById('scsPracticeSharedTitle');
     var activityHome = document.getElementById('scsActivityHome');
-    if (title && role === 'manager' && activityHome && !activityHome.hidden) title.textContent = 'Club Manager';
+    if (title && role === 'manager' && activityHome && !activityHome.hidden) title.textContent = (typeof translations!=='undefined'&&translations[(typeof currentLang!=='undefined'&&currentLang)||localStorage.getItem('appLanguage')||'en']||{}).scsClubManagerRole || 'Club Manager';
     if (title && document.getElementById('scsPracticeSharedHeader') && !document.getElementById('scsPracticeSharedHeader').hidden) {
       title.dataset.roleWorkspace = role;
     }
@@ -250,7 +250,7 @@
     var activityHome = document.getElementById('scsActivityHome');
     if (title && activityHome && typeof MutationObserver === 'function') {
       var enforceTitle = function () {
-        if (currentRole() === 'manager' && !activityHome.hidden && title.textContent !== 'Club Manager') title.textContent = 'Club Manager';
+        if (currentRole() === 'manager' && !activityHome.hidden && title.textContent !== ((typeof translations!=='undefined'&&translations[(typeof currentLang!=='undefined'&&currentLang)||localStorage.getItem('appLanguage')||'en']||{}).scsClubManagerRole || 'Club Manager')) title.textContent = (typeof translations!=='undefined'&&translations[(typeof currentLang!=='undefined'&&currentLang)||localStorage.getItem('appLanguage')||'en']||{}).scsClubManagerRole || 'Club Manager';
       };
       new MutationObserver(enforceTitle).observe(title, { childList:true, characterData:true, subtree:true });
       new MutationObserver(enforceTitle).observe(activityHome, { attributes:true, attributeFilter:['hidden'] });
