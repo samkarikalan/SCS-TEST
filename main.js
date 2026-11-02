@@ -1192,9 +1192,10 @@ function welcomeApprovalEscape(value) {
   });
 }
 
-async function welcomeOpenVaultApprovals() {
+async function welcomeOpenVaultApprovals(inlineTarget) {
+  var inline = inlineTarget && inlineTarget.nodeType === 1;
   var existing = document.getElementById('welcomeSlotApprovalsOverlay');
-  if (existing) existing.remove();
+  if (existing && !inline) existing.remove();
   var overlay = document.createElement('div');
   overlay.id = 'welcomeSlotApprovalsOverlay';
   overlay.className = 'welcome-slot-approvals-overlay';
@@ -1202,10 +1203,19 @@ async function welcomeOpenVaultApprovals() {
     '<header><span><small>SLOT MANAGER</small><strong id="welcomeApprovalsTitle">Pending approvals</strong></span><button type="button" data-close aria-label="Close">×</button></header>' +
     '<div class="welcome-slot-approvals-list"><div class="welcome-slot-approvals-loading">Loading requests…</div></div>' +
     '</section>';
-  document.body.appendChild(overlay);
-  overlay.querySelector('[data-close]').onclick = function(){ overlay.remove(); };
-  overlay.onclick = function(event){ if (event.target === overlay) overlay.remove(); };
+  if (inline) {
+    inlineTarget.replaceChildren(overlay);
+    overlay.classList.add('scs-inline-approvals');
+    overlay.querySelector('header').remove();
+  } else {
+    document.body.appendChild(overlay);
+    overlay.querySelector('[data-close]').onclick = function(){ overlay.remove(); };
+    overlay.onclick = function(event){ if (event.target === overlay) overlay.remove(); };
+  }
 
+  if (inline && typeof scsPrefetchWelcomeHubData === 'function') {
+    try { await scsPrefetchWelcomeHubData(true); } catch(e) {}
+  }
   var vault = (window.__scsWelcomeHubData && window.__scsWelcomeHubData.vault) || {};
   var slotIds = Array.isArray(vault.pendingSlotIds) ? vault.pendingSlotIds : (vault.pendingSlotId ? [vault.pendingSlotId] : []);
   var slots = [];
@@ -1229,6 +1239,12 @@ async function welcomeOpenVaultApprovals() {
     return request && request.id && !linkedRequestIds.has(String(request.id));
   }) : [];
   var list = overlay.querySelector('.welcome-slot-approvals-list');
+  if (inline) {
+    var section = document.getElementById('scsClubHomePendingApprovals');
+    if (section) section.hidden = !requests.length && !clubRequests.length;
+    var count = document.getElementById('scsClubHomePendingCount');
+    if (count) count.textContent = '(' + (requests.length + clubRequests.length) + ')';
+  }
   if (!requests.length && !clubRequests.length) {
     list.innerHTML = '<div class="welcome-slot-approvals-empty">No pending approvals.</div>';
     return;
@@ -1264,6 +1280,7 @@ async function welcomeOpenVaultApprovals() {
       if (row) row.remove();
       if (!list.querySelector('.welcome-slot-approval-row')) list.innerHTML = '<div class="welcome-slot-approvals-empty">No pending approvals.</div>';
       if (typeof scsPrefetchWelcomeHubData === 'function') scsPrefetchWelcomeHubData(true).catch(function(){});
+      if (inline) welcomeOpenVaultApprovals(inlineTarget).catch(function(){});
     };
   });
   list.querySelectorAll('[data-club-action]').forEach(function(button) {
@@ -1287,6 +1304,7 @@ async function welcomeOpenVaultApprovals() {
       if (!list.querySelector('.welcome-slot-approval-row')) list.innerHTML = '<div class="welcome-slot-approvals-empty">No pending approvals.</div>';
       if (typeof syncToLocal === 'function' && button.dataset.clubAction === 'approve') syncToLocal().catch(function(){});
       if (typeof scsPrefetchWelcomeHubData === 'function') scsPrefetchWelcomeHubData(true).catch(function(){});
+      if (inline) welcomeOpenVaultApprovals(inlineTarget).catch(function(){});
     };
   });
 }
