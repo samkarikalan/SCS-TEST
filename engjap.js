@@ -5403,3 +5403,103 @@ Object.assign(translations.zh, { selectedClub: '已选择的俱乐部', selectAc
 
 // Keep every supported language complete. When a maintained translation is unavailable, use Simple English.
 ['jp','kr','vi','zh'].forEach(function(lang){ Object.keys(translations.en).forEach(function(key){ if (!Object.prototype.hasOwnProperty.call(translations[lang], key) || translations[lang][key] == null || translations[lang][key] === '') translations[lang][key] = translations.en[key]; }); });
+
+// V619: New UI labels, using the existing translation dictionaries and settings picker.
+Object.assign(translations.en, {
+  "adminApprovalRequired": "Admin approval required",
+  "broadcast30Min": "30 min broadcast",
+  "broadcastInviteDesc": "Broadcast to SCS users for 30 minutes.",
+  "checkingTemplate": "Checking template…",
+  "chooseFromPhotos": "Choose from Photos",
+  "continueWithEmail": "Continue with email",
+  "continueWithGoogle": "Continue with Google",
+  "continueWithLine": "Continue with LINE",
+  "createAccountWithEmail": "Create Account with Email",
+  "createSlot": "CREATE SLOT",
+  "directJoinNoApproval": "Direct join (no approval)",
+  "draftPost": "Draft / Post",
+  "emailAccountChoice": "Use an existing account or create a new one.",
+  "fontPreview": "Font Preview",
+  "gameAlgorithm": "Game Algorithm",
+  "gameFormat": "Game Format",
+  "hubBookedSlots": "Booked Slots",
+  "hubClubs": "Clubs",
+  "hubDraft": "Draft",
+  "hubMembers": "Members",
+  "hubPoints": "Points",
+  "hubPosted": "Posted",
+  "hubRating": "Rating",
+  "hubUnpaid": "Unpaid",
+  "invite": "Invite",
+  "invitePlayers": "Invite Players",
+  "invitePlayersDesc": "Invite new players to your club",
+  "invitePublicStep": "3. Invite Public",
+  "loginWithEmail": "Login with Email",
+  "minimumRating": "Minimum Rating",
+  "mixed": "Mixed",
+  "myHub": "My Hub",
+  "myHubDescription": "View your profile, slots, payments and your activity overview.",
+  "newSlotsPosted": "New slots posted",
+  "nicknameInThisClub": "Your nickname in this club",
+  "numberOfCourts": "Number of Courts",
+  "orEnterAnotherNickname": "or enter another nickname",
+  "orLabel": "or",
+  "otherSignInMethod": "Other sign-in method",
+  "playerCardAction1": "Book Slots",
+  "playerCardAction2": "View Ranks",
+  "playerModeSetup": "Player mode setup",
+  "publish": "Publish",
+  "randomPlayersOrder": "Random Players Order",
+  "randomPlayersOrderDesc": "Flexible player selection during the first rest cycle.",
+  "removePhoto": "Remove Photo",
+  "roundIModeDescription": "Prepared first, live when needed, synced when the session ends.",
+  "roundManager": "Round Manager",
+  "roundManagerDescription": "Manage rounds, players, pairings and match progress.",
+  "roundsTemplate": "Rounds Template",
+  "scanToJoinRequest": "Scan to send a join request",
+  "schedule": "Schedule",
+  "searchClubJoinHelp": "Search for your club below and send a join request. Once approved by your organiser, you can watch live sessions and vie",
+  "session": "Session",
+  "shareInviteLinkDesc": "Copy and share the invite link with anyone.",
+  "shareLinkStep": "1. Share link",
+  "showQrDesc": "Let others scan the QR code to send a join request.",
+  "showQrStep": "2. Show QR",
+  "signUpFree": "Sign Up Free",
+  "slotManager": "Slot Manager",
+  "slotManagerDescription": "Create slots, manage players and club activities.",
+  "statsShownHome": "Your stats are shown on the home screen.",
+  "stopPublicInvite": "Stop public invite",
+  "subscribeUpgrade": "Subscribe / Upgrade",
+  "takePhoto": "Take Photo",
+  "typeClubName": "Type club name...",
+  "useTemplates": "Use Templates",
+  "useTemplatesDesc": "Use a matching prepared template when available.",
+  "welcomePlayerMode": "Welcome to Player mode",
+  "welcomeSubtitle": "Your all-in-one platform for players, organisers and club managers."
+});
+(function(){ const localized = {"adminApprovalRequired": "管理者の承認が必要", "broadcast30Min": "30分間の通知", "broadcastInviteDesc": "SCSユーザーに30分間通知します。", "checkingTemplate": "テンプレートを確認中…", "chooseFromPhotos": "写真から選ぶ", "continueWithEmail": "メールで続ける", "continueWithGoogle": "Googleで続ける", "continueWithLine": "LINEで続ける", "createAccountWithEmail": "メールでアカウント作成", "createSlot": "枠を作成", "directJoinNoApproval": "承認なしで直接参加", "draftPost": "下書き／投稿", "emailAccountChoice": "既存のアカウントを使用するか、新規作成してください。", "fontPreview": "フォントプレビュー", "gameAlgorithm": "試合アルゴリズム", "gameFormat": "試合形式", "hubBookedSlots": "予約済み枠", "hubClubs": "クラブ", "hubDraft": "下書き", "hubMembers": "メンバー", "hubPoints": "ポイント", "hubPosted": "投稿済み", "hubRating": "レーティング", "hubUnpaid": "未払い", "invite": "招待", "invitePlayers": "選手を招待", "invitePlayersDesc": "新しい選手をクラブに招待します", "invitePublicStep": "3. 一般公開で招待", "loginWithEmail": "メールでログイン", "minimumRating": "最低レーティング", "mixed": "混合", "myHub": "マイハブ", "myHubDescription": "プロフィール、枠、支払い、活動を確認します。", "newSlotsPosted": "新しい募集枠", "nicknameInThisClub": "このクラブでのニックネーム", "numberOfCourts": "コート数", "orEnterAnotherNickname": "または別のニックネームを入力", "orLabel": "または", "otherSignInMethod": "その他のログイン方法", "playerCardAction1": "枠を予約", "playerCardAction2": "ランキングを見る", "playerModeSetup": "プレイヤーモード設定", "publish": "公開", "randomPlayersOrder": "選手順をランダムにする", "randomPlayersOrderDesc": "最初の休憩サイクルでは選手を柔軟に選択します。", "removePhoto": "写真を削除", "roundIModeDescription": "事前準備し、必要に応じてライブで進行・同期します。", "roundManager": "ラウンド管理", "roundManagerDescription": "ラウンド、選手、ペア、試合の進行を管理します。", "roundsTemplate": "ラウンドテンプレート", "scanToJoinRequest": "スキャンして参加申請", "schedule": "スケジュール", "searchClubJoinHelp": "クラブを検索して参加を申請してください。", "session": "セッション", "shareInviteLinkDesc": "招待リンクをコピーして共有します。", "shareLinkStep": "1. リンクを共有", "showQrDesc": "QRコードを読み取って参加申請できます。", "showQrStep": "2. QRを表示", "signUpFree": "無料登録", "slotManager": "スロット管理", "slotManagerDescription": "枠、選手、クラブ活動を管理します。", "statsShownHome": "統計はホーム画面に表示されます。", "stopPublicInvite": "公開招待を停止", "subscribeUpgrade": "購読・アップグレード", "takePhoto": "写真を撮る", "typeClubName": "クラブ名を入力…", "useTemplates": "テンプレートを使用", "useTemplatesDesc": "利用可能なテンプレートを使用します。", "welcomePlayerMode": "プレイヤーモードへようこそ", "welcomeSubtitle": "選手、主催者、クラブのための総合プラットフォーム"};
+  Object.keys(localized).forEach(function(key){ if (!translations.jp[key] || translations.jp[key] === translations.en[key]) translations.jp[key] = localized[key]; });
+})();
+(function(){ const localized = {"adminApprovalRequired": "관리자 승인이 필요합니다", "broadcast30Min": "30분 알림", "broadcastInviteDesc": "SCS 사용자에게 30분 동안 알립니다.", "checkingTemplate": "템플릿 확인 중…", "chooseFromPhotos": "사진에서 선택", "continueWithEmail": "이메일로 계속", "continueWithGoogle": "Google로 계속", "continueWithLine": "LINE으로 계속", "createAccountWithEmail": "이메일로 계정 만들기", "createSlot": "슬롯 만들기", "directJoinNoApproval": "승인 없이 바로 참가", "draftPost": "초안 / 게시", "emailAccountChoice": "기존 계정을 사용하거나 새로 만드세요.", "fontPreview": "글꼴 미리보기", "gameAlgorithm": "경기 알고리즘", "gameFormat": "경기 형식", "hubBookedSlots": "예약된 슬롯", "hubClubs": "클럽", "hubDraft": "초안", "hubMembers": "회원", "hubPoints": "포인트", "hubPosted": "게시됨", "hubRating": "평점", "hubUnpaid": "미결제", "invite": "초대", "invitePlayers": "선수 초대", "invitePlayersDesc": "새 선수를 클럽에 초대합니다", "invitePublicStep": "3. 공개 초대", "loginWithEmail": "이메일로 로그인", "minimumRating": "최소 평점", "mixed": "혼합", "myHub": "내 허브", "myHubDescription": "프로필, 슬롯, 결제 및 활동을 확인합니다.", "newSlotsPosted": "새로 등록된 슬롯", "nicknameInThisClub": "이 클럽에서 사용할 별명", "numberOfCourts": "코트 수", "orEnterAnotherNickname": "또는 다른 별명 입력", "orLabel": "또는", "otherSignInMethod": "다른 로그인 방법", "playerCardAction1": "슬롯 예약", "playerCardAction2": "순위 보기", "playerModeSetup": "플레이어 모드 설정", "publish": "게시", "randomPlayersOrder": "선수 순서 무작위", "randomPlayersOrderDesc": "첫 휴식 주기에는 선수를 유연하게 선택합니다.", "removePhoto": "사진 삭제", "roundIModeDescription": "미리 준비하고 필요할 때 실시간 진행 및 동기화합니다.", "roundManager": "라운드 관리자", "roundManagerDescription": "라운드, 선수, 페어 및 경기 진행을 관리합니다.", "roundsTemplate": "라운드 템플릿", "scanToJoinRequest": "스캔하여 가입 요청", "schedule": "일정", "searchClubJoinHelp": "클럽을 검색하여 가입 요청을 보내세요.", "session": "세션", "shareInviteLinkDesc": "초대 링크를 복사해 공유합니다.", "shareLinkStep": "1. 링크 공유", "showQrDesc": "QR 코드를 스캔해 가입을 요청할 수 있습니다.", "showQrStep": "2. QR 표시", "signUpFree": "무료 가입", "slotManager": "슬롯 관리자", "slotManagerDescription": "슬롯, 선수 및 클럽 활동을 관리합니다.", "statsShownHome": "통계는 홈 화면에 표시됩니다.", "stopPublicInvite": "공개 초대 중지", "subscribeUpgrade": "구독 / 업그레이드", "takePhoto": "사진 찍기", "typeClubName": "클럽 이름 입력…", "useTemplates": "템플릿 사용", "useTemplatesDesc": "사용 가능한 템플릿을 사용합니다.", "welcomePlayerMode": "플레이어 모드에 오신 것을 환영합니다", "welcomeSubtitle": "선수, 주최자, 클럽을 위한 통합 플랫폼"};
+  Object.keys(localized).forEach(function(key){ if (!translations.kr[key] || translations.kr[key] === translations.en[key]) translations.kr[key] = localized[key]; });
+})();
+(function(){ const localized = {"adminApprovalRequired": "Cần quản trị viên phê duyệt", "broadcast30Min": "Phát thông báo 30 phút", "broadcastInviteDesc": "Thông báo tới người dùng SCS trong 30 phút.", "checkingTemplate": "Đang kiểm tra mẫu…", "chooseFromPhotos": "Chọn từ ảnh", "continueWithEmail": "Tiếp tục bằng email", "continueWithGoogle": "Tiếp tục với Google", "continueWithLine": "Tiếp tục với LINE", "createAccountWithEmail": "Tạo tài khoản bằng email", "createSlot": "Tạo lịch chơi", "directJoinNoApproval": "Tham gia trực tiếp (không cần duyệt)", "draftPost": "Nháp / Đăng", "emailAccountChoice": "Dùng tài khoản hiện có hoặc tạo tài khoản mới.", "fontPreview": "Xem trước phông chữ", "gameAlgorithm": "Thuật toán trận đấu", "gameFormat": "Thể thức thi đấu", "hubBookedSlots": "Lịch đã đặt", "hubClubs": "Câu lạc bộ", "hubDraft": "Bản nháp", "hubMembers": "Thành viên", "hubPoints": "Điểm", "hubPosted": "Đã đăng", "hubRating": "Xếp hạng", "hubUnpaid": "Chưa thanh toán", "invite": "Mời", "invitePlayers": "Mời người chơi", "invitePlayersDesc": "Mời người chơi mới vào câu lạc bộ", "invitePublicStep": "3. Mời công khai", "loginWithEmail": "Đăng nhập bằng email", "minimumRating": "Điểm tối thiểu", "mixed": "Đôi nam nữ", "myHub": "Trung tâm của tôi", "myHubDescription": "Xem hồ sơ, lịch chơi, thanh toán và hoạt động.", "newSlotsPosted": "Lịch chơi mới đăng", "nicknameInThisClub": "Biệt danh trong câu lạc bộ", "numberOfCourts": "Số sân", "orEnterAnotherNickname": "hoặc nhập biệt danh khác", "orLabel": "hoặc", "otherSignInMethod": "Cách đăng nhập khác", "playerCardAction1": "Đặt lịch chơi", "playerCardAction2": "Xem xếp hạng", "playerModeSetup": "Thiết lập chế độ người chơi", "publish": "Đăng", "randomPlayersOrder": "Thứ tự người chơi ngẫu nhiên", "randomPlayersOrderDesc": "Chọn người chơi linh hoạt trong lượt nghỉ đầu.", "removePhoto": "Xóa ảnh", "roundIModeDescription": "Chuẩn bị trước, chạy trực tiếp và đồng bộ khi cần.", "roundManager": "Quản lý vòng đấu", "roundManagerDescription": "Quản lý vòng đấu, người chơi, cặp đôi và tiến độ trận.", "roundsTemplate": "Mẫu vòng đấu", "scanToJoinRequest": "Quét để gửi yêu cầu tham gia", "schedule": "Lịch trình", "searchClubJoinHelp": "Tìm câu lạc bộ và gửi yêu cầu tham gia.", "session": "Buổi chơi", "shareInviteLinkDesc": "Sao chép và chia sẻ liên kết mời.", "shareLinkStep": "1. Chia sẻ liên kết", "showQrDesc": "Quét mã QR để gửi yêu cầu tham gia.", "showQrStep": "2. Hiển thị QR", "signUpFree": "Đăng ký miễn phí", "slotManager": "Quản lý lịch chơi", "slotManagerDescription": "Tạo lịch chơi, quản lý người chơi và hoạt động CLB.", "statsShownHome": "Thống kê hiển thị trên trang chủ.", "stopPublicInvite": "Dừng lời mời công khai", "subscribeUpgrade": "Đăng ký / Nâng cấp", "takePhoto": "Chụp ảnh", "typeClubName": "Nhập tên câu lạc bộ…", "useTemplates": "Sử dụng mẫu", "useTemplatesDesc": "Dùng mẫu phù hợp nếu có.", "welcomePlayerMode": "Chào mừng đến chế độ người chơi", "welcomeSubtitle": "Nền tảng dành cho người chơi, ban tổ chức và CLB"};
+  Object.keys(localized).forEach(function(key){ if (!translations.vi[key] || translations.vi[key] === translations.en[key]) translations.vi[key] = localized[key]; });
+})();
+(function(){ const localized = {"adminApprovalRequired": "需要管理员批准", "broadcast30Min": "广播30分钟", "broadcastInviteDesc": "向 SCS 用户广播30分钟。", "checkingTemplate": "正在检查模板…", "chooseFromPhotos": "从照片中选择", "continueWithEmail": "使用邮箱继续", "continueWithGoogle": "使用 Google 继续", "continueWithLine": "使用 LINE 继续", "createAccountWithEmail": "使用邮箱创建账户", "createSlot": "创建场次", "directJoinNoApproval": "直接加入（无需批准）", "draftPost": "草稿／发布", "emailAccountChoice": "使用现有账户或创建新账户。", "fontPreview": "字体预览", "gameAlgorithm": "比赛算法", "gameFormat": "比赛形式", "hubBookedSlots": "已预订场次", "hubClubs": "俱乐部", "hubDraft": "草稿", "hubMembers": "成员", "hubPoints": "积分", "hubPosted": "已发布", "hubRating": "评分", "hubUnpaid": "未付款", "invite": "邀请", "invitePlayers": "邀请球员", "invitePlayersDesc": "邀请新球员加入俱乐部", "invitePublicStep": "3. 公开邀请", "loginWithEmail": "使用邮箱登录", "minimumRating": "最低评分", "mixed": "混合", "myHub": "我的中心", "myHubDescription": "查看个人资料、场次、付款及活动。", "newSlotsPosted": "新发布的场次", "nicknameInThisClub": "在此俱乐部的昵称", "numberOfCourts": "场地数量", "orEnterAnotherNickname": "或输入其他昵称", "orLabel": "或", "otherSignInMethod": "其他登录方式", "playerCardAction1": "预订场次", "playerCardAction2": "查看排名", "playerModeSetup": "球员模式设置", "publish": "发布", "randomPlayersOrder": "随机球员顺序", "randomPlayersOrderDesc": "首轮休息周期内灵活选择球员。", "removePhoto": "删除照片", "roundIModeDescription": "提前准备，需要时实时运行并同步。", "roundManager": "轮次管理", "roundManagerDescription": "管理轮次、球员、配对及比赛进度。", "roundsTemplate": "轮次模板", "scanToJoinRequest": "扫描发送加入申请", "schedule": "日程", "searchClubJoinHelp": "搜索俱乐部并发送加入申请。", "session": "场次", "shareInviteLinkDesc": "复制并分享邀请链接。", "shareLinkStep": "1. 分享链接", "showQrDesc": "扫描二维码发送加入申请。", "showQrStep": "2. 显示二维码", "signUpFree": "免费注册", "slotManager": "场次管理", "slotManagerDescription": "创建场次并管理球员和俱乐部活动。", "statsShownHome": "统计信息显示在主页。", "stopPublicInvite": "停止公开邀请", "subscribeUpgrade": "订阅／升级", "takePhoto": "拍照", "typeClubName": "输入俱乐部名称…", "useTemplates": "使用模板", "useTemplatesDesc": "有合适模板时使用。", "welcomePlayerMode": "欢迎使用球员模式", "welcomeSubtitle": "面向球员、组织者和俱乐部的一站式平台"};
+  Object.keys(localized).forEach(function(key){ if (!translations.zh[key] || translations.zh[key] === translations.en[key]) translations.zh[key] = localized[key]; });
+})();
+
+// V620: complete remaining referenced keys and untranslated interface labels.
+Object.assign(translations.en, {"all": "All", "clubAndSlotRequestApproved": "Club membership and slot approved", "clubAndSlotRequestRejected": "Club and slot requests rejected", "noPlayableSlot": "No playable slot is available now.", "startSessionNotReady": "This slot is not ready to start yet.", "unknownClub": "Club"} );
+Object.assign(translations.jp, {"all": "すべて", "clubAndSlotRequestApproved": "クラブ参加と枠を承認しました", "clubAndSlotRequestRejected": "クラブと枠の申請を却下しました", "noPlayableSlot": "現在プレイ可能な枠がありません。", "startSessionNotReady": "この枠はまだ開始できません。", "unknownClub": "クラブ", "roundShort": "回", "adminBadge": "管理者", "userBadge": "ユーザー", "viewerBadge": "閲覧者", "liveBadge": "ライブ", "newBadge": "新規", "readyBadge": "準備完了", "setupBadge": "設定", "vsLabel": "対", "basic": "ベーシック"} );
+Object.assign(translations.kr, {"all": "전체", "clubAndSlotRequestApproved": "클럽 가입 및 슬롯 승인됨", "clubAndSlotRequestRejected": "클럽 및 슬롯 요청이 거절됨", "noPlayableSlot": "현재 플레이 가능한 슬롯이 없습니다.", "startSessionNotReady": "이 슬롯은 아직 시작할 수 없습니다.", "unknownClub": "클럽", "roundShort": "라운드", "adminBadge": "관리자", "userBadge": "사용자", "viewerBadge": "뷰어", "liveBadge": "라이브", "newBadge": "신규", "readyBadge": "준비 완료", "setupBadge": "설정", "vsLabel": "대", "viewer": "관전자"} );
+Object.assign(translations.vi, {"all": "Tất cả", "clubAndSlotRequestApproved": "Đã duyệt tham gia CLB và lịch chơi", "clubAndSlotRequestRejected": "Đã từ chối yêu cầu CLB và lịch chơi", "noPlayableSlot": "Hiện không có lịch chơi khả dụng.", "startSessionNotReady": "Lịch chơi này chưa sẵn sàng bắt đầu.", "unknownClub": "Câu lạc bộ", "roundShort": "Vòng", "adminBadge": "QUẢN TRỊ", "userBadge": "NGƯỜI DÙNG", "viewerBadge": "NGƯỜI XEM", "liveBadge": "TRỰC TIẾP", "setupBadge": "THIẾT LẬP", "vsLabel": "ĐẤU", "viewer": "Người xem", "email": "Email", "emailLabel": "Email", "slotLabel": "Buổi chơi", "markPaid": "Đánh dấu đã trả", "xlarge": "Rất lớn"} );
+Object.assign(translations.zh, {"all": "全部", "clubAndSlotRequestApproved": "已批准加入俱乐部及场次", "clubAndSlotRequestRejected": "已拒绝俱乐部及场次申请", "noPlayableSlot": "目前没有可参加的场次。", "startSessionNotReady": "该场次尚未准备好开始。", "unknownClub": "俱乐部", "roundShort": "轮", "adminBadge": "管理员", "userBadge": "用户", "viewerBadge": "查看者", "liveBadge": "直播", "setupBadge": "设置", "vsLabel": "对阵", "viewer": "查看者"} );
+
+// V621: dynamic labels used in active modules.
+Object.assign(translations.en, {"scsFullRoundSchedule": "Full Round Schedule", "scsMarkCompleted": "Mark Completed", "scsStartScoring": "Start scoring", "scsMatchHistory": "Match History", "scsNoMatchesYet": "No matches played yet.", "scsCourtAssigned": "Court Assigned!", "scsAvailableMatchCenter": "Available in Match Center", "scsAssignCourt": "Assign Court", "scsFinishSendResult": "Finish & Send Result", "scsSaveChanges": "Save Changes", "scsFinishScoring": "Finish Scoring", "scsSending": "Sending…", "scsSaving": "Saving…", "scsChooseHub": "Choose your hub", "scsNoSlotToday": "No slot today", "scsApprovePlayers": "Approve Players", "scsLoginToClub": "Login to a club", "scsSigningIn": "Signing in...", "scsRegistering": "Registering...", "scsLoadingPlayers": "Loading players…", "scsSelectSubClub": "Select a sub-club first.", "scsSelectOnePlayer": "Select at least one player."});
+Object.assign(translations.jp, {"scsFullRoundSchedule": "全ラウンド日程", "scsMarkCompleted": "完了にする", "scsStartScoring": "得点入力を開始", "scsMatchHistory": "試合履歴", "scsNoMatchesYet": "まだ試合がありません。", "scsCourtAssigned": "コートを割り当てました！", "scsAvailableMatchCenter": "マッチセンターで利用可能", "scsAssignCourt": "コートを割り当て", "scsFinishSendResult": "終了して結果を送信", "scsSaveChanges": "変更を保存", "scsFinishScoring": "得点入力を終了", "scsSending": "送信中…", "scsSaving": "保存中…", "scsChooseHub": "ハブを選択", "scsNoSlotToday": "本日の枠はありません", "scsApprovePlayers": "選手を承認", "scsLoginToClub": "クラブにログイン", "scsSigningIn": "ログイン中…", "scsRegistering": "登録中…", "scsLoadingPlayers": "選手を読み込み中…", "scsSelectSubClub": "先にサブクラブを選択してください。", "scsSelectOnePlayer": "少なくとも1人の選手を選択してください。"});
+Object.assign(translations.kr, {"scsFullRoundSchedule": "전체 라운드 일정", "scsMarkCompleted": "완료 표시", "scsStartScoring": "점수 기록 시작", "scsMatchHistory": "경기 기록", "scsNoMatchesYet": "아직 진행된 경기가 없습니다.", "scsCourtAssigned": "코트 배정 완료!", "scsAvailableMatchCenter": "매치 센터에서 이용 가능", "scsAssignCourt": "코트 배정", "scsFinishSendResult": "종료 및 결과 전송", "scsSaveChanges": "변경 사항 저장", "scsFinishScoring": "점수 기록 종료", "scsSending": "전송 중…", "scsSaving": "저장 중…", "scsChooseHub": "허브 선택", "scsNoSlotToday": "오늘 슬롯 없음", "scsApprovePlayers": "선수 승인", "scsLoginToClub": "클럽 로그인", "scsSigningIn": "로그인 중…", "scsRegistering": "등록 중…", "scsLoadingPlayers": "선수 불러오는 중…", "scsSelectSubClub": "먼저 하위 클럽을 선택하세요.", "scsSelectOnePlayer": "선수를 한 명 이상 선택하세요."});
+Object.assign(translations.vi, {"scsFullRoundSchedule": "Lịch toàn bộ vòng đấu", "scsMarkCompleted": "Đánh dấu hoàn thành", "scsStartScoring": "Bắt đầu ghi điểm", "scsMatchHistory": "Lịch sử trận đấu", "scsNoMatchesYet": "Chưa có trận đấu nào.", "scsCourtAssigned": "Đã phân sân!", "scsAvailableMatchCenter": "Có trong Trung tâm trận đấu", "scsAssignCourt": "Phân sân", "scsFinishSendResult": "Kết thúc và gửi kết quả", "scsSaveChanges": "Lưu thay đổi", "scsFinishScoring": "Kết thúc ghi điểm", "scsSending": "Đang gửi…", "scsSaving": "Đang lưu…", "scsChooseHub": "Chọn trung tâm", "scsNoSlotToday": "Hôm nay không có lịch chơi", "scsApprovePlayers": "Duyệt người chơi", "scsLoginToClub": "Đăng nhập câu lạc bộ", "scsSigningIn": "Đang đăng nhập…", "scsRegistering": "Đang đăng ký…", "scsLoadingPlayers": "Đang tải người chơi…", "scsSelectSubClub": "Hãy chọn câu lạc bộ phụ trước.", "scsSelectOnePlayer": "Chọn ít nhất một người chơi."});
+Object.assign(translations.zh, {"scsFullRoundSchedule": "完整轮次日程", "scsMarkCompleted": "标记完成", "scsStartScoring": "开始计分", "scsMatchHistory": "比赛记录", "scsNoMatchesYet": "尚无已进行的比赛。", "scsCourtAssigned": "场地分配成功！", "scsAvailableMatchCenter": "可在比赛中心查看", "scsAssignCourt": "分配场地", "scsFinishSendResult": "结束并发送结果", "scsSaveChanges": "保存更改", "scsFinishScoring": "结束计分", "scsSending": "正在发送…", "scsSaving": "正在保存…", "scsChooseHub": "选择工作区", "scsNoSlotToday": "今天没有场次", "scsApprovePlayers": "批准球员", "scsLoginToClub": "登录俱乐部", "scsSigningIn": "正在登录…", "scsRegistering": "正在注册…", "scsLoadingPlayers": "正在加载球员…", "scsSelectSubClub": "请先选择子俱乐部。", "scsSelectOnePlayer": "请至少选择一名球员。"});

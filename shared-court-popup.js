@@ -8,10 +8,10 @@ function showConfirmation(title,court){
  const notice=document.createElement('div');notice.className='scs-court-confirmation';notice.setAttribute('role','status');notice.setAttribute('aria-live','polite');
  const panel=document.createElement('div');panel.className='scs-court-confirmation-panel';
  const mark=document.createElement('span');mark.className='scs-court-confirmation-check';mark.textContent='✓';mark.setAttribute('aria-hidden','true');
- const heading=document.createElement('strong');heading.textContent='Court Assigned!';
+ const heading=document.createElement('strong');heading.textContent=(typeof t === 'function' ? t('scsCourtAssigned') : "Court Assigned!");
  const match=document.createElement('div');match.className='scs-court-confirmation-match';match.textContent=String(title||'Match');
  const location=document.createElement('div');location.className='scs-court-confirmation-location';location.textContent='Court '+court+' · Ready to start';
- const hint=document.createElement('div');hint.className='scs-court-confirmation-hint';hint.textContent='Available in Match Center';
+ const hint=document.createElement('div');hint.className='scs-court-confirmation-hint';hint.textContent=(typeof t === 'function' ? t('scsAvailableMatchCenter') : "Available in Match Center");
  panel.append(mark,heading,match,location,hint);notice.appendChild(panel);document.body.appendChild(notice);confirmation=notice;
  confirmationTimer=setTimeout(()=>{if(confirmation===notice)clearConfirmation()},1500);
 }
@@ -20,7 +20,7 @@ function open(opts){
  overlay.className='scs-court-popup-overlay';overlay.setAttribute('role','presentation');
  const modal=document.createElement('section');modal.className='scs-court-popup';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');modal.setAttribute('aria-label','Assign Court');
  const head=document.createElement('div');head.className='scs-court-popup-head';
- const h=document.createElement('h3');h.textContent='Assign Court';head.appendChild(h);
+ const h=document.createElement('h3');h.textContent=(typeof t === 'function' ? t('scsAssignCourt') : "Assign Court");head.appendChild(h);
  const x=document.createElement('button');x.type='button';x.textContent='×';x.setAttribute('aria-label','Close');x.onclick=close;head.appendChild(x);modal.appendChild(head);
  const subtitle=document.createElement('p');subtitle.textContent=String(o.title||'');modal.appendChild(subtitle);
  const choices=document.createElement('div');choices.className='scs-court-popup-choices';

@@ -1051,7 +1051,7 @@ function authShowConflictModal(user, deviceInfo) {
 
   document.getElementById('scsConflictForce').onclick = async function() {
     this.disabled = true;
-    this.textContent = 'Signing in...';
+    this.textContent = (typeof t === 'function' ? t('scsSigningIn') : "Signing in...");
     try {
       var r = await authForceLogin(_conflictPendingUser);
       if (r && r.user) {

@@ -880,12 +880,12 @@ function showMbmHistory() {
   if (!mbmEntries.length) {
     var empty = document.createElement('div');
     empty.style.cssText = 'color:var(--muted);text-align:center;padding:24px;font-size:0.9rem;';
-    empty.textContent = 'No matches played yet.';
+    empty.textContent = (typeof t === 'function' ? t('scsNoMatchesYet') : "No matches played yet.");
     container.appendChild(empty);
   } else {
     var label = document.createElement('div');
     label.style.cssText = 'font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin:14px 0 8px;padding-top:12px;border-top:1px solid var(--border2);';
-    label.textContent = 'Match History';
+    label.textContent = (typeof t === 'function' ? t('scsMatchHistory') : "Match History");
     container.appendChild(label);
 
     window._vRoundsData = allRounds;

@@ -101,7 +101,7 @@ async function saveGroupTournamentNow(){
  const indicator=el()?.querySelector('[data-group-save-status]');
  const button=el()?.querySelector('[data-group-save-now]');
  groupSaveBusy=true;if(button)button.disabled=true;
- if(indicator)indicator.textContent='Saving…';
+ if(indicator)indicator.textContent=(typeof t === 'function' ? t('scsSaving') : "Saving…");
  try{
   save();
   const snapshot=JSON.parse(localStorage.getItem(groupEventId?groupEventKey(groupEventId):KEY)||'null');

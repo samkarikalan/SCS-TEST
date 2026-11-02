@@ -20,7 +20,7 @@
     if (section) section.hidden = !enabled();
     setCount(count());
     const title = document.querySelector('.org-mode-panel-offline .org-sample-copy strong');
-    if (title && enabled()) title.textContent = 'Full Round Schedule';
+    if (title && enabled()) title.textContent = (typeof t === 'function' ? t('scsFullRoundSchedule') : "Full Round Schedule");
     else if (title) title.textContent = 'Round iMode';
   }
 

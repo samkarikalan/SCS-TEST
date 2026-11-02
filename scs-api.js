@@ -91,8 +91,8 @@ async function pickRegisteredRoster(onDone, providers={}){
  const close=()=>modal.remove();modal.querySelector('[data-cancel]').onclick=close;
  try{clubs=await registeredClubChoices();clubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});status.textContent=clubs.length?'Choose a sub-club.':'No registered sub-clubs available.'}
  catch(e){status.textContent='Unable to load clubs: '+(e.message||e)}
- sel.onchange=async()=>{names=[];list.innerHTML='';if(!sel.value)return;status.textContent='Loading players…';try{const id=sel.value;const loaded=await registeredClubPlayers(id);if(sel.value!==id)return;names=loaded;status.textContent=names.length+' registered players';list.innerHTML=names.map(n=>'<label class="scs-gt-player scs-team-level-row" style="display:flex;align-items:center;gap:10px;padding:8px"><input type="checkbox" data-name="'+esc(n)+'"><span>'+playerRow(n)+'</span></label>').join('');hydratePlayerCards()}catch(e){status.textContent='Unable to load players: '+(e.message||e)}};
- modal.querySelector('[data-done]').onclick=()=>{const club=clubs.find(c=>c.id===sel.value);if(!club){status.textContent='Select a sub-club first.';return}const selected=[...list.querySelectorAll('input[data-name]:checked')].map(x=>x.dataset.name);if(!selected.length){status.textContent='Select at least one player.';return}close();onDone({clubId:club.id,clubName:club.name,players:selected})};
+ sel.onchange=async()=>{names=[];list.innerHTML='';if(!sel.value)return;status.textContent=(typeof t === 'function' ? t('scsLoadingPlayers') : "Loading players…");try{const id=sel.value;const loaded=await registeredClubPlayers(id);if(sel.value!==id)return;names=loaded;status.textContent=names.length+' registered players';list.innerHTML=names.map(n=>'<label class="scs-gt-player scs-team-level-row" style="display:flex;align-items:center;gap:10px;padding:8px"><input type="checkbox" data-name="'+esc(n)+'"><span>'+playerRow(n)+'</span></label>').join('');hydratePlayerCards()}catch(e){status.textContent='Unable to load players: '+(e.message||e)}};
+ modal.querySelector('[data-done]').onclick=()=>{const club=clubs.find(c=>c.id===sel.value);if(!club){status.textContent=(typeof t === 'function' ? t('scsSelectSubClub') : "Select a sub-club first.");return}const selected=[...list.querySelectorAll('input[data-name]:checked')].map(x=>x.dataset.name);if(!selected.length){status.textContent=(typeof t === 'function' ? t('scsSelectOnePlayer') : "Select at least one player.");return}close();onDone({clubId:club.id,clubName:club.name,players:selected})};
 }
 api.players.pickRegisteredRoster=pickRegisteredRoster;
 
@@ -120,7 +120,7 @@ api.players.select=async function({selected=[],onDone,onCancel}={}){
  try{const parent=await timed(()=>scsResolveOrganizerClub());clubs=await timed(()=>dbGetSubClubs(parent.id));clubs.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.name;sel.appendChild(o)});status.textContent=clubs.length?'Choose a sub-club to select players.':'No registered sub-clubs found.'}
  catch(e){status.textContent='Could not load sub-clubs: '+(e.message||e)}
  sel.onchange=async()=>{
-  const id=sel.value;list.innerHTML='';if(!id)return;status.textContent='Loading players…';
+  const id=sel.value;list.innerHTML='';if(!id)return;status.textContent=(typeof t === 'function' ? t('scsLoadingPlayers') : "Loading players…");
   try{
    const memberships=await timed(()=>sbGet('memberships','club_id=eq.'+encodeURIComponent(id)+'&select=nickname,player_id'));
    const ids=[...new Set((memberships||[]).map(m=>m.player_id).filter(Boolean))];let info=new Map();

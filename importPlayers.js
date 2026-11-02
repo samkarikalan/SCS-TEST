@@ -1420,7 +1420,7 @@ async function regRegisterAll() {
   if (!pending.length) return;
 
   btn.disabled = true;
-  if (feedback) { feedback.textContent = "Registering..."; feedback.className = "register-feedback"; }
+  if (feedback) { feedback.textContent = (typeof t === 'function' ? t('scsRegistering') : "Registering..."); feedback.className = "register-feedback"; }
 
   let successCount = 0;
   let failCount    = 0;

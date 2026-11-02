@@ -162,32 +162,32 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="auth.js?v=V149" defer></script>
 
-  <script src="authUI.js?v=V562" defer></script>
+  <script src="authUI.js?v=V621" defer></script>
   <script src="tournament-engine.js?v=V559" defer></script>
 
   <script src="subscription.js?v=V618" defer></script>
 
-  <script src="HomeScreen.js?v=V560" defer></script>
+  <script src="HomeScreen.js?v=V620" defer></script>
 
-  <script src="engjap.js?v=V149" defer></script>
+  <script src="engjap.js?v=V621" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V618" defer></script>
-  <script src="role-workspaces.js?v=V618" defer></script>
-  <script src="scoring.js?v=V558" defer></script>
-  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V398" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V559" defer></script>
+  <script src="role-workspaces.js?v=V620" defer></script>
+  <script src="scoring.js?v=V621" defer></script>
+  <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V621" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V621" defer></script>
   <script src="court-center.js?v=V425" defer></script>
 
-  <script src="games.js?v=V149" defer></script>
+  <script src="games.js?v=V621" defer></script>
 
   <script src="rounds.js?v=V149" defer></script>
   <script src="offline-rounds.js?v=V149" defer></script>
-  <script src="full-schedule.js?v=V149" defer></script>
-  <script src="mbm.js?v=V149" defer></script>
+  <script src="full-schedule.js?v=V621" defer></script>
+  <script src="mbm.js?v=V621" defer></script>
 
   <script src="players.js?v=V149" defer></script>
 
-  <script src="importPlayers.js?v=V281" defer></script>
+  <script src="importPlayers.js?v=V621" defer></script>
 
   <script src="settings.js?v=V553" defer></script>
 
@@ -714,7 +714,7 @@ function scsStartKnockoutTournament(){
   alert('Tournament is still loading. Please try again.');
 }
 </script>
-<link rel="stylesheet" href="./group-tournament.css?v=V414"><script src="./shared-match-center.js?v=V395" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V321"><link rel="stylesheet" href="./shared-match-card.css?v=V395"><script src="./scs-api.js?v=V463" defer></script><script src="./group-tournament.js?v=V559" defer></script><script src="./team-tournament.js?v=V558" defer></script>
+<link rel="stylesheet" href="./group-tournament.css?v=V414"><script src="./shared-match-center.js?v=V395" defer></script><link rel="stylesheet" href="./team-tournament.css?v=V321"><link rel="stylesheet" href="./shared-match-card.css?v=V395"><script src="./scs-api.js?v=V621" defer></script><script src="./group-tournament.js?v=V621" defer></script><script src="./team-tournament.js?v=V621" defer></script>
 
 <style id="scs-tournament-manager-v1">
 .scs-tmgr-overlay{position:fixed;inset:0;z-index:10038;background:rgba(3,8,18,.78);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;padding:16px}
@@ -1215,7 +1215,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
         <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('tournaments')"><span>🏆</span> Tournaments</button>
         <button type="button" data-scs-roles="manager" onclick="scsRoleMenuNavigate('dashboard')"><span>▥</span> Dashboard</button>
         <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('settings')"><span>⚙</span> Settings</button>
-        <button type="button" data-scs-roles="member manager" data-scs-manager-only onclick="this.closest('details').open=false;scsSwitchRoleWorkspace()"><span>⇄</span> Switch Workspace</button>
+        <button type="button" data-scs-roles="member manager" onclick="this.closest('details').open=false;scsSwitchRoleWorkspace()"><span>⇄</span> Switch Workspace</button>
         <button type="button" data-scs-roles="member manager" onclick="scsRoleMenuNavigate('account')"><span>◎</span> Account</button>
       </nav>
     </details>
@@ -2713,7 +2713,6 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <section id="clubsOwnedPanel" class="clubs-tab-panel" role="tabpanel" aria-labelledby="clubsOwnedTab">
     <div class="jc-section-title">Clubs I manage</div>
     <div id="myOwnedClubsListInner"><div class="jc-empty">Loading...</div></div>
-    <button type="button" class="clubs-create-button" onclick="clubsPageCreateClub()">＋ Create a Club</button>
   </section>
 
   <section id="clubsJoinedPanel" class="clubs-tab-panel" role="tabpanel" aria-labelledby="clubsJoinedTab" hidden>
@@ -4239,7 +4238,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V618', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V621', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when

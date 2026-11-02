@@ -96,7 +96,7 @@ async function koSaveProgressNow(){
  const button=root?.querySelector('[data-ko-save-progress]');
  const indicator=root?.querySelector('[data-ko-save-progress-status]');
  koManualSaveBusy=true;if(button)button.disabled=true;
- if(indicator)indicator.textContent='Saving…';
+ if(indicator)indicator.textContent=(typeof t === 'function' ? t('scsSaving') : "Saving…");
  try{
   if(window.SCSCourtCenter?.tournamentGame&&Array.isArray(draw.matches))draw.matches.forEach(m=>koCaptureMatchScore(m.id,SCSCourtCenter.tournamentGame(m.id)));
   await localTournamentSave(draw);

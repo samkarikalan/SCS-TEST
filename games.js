@@ -473,7 +473,7 @@ async function toggleRound() {
     btn.classList.remove("start-state", "end");
     btn.classList.add("round-active");
     textEl.removeAttribute("data-i18n");
-    textEl.textContent = "Mark Completed";
+    textEl.textContent = (typeof t === 'function' ? t('scsMarkCompleted') : "Mark Completed");
     icon.textContent = " ✓";
   }
 }
@@ -2000,7 +2000,7 @@ function renderGames(data, roundIndex) {
       if (!game.score && window.SCSScoring && typeof window.SCSScoring.open === 'function') {
         const startScore = document.createElement('button');
         startScore.type = 'button';
-        startScore.textContent = 'Start scoring';
+        startScore.textContent = (typeof t === 'function' ? t('scsStartScoring') : "Start scoring");
         startScore.addEventListener('click', function() { window.SCSScoring.open(); });
         board.appendChild(startScore);
       }

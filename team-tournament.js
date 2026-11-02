@@ -21,7 +21,7 @@ async function saveTeamTournamentNow(){
  teamSaveBusy=true;
  const btn=root()?.querySelector('[data-team-save]');
  if(btn)btn.disabled=true;
- if(indicator)indicator.textContent='Saving…';
+ if(indicator)indicator.textContent=(typeof t === 'function' ? t('scsSaving') : "Saving…");
  try{
   localStorage.setItem(KEY,JSON.stringify(state));
   if(typeof window.dbSaveTournamentState!=='function')throw Error('Server save is unavailable. Saved on this device only.');
