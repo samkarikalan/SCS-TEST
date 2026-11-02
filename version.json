@@ -1,5 +1,1 @@
-{
-  "version": "V607",
-  "build": "2026-11-02",
-  "scope": "Club setup full page with hamburger; revert V606 history"
-}
+{"version": "V608", "build": "2026-11-02", "scope": "Dashboard duplicate header and X removal"}
