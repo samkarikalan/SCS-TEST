@@ -167,13 +167,13 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="subscription.js?v=V618" defer></script>
 
-  <script src="HomeScreen.js?v=V625" defer></script>
+  <script src="HomeScreen.js?v=V626" defer></script>
 
-  <script src="engjap.js?v=V625" defer></script>
+  <script src="engjap.js?v=V626" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V618" defer></script>
-  <script src="role-workspaces.js?v=V625" defer></script>
+  <script src="role-workspaces.js?v=V626" defer></script>
   <script src="scoring.js?v=V621" defer></script>
   <link rel="stylesheet" href="./shared-court-popup.css?v=V398"><script src="./shared-court-popup.js?v=V621" defer></script><script src="tournament-team-picker.js?v=V400" defer></script><script src="./tournament-players-page.js?v=V403" defer></script><script src="tournament-bracket.js?v=V621" defer></script>
   <script src="court-center.js?v=V425" defer></script>
@@ -199,7 +199,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
   <script src="account-status.js?v=V557" defer></script>
 
   <script src="dashboard.js?v=V149" defer></script>
-  <script src="slots.js?v=V625" defer></script>
+  <script src="slots.js?v=V626" defer></script>
   <script src="notifications.js?v=V149" defer></script>
 
   <script src="viewer.js?v=V149" defer></script>
@@ -4238,7 +4238,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V625', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V626', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4708,12 +4708,12 @@ body[data-scs-role-workspace="manager"]:has(#scsActivityHome:not([hidden])) #scs
  <div class="scs-activity-panel scs-home-simple">
   <header class="scs-home-brand"><img src="clubs-brand.png" alt="CLUBS badminton logo" class="scs-home-logo"><div class="scs-home-brand-name"><strong>Sports Club</strong><strong>Manager</strong></div></header>
   <section aria-labelledby="scsClubActivityTitle">
-   <h2 id="scsClubActivityTitle" class="scs-club-activity-title">Club Activity</h2>
+   <h2 id="scsClubActivityTitle" class="scs-club-activity-title" data-i18n="scsClubActivity">Club Activity</h2>
    <p class="scs-club-activity-subtitle" id="scsClubActivityClubName">Active club</p>
    <div class="scs-home-menu" id="scsClubActivityList" aria-live="polite">
-    <button type="button" class="scs-home-menu-row" onclick="scsRoleMenuNavigate('slots')"><span class="scs-home-menu-icon scs-home-practice" aria-hidden="true">☀</span><span class="scs-home-menu-copy"><strong>Today's Slot</strong><small id="scsClubTodaySlot" class="scs-club-activity-loading">Loading…</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
-    <button type="button" class="scs-home-menu-row" onclick="scsRoleMenuNavigate('slots')"><span class="scs-home-menu-icon scs-home-login" aria-hidden="true">→</span><span class="scs-home-menu-copy"><strong>Next Slot</strong><small id="scsClubNextSlot" class="scs-club-activity-loading">Loading…</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
-    <button type="button" class="scs-home-menu-row" onclick="scsRoleMenuNavigate('slots')"><span class="scs-home-menu-icon scs-home-tournament" aria-hidden="true">↶</span><span class="scs-home-menu-copy"><strong>Recent Slot</strong><small id="scsClubRecentSlot" class="scs-club-activity-loading">Loading…</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
+    <button type="button" class="scs-home-menu-row" onclick="scsRoleMenuNavigate('slots')"><span class="scs-home-menu-icon scs-home-practice" aria-hidden="true">☀</span><span class="scs-home-menu-copy"><strong data-i18n="scsClubToday">Today's Slot</strong><small id="scsClubTodaySlot" class="scs-club-activity-loading">Loading…</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
+    <button type="button" class="scs-home-menu-row" onclick="scsRoleMenuNavigate('slots')"><span class="scs-home-menu-icon scs-home-login" aria-hidden="true">→</span><span class="scs-home-menu-copy"><strong data-i18n="scsClubNext">Next Slot</strong><small id="scsClubNextSlot" class="scs-club-activity-loading">Loading…</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
+    <button type="button" class="scs-home-menu-row" onclick="scsRoleMenuNavigate('slots')"><span class="scs-home-menu-icon scs-home-tournament" aria-hidden="true">↶</span><span class="scs-home-menu-copy"><strong data-i18n="scsClubRecent">Recent Slot</strong><small id="scsClubRecentSlot" class="scs-club-activity-loading">Loading…</small></span><span class="scs-home-chevron" aria-hidden="true">›</span></button>
    </div>
    <section id="scsClubHomePendingApprovals" hidden aria-label="Pending player approvals" style="margin:28px 0 18px;padding:0 4px">
      <h3 style="font-size:1.12rem;margin:0 0 14px;color:var(--text,#fff)">Pending Player Approvals <span id="scsClubHomePendingCount"></span></h3>
@@ -4769,6 +4769,7 @@ window.scsClubActivitySlotText=function(slot,empty){
  var time=String(slot.start_time||'').slice(0,5),venue=slot.venue||slot.venue_name||'Club session';
  return [slot.slot_date,time,venue].filter(Boolean).join(' · ');
 };
+var scsClubActivityI18n=function(key,fallback){try{var lang=(typeof currentLang!=='undefined'&&currentLang)||localStorage.getItem('appLanguage')||'en';return (typeof translations!=='undefined'&&translations[lang]&&translations[lang][key])||fallback}catch(_){return fallback}};
 window.scsClubActivityRefresh=async function(){
  var activeClub=null;try{if(typeof getMyClub==='function')activeClub=getMyClub()}catch(_){}
  var clubId=(activeClub&&activeClub.id)||localStorage.getItem('kbrr_vault_club_id')||localStorage.getItem('kbrr_my_club_id')||'';
@@ -4776,9 +4777,9 @@ window.scsClubActivityRefresh=async function(){
  var clubLabel=document.getElementById('scsClubActivityClubName');if(clubLabel)clubLabel.textContent=clubName;
  var todayEl=document.getElementById('scsClubTodaySlot'),nextEl=document.getElementById('scsClubNextSlot'),recentEl=document.getElementById('scsClubRecentSlot');
  if(!clubId||typeof vaultSlotsLoadRange!=='function'){
-  if(todayEl)todayEl.textContent='No slot today';if(nextEl)nextEl.textContent='No upcoming slot';if(recentEl)recentEl.textContent='No recent slot';return;
+  if(todayEl)todayEl.textContent=scsClubActivityI18n('scsNoSlotToday','No slot today');if(nextEl)nextEl.textContent=scsClubActivityI18n('scsNoUpcomingSlot','No upcoming slot');if(recentEl)recentEl.textContent=scsClubActivityI18n('scsNoRecentSlot','No recent slot');return;
  }
- [todayEl,nextEl,recentEl].forEach(function(el){if(el){el.textContent='Loading…';el.classList.add('scs-club-activity-loading')}});
+ [todayEl,nextEl,recentEl].forEach(function(el){if(el){el.textContent=scsClubActivityI18n('scsLoading','Loading…');el.classList.add('scs-club-activity-loading')}});
  try{
   var now=new Date(),start=new Date(now),end=new Date(now);start.setDate(start.getDate()-60);end.setDate(end.getDate()+90);
   var dateString=function(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
@@ -4787,10 +4788,10 @@ window.scsClubActivityRefresh=async function(){
   var todaySlot=rows.find(function(s){return s.slot_date===today});
   var nextSlot=rows.find(function(s){return s.slot_date>today});
   var recent=rows.filter(function(s){return s.slot_date<today}).pop();
-  if(todayEl)todayEl.textContent=scsClubActivitySlotText(todaySlot,'No slot today');
-  if(nextEl)nextEl.textContent=scsClubActivitySlotText(nextSlot,'No upcoming slot');
-  if(recentEl)recentEl.textContent=scsClubActivitySlotText(recent,'No recent slot');
- }catch(_){if(todayEl)todayEl.textContent='Unable to load';if(nextEl)nextEl.textContent='Unable to load';if(recentEl)recentEl.textContent='Unable to load'}
+  if(todayEl)todayEl.textContent=scsClubActivitySlotText(todaySlot,scsClubActivityI18n('scsNoSlotToday','No slot today'));
+  if(nextEl)nextEl.textContent=scsClubActivitySlotText(nextSlot,scsClubActivityI18n('scsNoUpcomingSlot','No upcoming slot'));
+  if(recentEl)recentEl.textContent=scsClubActivitySlotText(recent,scsClubActivityI18n('scsNoRecentSlot','No recent slot'));
+ }catch(_){if(todayEl)todayEl.textContent=scsClubActivityI18n('scsUnableLoad','Unable to load');if(nextEl)nextEl.textContent=scsClubActivityI18n('scsUnableLoad','Unable to load');if(recentEl)recentEl.textContent=scsClubActivityI18n('scsUnableLoad','Unable to load')}
  [todayEl,nextEl,recentEl].forEach(function(el){if(el)el.classList.remove('scs-club-activity-loading')});
 };
 window.scsActivityShowHome=function(){
@@ -4837,22 +4838,22 @@ window.scsActivityReturnHome=function(){
     </div>
     <div class="scs-tmgr-simple-intro">
       <div class="scs-tmgr-kicker">SCS · TOURNAMENT</div>
-      <h2 id="scsTmManagerTitle">Welcome to Tournament Manager</h2>
-      <p>Create, manage and follow your competitions.</p>
-      <p class="scs-tmgr-simple-hint">☰ &nbsp; Open the menu to get started</p>
+      <h2 id="scsTmManagerTitle" data-i18n="scsTmWelcome">Welcome to Tournament Manager</h2>
+      <p data-i18n="scsTmDescription">Create, manage and follow your competitions.</p>
+      <p class="scs-tmgr-simple-hint">☰ &nbsp; <span data-i18n="scsTmHint">Open the menu to get started</span></p>
     </div>
     <div class="scs-tmgr-simple-footer">Sports Club Scheduler</div>
   </section>
   <div class="scs-tmgr-side-shade" onclick="scsTournamentMenuToggle(false)" hidden></div>
   <nav id="scsTournamentSideMenu" class="scs-tmgr-side-menu" aria-label="Tournament navigation" aria-hidden="true">
     <div class="scs-tmgr-side-top"><strong>SCS</strong><button type="button" onclick="scsTournamentMenuToggle(false)" aria-label="Close tournament menu">×</button></div>
-    <button type="button" class="scs-tmgr-side-home" data-scs-roles="member" onclick="scsTournamentMenuToggle(false);scsRoleMenuNavigate('workspace-home')"><span>⌂</span>Member Home</button>
-    <button type="button" class="scs-tmgr-side-home" data-scs-roles="manager" onclick="scsTournamentMenuToggle(false);scsRoleMenuNavigate('workspace-home')"><span>⌂</span>Club Manager Home</button>
+    <button type="button" class="scs-tmgr-side-home" data-scs-roles="member" onclick="scsTournamentMenuToggle(false);scsRoleMenuNavigate('workspace-home')"><span>⌂</span><span data-i18n="scsMenuMemberHome">Member Home</span></button>
+    <button type="button" class="scs-tmgr-side-home" data-scs-roles="manager" onclick="scsTournamentMenuToggle(false);scsRoleMenuNavigate('workspace-home')"><span>⌂</span><span data-i18n="scsMenuClubHome">Club Manager Home</span></button>
     <button type="button" data-scs-roles="member" onclick="scsTournamentMenuChoose('scsTournamentManagerLive')"><span>◉</span>Watch Tournaments</button>
-    <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerMyTournaments')"><span>🏆</span>My Tournaments</button>
-    <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerStart')"><span>＋</span>New Tournament</button>
-    <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerPlayers')"><span>♙</span>Players Manager</button>
-    <button type="button" data-scs-roles="member manager" onclick="scsTournamentMenuChoose('scsTournamentManagerConduct')"><span>▣</span>Score a Match</button>
+    <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerMyTournaments')"><span>🏆</span><span data-i18n="scsMyTournamentsTitle">My Tournaments</span></button>
+    <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerStart')"><span>＋</span><span data-i18n="scsNewTournamentTitle">New Tournament</span></button>
+    <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerPlayers')"><span>♙</span><span data-i18n="scsPlayersManagerTitle">Players Manager</span></button>
+    <button type="button" data-scs-roles="member manager" onclick="scsTournamentMenuChoose('scsTournamentManagerConduct')"><span>▣</span><span data-i18n="scsScoreMatch">Score a Match</span></button>
   </nav>
 </div>
 
