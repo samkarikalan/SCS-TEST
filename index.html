@@ -169,7 +169,7 @@ body.scs-practice-shared-active #playersPage #scsRoundPlayersDone:focus-visible 
 
   <script src="HomeScreen.js?v=V626" defer></script>
 
-  <script src="engjap.js?v=V626" defer></script>
+  <script src="engjap.js?v=V629" defer></script>
 
   <script src="qrcode-generator.js?v=V149" defer></script>
   <script src="main.js?v=V618" defer></script>
@@ -4240,7 +4240,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V628', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V629', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
@@ -4851,7 +4851,7 @@ window.scsActivityReturnHome=function(){
     <div class="scs-tmgr-side-top"><strong>SCS</strong><button type="button" onclick="scsTournamentMenuToggle(false)" aria-label="Close tournament menu">×</button></div>
     <button type="button" class="scs-tmgr-side-home" data-scs-roles="member" onclick="scsTournamentMenuToggle(false);scsRoleMenuNavigate('workspace-home')"><span>⌂</span><span data-i18n="scsMenuMemberHome">Member Home</span></button>
     <button type="button" class="scs-tmgr-side-home" data-scs-roles="manager" onclick="scsTournamentMenuToggle(false);scsRoleMenuNavigate('workspace-home')"><span>⌂</span><span data-i18n="scsMenuClubHome">Club Manager Home</span></button>
-    <button type="button" data-scs-roles="member" onclick="scsTournamentMenuChoose('scsTournamentManagerLive')"><span>◉</span>Watch Tournaments</button>
+    <button type="button" data-scs-roles="member" onclick="scsTournamentMenuChoose('scsTournamentManagerLive')"><span>◉</span><span data-i18n="scsTournamentWatch">Watch Tournaments</span></button>
     <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerMyTournaments')"><span>🏆</span><span data-i18n="scsMyTournamentsTitle">My Tournaments</span></button>
     <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerStart')"><span>＋</span><span data-i18n="scsNewTournamentTitle">New Tournament</span></button>
     <button type="button" data-scs-roles="manager" onclick="scsTournamentMenuChoose('scsTournamentManagerPlayers')"><span>♙</span><span data-i18n="scsPlayersManagerTitle">Players Manager</span></button>
@@ -4859,25 +4859,25 @@ window.scsActivityReturnHome=function(){
   </nav>
 </div>
 
-<div id="scsTournamentContinue" class="scs-tmgr-overlay" hidden onclick="if(event.target===this)scsCloseTournamentContinue()"><section class="scs-tmgr-card" role="dialog" aria-modal="true"><header class="scs-tmgr-head"><div><div class="scs-tmgr-kicker">SCS · TOURNAMENT</div><h2>My Tournaments</h2><p>All your tournaments in one place.</p></div><button class="scs-tmgr-close" onclick="scsCloseTournamentContinue()" aria-label="Close">×</button></header><div class="scs-tmgr-filters" role="group" aria-label="Filter tournaments"><button type="button" data-tm-filter="all" class="is-active" onclick="scsSetMyTournamentFilter('all')">All</button><button type="button" data-tm-filter="live" onclick="scsSetMyTournamentFilter('live')">Live</button><button type="button" data-tm-filter="completed" onclick="scsSetMyTournamentFilter('completed')">Completed</button></div><div id="scsTournamentContinueList" class="scs-tmgr-tournament-list"></div><button class="scs-tmgr-back" onclick="scsCloseTournamentContinue()">‹ Tournament Manager</button></section></div>
+<div id="scsTournamentContinue" class="scs-tmgr-overlay" hidden onclick="if(event.target===this)scsCloseTournamentContinue()"><section class="scs-tmgr-card" role="dialog" aria-modal="true"><header class="scs-tmgr-head"><div><div class="scs-tmgr-kicker">SCS · TOURNAMENT</div><h2>My Tournaments</h2><p><span data-i18n="scsTournamentAllPlace">All your tournaments in one place.</span></p></div><button class="scs-tmgr-close" onclick="scsCloseTournamentContinue()" aria-label="Close">×</button></header><div class="scs-tmgr-filters" role="group" aria-label="Filter tournaments"><button type="button" data-tm-filter="all" class="is-active" onclick="scsSetMyTournamentFilter('all')"><span data-i18n="scsTournamentAll">All</span></button><button type="button" data-tm-filter="live" onclick="scsSetMyTournamentFilter('live')"><span data-i18n="scsTournamentLiveTab">Live</span></button><button type="button" data-tm-filter="completed" onclick="scsSetMyTournamentFilter('completed')"><span data-i18n="scsTournamentCompleted">Completed</span></button></div><div id="scsTournamentContinueList" class="scs-tmgr-tournament-list"></div><button class="scs-tmgr-back" onclick="scsCloseTournamentContinue()">‹ Tournament Manager</button></section></div>
 
-<div id="scsTournamentLive" class="scs-tmgr-overlay" hidden onclick="if(event.target===this)scsCloseTournamentLive()"><section class="scs-tmgr-card" role="dialog" aria-modal="true" aria-labelledby="scsTournamentLiveTitle"><header class="scs-tmgr-head"><div><div class="scs-tmgr-kicker">SCS · LIVE</div><h2 id="scsTournamentLiveTitle">Live Tournaments</h2><p>Choose a tournament to view.</p></div><button class="scs-tmgr-close" onclick="scsCloseTournamentLive()" aria-label="Close">×</button></header><div id="scsTournamentLiveList" class="scs-tmgr-tournament-list"></div><button class="scs-tmgr-back" onclick="scsCloseTournamentLive()">‹ Tournament Manager</button></section></div>
+<div id="scsTournamentLive" class="scs-tmgr-overlay" hidden onclick="if(event.target===this)scsCloseTournamentLive()"><section class="scs-tmgr-card" role="dialog" aria-modal="true" aria-labelledby="scsTournamentLiveTitle"><header class="scs-tmgr-head"><div><div class="scs-tmgr-kicker">SCS · LIVE</div><h2 id="scsTournamentLiveTitle"><span data-i18n="scsTournamentLive">Live Tournaments</span></h2><p><span data-i18n="scsTournamentChooseWatch">Choose a tournament to view.</span></p></div><button class="scs-tmgr-close" onclick="scsCloseTournamentLive()" aria-label="Close">×</button></header><div id="scsTournamentLiveList" class="scs-tmgr-tournament-list"></div><button class="scs-tmgr-back" onclick="scsCloseTournamentLive()">‹ Tournament Manager</button></section></div>
 
 <div id="scsTournamentTypePicker" class="scs-tournament-type-overlay" hidden onclick="if(event.target===this)scsCloseTournamentTypePicker()">
   <section class="scs-tournament-type-card" role="dialog" aria-modal="true" aria-labelledby="scsTournamentTypeTitle">
     <div class="scs-tournament-type-kicker">SCS · TOURNAMENT</div>
-    <h2 id="scsTournamentTypeTitle">Start a Tournament</h2>
-    <p>Choose the tournament format.</p>
-    <button type="button" class="scs-tournament-type-option is-active" onclick="scsStartKnockoutTournament()"><span class="scs-tournament-type-icon">🏆</span><span><strong>Knockout</strong><small>Create or continue a knockout bracket</small></span><b>›</b></button>
-    <button type="button" class="scs-tournament-type-option is-active" onclick="scsStartGroupTournament()"><span class="scs-tournament-type-icon">🔄</span><span><strong>Group Tournament</strong><small>Group setup, standings and knockouts</small></span><b>›</b></button>
-    <button type="button" class="scs-tournament-type-option is-active" onclick="scsStartTeamTournament()"><span class="scs-tournament-type-icon">🏸</span><span><strong>Team Tournament</strong><small>Clubs · Three doubles per encounter</small></span><b>›</b></button>
-    <button type="button" class="scs-tournament-type-cancel" onclick="scsCloseTournamentTypePicker()">Cancel</button>
+    <h2 id="scsTournamentTypeTitle"><span data-i18n="scsTournamentStart">Start a Tournament</span></h2>
+    <p><span data-i18n="scsTournamentChooseFormat">Choose the tournament format.</span></p>
+    <button type="button" class="scs-tournament-type-option is-active" onclick="scsStartKnockoutTournament()"><span class="scs-tournament-type-icon">🏆</span><span><strong><span data-i18n="scsKnockout">Knockout</span></strong><small><span data-i18n="scsKnockoutDesc">Create or continue a knockout bracket</span></small></span><b>›</b></button>
+    <button type="button" class="scs-tournament-type-option is-active" onclick="scsStartGroupTournament()"><span class="scs-tournament-type-icon">🔄</span><span><strong><span data-i18n="scsGroupTournament">Group Tournament</span></strong><small><span data-i18n="scsGroupTournamentDesc">Group setup, standings and knockouts</span></small></span><b>›</b></button>
+    <button type="button" class="scs-tournament-type-option is-active" onclick="scsStartTeamTournament()"><span class="scs-tournament-type-icon">🏸</span><span><strong><span data-i18n="scsTeamTournament">Team Tournament</span></strong><small><span data-i18n="scsTeamTournamentDesc">Clubs · Three doubles per encounter</span></small></span><b>›</b></button>
+    <button type="button" class="scs-tournament-type-cancel" onclick="scsCloseTournamentTypePicker()"><span data-i18n="scsCancel">Cancel</span></button>
   </section>
 </div>
 <div id="scsTournamentOverlay" class="scs-tm-overlay" hidden></div>
 <div id="scsCourtCenterOverlay" class="scs-court-overlay" hidden>
   <section class="scs-court-shell">
-    <header class="scs-court-title"><button type="button" onclick="SCSCourtCenter.close()">‹</button><div><h2>Court Center</h2><span id="scsCourtClub"></span></div><button id="scsCourtAssign" type="button" onclick="SCSCourtCenter.showAssign()">＋</button></header>
+    <header class="scs-court-title"><button type="button" onclick="SCSCourtCenter.close()">‹</button><div><h2><span data-i18n="scsCourtCenterTitle">Court Center</span></h2><span id="scsCourtClub"></span></div><button id="scsCourtAssign" type="button" onclick="SCSCourtCenter.showAssign()">＋</button></header>
     <div id="scsCourtBody"></div>
     <div id="scsCourtAssignForm" class="scs-court-assign-form" hidden></div>
   </section>
@@ -4888,17 +4888,17 @@ window.scsActivityReturnHome=function(){
     <header class="scs-scoring-header"><button type="button" onclick="SCSScoring.close()" aria-label="Close">×</button></header>
     <div id="scsScoreMatchPicker" class="scs-score-match-picker" hidden></div>
     <div id="scsScoreSetup" class="scs-score-setup">
-      <h2>Players</h2><p>Select four players from the current club.</p>
-      <div class="scs-score-team-card team-a"><strong>Team A</strong><select id="scsScoreP1" onchange="SCSScoring.playerChanged()"></select><select id="scsScoreP2" onchange="SCSScoring.playerChanged()"></select></div>
+      <h2>Players</h2><p><span data-i18n="scsScoreSelectPlayers">Select four players from the current club.</span></p>
+      <div class="scs-score-team-card team-a"><strong><span data-i18n="scsScoreTeamA">Team A</span></strong><select id="scsScoreP1" onchange="SCSScoring.playerChanged()"></select><select id="scsScoreP2" onchange="SCSScoring.playerChanged()"></select></div>
       <div class="scs-score-vs">VS</div>
-      <div class="scs-score-team-card team-b"><strong>Team B</strong><select id="scsScoreP3" onchange="SCSScoring.playerChanged()"></select><select id="scsScoreP4" onchange="SCSScoring.playerChanged()"></select></div>
-      <div class="scs-score-match-format" role="group" aria-label="Match format"><strong>Match Format</strong><div><label><input type="radio" name="scsScoreMatchFormat" value="1" checked onchange="SCSScoring.matchFormatChanged()"><span>1 Set</span></label><label><input type="radio" name="scsScoreMatchFormat" value="3" onchange="SCSScoring.matchFormatChanged()"><span>3 Sets</span></label></div></div>
+      <div class="scs-score-team-card team-b"><strong><span data-i18n="scsScoreTeamB">Team B</span></strong><select id="scsScoreP3" onchange="SCSScoring.playerChanged()"></select><select id="scsScoreP4" onchange="SCSScoring.playerChanged()"></select></div>
+      <div class="scs-score-match-format" role="group" aria-label="Match format"><strong><span data-i18n="scsScoreMatchFormat">Match Format</span></strong><div><label><input type="radio" name="scsScoreMatchFormat" value="1" checked onchange="SCSScoring.matchFormatChanged()"><span><span data-i18n="scsScoreOneSet">1 Set</span></span></label><label><input type="radio" name="scsScoreMatchFormat" value="3" onchange="SCSScoring.matchFormatChanged()"><span><span data-i18n="scsScoreThreeSets">3 Sets</span></span></label></div></div>
       <div id="scsScoreSetRules" class="scs-score-set-rules">
-        <div class="scs-score-set-rule" data-set="1"><strong>Set 1</strong><label>Win <input id="scsScoreSet1Win" type="number" inputmode="numeric" min="1" value="15"></label><label>Max <input id="scsScoreSet1Max" type="number" inputmode="numeric" min="1" value="21"></label></div>
-        <div class="scs-score-set-rule" data-set="2" hidden><strong>Set 2</strong><label>Win <input id="scsScoreSet2Win" type="number" inputmode="numeric" min="1" value="15"></label><label>Max <input id="scsScoreSet2Max" type="number" inputmode="numeric" min="1" value="21"></label></div>
-        <div class="scs-score-set-rule" data-set="3" hidden><strong>Set 3</strong><label>Win <input id="scsScoreSet3Win" type="number" inputmode="numeric" min="1" value="11"></label><label>Max <input id="scsScoreSet3Max" type="number" inputmode="numeric" min="1" value="11"></label></div>
+        <div class="scs-score-set-rule" data-set="1"><strong><span data-i18n="scsScoreSet1">Set 1</span></strong><label>Win <input id="scsScoreSet1Win" type="number" inputmode="numeric" min="1" value="15"></label><label>Max <input id="scsScoreSet1Max" type="number" inputmode="numeric" min="1" value="21"></label></div>
+        <div class="scs-score-set-rule" data-set="2" hidden><strong><span data-i18n="scsScoreSet2">Set 2</span></strong><label>Win <input id="scsScoreSet2Win" type="number" inputmode="numeric" min="1" value="15"></label><label>Max <input id="scsScoreSet2Max" type="number" inputmode="numeric" min="1" value="21"></label></div>
+        <div class="scs-score-set-rule" data-set="3" hidden><strong><span data-i18n="scsScoreSet3">Set 3</span></strong><label>Win <input id="scsScoreSet3Win" type="number" inputmode="numeric" min="1" value="11"></label><label>Max <input id="scsScoreSet3Max" type="number" inputmode="numeric" min="1" value="11"></label></div>
       </div>
-      <div id="scsScoreSetupMsg" class="scs-score-message"></div><button class="scs-score-start-btn" type="button" onclick="SCSScoring.start()">Start Scoring</button>
+      <div id="scsScoreSetupMsg" class="scs-score-message"></div><button class="scs-score-start-btn" type="button" onclick="SCSScoring.start()"><span data-i18n="scsScoreStart">Start Scoring</span></button>
     </div>
     <div id="scsScoreLive" class="scs-score-live" hidden>
       
