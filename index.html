@@ -844,8 +844,9 @@ body>.scs-tmgr-side-menu.is-open{transform:translateX(0);visibility:visible}
 body>.scs-tmgr-side-menu .scs-tmgr-side-top{display:flex;justify-content:space-between;align-items:center;padding:8px 10px 22px;margin-bottom:14px;border-bottom:1px solid #31415a;color:#e7b95d;font-size:1.45rem}
 body>.scs-tmgr-side-menu .scs-tmgr-side-top button{border:0;background:transparent;color:#a9b8cf;font-size:1.8rem;width:44px;height:44px}
 body>.scs-tmgr-side-menu>button{width:100%;display:flex;align-items:center;gap:18px;text-align:left;border:0;border-radius:12px;background:transparent;color:#f5f7fc;padding:17px 14px;font-size:1rem;font-weight:600;cursor:pointer}
-body>.scs-tmgr-side-menu>button span{display:inline-flex;justify-content:center;width:28px;color:#e7b95d;font-size:1.35rem}
-body>.scs-tmgr-side-menu>.scs-tmgr-side-home{margin-top:auto;border-top:1px solid #31415a;color:#b4c4dc}
+body>.scs-tmgr-side-menu>button>span:first-child{display:inline-flex;align-items:center;justify-content:center;flex:0 0 28px;width:28px;color:#e7b95d;font-size:1.35rem}
+body>.scs-tmgr-side-menu>button>span:not(:first-child){display:block;flex:1 1 auto;min-width:0;width:auto;color:inherit;font-size:inherit;line-height:1.4;white-space:normal;overflow-wrap:normal;word-break:normal;writing-mode:horizontal-tb;text-align:left}
+body>.scs-tmgr-side-menu>.scs-tmgr-side-home{margin-top:0;border-top:1px solid #31415a;color:#b4c4dc}
 </style>
 <style id="scs-tournament-menu-v454">
 #scsTournamentManager.scs-tmgr-fullpage{background:#0d1729}
@@ -4239,7 +4240,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V627', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V628', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
