@@ -866,7 +866,8 @@ body>.scs-tmgr-side-menu>.scs-tmgr-side-home{margin-top:auto;border-top:1px soli
 #scsTournamentManager .scs-tmgr-side-top button{border:0;background:transparent;color:#a9b8cf;font-size:1.8rem;width:44px;height:44px}
 #scsTournamentManager .scs-tmgr-side-menu>button{width:100%;display:flex;align-items:center;gap:18px;text-align:left;border:0;border-radius:12px;background:transparent;color:#f5f7fc;padding:17px 14px;font-size:1rem;font-weight:600;cursor:pointer}
 #scsTournamentManager .scs-tmgr-side-menu>button:active,#scsTournamentManager .scs-tmgr-side-menu>button:focus-visible{background:#263955}
-#scsTournamentManager .scs-tmgr-side-menu>button span{display:inline-flex;justify-content:center;width:28px;color:#e7b95d;font-size:1.35rem}
+#scsTournamentManager .scs-tmgr-side-menu>button>span:first-child{display:inline-flex;justify-content:center;align-items:center;flex:0 0 28px;width:28px;color:#e7b95d;font-size:1.35rem}
+#scsTournamentManager .scs-tmgr-side-menu>button>span:not(:first-child){display:block;flex:1 1 auto;min-width:0;width:auto;color:inherit;font-size:inherit;line-height:1.4;white-space:normal;overflow-wrap:normal;word-break:normal;writing-mode:horizontal-tb}
 #scsTournamentManager .scs-tmgr-side-menu>.scs-tmgr-side-home{margin-top:auto;border-top:1px solid #31415a;border-radius:0;color:#b4c4dc}
 @media(prefers-reduced-motion:reduce){#scsTournamentManager .scs-tmgr-side-menu{transition:none}}
 </style>
@@ -4238,7 +4239,7 @@ body.scs-practice-shared-active #playersPage #scsPlayersFloatingAdd {
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=V626', { updateViaCache: 'none' })
+        navigator.serviceWorker.register('./sw.js?v=V627', { updateViaCache: 'none' })
           .then(function(reg) {
             console.log('SW registered - CLUBS v' + (window.SCS_APP_VERSION || '1.6.4'));
             // Check once on a clean app load. Do not trigger update checks when
