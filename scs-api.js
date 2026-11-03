@@ -1,5 +1,6 @@
 (function(){
 'use strict';
+const tx=(key,fallback)=>typeof t==='function'?t(key):fallback;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const api=window.ScsApi=window.ScsApi||{};
 api.cards=api.cards||{};
@@ -24,15 +25,15 @@ api.buttons.render=function({label='',action='',className='',disabled=false}={})
  return '<button type="button"'+(action?' data-'+esc(action):'')+(className?' class="'+esc(className)+'"':'')+(disabled?' disabled':'')+'>'+esc(label)+'</button>';
 };
 api.navigation.bottom=function({active='home',attribute='data-team-nav',ariaLabel='Tournament sections'}={}){
- const items=[['home','Home','⌂'],['clubs','Clubs','♙'],['tournament','Tournament','⑂'],['match','Match Center','▣']];
+ const items=[['home',tx('scsNavHome','Home'),'⌂'],['clubs',tx('scsNavClubs','Clubs'),'♙'],['tournament',tx('scsNavTournament','Tournament'),'⑂'],['match',tx('scsNavMatchCenter','Match Center'),'▣']];
  return '<nav class="scs-tm-organized-tabs scs-tm-bottom-nav scs-gt-bottom-nav scs-team-bottom-nav" aria-label="'+esc(ariaLabel)+'">'+items.map(([key,label,icon])=>'<button type="button" '+esc(attribute)+'="'+key+'" class="'+(active===key?'active':'')+'"'+(active===key?' aria-current="page"':'')+'><span class="scs-tm-nav-icon" aria-hidden="true">'+icon+'</span><span class="scs-tm-nav-label">'+label+'</span></button>').join('')+'</nav>';
 };
 api.events.createForm=function(){
- return '<section class="scs-gt-card scs-team-main-create"><div class="scs-team-main-icon">🏆</div><h2>New Tournament</h2><p>Enter a tournament name. You can add Men’s Doubles, Women’s Doubles and other events on the next page.</p><label for="scs-main-name">Tournament Name</label><input id="scs-main-name" data-main-name type="text" maxlength="100" autocomplete="off" placeholder="e.g. Spring Tournament 2027" /><small data-main-error hidden>Please enter a tournament name.</small><div class="scs-team-main-actions"><button type="button" data-main-cancel>Cancel</button><button type="button" class="scs-gt-primary" data-main-create>Create Tournament →</button></div></section>';
+ return '<section class="scs-gt-card scs-team-main-create"><div class="scs-team-main-icon">🏆</div><h2>'+esc(tx('scsCreateMainHeading','New Tournament'))+'</h2><p>'+esc(tx('scsCreateMainHelp','Enter a tournament name.'))+'</p><label for="scs-main-name">'+esc(tx('scsCreateMainName','Tournament Name'))+'</label><input id="scs-main-name" data-main-name type="text" maxlength="100" autocomplete="off" placeholder="'+esc(tx('scsCreateMainPlaceholder','e.g. Spring Tournament 2027'))+'" /><small data-main-error hidden>'+esc(tx('scsCreateMainError','Please enter a tournament name.'))+'</small><div class="scs-team-main-actions"><button type="button" data-main-cancel>'+esc(tx('scsTournamentCancel','Cancel'))+'</button><button type="button" class="scs-gt-primary" data-main-create>'+esc(tx('scsCreateMainButton','Create Tournament'))+' →</button></div></section>';
 };
 api.events.requestCreate=function({onCreate,onCancel}={}){
  const backdrop=document.createElement('div');backdrop.className='scs-gt-overlay scs-team-overlay';backdrop.id='scs-api-create-overlay';backdrop.style.zIndex='2147483000';
- backdrop.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-create-sheet" role="dialog" aria-label="Create Tournament"><header><strong>Tournament</strong><button type="button" data-main-cancel aria-label="Close">✕</button></header>'+api.events.createForm()+'</div>';
+ backdrop.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-create-sheet" role="dialog" aria-label="'+esc(tx('scsCreateMainButton','Create Tournament'))+'"><header><strong>'+esc(tx('scsNavTournament','Tournament'))+'</strong><button type="button" data-main-cancel aria-label="'+esc(tx('scsTournamentClose','Close'))+'">✕</button></header>'+api.events.createForm()+'</div>';
  document.body.appendChild(backdrop);
  const cancel=()=>{backdrop.remove();if(onCancel)onCancel()};
  backdrop.querySelectorAll('[data-main-cancel]').forEach(b=>b.addEventListener('click',cancel));
@@ -42,7 +43,7 @@ api.events.requestCreate=function({onCreate,onCancel}={}){
  setTimeout(()=>backdrop.querySelector('[data-main-name]')?.focus(),0);
 };
 api.events.homePage=function({title='',events=[],activeEventId=null,viewOnly=false,navAttribute='data-team-nav',ariaLabel='Tournament sections'}={}){
- return '<div class="scs-gt-sheet scs-team-sheet scs-team-main-sheet"><header><strong>'+esc(title)+'</strong><button type="button" data-close aria-label="Close">✕</button></header>'+api.events.home({events,activeEventId,viewOnly})+'</div>'+api.navigation.bottom({active:'home',attribute:navAttribute,ariaLabel});
+ return '<div class="scs-gt-sheet scs-team-sheet scs-team-main-sheet"><header><strong>'+esc(title)+'</strong><button type="button" data-close aria-label="'+esc(tx('scsTournamentClose','Close'))+'">✕</button></header>'+api.events.home({events,activeEventId,viewOnly})+'</div>'+api.navigation.bottom({active:'home',attribute:navAttribute,ariaLabel});
 };
 // One Home mounting path for Team, Knockout and Group. Keep the original
 // host's tournament-specific logic separate from the shared Home presentation.
@@ -54,11 +55,11 @@ api.events.mountHome=function(root,options={}){
 };
 api.events.leaveHome=function(root){root?.classList.remove('scs-api-home-host')};
 api.events.eventForm=function({parentTitle=''}={}){
- return '<section class="scs-gt-card scs-team-main-create"><div class="scs-team-main-icon">🏸</div><h2>Add Event</h2><p>Create an event under <strong>'+esc(parentTitle)+'</strong>. Each event has its own matches and results.</p><label for="scs-event-name">Event Name</label><input id="scs-event-name" data-event-name type="text" maxlength="100" autocomplete="off" placeholder="e.g. Men’s Doubles" /><small data-event-error hidden>Please enter an event name.</small><div class="scs-team-main-actions"><button type="button" data-event-cancel>Cancel</button><button type="button" class="scs-gt-primary" data-event-create>Create Event →</button></div></section>';
+ return '<section class="scs-gt-card scs-team-main-create"><div class="scs-team-main-icon">🏸</div><h2>'+esc(tx('scsCreateEventHeading','Add Event'))+'</h2><p>'+esc(tx('scsCreateEventHelpStart','Create an event under'))+' <strong>'+esc(parentTitle)+'</strong>. '+esc(tx('scsCreateEventHelpEnd','Each event has its own matches and results.'))+'</p><label for="scs-event-name">'+esc(tx('scsCreateEventName','Event Name'))+'</label><input id="scs-event-name" data-event-name type="text" maxlength="100" autocomplete="off" placeholder="'+esc(tx('scsCreateEventPlaceholder','e.g. Men’s Doubles'))+'" /><small data-event-error hidden>'+esc(tx('scsCreateEventError','Please enter an event name.'))+'</small><div class="scs-team-main-actions"><button type="button" data-event-cancel>'+esc(tx('scsTournamentCancel','Cancel'))+'</button><button type="button" class="scs-gt-primary" data-event-create>'+esc(tx('scsCreateEventButton','Create Event'))+' →</button></div></section>';
 };
 api.events.requestEvent=function({parentTitle='',onCreate,onCancel}={}){
  const backdrop=document.createElement('div');backdrop.className='scs-gt-overlay scs-team-overlay';backdrop.style.zIndex='2147483000';
- backdrop.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-create-sheet" role="dialog" aria-label="Add Event"><header><strong>'+esc(parentTitle)+'</strong><button type="button" data-event-cancel aria-label="Close">✕</button></header>'+api.events.eventForm({parentTitle})+'</div>';
+ backdrop.innerHTML='<div class="scs-gt-sheet scs-team-sheet scs-team-create-sheet" role="dialog" aria-label="'+esc(tx('scsCreateEventHeading','Add Event'))+'"><header><strong>'+esc(parentTitle)+'</strong><button type="button" data-event-cancel aria-label="'+esc(tx('scsTournamentClose','Close'))+'">✕</button></header>'+api.events.eventForm({parentTitle})+'</div>';
  document.body.appendChild(backdrop);const input=backdrop.querySelector('[data-event-name]');
  const cancel=()=>{backdrop.remove();onCancel?.()};backdrop.querySelectorAll('[data-event-cancel]').forEach(b=>b.onclick=cancel);
  const submit=()=>{const name=input.value.trim();if(!name){backdrop.querySelector('[data-event-error]').hidden=false;input.focus();return}backdrop.remove();onCreate?.(name)};
@@ -73,19 +74,19 @@ api.events.home=function({events=[],activeEventId=null,viewOnly=false}={}){
   return '<section class="scs-team-event-section"><h2>'+esc(title)+' <span>('+items.length+')</span></h2><div class="scs-team-event-list">'+items.map(e=>{
    const clubs=Array.isArray(e.clubs)?e.clubs:[];
    const active=e.id===activeEventId;
-   return '<button type="button" class="scs-team-event-row '+kind+(active?' is-active':'')+'" data-open-event="'+esc(e.id)+'"'+(active?' aria-label="Active Event: '+esc(e.title||'Event')+'"':'')+'><span class="scs-team-event-code">'+esc(e.title||'Event')+'</span><span class="scs-team-event-details"><strong>'+esc(clubs.join(', ')||'Clubs not selected')+'</strong><small>'+clubs.length+' teams · '+Number(e.completed||0)+' / '+Number(e.matches||0)+' matches completed</small>'+(active?'<span class="scs-team-event-active-label">✓ Active Event</span>':'')+'</span><span class="scs-team-event-arrow" aria-hidden="true">›</span></button>';
+   return '<button type="button" class="scs-team-event-row '+kind+(active?' is-active':'')+'" data-open-event="'+esc(e.id)+'"'+(active?' aria-label="Active Event: '+esc(e.title||'Event')+'"':'')+'><span class="scs-team-event-code">'+esc(e.title||'Event')+'</span><span class="scs-team-event-details"><strong>'+esc(clubs.join(', ')||tx('scsEventsNoClubs','Clubs not selected'))+'</strong><small>'+clubs.length+' teams · '+Number(e.completed||0)+' / '+Number(e.matches||0)+' '+esc(tx('scsEventsMatchesDone','matches completed'))+'</small>'+(active?'<span class="scs-team-event-active-label">✓ '+esc(tx('scsEventsActive','Active Event'))+'</span>':'')+'</span><span class="scs-team-event-arrow" aria-hidden="true">›</span></button>';
   }).join('')+'</div></section>';
  };
- return '<div class="scs-team-event-home"><p class="scs-team-event-summary">'+events.length+' events · '+countClubs+' teams</p>'+
-  (events.length?section('men','Men’s Events')+section('ladies','Ladies’ Events')+section('other','Other Events'):'<p class="scs-team-event-empty">No events yet. Add an event to get started.</p>')+
-  (viewOnly?'':api.buttons.render({label:'＋ Add Event',action:'add-event',className:'scs-gt-primary scs-team-add-event-bottom'}))+'</div>';
+ return '<div class="scs-team-event-home"><p class="scs-team-event-summary">'+events.length+' '+esc(tx('scsEventsCount','events'))+' · '+countClubs+' '+esc(tx('scsEventsTeams','teams'))+'</p>'+
+  (events.length?section('men',tx('scsEventsMen','Men’s Events'))+section('ladies',tx('scsEventsLadies','Ladies’ Events'))+section('other',tx('scsEventsOther','Other Events')):'<p class="scs-team-event-empty">'+esc(tx('scsEventsNone','No events yet. Add an event to get started.'))+'</p>')+
+  (viewOnly?'':api.buttons.render({label:'＋ '+tx('scsEventsAdd','Add Event'),action:'add-event',className:'scs-gt-primary scs-team-add-event-bottom'}))+'</div>';
 };
 api.players=api.players||{};
 async function pickRegisteredRoster(onDone, providers={}){
  const {registeredClubChoices,registeredClubPlayers,playerRow,hydratePlayerCards}=providers;
  if([registeredClubChoices,registeredClubPlayers,playerRow,hydratePlayerCards].some(f=>typeof f!=='function'))throw Error('Shared roster picker requires registered-club providers');
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal';
- modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Club players</h3><p>Select a registered sub-club and its players</p></div><label>Sub-club<select data-club><option value="">Select a sub-club</option></select></label><p data-status>Loading clubs…</p><div data-roster></div></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-done>Done</button></div></div>';
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Club players</h3><p>Select a registered sub-club and its players</p></div><label>Sub-club<select data-club><option value="">Select a sub-club</option></select></label><p data-status>Loading clubs…</p><div data-roster></div></div><div class="scs-tm-import-actions"><button type="button" data-cancel>'+esc(tx('scsTournamentCancel','Cancel'))+'</button><button type="button" class="scs-tm-primary" data-done>'+esc(tx('scsTournamentDone','Done'))+'</button></div></div>';
  document.body.appendChild(modal);
  const sel=modal.querySelector('[data-club]'),status=modal.querySelector('[data-status]'),list=modal.querySelector('[data-roster]');let clubs=[],names=[];
  const close=()=>modal.remove();modal.querySelector('[data-cancel]').onclick=close;
@@ -100,7 +101,7 @@ api.players.pickRegisteredRoster=pickRegisteredRoster;
 api.players.select=async function({selected=[],onDone,onCancel}={}){
  const selectedMap=new Map((selected||[]).filter(p=>p&&p.player).map(p=>[String(p.subClubId||p.subClub||'')+'|'+String(p.playerId||p.player).toLowerCase(),p]));
  const modal=document.createElement('section');modal.className='scs-tm-entry-modal scs-api-player-selector';modal.setAttribute('role','dialog');modal.setAttribute('aria-modal','true');
- modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Tournament Players Manager</h3><p>Select players only from the selected main club’s sub-clubs</p></div><label>Sub-club<select data-subclub><option value="">Select a sub-club</option></select></label><p data-status role="status">Loading sub-clubs…</p><div data-players></div><h4 data-count>Selected players ('+selectedMap.size+')</h4></div><div class="scs-tm-import-actions"><button type="button" data-cancel>Cancel</button><button type="button" class="scs-tm-primary" data-done>Done</button></div></div>';
+ modal.innerHTML='<div class="scs-tm-entry-editor scs-team-club-editor"><div class="scs-team-club-scroll"><div class="scs-team-editor-head"><h3>Tournament Players Manager</h3><p>Select players only from the selected main club’s sub-clubs</p></div><label>Sub-club<select data-subclub><option value="">Select a sub-club</option></select></label><p data-status role="status">Loading sub-clubs…</p><div data-players></div><h4 data-count>Selected players ('+selectedMap.size+')</h4></div><div class="scs-tm-import-actions"><button type="button" data-cancel>'+esc(tx('scsTournamentCancel','Cancel'))+'</button><button type="button" class="scs-tm-primary" data-done>'+esc(tx('scsTournamentDone','Done'))+'</button></div></div>';
  // Mount inside the invoking tournament overlay so its existing modal CSS and
  // stacking context apply. In particular, Team Tournament has a high-z-index
  // overlay and a body-mounted selector would be hidden underneath it on iOS.
