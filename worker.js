@@ -1384,17 +1384,45 @@ __name2222(handleDb, "handleDb");
 __name22222(handleDb, "handleDb");
 async function handleSendOtp(request, env) {
   const { email } = await request.json();
-  if (!email)
-    return json({ error: "email required" }, 400);
-  const res = await fetch(env.EDGE_BASE + "/send-otp", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + env.SUPABASE_KEY, "apikey": env.SUPABASE_KEY },
-    body: JSON.stringify({ email: email.toLowerCase().trim() })
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok)
-    return json({ error: data.error || "Failed to send OTP" }, res.status);
-  return json({ success: true });
+  const normalizedEmail = String(email || "").toLowerCase().trim();
+  if (!normalizedEmail || !normalizedEmail.includes("@"))
+    return json({ error: "Valid email required" }, 400);
+  if (!env.BREVO_API_KEY)
+    return json({ error: "Email service is not configured" }, 503);
+  const random = new Uint32Array(1);
+  crypto.getRandomValues(random);
+  const otp = String(1e5 + random[0] % 9e5);
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1e3).toISOString();
+  const emailQuery = "email=eq." + encodeURIComponent(normalizedEmail);
+  try {
+    await sbDelete(env, "otp_verifications", emailQuery);
+    await sbPost(env, "otp_verifications", {
+      email: normalizedEmail,
+      otp,
+      expires_at: expiresAt,
+      verified: false
+    }, "return=minimal");
+    const emailRes = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: { "api-key": env.BREVO_API_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sender: { name: "Sports Club Scheduler", email: env.BREVO_FROM_EMAIL || "karikalan.android@gmail.com" },
+        to: [{ email: normalizedEmail }],
+        subject: "Your Sports Club Scheduler verification code",
+        htmlContent: '<div style="font-family:sans-serif;padding:24px"><h2 style="color:#6c63ff">Sports Club Scheduler</h2><p>Your verification code:</p><div style="font-size:2rem;font-weight:800;letter-spacing:8px;padding:16px;background:#f5f5fb;border-radius:8px;text-align:center">' + otp + '</div><p style="color:#888;font-size:.85rem;margin-top:16px">Expires in 10 minutes.</p></div>'
+      })
+    });
+    if (!emailRes.ok) {
+      await sbDelete(env, "otp_verifications", emailQuery).catch(() => {
+      });
+      return json({ error: "Verification email could not be sent (email service " + emailRes.status + ")" }, 502);
+    }
+    return json({ success: true });
+  } catch (error) {
+    await sbDelete(env, "otp_verifications", emailQuery).catch(() => {
+    });
+    return json({ error: error.message || "Failed to send OTP" }, 500);
+  }
 }
 __name(handleSendOtp, "handleSendOtp");
 __name2(handleSendOtp, "handleSendOtp");
@@ -1404,17 +1432,20 @@ __name2222(handleSendOtp, "handleSendOtp");
 __name22222(handleSendOtp, "handleSendOtp");
 async function handleVerifyOtp(request, env) {
   const { email, otp } = await request.json();
-  if (!email || !otp)
-    return json({ error: "email and otp required" }, 400);
-  const res = await fetch(env.EDGE_BASE + "/verify-otp", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + env.SUPABASE_KEY, "apikey": env.SUPABASE_KEY },
-    body: JSON.stringify({ email: email.toLowerCase().trim(), otp: otp.trim() })
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok)
-    return json({ error: data.error || "Invalid OTP" }, res.status);
-  return json({ success: true });
+  const normalizedEmail = String(email || "").toLowerCase().trim();
+  const normalizedOtp = String(otp || "").trim();
+  if (!normalizedEmail || !/^\d{6}$/.test(normalizedOtp))
+    return json({ error: "Email and valid OTP required" }, 400);
+  try {
+    const query = "email=eq." + encodeURIComponent(normalizedEmail) + "&otp=eq." + encodeURIComponent(normalizedOtp) + "&verified=eq.false&expires_at=gt." + encodeURIComponent((/* @__PURE__ */ new Date()).toISOString()) + "&select=id";
+    const rows = await sbGet(env, "otp_verifications", query);
+    if (!rows || !rows.length)
+      return json({ error: "Invalid or expired OTP" }, 400);
+    await sbPatch(env, "otp_verifications", "id=eq." + encodeURIComponent(rows[0].id), { verified: true });
+    return json({ success: true });
+  } catch (error) {
+    return json({ error: error.message || "OTP verification failed" }, 500);
+  }
 }
 __name(handleVerifyOtp, "handleVerifyOtp");
 __name2(handleVerifyOtp, "handleVerifyOtp");
